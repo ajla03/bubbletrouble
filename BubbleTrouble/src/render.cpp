@@ -13,23 +13,14 @@ void RefreshScreen(HWND hwnd){
     HBITMAP hbmBuffer = CreateCompatibleBitmap(hdc, rect.right, rect.bottom);
     HBITMAP oldBufferBmp = (HBITMAP)SelectObject(hdcBuffer, hbmBuffer);
 
-
     // === RENDER WALLS ===
     SelectObject(hdcMem, wall);
 
-    // Left wall
     for (int y = 0; y < rect.bottom; y += leftWall.height) {
-        BitBlt(hdcBuffer, 0, y, leftWall.width, leftWall.height, hdcMem, 0, 0, SRCCOPY);
+        for (int x = 0; x < rect.right; x += leftWall.width) {
+            BitBlt(hdcBuffer, x, y, floorWall.width, leftWall.height, hdcMem, 0, 0, SRCCOPY);
+        }
     }
-
-    // Right wall
-    for (int y = 0; y < rect.bottom; y += rightWall.height) {
-        BitBlt(hdcBuffer, rect.right - rightWall.width, y, rightWall.width, rightWall.height, hdcMem, 0, 0, SRCCOPY);
-    }
-
-    // Floor
-    StretchBlt(hdcBuffer, 0, rect.bottom - floorWall.height, rect.right, floorWall.height,
-               hdcMem, 0, 0, floorWall.width, floorWall.height, SRCCOPY);
 
     // === RENDER BACKGROUND ===
     SelectObject(hdcMem, background);
@@ -39,8 +30,15 @@ void RefreshScreen(HWND hwnd){
     int bgW = rect.right - leftWall.width - rightWall.width;
     int bgH = rect.bottom - floorWall.height;
 
+    HPEN hpen = CreatePen(PS_SOLID, 3, RGB(255,255,255));
+    HPEN oldPen  = (HPEN)SelectObject(hdcBuffer, hpen);
+    Rectangle(hdcBuffer, bgX, bgY, bgX + bgW, bgY + bgH);
+    SelectObject(hdcBuffer, oldPen);
+    DeleteObject(hpen);
+
     StretchBlt(hdcBuffer, bgX, bgY, bgW, bgH, hdcMem, 0, 0, backgroundInfo.width, backgroundInfo.height, SRCCOPY);
 
+    //rendering balloons
      for (int i = 0; i < MAX_BALLOONS; i++) {
         if (balloons[i].active) {
             DrawBalloonGDI(hdcBuffer, &balloons[i]);

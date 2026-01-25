@@ -66,7 +66,7 @@ void LoadBitmaps(HWND hwnd, HINSTANCE hInstance){
         rightWall.height = bm.bmHeight;
 
         floorWall.width = bm.bmWidth;
-        floorWall.height = bm.bmHeight / 2;
+        floorWall.height = bm.bmHeight / 3;
     }
 
     // === HERO SETUP ===
