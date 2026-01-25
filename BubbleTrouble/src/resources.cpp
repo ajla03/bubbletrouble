@@ -17,6 +17,9 @@ StaticObject floorWall;
 StaticObject backgroundInfo;
 InputState inputState = {false};
 
+Balloon balloons[MAX_BALLOONS] = {0};
+int activeBalloonCount = 0;
+
 void LoadBitmaps(HWND hwnd, HINSTANCE hInstance){
     // Učitaj bitmap-e
     character = LoadBitmap(hInstance, MAKEINTRESOURCE(IDB_HERO));
@@ -82,5 +85,23 @@ void LoadBitmaps(HWND hwnd, HINSTANCE hInstance){
 
     // === INPUT STATE SETUP ===
     inputState.wasSpacePressed = false;
+
+    InitBalloon(0, 200, 100, 20, 2.5f, RGB(255, 0, 0));    // Crvena
+    InitBalloon(1, 400, 150, 40, -2.0f, RGB(0, 255, 0));   // Zelena
+    InitBalloon(2, 600, 120, 80, 3.0f, RGB(0, 100, 255));  // Plava
 }
+
+void InitBalloon(int index, float x, float y, float radius, float speedX, COLORREF color) {
+    if (index >= MAX_BALLOONS) return;
+
+    balloons[index].x = x;
+    balloons[index].y = y;
+    balloons[index].radius = radius;
+    balloons[index].speedX = speedX;
+    balloons[index].speedY = 0;
+    balloons[index].active = true;
+    balloons[index].color = color;
+    activeBalloonCount++;
+}
+
 

@@ -9,6 +9,11 @@
 #define IDB_WALL            105
 #define IDB_BACKGROUND      106
 
+#define MAX_BALLOONS 20
+#define GRAVITY 0.2f
+#define BOUNCE_DAMPING 0.9f
+#define MIN_RADIUS 10.0f
+#define MIN_BOUNCE_SPEED 3.0f
 
 struct Hero{
  int x, y;
@@ -31,6 +36,14 @@ struct StaticObject{
  int width, height;
 };
 
+struct Balloon {
+    float x, y;
+    float speedX, speedY;
+    float radius;
+    bool active;
+    COLORREF color;
+};
+
 struct InputState{
  bool wasSpacePressed;
 };
@@ -51,9 +64,18 @@ extern StaticObject floorWall;
 extern StaticObject backgroundInfo;
 extern InputState inputState;
 
+extern Balloon balloons[MAX_BALLOONS];
+extern int activeBalloonCount;
+
 void LoadBitmaps(HWND hwnd, HINSTANCE hInstance);
 void CheckInputs(HWND hwnd);
 void Update(HWND hwnd);
 void RefreshScreen(HWND hwnd);
 void RefreshSound();
+
+void InitBalloon(int index, float x, float y, float radius, float speedX, COLORREF color);
+void UpdateBalloons(HWND hwnd);
+void CheckCollisions();
+void SplitBalloon(int index);
+void DrawBalloonGDI(HDC hdc, Balloon* b);
 

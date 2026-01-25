@@ -40,6 +40,12 @@ void RefreshScreen(HWND hwnd){
 
     StretchBlt(hdcBuffer, bgX, bgY, bgW, bgH, hdcMem, 0, 0, backgroundInfo.width, backgroundInfo.height, SRCCOPY);
 
+     for (int i = 0; i < MAX_BALLOONS; i++) {
+        if (balloons[i].active) {
+            DrawBalloonGDI(hdcBuffer, &balloons[i]);
+        }
+    }
+
     // === RENDER HARPOON ===
     if (harpoon.isActive) {
         int visiblePart = std::min(harpoon.length, harpoon.height);
