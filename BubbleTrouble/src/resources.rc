@@ -7,4 +7,4 @@ IDB_ARROW       BITMAP "../assets/arrowWhite1.bmp"
 IDB_ARROW_MASK  BITMAP "../assets/arrowBlack1.bmp"
 
 IDB_WALL        BITMAP "../assets/wall.bmp"
-IDB_BACKGROUND  BITMAP "../assets/bgImage5.bmp"
+IDB_BACKGROUND  BITMAP "../assets/bg.bmp"
