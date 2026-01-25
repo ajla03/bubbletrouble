@@ -51,7 +51,7 @@ void CheckInputs(HWND hwnd){
     if (isSpacePressed && !inputState.wasSpacePressed && !harpoon.isActive) {
         harpoon.isActive = true;
         harpoon.length = 0;
-        harpoon.x = hero.x + (hero.width / 2) - (harpoon.width / 2) -  10;
+        harpoon.x = hero.x + (hero.width / 2) - (harpoon.width / 2);
         harpoon.y = rect.bottom - floorWall.height;
     }
 
