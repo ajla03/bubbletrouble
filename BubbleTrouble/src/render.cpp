@@ -13,6 +13,7 @@ void RefreshScreen(HWND hwnd){
     HBITMAP hbmBuffer = CreateCompatibleBitmap(hdc, rect.right, rect.bottom);
     HBITMAP oldBufferBmp = (HBITMAP)SelectObject(hdcBuffer, hbmBuffer);
 
+
     // === RENDER WALLS ===
     SelectObject(hdcMem, wall);
 
