@@ -67,6 +67,10 @@ extern InputState inputState;
 extern Balloon balloons[MAX_BALLOONS];
 extern int activeBalloonCount;
 
+extern double maxTime;
+extern double timeLeft;
+extern bool isGameOver;
+
 void LoadBitmaps(HWND hwnd, HINSTANCE hInstance);
 void CheckInputs(HWND hwnd);
 void Update(HWND hwnd);

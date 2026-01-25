@@ -17,6 +17,10 @@ StaticObject floorWall;
 StaticObject backgroundInfo;
 InputState inputState = {false};
 
+double maxTime = 2000.0;
+double timeLeft = 2000.0;
+bool isGameOver = false;
+
 Balloon balloons[MAX_BALLOONS] = {0};
 int activeBalloonCount = 0;
 
