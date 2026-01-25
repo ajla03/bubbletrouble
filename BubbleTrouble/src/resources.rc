@@ -1,0 +1,10 @@
+#include "../include/resources.h"
+
+IDB_HERO        BITMAP "../assets/hero.bmp"
+IDB_HERO_MASK   BITMAP "../assets/hero_mask.bmp"
+
+IDB_ARROW       BITMAP "../assets/arrowWhite.bmp"
+IDB_ARROW_MASK  BITMAP "../assets/arrowBlack.bmp"
+
+IDB_WALL        BITMAP "../assets/wall.bmp"
+IDB_BACKGROUND  BITMAP "../assets/bgImage5.bmp"

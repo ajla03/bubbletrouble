@@ -1,0 +1,28 @@
+# depslib dependency file v1.0
+1769339271 source:c:\users\korisnik\bubble_trouble\bubbletrouble\bubbletrouble\main.cpp
+	<windows.h>
+	<tchar.h>
+	"resources.h"
+
+1769342220 c:\users\korisnik\bubble_trouble\bubbletrouble\bubbletrouble\include\resources.h
+	<windows.h>
+
+1769337080 source:c:\users\korisnik\bubble_trouble\bubbletrouble\bubbletrouble\src\resources.rc
+	"../include/resources.h"
+
+1769342476 source:c:\users\korisnik\bubble_trouble\bubbletrouble\bubbletrouble\src\render.cpp
+	"resources.h"
+	<windows.h>
+	<algorithm>
+
+1769342508 source:c:\users\korisnik\bubble_trouble\bubbletrouble\bubbletrouble\src\resources.cpp
+	"resources.h"
+
+1769342414 source:c:\users\korisnik\bubble_trouble\bubbletrouble\bubbletrouble\src\input.cpp
+	"resources.h"
+	<windows.h>
+
+1769342447 source:c:\users\korisnik\bubble_trouble\bubbletrouble\bubbletrouble\src\update.cpp
+	"resources.h"
+	<windows.h>
+
