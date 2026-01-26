@@ -10,10 +10,16 @@
 #define IDB_BACKGROUND      106
 
 #define MAX_BALLOONS 20
-#define GRAVITY 0.2f
 #define BOUNCE_DAMPING 0.9f
 #define MIN_RADIUS 10.0f
-#define MIN_BOUNCE_SPEED 3.0f
+#define BALLOON_GRAVITY  0.7f
+#define MAX_FALL_SPEED   8.0f
+#define MIN_BOUNCE_SPEED   10.0f
+#define MAX_BOUNCE_SPEED   13.0f
+#define SPLIT_BOOST_FACTOR 1.2f
+#define MAX_RADIUS 32.0f
+
+#define maxTime 2000.0
 
 struct Hero{
  int x, y;
@@ -40,6 +46,7 @@ struct Balloon {
     float x, y;
     float speedX, speedY;
     float radius;
+    float bounceSpeed;
     bool active;
     COLORREF color;
 };
@@ -47,6 +54,14 @@ struct Balloon {
 struct InputState{
  bool wasSpacePressed;
 };
+
+struct GameState{
+    int activeBalloonCount;
+    double timeLeft;
+    bool isGameOver;
+    bool isLevelCleared;
+};
+
 
 extern HBITMAP character, characterMask;
 extern HBITMAP arrow, arrowMask;
@@ -63,13 +78,9 @@ extern StaticObject rightWall;
 extern StaticObject floorWall;
 extern StaticObject backgroundInfo;
 extern InputState inputState;
+extern GameState gameState;
 
 extern Balloon balloons[MAX_BALLOONS];
-extern int activeBalloonCount;
-
-extern double maxTime;
-extern double timeLeft;
-extern bool isGameOver;
 
 void LoadBitmaps(HWND hwnd, HINSTANCE hInstance);
 void CheckInputs(HWND hwnd);
@@ -77,6 +88,7 @@ void Update(HWND hwnd);
 void RefreshScreen(HWND hwnd);
 void RefreshSound();
 
+float GetBounceSpeedForRadius(float radius);
 void InitBalloon(int index, float x, float y, float radius, float speedX, COLORREF color);
 void UpdateBalloons(HWND hwnd);
 void CheckCollisions();

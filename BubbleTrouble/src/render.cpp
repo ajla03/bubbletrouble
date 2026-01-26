@@ -50,8 +50,8 @@ void RefreshScreen(HWND hwnd){
     FillRect(hdcBuffer, &barBgRect, hDarkBrush);
     DeleteObject(hDarkBrush);
 
-    if (timeLeft < 0) timeLeft = 0;
-    int currentWidth = (int)((timeLeft / maxTime) * maxBarWidth);
+    if (gameState.timeLeft < 0) gameState.timeLeft = 0;
+    int currentWidth = (int)((gameState.timeLeft / maxTime) * maxBarWidth);
 
     HBRUSH hRedBrush = CreateSolidBrush(RGB(220, 0, 0));
     RECT barRect = {barX, barY, barX + currentWidth, barY + barHeight};
@@ -104,8 +104,30 @@ void RefreshScreen(HWND hwnd){
     SelectObject(hdcMem, character);
     BitBlt(hdcBuffer, hero.x, heroY, hero.width, hero.height, hdcMem, srcX, srcY, SRCPAINT);
 
+    if (!gameState.isLevelCleared && gameState.activeBalloonCount == 0 && gameState.timeLeft > 0 && !gameState.isGameOver) {
+        gameState.isLevelCleared = true;
+    }
+
+    // WELL DONE TEKST //
+    if (gameState.isLevelCleared) {
+    SetBkMode(hdcBuffer, TRANSPARENT);
+    SetTextColor(hdcBuffer, RGB(0, 255, 0));
+    HFONT hBigFont = CreateFont(60, 0, 0, 0, FW_BOLD, FALSE, FALSE, FALSE,
+                                DEFAULT_CHARSET, OUT_OUTLINE_PRECIS,
+                                CLIP_DEFAULT_PRECIS, ANTIALIASED_QUALITY,
+                                VARIABLE_PITCH, TEXT("Arial"));
+    HFONT hOldFont = (HFONT)SelectObject(hdcBuffer, hBigFont);
+
+    const char* msg = "WELL DONE!";
+    SIZE size;
+    GetTextExtentPoint32(hdcBuffer, msg, strlen(msg), &size);
+    TextOut(hdcBuffer, (rect.right - size.cx) / 2, (rect.bottom - size.cy) / 2 - 100, msg, strlen(msg));
+
+    SelectObject(hdcBuffer, hOldFont);
+    DeleteObject(hBigFont);
+    }
      // === GAME OVER TEKST ===
-    if (isGameOver) {
+     else if (gameState.isGameOver) {
         SetBkMode(hdcBuffer, TRANSPARENT);
         SetTextColor(hdcBuffer, RGB(255, 0, 0));
         HFONT hBigFont = CreateFont(60, 0, 0, 0, FW_BOLD, FALSE, FALSE, FALSE,

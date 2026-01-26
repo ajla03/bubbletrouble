@@ -3,6 +3,9 @@
 #include <cmath>
 
 void UpdateBalloons(HWND hwnd) {
+    if(gameState.isGameOver)
+        return;
+
     RECT rect;
     GetClientRect(hwnd, &rect);
 
@@ -15,65 +18,67 @@ void UpdateBalloons(HWND hwnd) {
 
         Balloon* b = &balloons[i];
 
-        b->speedY += GRAVITY;
+        //gravitacija
+        b->speedY += BALLOON_GRAVITY;
+        if(b->speedY > MAX_FALL_SPEED)
+            b->speedY = MAX_FALL_SPEED;
 
+        //pomicanje
         b->x += b->speedX;
         b->y += b->speedY;
 
+        //lijevi zid check
         if (b->x - b->radius <= LEFT_WALL_X) {
             b->x = LEFT_WALL_X + b->radius;
             b->speedX = -b->speedX;
         }
 
+        //desni zid check
         if (b->x + b->radius >= RIGHT_WALL_X) {
             b->x = RIGHT_WALL_X - b->radius;
             b->speedX = -b->speedX;
         }
 
+        //pod check
         if (b->y + b->radius >= FLOOR_Y) {
             b->y = FLOOR_Y - b->radius;
-
-            b->speedY = -b->speedY * BOUNCE_DAMPING;
-
-            float potrebnaVisina = (float)hero.height + 20.0f;
-
-            float minBrzina = sqrt(2.0f * GRAVITY * potrebnaVisina);
-
-            if (fabs(b->speedY) < minBrzina) {
-                b->speedY = -minBrzina;
-            }
+            b->speedY = -b->bounceSpeed;
         }
 
+        //plafon check
         if (b->y - b->radius <= 0) {
             b->y = b->radius;
-            b->speedY = -b->speedY;
+            b->speedY = 0.0f;
         }
+
+        float minBounce = hero.height + 40.0f;
+        float estimatedPeak  = b->bounceSpeed * 12.0f;
+        if(estimatedPeak < minBounce)
+            b->bounceSpeed +=0.2f;
     }
 }
 
-void CheckCollisions() {
-    if (!harpoon.isActive) return;
+void CheckCollisions(){
+    float harpoonCenterX = harpoon.x + harpoon.width / 2.0f;
+    float harpoonTop = harpoon.y - harpoon.length;
+    float harpoonBottom = harpoon.y;
 
     for (int i = 0; i < MAX_BALLOONS; i++) {
         if (!balloons[i].active) continue;
-
         Balloon* b = &balloons[i];
 
-        float harpoonCenterX = harpoon.x + harpoon.width / 2.0f;
-        float harpoonTop = harpoon.y - harpoon.length;
-        float harpoonBottom = harpoon.y;
+        if(harpoon.isActive){
 
-        float distanceX = fabs(b->x - harpoonCenterX);
+        float distanceHarpoonX = fabs(b->x - harpoonCenterX);
 
-        if (distanceX > b->radius) continue;
-
-        if (harpoonTop > b->y + b->radius) continue;
-        if (harpoonBottom < b->y - b->radius) continue;
-
-
-        SplitBalloon(i);
-        harpoon.isActive = false;
-        break;
+        if (distanceHarpoonX <= b->radius) {
+                if (harpoonTop <= b->y + b->radius && harpoonBottom >= b->y - b->radius) {
+                    SplitBalloon(i);
+                    harpoon.isActive = false;
+                    break;
+                }
+            }
+        }
     }
 }
 
@@ -85,6 +90,7 @@ void SplitBalloon(int index) {
         for (int i = 0; i < MAX_BALLOONS; i++) {
             if (!balloons[i].active) {
                 InitBalloon(i, b->x - 10, b->y, newRadius, -3.5f, b->color);
+                balloons[i].speedY = -balloons[i].bounceSpeed * SPLIT_BOOST_FACTOR;
                 break;
             }
         }
@@ -92,13 +98,15 @@ void SplitBalloon(int index) {
         for (int i = 0; i < MAX_BALLOONS; i++) {
             if (!balloons[i].active) {
                 InitBalloon(i, b->x + 10, b->y, newRadius, 3.5f, b->color);
+                balloons[i].speedY = -balloons[i].bounceSpeed * SPLIT_BOOST_FACTOR;
+
                 break;
             }
         }
     }
 
     b->active = false;
-    activeBalloonCount--;
+    gameState.activeBalloonCount--;
 }
 
 void DrawBalloonGDI(HDC hdc, Balloon* b) {
