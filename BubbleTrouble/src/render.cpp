@@ -27,6 +27,9 @@ void RefreshScreen(HWND hwnd){
     // === RENDER BACKGROUND ===
     SelectObject(hdcMem, background);
 
+    //int tileW = backgroundInfo.width;
+    //int tileH = backgroundInfo.height;
+
     int bgX = leftWall.width;
     int bgY = 0;
     int bgW = rect.right - leftWall.width - rightWall.width;
@@ -38,7 +41,18 @@ void RefreshScreen(HWND hwnd){
     SelectObject(hdcBuffer, oldPen);
     DeleteObject(hpen);
 
+
     StretchBlt(hdcBuffer, bgX, bgY, bgW, bgH, hdcMem, 0, 0, backgroundInfo.width, backgroundInfo.height, SRCCOPY);
+    /*
+    for(int y = bgY; y < bgY + bgH; y += tileH) {
+      for(int x = bgX; x < bgX + bgW; x += tileW) {
+        int w = std::min(tileW, bgX + bgW - x);
+        int h = std::min(tileH, bgY + bgH - y);
+
+        BitBlt(hdcBuffer, x, y, w, h, hdcMem, 0, 0, SRCCOPY);
+      }
+    }
+    */
 
     //traka s vremenom
     int barHeight = 25;
