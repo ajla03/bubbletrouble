@@ -2,6 +2,9 @@
 #include <windows.h>
 
 void CheckInputs(HWND hwnd){
+    if(gameState.isGameOver || gameState.isLevelCleared)
+        return;
+
     RECT rect;
     GetClientRect(hwnd, &rect);
     int windowWidth = rect.right;

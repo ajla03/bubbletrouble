@@ -65,8 +65,20 @@ void CheckCollisions(){
 
     for (int i = 0; i < MAX_BALLOONS; i++) {
         if (!balloons[i].active) continue;
-        Balloon* b = &balloons[i];
 
+        Balloon* b = &balloons[i];
+        // check collision with hero
+        float closestX = std::max(float(hero.x), std::min(b->x, (float)(hero.x + hero.width)));
+        float closestY = std::max((float)hero.y, std::min(b->y,(float)(hero.y + hero.height)));
+        float dx = b->x - closestX;
+        float dy = b->y - closestY;
+        float distance = sqrt(dx*dx + dy*dy);
+        if(distance < b->radius) {
+            gameState.isGameOver = true;
+            break;
+        }
+
+        // check collision with harpoon
         if(harpoon.isActive){
 
         float distanceHarpoonX = fabs(b->x - harpoonCenterX);

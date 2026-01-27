@@ -147,22 +147,22 @@ void RefreshScreen(HWND hwnd){
     }
 
     // === RENDER HERO ===
-    int heroY = rect.bottom - floorWall.height - hero.height;
+    hero.y = rect.bottom - floorWall.height - hero.height;
     int srcX = hero.currentFrame * hero.width;
     int srcY = hero.currentRow * hero.height;
 
     SelectObject(hdcMem, characterMask);
-    BitBlt(hdcBuffer, hero.x, heroY, hero.width, hero.height, hdcMem, srcX, srcY, SRCAND);
+    BitBlt(hdcBuffer, hero.x, hero.y, hero.width, hero.height, hdcMem, srcX, srcY, SRCAND);
 
     SelectObject(hdcMem, character);
-    BitBlt(hdcBuffer, hero.x, heroY, hero.width, hero.height, hdcMem, srcX, srcY, SRCPAINT);
+    BitBlt(hdcBuffer, hero.x, hero.y , hero.width, hero.height, hdcMem, srcX, srcY, SRCPAINT);
 
     if (!gameState.isLevelCleared && gameState.activeBalloonCount == 0 && gameState.timeLeft > 0 && !gameState.isGameOver) {
         gameState.isLevelCleared = true;
     }
 
     // WELL DONE TEKST //
-    if (gameState.isLevelCleared) {
+    if (gameState.isLevelCleared){
     SetBkMode(hdcBuffer, TRANSPARENT);
     SetTextColor(hdcBuffer, RGB(0, 255, 0));
     HFONT hBigFont = CreateFont(60, 0, 0, 0, FW_BOLD, FALSE, FALSE, FALSE,
