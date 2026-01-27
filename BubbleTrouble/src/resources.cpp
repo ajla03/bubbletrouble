@@ -131,14 +131,14 @@ void LoadBitmaps(HWND hwnd, HINSTANCE hInstance){
     if (wall) {
         GetObject(wall, sizeof(BITMAP), &bm);
 
-        leftWall.width = bm.bmWidth / 7;
+        leftWall.width = bm.bmWidth /2 ;
         leftWall.height = bm.bmHeight;
 
-        rightWall.width = bm.bmWidth / 7;
+        rightWall.width = bm.bmWidth / 2;
         rightWall.height = bm.bmHeight;
 
         floorWall.width = bm.bmWidth;
-        floorWall.height = bm.bmHeight / 3;
+        floorWall.height = bm.bmHeight;
     }
 
 

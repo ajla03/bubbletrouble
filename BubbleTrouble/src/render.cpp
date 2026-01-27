@@ -18,6 +18,7 @@ void RefreshScreen(HWND hwnd){
     // === RENDER WALLS ===
     SelectObject(hdcMem, wall);
 
+
     for (int y = 0; y < rect.bottom; y += leftWall.height) {
         for (int x = 0; x < rect.right; x += leftWall.width) {
             BitBlt(hdcBuffer, x, y, floorWall.width, leftWall.height, hdcMem, 0, 0, SRCCOPY);
@@ -27,8 +28,8 @@ void RefreshScreen(HWND hwnd){
     // === RENDER BACKGROUND ===
     SelectObject(hdcMem, background);
 
-    //int tileW = backgroundInfo.width;
-    //int tileH = backgroundInfo.height;
+    int tileW = backgroundInfo.width;
+    int tileH = backgroundInfo.height;
 
     int bgX = leftWall.width;
     int bgY = 0;
@@ -37,12 +38,13 @@ void RefreshScreen(HWND hwnd){
 
     HPEN hpen = CreatePen(PS_SOLID, 3, RGB(255,255,255));
     HPEN oldPen  = (HPEN)SelectObject(hdcBuffer, hpen);
-    Rectangle(hdcBuffer, bgX, bgY, bgX + bgW, bgY + bgH);
+    //Rectangle(hdcBuffer, bgX, bgY, bgX + bgW, bgY + bgH);
     SelectObject(hdcBuffer, oldPen);
     DeleteObject(hpen);
 
 
     StretchBlt(hdcBuffer, bgX, bgY, bgW, bgH, hdcMem, 0, 0, backgroundInfo.width, backgroundInfo.height, SRCCOPY);
+
     /*
     for(int y = bgY; y < bgY + bgH; y += tileH) {
       for(int x = bgX; x < bgX + bgW; x += tileW) {
