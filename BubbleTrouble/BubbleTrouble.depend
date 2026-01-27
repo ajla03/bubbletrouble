@@ -26,3 +26,35 @@
 	"resources.h"
 	<windows.h>
 
+1769471694 source:c:\users\amina\desktop\precommit\bubbletrouble\bubbletrouble\main.cpp
+	<windows.h>
+	<tchar.h>
+	"resources.h"
+
+1769471943 c:\users\amina\desktop\precommit\bubbletrouble\bubbletrouble\include\resources.h
+	<windows.h>
+
+1769471943 source:c:\users\amina\desktop\precommit\bubbletrouble\bubbletrouble\src\baloons.cpp
+	"resources.h"
+	<windows.h>
+	<cmath>
+
+1769471943 source:c:\users\amina\desktop\precommit\bubbletrouble\bubbletrouble\src\input.cpp
+	"resources.h"
+	<windows.h>
+
+1769471694 source:c:\users\amina\desktop\precommit\bubbletrouble\bubbletrouble\src\render.cpp
+	"resources.h"
+	<windows.h>
+	<algorithm>
+
+1769471694 source:c:\users\amina\desktop\precommit\bubbletrouble\bubbletrouble\src\resources.cpp
+	"resources.h"
+
+1769471937 source:c:\users\amina\desktop\precommit\bubbletrouble\bubbletrouble\src\resources.rc
+	"../include/resources.h"
+
+1769471694 source:c:\users\amina\desktop\precommit\bubbletrouble\bubbletrouble\src\update.cpp
+	"resources.h"
+	<windows.h>
+

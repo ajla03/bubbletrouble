@@ -86,6 +86,12 @@ void SplitBalloon(int index) {
     Balloon* b = &balloons[index];
     float newRadius = b->radius /2.0f;
 
+    PlaySound(MAKEINTRESOURCE(IDR_BALLOON_POP),
+                                  GetModuleHandle(NULL),
+                                  SND_RESOURCE | SND_ASYNC | SND_NODEFAULT);
+
+
+
     if (newRadius >= MIN_RADIUS) {
         for (int i = 0; i < MAX_BALLOONS; i++) {
             if (!balloons[i].active) {
