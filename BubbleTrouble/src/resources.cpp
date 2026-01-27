@@ -11,6 +11,12 @@ HBITMAP torch = NULL;
 HBITMAP torchMask = NULL;
 HBITMAP levelPlaceholderBlack = NULL;
 HBITMAP levelPlaceholderWhite = NULL;
+HBITMAP heart = NULL;
+HBITMAP heartMask = NULL;
+HBITMAP heartBorder = NULL;
+HBITMAP heartBorderMask = NULL;
+HBITMAP heartBkg = NULL;
+HBITMAP heartBkgMask = NULL;
 
 HFONT hFont = NULL;
 HANDLE hFontRes = NULL;
@@ -23,9 +29,13 @@ StaticObject rightWall;
 StaticObject floorWall;
 StaticObject levelPlaceholderInfo;
 StaticObject backgroundInfo;
+StaticObject heartInfo;
+StaticObject heartBgInfo;
+StaticObject heartBorderInfo;
+
 Torch torchInfo;
 InputState inputState = {false};
-GameState gameState = {0, maxTime, false, false};
+GameState gameState = {0, maxTime, false, false, 5};
 
 double timeLeft = 2000.0;
 bool isGameOver = false;
@@ -49,13 +59,43 @@ void LoadBitmaps(HWND hwnd, HINSTANCE hInstance){
     levelPlaceholderWhite = LoadBitmap(hInstance, MAKEINTRESOURCE(IDB_LEVEL_WHITE));
     levelPlaceholderBlack = LoadBitmap(hInstance, MAKEINTRESOURCE(IDB_LEVEL_BLACK));
 
-
     if (!character || !characterMask || !arrow || !arrowMask || !wall || !background || !torch || !torchMask || !levelPlaceholderWhite ) {
         MessageBox(NULL, ("Ne mogu da učitam resurse!"), ("Greška"), MB_ICONERROR);
         return;
     }
 
+    heart = LoadBitmap(hInstance, MAKEINTRESOURCE(IDB_HEART));
+    heartMask = LoadBitmap(hInstance, MAKEINTRESOURCE(IDB_HEART_MASK));
+    heartBorder = LoadBitmap(hInstance, MAKEINTRESOURCE(IDB_HEART_BORDER));
+    heartBorderMask = LoadBitmap(hInstance, MAKEINTRESOURCE(IDB_HEART_BORDER_MASK));
+    heartBkg = LoadBitmap(hInstance, MAKEINTRESOURCE(IDB_HEART_BKG));
+    heartBkgMask = LoadBitmap(hInstance, MAKEINTRESOURCE(IDB_HEART_BKG_MASK));
+
+    if (!heart || !heartMask || !heartBorder || !heartBorderMask || !heartBkg || !heartBkgMask) {
+    MessageBox(NULL, ("Ne mogu da učitam srca!"), ("Greška"), MB_ICONERROR);
+    return;
+    }
+
     BITMAP bm;
+
+    // SRCA //
+    GetObject(heart, sizeof(BITMAP), &bm);
+    heartInfo.width = bm.bmWidth;
+    heartInfo.height = bm.bmHeight;
+    heartInfo.x = 0;
+    heartInfo.y = 0;
+
+    GetObject(heartBkg, sizeof(BITMAP), &bm);
+    heartBgInfo.width = bm.bmWidth;
+    heartBgInfo.height = bm.bmHeight;
+    heartBgInfo.x = 0;
+    heartBgInfo.y = 0;
+
+    GetObject(heartBorder, sizeof(BITMAP), &bm);
+    heartBorderInfo.width = bm.bmWidth;
+    heartBorderInfo.height = bm.bmHeight;
+    heartBorderInfo.x = 0;
+    heartBorderInfo.y = 0;
 
     // === HARPUN SETUP ===
     if (arrow) {

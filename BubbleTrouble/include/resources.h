@@ -12,6 +12,15 @@
 #define IDB_TORCH_MASK      108
 #define IDB_LEVEL_WHITE     109
 #define IDB_LEVEL_BLACK     110
+
+// HEARTS
+#define IDB_HEART           111
+#define IDB_HEART_MASK      112
+#define IDB_HEART_BORDER    113
+#define IDB_HEART_BORDER_MASK 114
+#define IDB_HEART_BKG       115
+#define IDB_HEART_BKG_MASK  116
+
 #define IDR_HARPOON_SOUND   201
 #define IDR_BALLOON_POP     202
 #define IDR_MINI_FONT       301
@@ -25,6 +34,7 @@
 #define MAX_BOUNCE_SPEED   13.0f
 #define SPLIT_BOOST_FACTOR 1.2f
 #define MAX_RADIUS 32.0f
+
 
 #define maxTime 2000.0
 
@@ -67,6 +77,7 @@ struct GameState{
     double timeLeft;
     bool isGameOver;
     bool isLevelCleared;
+    int lives;
 };
 
 struct Torch{
@@ -83,6 +94,9 @@ extern HBITMAP background;
 extern HBITMAP torch, torchMask;
 extern HBITMAP levelPlaceholderBlack;
 extern HBITMAP levelPlaceholderWhite;
+extern HBITMAP heartMask, heart;
+extern HBITMAP heartBkgMask, heartBkg;
+extern HBITMAP heartBorderMask, heartBorder;
 
 extern bool wasSpacePressed;
 extern bool isHarpoonActive;
@@ -99,6 +113,7 @@ extern Torch torchInfo;
 extern InputState inputState;
 extern GameState gameState;
 extern StaticObject levelPlaceholderInfo;
+extern StaticObject heartInfo, heartBgInfo, heartBorderInfo;
 
 extern Balloon balloons[MAX_BALLOONS];
 

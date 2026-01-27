@@ -18,4 +18,13 @@ IDR_BALLOON_POP    WAVE "../assets/bubble-pop-06-351337.wav"
 IDB_LEVEL_WHITE       BITMAP "../assets/levelPlaceholderWhite.bmp"
 IDB_LEVEL_BLACK       BITMAP "../assets/levelPlaceholderBlack.bmp"
 
+IDB_HEART_MASK    BITMAP "../assets/heartBlack.bmp"
+IDB_HEART         BITMAP "../assets/heartWhite.bmp"
+
+IDB_HEART_BORDER_MASK     BITMAP "../assets/borderBlack.bmp"
+IDB_HEART_BORDER          BITMAP "../assets/borderWhite.bmp"
+
+IDB_HEART_BKG_MASK        BITMAP "../assets/heartBackgroundBlack.bmp"
+IDB_HEART_BKG             BITMAP "../assets/heartBackgroundWhite.bmp"
+
 IDR_MINI_FONT   RCDATA  "../assets/KenneyMiniSquare.ttf"

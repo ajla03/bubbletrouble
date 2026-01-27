@@ -74,7 +74,9 @@ void CheckCollisions(){
         float dy = b->y - closestY;
         float distance = sqrt(dx*dx + dy*dy);
         if(distance < b->radius) {
-            gameState.isGameOver = true;
+            --gameState.lives;
+            if(gameState.lives==0)
+                gameState.isGameOver = true;
             break;
         }
 
