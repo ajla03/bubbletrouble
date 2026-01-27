@@ -1,10 +1,30 @@
 #include <windows.h>
 #include <tchar.h>
+#include <wingdi.h>
 #include "resources.h"
 
 TCHAR szClassName[] = _T("CodeBlocksWindowsApp");
 
 LRESULT CALLBACK WindowProcedure(HWND, UINT, WPARAM, LPARAM);
+
+void LoadCustomFontFromResource(HINSTANCE hInst){
+    HRSRC hRes = FindResource(hInst, MAKEINTRESOURCE(IDR_MINI_FONT), RT_RCDATA);
+
+    if(!hRes) return;
+
+    DWORD size = SizeofResource(hInst, hRes);
+    HGLOBAL hMem = LoadResource(hInst, hRes);
+    void* data = LockResource(hMem);
+
+    DWORD fontCount;
+    hFontRes = AddFontMemResourceEx(
+        data,
+        size,
+        NULL,
+        &fontCount
+    );
+
+}
 
 int WINAPI WinMain(HINSTANCE hThisInstance, HINSTANCE hPrevInstance, LPSTR lpszArgument, int nCmdShow){
     HWND hwnd;
@@ -31,6 +51,8 @@ int WINAPI WinMain(HINSTANCE hThisInstance, HINSTANCE hPrevInstance, LPSTR lpszA
 
     ShowWindow(hwnd, nCmdShow);
 
+    LoadCustomFontFromResource(hThisInstance);
+
     LoadBitmaps(hwnd, hThisInstance);
 
     while (1){
@@ -51,7 +73,23 @@ int WINAPI WinMain(HINSTANCE hThisInstance, HINSTANCE hPrevInstance, LPSTR lpszA
 
 LRESULT CALLBACK WindowProcedure(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam){
     switch (message){
+        case WM_CREATE:
+        {
+        hFont = CreateFont(
+            48, 0, 0, 0,
+            FW_BOLD,
+            FALSE, FALSE, FALSE,
+            DEFAULT_CHARSET,
+            OUT_TT_PRECIS,
+            CLIP_DEFAULT_PRECIS,
+            ANTIALIASED_QUALITY,
+            VARIABLE_PITCH,
+            TEXT("Kenney Mini Square")
+            );
+        }
+        break;
         case WM_DESTROY:
+            RemoveFontMemResourceEx(hFontRes);
             PostQuitMessage(0);
             break;
         default:

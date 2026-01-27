@@ -10,8 +10,11 @@
 #define IDB_BACKGROUND      106
 #define IDB_TORCH           107
 #define IDB_TORCH_MASK      108
+#define IDB_LEVEL_WHITE     109
+#define IDB_LEVEL_BLACK     110
 #define IDR_HARPOON_SOUND   201
 #define IDR_BALLOON_POP     202
+#define IDR_MINI_FONT       301
 
 #define MAX_BALLOONS 20
 #define BOUNCE_DAMPING 0.9f
@@ -78,9 +81,13 @@ extern HBITMAP arrow, arrowMask;
 extern HBITMAP wall;
 extern HBITMAP background;
 extern HBITMAP torch, torchMask;
+extern HBITMAP levelPlaceholderBlack;
+extern HBITMAP levelPlaceholderWhite;
 
 extern bool wasSpacePressed;
 extern bool isHarpoonActive;
+extern HFONT hFont;
+extern HANDLE hFontRes;
 
 extern Projectile harpoon;
 extern Hero hero;
@@ -91,9 +98,11 @@ extern StaticObject backgroundInfo;
 extern Torch torchInfo;
 extern InputState inputState;
 extern GameState gameState;
+extern StaticObject levelPlaceholderInfo;
 
 extern Balloon balloons[MAX_BALLOONS];
 
+void LoadCustomFont();
 void LoadBitmaps(HWND hwnd, HINSTANCE hInstance);
 void CheckInputs(HWND hwnd);
 void Update(HWND hwnd);

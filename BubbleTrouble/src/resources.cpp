@@ -9,6 +9,11 @@ HBITMAP wall = NULL;
 HBITMAP background = NULL;
 HBITMAP torch = NULL;
 HBITMAP torchMask = NULL;
+HBITMAP levelPlaceholderBlack = NULL;
+HBITMAP levelPlaceholderWhite = NULL;
+
+HFONT hFont = NULL;
+HANDLE hFontRes = NULL;
 
 // Game objects
 Hero hero;
@@ -16,6 +21,7 @@ Projectile harpoon;
 StaticObject leftWall;
 StaticObject rightWall;
 StaticObject floorWall;
+StaticObject levelPlaceholderInfo;
 StaticObject backgroundInfo;
 Torch torchInfo;
 InputState inputState = {false};
@@ -28,6 +34,9 @@ bool isLevelCleared = false;
 Balloon balloons[MAX_BALLOONS] = {0};
 
 void LoadBitmaps(HWND hwnd, HINSTANCE hInstance){
+    RECT clientRect;
+    GetClientRect(hwnd, &clientRect);
+
     // Učitaj bitmap-e
     character = LoadBitmap(hInstance, MAKEINTRESOURCE(IDB_HERO));
     characterMask = LoadBitmap(hInstance, MAKEINTRESOURCE(IDB_HERO_MASK));
@@ -37,8 +46,11 @@ void LoadBitmaps(HWND hwnd, HINSTANCE hInstance){
     background = LoadBitmap(hInstance, MAKEINTRESOURCE(IDB_BACKGROUND));
     torch = LoadBitmap(hInstance, MAKEINTRESOURCE(IDB_TORCH));
     torchMask = LoadBitmap(hInstance, MAKEINTRESOURCE(IDB_TORCH_MASK));
+    levelPlaceholderWhite = LoadBitmap(hInstance, MAKEINTRESOURCE(IDB_LEVEL_WHITE));
+    levelPlaceholderBlack = LoadBitmap(hInstance, MAKEINTRESOURCE(IDB_LEVEL_BLACK));
 
-    if (!character || !characterMask || !arrow || !arrowMask || !wall || !background || !torch || !torchMask) {
+
+    if (!character || !characterMask || !arrow || !arrowMask || !wall || !background || !torch || !torchMask || !levelPlaceholderWhite ) {
         MessageBox(NULL, ("Ne mogu da učitam resurse!"), ("Greška"), MB_ICONERROR);
         return;
     }
@@ -85,6 +97,17 @@ void LoadBitmaps(HWND hwnd, HINSTANCE hInstance){
 
         floorWall.width = bm.bmWidth;
         floorWall.height = bm.bmHeight / 3;
+    }
+
+
+    // ==== LEVEL PLACEHOLDER SETUP ==== //
+    if(levelPlaceholderWhite){
+        GetObject(levelPlaceholderWhite, sizeof(BITMAP), &bm);
+
+        levelPlaceholderInfo.height = bm.bmHeight;
+        levelPlaceholderInfo.width = bm.bmWidth;
+        levelPlaceholderInfo.x = 0;
+        levelPlaceholderInfo.y = 0;
     }
 
     // === HERO SETUP ===

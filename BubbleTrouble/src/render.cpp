@@ -22,24 +22,6 @@ void RefreshScreen(HWND hwnd){
         }
     }
 
-    // RENDER BAKLJI //
-
-    int torchX1 = rect.right/2 - 80;
-    int torchX2 = rect.right/2 + 80;
-    int torchY = rect.bottom - floorWall.height + torchInfo.height/2;
-
-    int torchSrcX = torchInfo.currentFrame * torchInfo.width;
-    int torchSrcY = torchInfo.currentRow * torchInfo.height;
-    SelectObject(hdcMem, torchMask);
-    BitBlt(hdcBuffer, torchX1, torchY, torchInfo.width, torchInfo.height, hdcMem, torchSrcX, torchSrcY, SRCPAINT);
-    SelectObject(hdcMem, torch);
-    BitBlt(hdcBuffer, torchX1, torchY, torchInfo.width, torchInfo.height, hdcMem, torchSrcX, torchSrcY, SRCAND);
-
-    SelectObject(hdcMem, torchMask);
-    BitBlt(hdcBuffer, torchX2, torchY, torchInfo.width, torchInfo.height, hdcMem, torchSrcX, torchSrcY, SRCPAINT);
-    SelectObject(hdcMem, torch);
-    BitBlt(hdcBuffer, torchX2, torchY, torchInfo.width, torchInfo.height, hdcMem, torchSrcX, torchSrcY, SRCAND);
-
     // === RENDER BACKGROUND ===
     SelectObject(hdcMem, background);
 
@@ -88,6 +70,59 @@ void RefreshScreen(HWND hwnd){
     SelectObject(hdcBuffer, hOldPen);
     SelectObject(hdcBuffer, hOldBrush);
     DeleteObject(hWhitePen);
+
+
+    // RENDER PLACEHOLDERA ZA LEVEL //
+    SelectObject(hdcMem, levelPlaceholderWhite);
+
+    int placeholderX = (rect.right / 2) - (levelPlaceholderInfo.width / 2);
+    int placeholderY = rect.bottom - floorWall.height + levelPlaceholderInfo.height / 2 + barHeight;
+    BitBlt(hdcBuffer, placeholderX, placeholderY, levelPlaceholderInfo.width, levelPlaceholderInfo.height, hdcMem, 0, 0, SRCAND);
+
+    SelectObject(hdcMem, levelPlaceholderBlack);
+    BitBlt(hdcBuffer, placeholderX, placeholderY, levelPlaceholderInfo.width, levelPlaceholderInfo.height, hdcMem, 0, 0, SRCPAINT);
+
+    const char *levelText = "LEVEL 1";
+    HFONT oldFont = (HFONT) SelectObject(hdcBuffer, hFont);
+    SetBkMode(hdcBuffer, TRANSPARENT);
+    SetTextColor(hdcBuffer, RGB(0, 0, 0));
+    SIZE textSize;
+    GetTextExtentPoint32(
+        hdcBuffer,
+        levelText,
+        strlen(levelText),
+        &textSize
+    );
+
+    int textX = placeholderX
+              + (levelPlaceholderInfo.width  - textSize.cx) / 2;
+
+    int textY = placeholderY
+              + (levelPlaceholderInfo.height - textSize.cy) / 2;
+
+    TextOut(hdcBuffer, textX, textY, levelText, strlen(levelText));
+
+    SelectObject(hdcBuffer, oldFont);
+
+
+    // RENDER BAKLJI //
+
+    int torchGap = 10;
+    int torchX1 = placeholderX - torchInfo.width - torchGap;
+    int torchX2 = placeholderX + levelPlaceholderInfo.width + torchGap;
+    int torchY = rect.bottom - floorWall.height + torchInfo.height/2 + barHeight;
+
+    int torchSrcX = torchInfo.currentFrame * torchInfo.width;
+    int torchSrcY = torchInfo.currentRow * torchInfo.height;
+    SelectObject(hdcMem, torchMask);
+    BitBlt(hdcBuffer, torchX1, torchY, torchInfo.width, torchInfo.height, hdcMem, torchSrcX, torchSrcY, SRCPAINT);
+    SelectObject(hdcMem, torch);
+    BitBlt(hdcBuffer, torchX1, torchY, torchInfo.width, torchInfo.height, hdcMem, torchSrcX, torchSrcY, SRCAND);
+
+    SelectObject(hdcMem, torchMask);
+    BitBlt(hdcBuffer, torchX2, torchY, torchInfo.width, torchInfo.height, hdcMem, torchSrcX, torchSrcY, SRCPAINT);
+    SelectObject(hdcMem, torch);
+    BitBlt(hdcBuffer, torchX2, torchY, torchInfo.width, torchInfo.height, hdcMem, torchSrcX, torchSrcY, SRCAND);
 
 
     //rendering balloons
