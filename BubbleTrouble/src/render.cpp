@@ -229,35 +229,67 @@ void RefreshScreen(HWND hwnd){
     ReleaseDC(hwnd, hdc);
 }
 
-void DrawHearts(HDC hdc, RECT rect, int padding){
-    int startX = leftWall.width ;
+
+void DrawHearts(HDC hdc, RECT rect, int padding) {
+    int startX = leftWall.width;
     int startY = rect.bottom - floorWall.height + padding + heartInfo.height;
     int gap = 5;
 
     HDC hdcMem = CreateCompatibleDC(hdc);
 
-    for (int i = 0; i < gameState.lives; i++) {
+    for (int i = 0; i < 5 ; i++) {
         int x = startX + i * (heartInfo.width + gap);
         int y = startY;
 
-        HBITMAP oldBmp = (HBITMAP)SelectObject(hdcMem, heartBkg);
-        //BitBlt(hdc, x, y, heartBgInfo.width, heartBgInfo.height, hdcMem, 0, 0, SRCCOPY);
+        // === BACKGROUND  ===
+        HBITMAP oldBmp = (HBITMAP)SelectObject(hdcMem, heartBkgMask);
+        BitBlt(hdc, x, y, heartBgInfo.width, heartBgInfo.height, hdcMem, 0, 0, SRCPAINT);
+        SelectObject(hdcMem, heartBkg);
+        BitBlt(hdc, x, y, heartBgInfo.width, heartBgInfo.height, hdcMem, 0, 0, SRCAND);
 
+        // === BORDER ===
         SelectObject(hdcMem, heartBorderMask);
         BitBlt(hdc, x, y, heartBorderInfo.width, heartBorderInfo.height, hdcMem, 0, 0, SRCPAINT);
         SelectObject(hdcMem, heartBorder);
         BitBlt(hdc, x, y, heartBorderInfo.width, heartBorderInfo.height, hdcMem, 0, 0, SRCAND);
 
-        SelectObject(hdcMem, heartMask);
-        BitBlt(hdc, x, y, heartInfo.width, heartInfo.height, hdcMem, 0, 0, SRCPAINT);
-        SelectObject(hdcMem, heart);
-        BitBlt(hdc, x, y, heartInfo.width, heartInfo.height, hdcMem, 0, 0, SRCAND);
+        // === FILL  ===
+        if (i < gameState.lives) {
+            int srcX = hearts[i].currentFrame * heartInfo.width;
+
+            SelectObject(hdcMem, heartMask);
+            BitBlt(
+                hdc,
+                x,
+                y,
+                heartInfo.width,
+                heartInfo.height,
+                hdcMem,
+                srcX,
+                0,
+                SRCPAINT
+            );
+
+            SelectObject(hdcMem, heart);
+            BitBlt(
+                hdc,
+                x,
+                y,
+                heartInfo.width,
+                heartInfo.height,
+                hdcMem,
+                srcX,
+                0,
+                SRCAND
+            );
+        }
 
         SelectObject(hdcMem, oldBmp);
     }
 
     DeleteDC(hdcMem);
 }
+
 
 void RefreshSound(){
 }

@@ -6,6 +6,21 @@ void UpdateHeroCoolDown(float dt){
         hero.heroHitCooldown -=dt;
 }
 
+void UpdateHearts(){
+ for (int i = 0; i < gameState.lives; i++) {
+    hearts[i].animCounter++;
+
+    if (hearts[i].animCounter >= HEART_ANIM_SPEED) {
+        hearts[i].animCounter = 0;
+        hearts[i].currentFrame++;
+
+        if (hearts[i].currentFrame >= HEART_FRAMES) {
+            hearts[i].currentFrame = 0;
+        }
+    }
+ }
+}
+
 void Update(HWND hwnd){
      if (!gameState.isGameOver && gameState.timeLeft > 0 && !gameState.isLevelCleared) {
         gameState.timeLeft -= 1.0;
@@ -38,6 +53,8 @@ void Update(HWND hwnd){
     UpdateHeroCoolDown(0.016f);
 
     UpdateBalloons(hwnd);
+
+    UpdateHearts();
 
     CheckCollisions();
 }

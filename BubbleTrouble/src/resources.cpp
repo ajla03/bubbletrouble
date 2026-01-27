@@ -34,6 +34,9 @@ StaticObject backgroundInfo;
 StaticObject heartInfo;
 StaticObject heartBgInfo;
 StaticObject heartBorderInfo;
+HeartAnim    heartAnimation;
+
+HeartAnim hearts[5];
 
 Torch torchInfo;
 InputState inputState = {false};
@@ -82,7 +85,7 @@ void LoadBitmaps(HWND hwnd, HINSTANCE hInstance){
 
     // SRCA //
     GetObject(heart, sizeof(BITMAP), &bm);
-    heartInfo.width = bm.bmWidth;
+    heartInfo.width = bm.bmWidth / 10;
     heartInfo.height = bm.bmHeight;
     heartInfo.x = 0;
     heartInfo.y = 0;
@@ -98,6 +101,11 @@ void LoadBitmaps(HWND hwnd, HINSTANCE hInstance){
     heartBorderInfo.height = bm.bmHeight;
     heartBorderInfo.x = 0;
     heartBorderInfo.y = 0;
+
+    for (int i = 0; i < 5; i++) {
+    hearts[i].currentFrame = 0;
+    hearts[i].animCounter = 8;
+    }
 
     // === HARPUN SETUP ===
     if (arrow) {

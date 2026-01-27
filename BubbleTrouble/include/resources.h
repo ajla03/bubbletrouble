@@ -20,6 +20,9 @@
 #define IDB_HEART_BORDER_MASK 114
 #define IDB_HEART_BKG       115
 #define IDB_HEART_BKG_MASK  116
+#define HEART_FRAMES        10
+#define HEART_ANIM_SPEED     5
+
 
 #define IDR_HARPOON_SOUND   201
 #define IDR_BALLOON_POP     202
@@ -81,6 +84,11 @@ struct GameState{
     int lives;
 };
 
+struct HeartAnim{
+    int currentFrame;
+    int animCounter;
+};
+
 struct Torch{
  int x, y;
  int width, height;
@@ -118,7 +126,7 @@ extern StaticObject heartInfo, heartBgInfo, heartBorderInfo;
 extern const float HERO_INVINCIBLE_TIME;
 
 extern Balloon balloons[MAX_BALLOONS];
-
+extern HeartAnim hearts[5];
 
 void LoadCustomFont();
 void LoadBitmaps(HWND hwnd, HINSTANCE hInstance);
