@@ -10,7 +10,8 @@
 #define IDB_BACKGROUND      106
 #define IDB_TORCH           107
 #define IDB_TORCH_MASK      108
-
+#define IDR_HARPOON_SOUND   201
+#define IDR_BALLOON_POP     202
 
 #define MAX_BALLOONS 20
 #define BOUNCE_DAMPING 0.9f

@@ -53,6 +53,8 @@ void CheckInputs(HWND hwnd){
         harpoon.length = 0;
         harpoon.x = hero.x + (hero.width / 2) - (harpoon.width / 2);
         harpoon.y = rect.bottom - floorWall.height;
+        PlaySound(MAKEINTRESOURCE(IDR_HARPOON_SOUND), GetModuleHandle(NULL),
+              SND_RESOURCE | SND_ASYNC);
     }
 
     inputState.wasSpacePressed = isSpacePressed;

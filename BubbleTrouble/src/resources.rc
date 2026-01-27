@@ -11,3 +11,6 @@ IDB_BACKGROUND  BITMAP "../assets/bg.bmp"
 
 IDB_TORCH       BITMAP "../assets/torchWhite.bmp"
 IDB_TORCH_MASK  BITMAP "../assets/torchBlack.bmp"
+
+IDR_HARPOON_SOUND WAVE "../assets/Harpoon-audio.wav"
+IDR_BALLOON_POP WAVE "../assets/bubble-pop-06-351337.wav"
