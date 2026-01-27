@@ -1,5 +1,7 @@
 #include "resources.h"
 
+const float HERO_INVINCIBLE_TIME = 1.0f;
+
 // Bitmap definicije
 HBITMAP character = NULL;
 HBITMAP characterMask = NULL;

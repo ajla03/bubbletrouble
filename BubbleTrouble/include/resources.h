@@ -44,6 +44,7 @@ struct Hero{
  int width, height;
  int currentFrame, currentRow;
  int animCounter;
+ float heroHitCooldown; // in secs
 };
 
 struct Projectile{
@@ -114,8 +115,10 @@ extern InputState inputState;
 extern GameState gameState;
 extern StaticObject levelPlaceholderInfo;
 extern StaticObject heartInfo, heartBgInfo, heartBorderInfo;
+extern const float HERO_INVINCIBLE_TIME;
 
 extern Balloon balloons[MAX_BALLOONS];
+
 
 void LoadCustomFont();
 void LoadBitmaps(HWND hwnd, HINSTANCE hInstance);

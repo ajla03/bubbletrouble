@@ -1,6 +1,11 @@
 #include "resources.h"
 #include <windows.h>
 
+void UpdateHeroCoolDown(float dt){
+    if(hero.heroHitCooldown > 0)
+        hero.heroHitCooldown -=dt;
+}
+
 void Update(HWND hwnd){
      if (!gameState.isGameOver && gameState.timeLeft > 0 && !gameState.isLevelCleared) {
         gameState.timeLeft -= 1.0;
@@ -29,6 +34,8 @@ void Update(HWND hwnd){
      }
      torchInfo.animCounter = 0;
     }
+
+    UpdateHeroCoolDown(0.016f);
 
     UpdateBalloons(hwnd);
 

@@ -55,7 +55,10 @@ int WINAPI WinMain(HINSTANCE hThisInstance, HINSTANCE hPrevInstance, LPSTR lpszA
 
     LoadBitmaps(hwnd, hThisInstance);
 
+    float targetFPS = 60.0f;
+    DWORD frameTimeMs = (DWORD) (1000.0f / targetFPS);
     while (1){
+        DWORD start = GetTickCount();
         if (PeekMessage(&messages, NULL, 0, 0, PM_REMOVE)){
             if (messages.message == WM_QUIT) break;
             TranslateMessage(&messages);
@@ -65,7 +68,9 @@ int WINAPI WinMain(HINSTANCE hThisInstance, HINSTANCE hPrevInstance, LPSTR lpszA
         Update(hwnd);
         RefreshScreen(hwnd);
         RefreshSound();
-        Sleep(10);
+        DWORD elapsed = GetTickCount() - start;
+        if (elapsed < frameTimeMs)
+            Sleep(frameTimeMs - elapsed);
     }
 
     return messages.wParam;

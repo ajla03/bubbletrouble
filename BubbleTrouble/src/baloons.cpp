@@ -73,12 +73,14 @@ void CheckCollisions(){
         float dx = b->x - closestX;
         float dy = b->y - closestY;
         float distance = sqrt(dx*dx + dy*dy);
-        if(distance < b->radius) {
+        if(distance < b->radius && hero.heroHitCooldown <= 0) {
             --gameState.lives;
+            hero.heroHitCooldown = HERO_INVINCIBLE_TIME;
             if(gameState.lives==0)
                 gameState.isGameOver = true;
             break;
         }
+
 
         // check collision with harpoon
         if(harpoon.isActive){
