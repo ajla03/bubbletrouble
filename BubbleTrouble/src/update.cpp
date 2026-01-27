@@ -18,6 +18,18 @@ void Update(HWND hwnd){
             harpoon.isActive = false;
         }
     }
+
+    // update baklji
+    torchInfo.animCounter++;
+    if(torchInfo.animCounter > 5){
+    torchInfo.currentFrame++;
+    if (torchInfo.currentFrame >= 4) {
+        torchInfo.currentFrame = 0;
+        torchInfo.currentRow = (torchInfo.currentRow + 1) % 2;
+     }
+     torchInfo.animCounter = 0;
+    }
+
     UpdateBalloons(hwnd);
 
     CheckCollisions();

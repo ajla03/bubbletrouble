@@ -7,6 +7,8 @@ HBITMAP arrow = NULL;
 HBITMAP arrowMask = NULL;
 HBITMAP wall = NULL;
 HBITMAP background = NULL;
+HBITMAP torch = NULL;
+HBITMAP torchMask = NULL;
 
 // Game objects
 Hero hero;
@@ -15,6 +17,7 @@ StaticObject leftWall;
 StaticObject rightWall;
 StaticObject floorWall;
 StaticObject backgroundInfo;
+Torch torchInfo;
 InputState inputState = {false};
 GameState gameState = {0, maxTime, false, false};
 
@@ -32,8 +35,10 @@ void LoadBitmaps(HWND hwnd, HINSTANCE hInstance){
     arrowMask = LoadBitmap(hInstance, MAKEINTRESOURCE(IDB_ARROW_MASK));
     wall = LoadBitmap(hInstance, MAKEINTRESOURCE(IDB_WALL));
     background = LoadBitmap(hInstance, MAKEINTRESOURCE(IDB_BACKGROUND));
+    torch = LoadBitmap(hInstance, MAKEINTRESOURCE(IDB_TORCH));
+    torchMask = LoadBitmap(hInstance, MAKEINTRESOURCE(IDB_TORCH_MASK));
 
-    if (!character || !characterMask || !arrow || !arrowMask || !wall || !background) {
+    if (!character || !characterMask || !arrow || !arrowMask || !wall || !background || !torch || !torchMask) {
         MessageBox(NULL, ("Ne mogu da učitam resurse!"), ("Greška"), MB_ICONERROR);
         return;
     }
@@ -57,6 +62,15 @@ void LoadBitmaps(HWND hwnd, HINSTANCE hInstance){
         backgroundInfo.height = bm.bmHeight;
         backgroundInfo.x = 0;
         backgroundInfo.y = 0;
+    }
+
+    if(torch){
+        GetObject(torch, sizeof(BITMAP), &bm);
+        torchInfo.width = bm.bmWidth / 4;
+        torchInfo.height = bm.bmHeight /2 ;
+        torchInfo.x = 0;
+        torchInfo.y = 0;
+        torchInfo.currentFrame = torchInfo.currentRow = 0;
     }
 
     // === WALL SETUP ===

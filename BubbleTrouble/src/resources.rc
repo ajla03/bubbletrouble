@@ -8,3 +8,6 @@ IDB_ARROW_MASK  BITMAP "../assets/arrowBlack1.bmp"
 
 IDB_WALL        BITMAP "../assets/stoneWall.bmp"
 IDB_BACKGROUND  BITMAP "../assets/bg.bmp"
+
+IDB_TORCH       BITMAP "../assets/torchWhite.bmp"
+IDB_TORCH_MASK  BITMAP "../assets/torchBlack.bmp"

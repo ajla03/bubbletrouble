@@ -8,6 +8,9 @@
 #define IDB_ARROW_MASK      104
 #define IDB_WALL            105
 #define IDB_BACKGROUND      106
+#define IDB_TORCH           107
+#define IDB_TORCH_MASK      108
+
 
 #define MAX_BALLOONS 20
 #define BOUNCE_DAMPING 0.9f
@@ -62,11 +65,18 @@ struct GameState{
     bool isLevelCleared;
 };
 
+struct Torch{
+ int x, y;
+ int width, height;
+ int currentFrame, currentRow;
+ int animCounter = 0;
+};
 
 extern HBITMAP character, characterMask;
 extern HBITMAP arrow, arrowMask;
 extern HBITMAP wall;
 extern HBITMAP background;
+extern HBITMAP torch, torchMask;
 
 extern bool wasSpacePressed;
 extern bool isHarpoonActive;
@@ -77,6 +87,7 @@ extern StaticObject leftWall;
 extern StaticObject rightWall;
 extern StaticObject floorWall;
 extern StaticObject backgroundInfo;
+extern Torch torchInfo;
 extern InputState inputState;
 extern GameState gameState;
 

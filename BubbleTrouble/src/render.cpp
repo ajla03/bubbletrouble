@@ -22,6 +22,24 @@ void RefreshScreen(HWND hwnd){
         }
     }
 
+    // RENDER BAKLJI //
+
+    int torchX1 = rect.right/2 - 80;
+    int torchX2 = rect.right/2 + 80;
+    int torchY = rect.bottom - floorWall.height + torchInfo.height/2;
+
+    int torchSrcX = torchInfo.currentFrame * torchInfo.width;
+    int torchSrcY = torchInfo.currentRow * torchInfo.height;
+    SelectObject(hdcMem, torchMask);
+    BitBlt(hdcBuffer, torchX1, torchY, torchInfo.width, torchInfo.height, hdcMem, torchSrcX, torchSrcY, SRCPAINT);
+    SelectObject(hdcMem, torch);
+    BitBlt(hdcBuffer, torchX1, torchY, torchInfo.width, torchInfo.height, hdcMem, torchSrcX, torchSrcY, SRCAND);
+
+    SelectObject(hdcMem, torchMask);
+    BitBlt(hdcBuffer, torchX2, torchY, torchInfo.width, torchInfo.height, hdcMem, torchSrcX, torchSrcY, SRCPAINT);
+    SelectObject(hdcMem, torch);
+    BitBlt(hdcBuffer, torchX2, torchY, torchInfo.width, torchInfo.height, hdcMem, torchSrcX, torchSrcY, SRCAND);
+
     // === RENDER BACKGROUND ===
     SelectObject(hdcMem, background);
 
