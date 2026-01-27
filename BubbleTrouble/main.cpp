@@ -92,7 +92,49 @@ LRESULT CALLBACK WindowProcedure(HWND hwnd, UINT message, WPARAM wParam, LPARAM 
             TEXT("Kenney Mini Square")
             );
         }
+          case WM_SIZE: {
+            if (gameState.currentMode == GAME_MODE_MENU) {
+                InitializeMenu(hwnd);
+            }
+            InvalidateRect(hwnd, NULL, FALSE);
+            return 0;
+        }
         break;
+
+        case WM_PAINT: {
+            PAINTSTRUCT ps;
+            HDC hdc = BeginPaint(hwnd, &ps);
+            RefreshScreen(hwnd);
+            EndPaint(hwnd, &ps);
+            return 0;
+        }
+
+        case WM_LBUTTONDOWN: {
+            if (gameState.currentMode == GAME_MODE_MENU) {
+                int x = LOWORD(lParam);
+                int y = HIWORD(lParam);
+                HandleMenuClick(hwnd, x, y);
+            }
+            return 0;
+        }
+
+        case WM_MOUSEMOVE: {
+            if (gameState.currentMode == GAME_MODE_MENU) {
+                int x = LOWORD(lParam);
+                int y = HIWORD(lParam);
+                HandleMenuMouseMove(hwnd, x, y);
+            }
+            return 0;
+        }
+
+        case WM_KEYDOWN: {
+            if (wParam == VK_ESCAPE) {
+                gameState.currentMode = GAME_MODE_MENU;
+                InitializeMenu(hwnd);
+                InvalidateRect(hwnd, NULL, FALSE);
+            }
+            return 0;
+        }
         case WM_DESTROY:
             RemoveFontMemResourceEx(hFontRes);
             PostQuitMessage(0);

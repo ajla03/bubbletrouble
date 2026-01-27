@@ -20,6 +20,14 @@ HBITMAP heartBorderMask = NULL;
 HBITMAP heartBkg = NULL;
 HBITMAP heartBkgMask = NULL;
 
+HBITMAP menuScreen = NULL;
+HBITMAP menuCharacter = NULL;
+HBITMAP menuCharacterMask = NULL;
+HBITMAP hButtonsHolder = NULL;
+HBITMAP hButtonsHolderMask = NULL;
+
+MenuButton menuButtons[NUM_MENU_BUTTONS];
+
 HFONT hFont = NULL;
 HANDLE hFontRes = NULL;
 
@@ -40,7 +48,7 @@ HeartAnim hearts[5];
 
 Torch torchInfo;
 InputState inputState = {false};
-GameState gameState = {0, maxTime, false, false, 5};
+GameState gameState = {0, maxTime, false, false, GAME_MODE_MENU};
 
 double timeLeft = 2000.0;
 bool isGameOver = false;
@@ -63,6 +71,12 @@ void LoadBitmaps(HWND hwnd, HINSTANCE hInstance){
     torchMask = LoadBitmap(hInstance, MAKEINTRESOURCE(IDB_TORCH_MASK));
     levelPlaceholderWhite = LoadBitmap(hInstance, MAKEINTRESOURCE(IDB_LEVEL_WHITE));
     levelPlaceholderBlack = LoadBitmap(hInstance, MAKEINTRESOURCE(IDB_LEVEL_BLACK));
+
+    menuScreen = LoadBitmap(hInstance, MAKEINTRESOURCE(IDB_MENU_SCREEN));
+    menuCharacter = LoadBitmap(hInstance, MAKEINTRESOURCE(IDB_MENU_CHARACTER));
+    menuCharacterMask = LoadBitmap(hInstance, MAKEINTRESOURCE(IDB_MENU_CHARACTER_MASK));
+    hButtonsHolder = LoadBitmap(hInstance, MAKEINTRESOURCE(IDB_BUTTONS_HOLDER));
+    hButtonsHolderMask = LoadBitmap(hInstance, MAKEINTRESOURCE(IDB_BUTTONS_HOLDER_MASK));
 
     if (!character || !characterMask || !arrow || !arrowMask || !wall || !background || !torch || !torchMask || !levelPlaceholderWhite ) {
         MessageBox(NULL, ("Ne mogu da učitam resurse!"), ("Greška"), MB_ICONERROR);
@@ -176,6 +190,7 @@ void LoadBitmaps(HWND hwnd, HINSTANCE hInstance){
 
     // === INPUT STATE SETUP ===
     inputState.wasSpacePressed = false;
+    InitializeMenu(hwnd);
 
     //InitBalloon(0, 200, 100, 20, 2.5f, RGB(255, 0, 0));    // Crvena
     InitBalloon(1, 400, 150, 40, -2.0f, RGB(0, 255, 0));   // Zelena

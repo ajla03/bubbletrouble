@@ -13,6 +13,7 @@
 #define IDB_LEVEL_WHITE     109
 #define IDB_LEVEL_BLACK     110
 
+
 // HEARTS
 #define IDB_HEART           111
 #define IDB_HEART_MASK      112
@@ -23,7 +24,11 @@
 #define HEART_FRAMES        10
 #define HEART_ANIM_SPEED     5
 
-
+#define IDB_MENU_SCREEN     117
+#define IDB_MENU_CHARACTER      118
+#define IDB_MENU_CHARACTER_MASK 119
+#define IDB_BUTTONS_HOLDER 120
+#define IDB_BUTTONS_HOLDER_MASK 121
 #define IDR_HARPOON_SOUND   201
 #define IDR_BALLOON_POP     202
 #define IDR_MINI_FONT       301
@@ -76,11 +81,24 @@ struct InputState{
  bool wasSpacePressed;
 };
 
+enum GameMode {
+    GAME_MODE_MENU,
+    GAME_MODE_PLAYING
+};
+
+struct MenuButton {
+    RECT rect;
+    const char* text;
+    bool isHovered;
+};
+
+
 struct GameState{
     int activeBalloonCount;
     double timeLeft;
     bool isGameOver;
     bool isLevelCleared;
+    GameMode currentMode;
     int lives;
 };
 
@@ -106,6 +124,15 @@ extern HBITMAP levelPlaceholderWhite;
 extern HBITMAP heartMask, heart;
 extern HBITMAP heartBkgMask, heartBkg;
 extern HBITMAP heartBorderMask, heartBorder;
+
+extern HBITMAP menuScreen;
+extern HBITMAP menuCharacter;
+extern HBITMAP menuCharacterMask;
+extern HBITMAP hButtonsHolder;
+extern HBITMAP hButtonsHolderMask;
+
+#define NUM_MENU_BUTTONS 3
+extern MenuButton menuButtons[NUM_MENU_BUTTONS];
 
 extern bool wasSpacePressed;
 extern bool isHarpoonActive;
@@ -142,3 +169,9 @@ void CheckCollisions();
 void SplitBalloon(int index);
 void DrawBalloonGDI(HDC hdc, Balloon* b);
 
+void InitializeMenu(HWND hwnd);
+void RenderMenu(HWND hwnd);
+void HandleMenuClick(HWND hwnd, int x, int y);
+void HandleMenuMouseMove(HWND hwnd, int x, int y);
+void StartGame(HWND hwnd);
+void ResetGame(HWND hwnd);

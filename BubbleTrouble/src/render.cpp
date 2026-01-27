@@ -8,7 +8,10 @@ void RefreshScreen(HWND hwnd){
     HDC hdc = GetDC(hwnd);
     RECT rect;
     GetClientRect(hwnd, &rect);
-
+   if (gameState.currentMode == GAME_MODE_MENU) {
+        RenderMenu(hwnd);
+        return;
+    }
     // Double buffering setup
     HDC hdcBuffer = CreateCompatibleDC(hdc);
     HDC hdcMem = CreateCompatibleDC(hdc);

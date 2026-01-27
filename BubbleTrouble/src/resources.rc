@@ -28,3 +28,12 @@ IDB_HEART_BKG_MASK        BITMAP "../assets/heartBackgroundBlack.bmp"
 IDB_HEART_BKG             BITMAP "../assets/heartBackgroundWhite.bmp"
 
 IDR_MINI_FONT   RCDATA  "../assets/KenneyMiniSquare.ttf"
+
+IDB_MENU_SCREEN    BITMAP "../assets/menuscreen_clean.bmp"
+
+IDB_MENU_CHARACTER      BITMAP "../assets/start-screen.bmp"
+IDB_MENU_CHARACTER_MASK  BITMAP "../assets/start-screen_mask.bmp"
+
+IDB_BUTTONS_HOLDER BITMAP "../assets/buttonsholder1.bmp"
+
+IDB_BUTTONS_HOLDER_MASK BITMAP "../assets/buttonsholder1_mask.bmp"
