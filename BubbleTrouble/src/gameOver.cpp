@@ -1,18 +1,57 @@
 #include "resources.h"
 
 
-void DrawButton(HDC hdc, HBITMAP bmp, HBITMAP mask, StaticObject& info)
+void DrawButton(HDC hdc, HBITMAP bmp, HBITMAP mask, Button& button)
 {
     HDC memDC = CreateCompatibleDC(hdc);
-    HBITMAP oldBmp = (HBITMAP)SelectObject(memDC, mask);
 
-    BitBlt(hdc, info.x, info.y, info.width, info.height, memDC, 0, 0, SRCPAINT);
+    SelectObject(memDC, mask);
+    BitBlt(hdc, button.x, button.y, button.width, button.height, memDC, 0, 0, SRCPAINT);
 
     SelectObject(memDC, bmp);
-    BitBlt(hdc, info.x, info.y, info.width, info.height, memDC, 0, 0, SRCAND);
+    BitBlt(hdc, button.x, button.y, button.width, button.height, memDC, 0, 0, SRCAND);
 
-    SelectObject(memDC, oldBmp);
-    DeleteDC(memDC);
+ if (button.isHover)
+    {
+        HRGN rgn = CreateEllipticRgn(      // da napravimo sjenu samo na okruglom buttonu
+            button.x,
+            button.y,
+            button.x + button.width,
+            button.y + button.height
+        );
+
+        SelectClipRgn(hdc, rgn);
+
+        HBRUSH brush = CreateSolidBrush(RGB(255, 255, 255));
+        BLENDFUNCTION bf{};
+        bf.BlendOp = AC_SRC_OVER;
+        bf.SourceConstantAlpha = 60;
+
+        HDC overlayDC = CreateCompatibleDC(hdc);
+        HBITMAP overlayBmp = CreateCompatibleBitmap(hdc, button.width, button.height);
+        SelectObject(overlayDC, overlayBmp);
+
+        RECT r = { 0, 0, button.width, button.height };
+        FillRect(overlayDC, &r, brush);
+
+        AlphaBlend(
+            hdc,
+            button.x, button.y,
+            button.width, button.height,
+            overlayDC,
+            0, 0,
+            button.width, button.height,
+            bf
+        );
+
+        SelectClipRgn(hdc, NULL);
+        DeleteObject(rgn);
+        DeleteObject(brush);
+        DeleteObject(overlayBmp);
+        DeleteDC(overlayDC);
+    }
+
+    DeleteDC(memDC);;
 }
 
 void DrawGameOverScreen(HDC hdc, RECT rect)

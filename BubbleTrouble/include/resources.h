@@ -121,6 +121,13 @@ struct Torch{
  int animCounter = 0;
 };
 
+// used for MENU, RESTART and NEXT button
+struct Button {
+   int x, y;
+   int width, height;
+   bool isHover;
+};
+
 extern HBITMAP character, characterMask;
 extern HBITMAP arrow, arrowMask;
 extern HBITMAP wall;
@@ -164,8 +171,8 @@ extern InputState inputState;
 extern GameState gameState;
 extern StaticObject levelPlaceholderInfo;
 extern StaticObject heartInfo, heartBgInfo, heartBorderInfo;
-extern StaticObject restartButtonInfo, homeButtonInfo;
-extern StaticObject nextButtonInfo;
+extern Button restartButtonInfo, homeButtonInfo;
+extern Button nextButtonInfo;
 extern const float HERO_INVINCIBLE_TIME;
 
 extern Balloon balloons[MAX_BALLOONS];
@@ -194,4 +201,5 @@ void ResetGame(HWND hwnd);
 
 void DrawGameOverScreen(HDC hdc, RECT rect);
 void DrawLevelPassedScreen(HDC hdc, RECT rect);
-void DrawButton(HDC hdc, HBITMAP bmp, HBITMAP mask, StaticObject& info);
+void DrawButton(HDC hdc, HBITMAP bmp, HBITMAP mask, Button& info);
+void CheckHover(Button&, int, int);

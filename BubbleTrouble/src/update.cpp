@@ -58,3 +58,15 @@ void Update(HWND hwnd){
 
     CheckCollisions();
 }
+
+void CheckHover(Button& button, int mx, int my){
+ if (mx >= button.x && mx <= button.x + button.width &&
+            my >= button.y  && my <= button.y + button.height)
+        {
+            button.isHover = true;
+        }
+        else
+        {
+            button.isHover = false;
+        }
+}

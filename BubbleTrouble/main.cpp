@@ -151,10 +151,14 @@ LRESULT CALLBACK WindowProcedure(HWND hwnd, UINT message, WPARAM wParam, LPARAM 
         }
 
         case WM_MOUSEMOVE: {
+            int x = LOWORD(lParam);
+            int y = HIWORD(lParam);
             if (gameState.currentMode == GAME_MODE_MENU) {
-                int x = LOWORD(lParam);
-                int y = HIWORD(lParam);
                 HandleMenuMouseMove(hwnd, x, y);
+            }else if(gameState.currentMode == GAME_OVER || gameState.isLevelCleared == true){
+                CheckHover(homeButtonInfo, x, y);
+                CheckHover(restartButtonInfo, x, y);
+                CheckHover(nextButtonInfo, x, y);
             }
             return 0;
         }

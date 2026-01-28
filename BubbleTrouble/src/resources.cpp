@@ -48,9 +48,9 @@ StaticObject backgroundInfo;
 StaticObject heartInfo;
 StaticObject heartBgInfo;
 StaticObject heartBorderInfo;
-StaticObject homeButtonInfo;
-StaticObject restartButtonInfo;
-StaticObject nextButtonInfo;
+Button homeButtonInfo;
+Button restartButtonInfo;
+Button nextButtonInfo;
 HeartAnim    heartAnimation;
 
 HeartAnim hearts[5];
@@ -210,18 +210,21 @@ void LoadBitmaps(HWND hwnd, HINSTANCE hInstance){
         GetObject(homeButton, sizeof(BITMAP), &bm);
         homeButtonInfo.width = bm.bmWidth;
         homeButtonInfo.height = bm.bmHeight;
+        homeButtonInfo.isHover = false;
     }
 
     if(restartButton){
         GetObject(restartButton, sizeof(BITMAP), &bm);
         restartButtonInfo.width = bm.bmWidth;
         restartButtonInfo.height = bm.bmHeight;
+        restartButtonInfo.isHover = false;
     }
 
     if(nextButton){
         GetObject(nextButton, sizeof(BITMAP), &bm);
         nextButtonInfo.width = bm.bmWidth;
         nextButtonInfo.height = bm.bmHeight;
+        nextButtonInfo.isHover = false;
     }
 
     // === INPUT STATE SETUP ===
