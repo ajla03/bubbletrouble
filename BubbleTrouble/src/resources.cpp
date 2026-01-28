@@ -48,7 +48,7 @@ HeartAnim hearts[5];
 
 Torch torchInfo;
 InputState inputState = {false};
-GameState gameState = {0, maxTime, false, false, GAME_MODE_MENU};
+GameState gameState = {0, maxTime, false, false, GAME_MODE_MENU,5};
 
 double timeLeft = 2000.0;
 bool isGameOver = false;
