@@ -281,6 +281,7 @@ void ResetGame(HWND hwnd) {
     gameState.isGameOver = false;
     gameState.isLevelCleared = false;
     gameState.activeBalloonCount = 0;
+    gameState.lives = MAX_LIVES;
 
     // Reset hero position
     RECT clientRect;

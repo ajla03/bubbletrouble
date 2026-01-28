@@ -76,8 +76,10 @@ void CheckCollisions(){
         if(distance < b->radius && hero.heroHitCooldown <= 0) {
             --gameState.lives;
             hero.heroHitCooldown = HERO_INVINCIBLE_TIME;
-            if(gameState.lives==0)
+            if(gameState.lives==0){
                 gameState.isGameOver = true;
+                gameState.currentMode = GAME_OVER;
+            }
             break;
         }
 

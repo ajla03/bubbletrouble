@@ -110,7 +110,27 @@ LRESULT CALLBACK WindowProcedure(HWND hwnd, UINT message, WPARAM wParam, LPARAM 
         }
 
         case WM_LBUTTONDOWN: {
-            if (gameState.currentMode == GAME_MODE_MENU) {
+            if (gameState.currentMode == GAME_OVER) {
+                int mx = LOWORD(lParam);
+                int my = HIWORD(lParam);
+                   if (mx >= restartButtonInfo.x &&
+                       mx <= restartButtonInfo.x + restartButtonInfo.width &&
+                       my >= restartButtonInfo.y &&
+                       my <= restartButtonInfo.y + restartButtonInfo.height)
+                    {
+                        ResetGame(hwnd);
+                    }
+                   if (mx >= homeButtonInfo.x &&
+                        mx <= homeButtonInfo.x + homeButtonInfo.width &&
+                        my >= homeButtonInfo.y &&
+                        my <= homeButtonInfo.y + homeButtonInfo.height)
+                    {
+                        gameState.currentMode = GAME_MODE_MENU;
+                        gameState.isGameOver = false;
+                        gameState.isLevelCleared = false;
+
+                        InvalidateRect(hwnd, NULL, FALSE);                    }
+            }else if (gameState.currentMode == GAME_MODE_MENU) {
                 int x = LOWORD(lParam);
                 int y = HIWORD(lParam);
                 HandleMenuClick(hwnd, x, y);

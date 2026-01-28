@@ -1,6 +1,6 @@
 #include "resources.h"
 
-const float HERO_INVINCIBLE_TIME = 1.0f;
+const float HERO_INVINCIBLE_TIME = 0.50f;
 
 // Bitmap definicije
 HBITMAP character = NULL;
@@ -19,6 +19,11 @@ HBITMAP heartBorder = NULL;
 HBITMAP heartBorderMask = NULL;
 HBITMAP heartBkg = NULL;
 HBITMAP heartBkgMask = NULL;
+
+HBITMAP restartButton = NULL ;
+HBITMAP restartButtonMask = NULL;
+HBITMAP homeButton = NULL;
+HBITMAP homeButtonMask = NULL;
 
 HBITMAP menuScreen = NULL;
 HBITMAP menuCharacter = NULL;
@@ -42,13 +47,15 @@ StaticObject backgroundInfo;
 StaticObject heartInfo;
 StaticObject heartBgInfo;
 StaticObject heartBorderInfo;
+StaticObject homeButtonInfo;
+StaticObject restartButtonInfo;
 HeartAnim    heartAnimation;
 
 HeartAnim hearts[5];
 
 Torch torchInfo;
 InputState inputState = {false};
-GameState gameState = {0, maxTime, false, false, GAME_MODE_MENU,5};
+GameState gameState = {0, maxTime, false, false, GAME_MODE_MENU, MAX_LIVES};
 
 double timeLeft = 2000.0;
 bool isGameOver = false;
@@ -72,11 +79,18 @@ void LoadBitmaps(HWND hwnd, HINSTANCE hInstance){
     levelPlaceholderWhite = LoadBitmap(hInstance, MAKEINTRESOURCE(IDB_LEVEL_WHITE));
     levelPlaceholderBlack = LoadBitmap(hInstance, MAKEINTRESOURCE(IDB_LEVEL_BLACK));
 
+
     menuScreen = LoadBitmap(hInstance, MAKEINTRESOURCE(IDB_MENU_SCREEN));
     menuCharacter = LoadBitmap(hInstance, MAKEINTRESOURCE(IDB_MENU_CHARACTER));
     menuCharacterMask = LoadBitmap(hInstance, MAKEINTRESOURCE(IDB_MENU_CHARACTER_MASK));
     hButtonsHolder = LoadBitmap(hInstance, MAKEINTRESOURCE(IDB_BUTTONS_HOLDER));
     hButtonsHolderMask = LoadBitmap(hInstance, MAKEINTRESOURCE(IDB_BUTTONS_HOLDER_MASK));
+
+    restartButton = LoadBitmap(hInstance, MAKEINTRESOURCE(IDB_RESTART));
+    restartButtonMask = LoadBitmap(hInstance, MAKEINTRESOURCE(IDB_RESTART_MASK));
+    homeButton = LoadBitmap(hInstance, MAKEINTRESOURCE(IDB_HOME));
+    homeButtonMask = LoadBitmap(hInstance, MAKEINTRESOURCE(IDB_HOME_MASK));
+
 
     if (!character || !characterMask || !arrow || !arrowMask || !wall || !background || !torch || !torchMask || !levelPlaceholderWhite ) {
         MessageBox(NULL, ("Ne mogu da učitam resurse!"), ("Greška"), MB_ICONERROR);
@@ -186,6 +200,18 @@ void LoadBitmaps(HWND hwnd, HINSTANCE hInstance){
         hero.currentRow = 2;
         hero.currentFrame = 0;
         hero.animCounter = 0;
+    }
+
+    if(homeButton){
+        GetObject(homeButton, sizeof(BITMAP), &bm);
+        homeButtonInfo.width = bm.bmWidth;
+        homeButtonInfo.height = bm.bmHeight;
+    }
+
+    if(restartButton){
+        GetObject(restartButton, sizeof(BITMAP), &bm);
+        restartButtonInfo.width = bm.bmWidth;
+        restartButtonInfo.height = bm.bmHeight;
     }
 
     // === INPUT STATE SETUP ===

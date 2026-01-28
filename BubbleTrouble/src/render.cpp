@@ -204,6 +204,9 @@ void RefreshScreen(HWND hwnd){
     }
      // === GAME OVER TEKST ===
      else if (gameState.isGameOver) {
+        DrawGameOverScreen(hdcBuffer, rect);
+
+        /*
         SetBkMode(hdcBuffer, TRANSPARENT);
         SetTextColor(hdcBuffer, RGB(255, 0, 0));
         HFONT hBigFont = CreateFont(60, 0, 0, 0, FW_BOLD, FALSE, FALSE, FALSE,
@@ -219,6 +222,7 @@ void RefreshScreen(HWND hwnd){
 
         SelectObject(hdcBuffer, hOldGameOverFont);
         DeleteObject(hBigFont);
+        */
     }
 
     // === COPY TO SCREEN ===

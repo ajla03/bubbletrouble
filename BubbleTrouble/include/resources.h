@@ -12,8 +12,6 @@
 #define IDB_TORCH_MASK      108
 #define IDB_LEVEL_WHITE     109
 #define IDB_LEVEL_BLACK     110
-
-
 // HEARTS
 #define IDB_HEART           111
 #define IDB_HEART_MASK      112
@@ -21,14 +19,20 @@
 #define IDB_HEART_BORDER_MASK 114
 #define IDB_HEART_BKG       115
 #define IDB_HEART_BKG_MASK  116
-#define HEART_FRAMES        10
-#define HEART_ANIM_SPEED     5
-
 #define IDB_MENU_SCREEN     117
 #define IDB_MENU_CHARACTER      118
 #define IDB_MENU_CHARACTER_MASK 119
 #define IDB_BUTTONS_HOLDER 120
 #define IDB_BUTTONS_HOLDER_MASK 121
+#define IDB_HOME            122
+#define IDB_HOME_MASK       123
+#define IDB_RESTART         124
+#define IDB_RESTART_MASK    125
+
+#define HEART_FRAMES        10
+#define HEART_ANIM_SPEED     5
+#define MAX_LIVES            3
+
 #define IDR_HARPOON_SOUND   201
 #define IDR_BALLOON_POP     202
 #define IDR_MINI_FONT       301
@@ -83,7 +87,8 @@ struct InputState{
 
 enum GameMode {
     GAME_MODE_MENU,
-    GAME_MODE_PLAYING
+    GAME_MODE_PLAYING,
+    GAME_OVER
 };
 
 struct MenuButton {
@@ -131,6 +136,11 @@ extern HBITMAP menuCharacterMask;
 extern HBITMAP hButtonsHolder;
 extern HBITMAP hButtonsHolderMask;
 
+extern HBITMAP restartButton;
+extern HBITMAP restartButtonMask;
+extern HBITMAP homeButton;
+extern HBITMAP homeButtonMask;
+
 #define NUM_MENU_BUTTONS 3
 extern MenuButton menuButtons[NUM_MENU_BUTTONS];
 
@@ -150,6 +160,7 @@ extern InputState inputState;
 extern GameState gameState;
 extern StaticObject levelPlaceholderInfo;
 extern StaticObject heartInfo, heartBgInfo, heartBorderInfo;
+extern StaticObject restartButtonInfo, homeButtonInfo;
 extern const float HERO_INVINCIBLE_TIME;
 
 extern Balloon balloons[MAX_BALLOONS];
@@ -175,3 +186,5 @@ void HandleMenuClick(HWND hwnd, int x, int y);
 void HandleMenuMouseMove(HWND hwnd, int x, int y);
 void StartGame(HWND hwnd);
 void ResetGame(HWND hwnd);
+
+void DrawGameOverScreen(HDC hdc, RECT rect);
