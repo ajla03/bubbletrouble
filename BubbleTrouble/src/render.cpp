@@ -180,49 +180,13 @@ void RefreshScreen(HWND hwnd){
     SelectObject(hdcMem, character);
     BitBlt(hdcBuffer, hero.x, hero.y , hero.width, hero.height, hdcMem, srcX, srcY, SRCPAINT);
 
-    if (!gameState.isLevelCleared && gameState.activeBalloonCount == 0 && gameState.timeLeft > 0 && !gameState.isGameOver) {
-        gameState.isLevelCleared = true;
-    }
-
     // WELL DONE TEKST //
     if (gameState.isLevelCleared){
-    SetBkMode(hdcBuffer, TRANSPARENT);
-    SetTextColor(hdcBuffer, RGB(0, 255, 0));
-    HFONT hBigFont = CreateFont(60, 0, 0, 0, FW_BOLD, FALSE, FALSE, FALSE,
-                                DEFAULT_CHARSET, OUT_OUTLINE_PRECIS,
-                                CLIP_DEFAULT_PRECIS, ANTIALIASED_QUALITY,
-                                VARIABLE_PITCH, TEXT("Arial"));
-    HFONT hOldFont = (HFONT)SelectObject(hdcBuffer, hBigFont);
-
-    const char* msg = "WELL DONE!";
-    SIZE size;
-    GetTextExtentPoint32(hdcBuffer, msg, strlen(msg), &size);
-    TextOut(hdcBuffer, (rect.right - size.cx) / 2, (rect.bottom - size.cy) / 2 - 100, msg, strlen(msg));
-
-    SelectObject(hdcBuffer, hOldFont);
-    DeleteObject(hBigFont);
+        DrawLevelPassedScreen(hdcBuffer, rect);
     }
      // === GAME OVER TEKST ===
      else if (gameState.isGameOver) {
         DrawGameOverScreen(hdcBuffer, rect);
-
-        /*
-        SetBkMode(hdcBuffer, TRANSPARENT);
-        SetTextColor(hdcBuffer, RGB(255, 0, 0));
-        HFONT hBigFont = CreateFont(60, 0, 0, 0, FW_BOLD, FALSE, FALSE, FALSE,
-                                     DEFAULT_CHARSET, OUT_OUTLINE_PRECIS,
-                                     CLIP_DEFAULT_PRECIS, ANTIALIASED_QUALITY,
-                                     VARIABLE_PITCH, TEXT("Arial"));
-        HFONT hOldGameOverFont = (HFONT)SelectObject(hdcBuffer, hBigFont);
-
-        const char* msg = "GAME OVER";
-        SIZE size;
-        GetTextExtentPoint32(hdcBuffer, msg, strlen(msg), &size);
-        TextOut(hdcBuffer, (rect.right - size.cx) / 2, (rect.bottom - size.cy) / 2 - 100, msg, strlen(msg));
-
-        SelectObject(hdcBuffer, hOldGameOverFont);
-        DeleteObject(hBigFont);
-        */
     }
 
     // === COPY TO SCREEN ===

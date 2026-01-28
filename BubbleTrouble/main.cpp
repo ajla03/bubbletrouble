@@ -110,7 +110,7 @@ LRESULT CALLBACK WindowProcedure(HWND hwnd, UINT message, WPARAM wParam, LPARAM 
         }
 
         case WM_LBUTTONDOWN: {
-            if (gameState.currentMode == GAME_OVER) {
+            if (gameState.currentMode == GAME_OVER || gameState.isLevelCleared == true) {
                 int mx = LOWORD(lParam);
                 int my = HIWORD(lParam);
                    if (mx >= restartButtonInfo.x &&
@@ -119,6 +119,7 @@ LRESULT CALLBACK WindowProcedure(HWND hwnd, UINT message, WPARAM wParam, LPARAM 
                        my <= restartButtonInfo.y + restartButtonInfo.height)
                     {
                         ResetGame(hwnd);
+                        return 0;
                     }
                    if (mx >= homeButtonInfo.x &&
                         mx <= homeButtonInfo.x + homeButtonInfo.width &&
@@ -129,7 +130,18 @@ LRESULT CALLBACK WindowProcedure(HWND hwnd, UINT message, WPARAM wParam, LPARAM 
                         gameState.isGameOver = false;
                         gameState.isLevelCleared = false;
 
-                        InvalidateRect(hwnd, NULL, FALSE);                    }
+                        InvalidateRect(hwnd, NULL, FALSE);
+                        return 0;
+                     }
+                    if(mx >= nextButtonInfo.x &&
+                       mx <= nextButtonInfo.x + nextButtonInfo.width &&
+                       my >= nextButtonInfo.y &&
+                       my <= nextButtonInfo.y + nextButtonInfo.height &&
+                       gameState.isLevelCleared == true){
+
+                         MessageBox(hwnd, "Other levels arent implemented yet!", "Next level warning", MB_OK);
+                         return 0;
+                       }
             }else if (gameState.currentMode == GAME_MODE_MENU) {
                 int x = LOWORD(lParam);
                 int y = HIWORD(lParam);

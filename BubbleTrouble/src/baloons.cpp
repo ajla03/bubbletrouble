@@ -92,6 +92,8 @@ void CheckCollisions(){
         if (distanceHarpoonX <= b->radius) {
                 if (harpoonTop <= b->y + b->radius && harpoonBottom >= b->y - b->radius) {
                     SplitBalloon(i);
+                    if(gameState.activeBalloonCount == 0)
+                        gameState.isLevelCleared = true;
                     harpoon.isActive = false;
                     break;
                 }

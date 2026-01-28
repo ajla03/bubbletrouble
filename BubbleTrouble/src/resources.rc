@@ -33,6 +33,8 @@ IDB_RESTART_MASK            BITMAP "../assets/restartBlack.bmp"
 IDB_HOME                 BITMAP "../assets/homeButtonWhite.bmp"
 IDB_HOME_MASK            BITMAP "../assets/homeButtonBlack.bmp"
 
+IDB_NEXT_MASK            BITMAP "../assets/nextButtonBlack.bmp"
+IDB_NEXT                 BITMAP "../assets/nextButtonWhite.bmp"
 
 IDR_MINI_FONT   RCDATA  "../assets/KenneyMiniSquare.ttf"
 

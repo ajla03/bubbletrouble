@@ -28,6 +28,8 @@
 #define IDB_HOME_MASK       123
 #define IDB_RESTART         124
 #define IDB_RESTART_MASK    125
+#define IDB_NEXT            126
+#define IDB_NEXT_MASK       127
 
 #define HEART_FRAMES        10
 #define HEART_ANIM_SPEED     5
@@ -88,7 +90,7 @@ struct InputState{
 enum GameMode {
     GAME_MODE_MENU,
     GAME_MODE_PLAYING,
-    GAME_OVER
+    GAME_OVER,
 };
 
 struct MenuButton {
@@ -140,6 +142,8 @@ extern HBITMAP restartButton;
 extern HBITMAP restartButtonMask;
 extern HBITMAP homeButton;
 extern HBITMAP homeButtonMask;
+extern HBITMAP nextButton;
+extern HBITMAP nextButtonMask;
 
 #define NUM_MENU_BUTTONS 3
 extern MenuButton menuButtons[NUM_MENU_BUTTONS];
@@ -161,6 +165,7 @@ extern GameState gameState;
 extern StaticObject levelPlaceholderInfo;
 extern StaticObject heartInfo, heartBgInfo, heartBorderInfo;
 extern StaticObject restartButtonInfo, homeButtonInfo;
+extern StaticObject nextButtonInfo;
 extern const float HERO_INVINCIBLE_TIME;
 
 extern Balloon balloons[MAX_BALLOONS];
@@ -188,3 +193,5 @@ void StartGame(HWND hwnd);
 void ResetGame(HWND hwnd);
 
 void DrawGameOverScreen(HDC hdc, RECT rect);
+void DrawLevelPassedScreen(HDC hdc, RECT rect);
+void DrawButton(HDC hdc, HBITMAP bmp, HBITMAP mask, StaticObject& info);

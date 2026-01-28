@@ -24,7 +24,8 @@ HBITMAP restartButton = NULL ;
 HBITMAP restartButtonMask = NULL;
 HBITMAP homeButton = NULL;
 HBITMAP homeButtonMask = NULL;
-
+HBITMAP nextButton = NULL;
+HBITMAP nextButtonMask = NULL;
 HBITMAP menuScreen = NULL;
 HBITMAP menuCharacter = NULL;
 HBITMAP menuCharacterMask = NULL;
@@ -49,6 +50,7 @@ StaticObject heartBgInfo;
 StaticObject heartBorderInfo;
 StaticObject homeButtonInfo;
 StaticObject restartButtonInfo;
+StaticObject nextButtonInfo;
 HeartAnim    heartAnimation;
 
 HeartAnim hearts[5];
@@ -90,6 +92,8 @@ void LoadBitmaps(HWND hwnd, HINSTANCE hInstance){
     restartButtonMask = LoadBitmap(hInstance, MAKEINTRESOURCE(IDB_RESTART_MASK));
     homeButton = LoadBitmap(hInstance, MAKEINTRESOURCE(IDB_HOME));
     homeButtonMask = LoadBitmap(hInstance, MAKEINTRESOURCE(IDB_HOME_MASK));
+    nextButton = LoadBitmap(hInstance, MAKEINTRESOURCE(IDB_NEXT));
+    nextButtonMask = LoadBitmap(hInstance, MAKEINTRESOURCE(IDB_NEXT_MASK));
 
 
     if (!character || !characterMask || !arrow || !arrowMask || !wall || !background || !torch || !torchMask || !levelPlaceholderWhite ) {
@@ -212,6 +216,12 @@ void LoadBitmaps(HWND hwnd, HINSTANCE hInstance){
         GetObject(restartButton, sizeof(BITMAP), &bm);
         restartButtonInfo.width = bm.bmWidth;
         restartButtonInfo.height = bm.bmHeight;
+    }
+
+    if(nextButton){
+        GetObject(nextButton, sizeof(BITMAP), &bm);
+        nextButtonInfo.width = bm.bmWidth;
+        nextButtonInfo.height = bm.bmHeight;
     }
 
     // === INPUT STATE SETUP ===
