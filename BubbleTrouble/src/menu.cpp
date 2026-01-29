@@ -2,6 +2,8 @@
 #include <windows.h>
 #include <stdio.h>
 #include <algorithm>
+#include "globals.h"
+#include "game.h"
 
 // Helper macros if std::max/min don't work
 #ifndef max

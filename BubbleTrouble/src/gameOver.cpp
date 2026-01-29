@@ -1,4 +1,6 @@
 #include "resources.h"
+#include "types.h"
+#include "globals.h"
 
 
 void DrawButton(HDC hdc, HBITMAP bmp, HBITMAP mask, Button& button)

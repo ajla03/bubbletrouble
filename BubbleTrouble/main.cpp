@@ -2,6 +2,8 @@
 #include <tchar.h>
 #include <wingdi.h>
 #include "resources.h"
+#include "globals.h"
+#include "game.h"
 
 TCHAR szClassName[] = _T("CodeBlocksWindowsApp");
 

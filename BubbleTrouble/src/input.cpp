@@ -1,5 +1,7 @@
 #include "resources.h"
+#include "globals.h"
 #include <windows.h>
+
 
 void CheckInputs(HWND hwnd){
     if(gameState.isGameOver || gameState.isLevelCleared)

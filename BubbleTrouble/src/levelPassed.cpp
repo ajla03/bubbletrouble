@@ -1,4 +1,6 @@
 #include "resources.h"
+#include "globals.h"
+#include "game.h"
 
 void DrawLevelPassedScreen(HDC hdc, RECT rect){
     int w = rect.right;

@@ -1,4 +1,6 @@
 #include "resources.h"
+#include "globals.h"
+#include "game.h"
 #include <windows.h>
 #include <cmath>
 
