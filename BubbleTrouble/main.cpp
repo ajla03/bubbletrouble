@@ -80,6 +80,10 @@ int WINAPI WinMain(HINSTANCE hThisInstance, HINSTANCE hPrevInstance, LPSTR lpszA
 
 LRESULT CALLBACK WindowProcedure(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam){
     switch (message){
+        case WM_SETCURSOR: {
+         SetCursor(gameCursor);
+         return 0 ;
+        }
         case WM_CREATE:
         {
         hFont = CreateFont(

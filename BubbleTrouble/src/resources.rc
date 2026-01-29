@@ -46,3 +46,5 @@ IDB_MENU_CHARACTER_MASK  BITMAP "../assets/start-screen_mask.bmp"
 IDB_BUTTONS_HOLDER BITMAP "../assets/buttonsholder1.bmp"
 
 IDB_BUTTONS_HOLDER_MASK BITMAP "../assets/buttonsholder1_mask.bmp"
+
+IDC_GAME_CURSOR   CURSOR   "../assets/pinkBubble.cur"

@@ -26,6 +26,7 @@ extern HBITMAP homeButton;
 extern HBITMAP homeButtonMask;
 extern HBITMAP nextButton;
 extern HBITMAP nextButtonMask;
+extern HCURSOR gameCursor;
 
 // ===== GAME OBJEKTI =====
 extern Projectile harpoon;

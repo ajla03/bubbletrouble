@@ -53,3 +53,4 @@ HBITMAP menuCharacter = NULL;
 HBITMAP menuCharacterMask = NULL;
 HBITMAP hButtonsHolder = NULL;
 HBITMAP hButtonsHolderMask = NULL;
+HCURSOR gameCursor = NULL;

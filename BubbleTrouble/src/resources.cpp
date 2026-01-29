@@ -32,6 +32,7 @@ void LoadBitmaps(HWND hwnd, HINSTANCE hInstance){
     nextButton = LoadBitmap(hInstance, MAKEINTRESOURCE(IDB_NEXT));
     nextButtonMask = LoadBitmap(hInstance, MAKEINTRESOURCE(IDB_NEXT_MASK));
 
+    gameCursor =  LoadCursor(hInstance, MAKEINTRESOURCE(IDC_GAME_CURSOR));
 
     if (!character || !characterMask || !arrow || !arrowMask || !wall || !background || !torch || !torchMask || !levelPlaceholderWhite ) {
         MessageBox(NULL, ("Ne mogu da učitam resurse!"), ("Greška"), MB_ICONERROR);
