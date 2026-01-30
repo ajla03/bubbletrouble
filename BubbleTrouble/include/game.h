@@ -16,7 +16,7 @@ void SplitBalloon(int index);
 void DrawBalloonGDI(HDC hdc, Balloon* b);
 
 void InitializeMenu(HWND hwnd);
-void RenderMenu(HWND hwnd);
+void RenderMenu(HDC, RECT);
 void HandleMenuClick(HWND hwnd, int x, int y);
 void HandleMenuMouseMove(HWND hwnd, int x, int y);
 void StartGame(HWND hwnd);
@@ -26,3 +26,7 @@ void DrawGameOverScreen(HDC hdc, RECT rect);
 void DrawLevelPassedScreen(HDC hdc, RECT rect);
 void DrawButton(HDC hdc, HBITMAP bmp, HBITMAP mask, Button& info);
 void CheckHover(Button&, int, int);
+
+void StartWallTransition(HWND hwnd);
+void UpdateWallTransition(HWND hwnd);
+void DrawTransitionWalls(HDC hdc, RECT);

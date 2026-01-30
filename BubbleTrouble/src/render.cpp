@@ -10,15 +10,17 @@ void RefreshScreen(HWND hwnd){
     HDC hdc = GetDC(hwnd);
     RECT rect;
     GetClientRect(hwnd, &rect);
-   if (gameState.currentMode == GAME_MODE_MENU) {
-        RenderMenu(hwnd);
-        return;
-    }
+
     // Double buffering setup
     HDC hdcBuffer = CreateCompatibleDC(hdc);
     HDC hdcMem = CreateCompatibleDC(hdc);
     HBITMAP hbmBuffer = CreateCompatibleBitmap(hdc, rect.right, rect.bottom);
     HBITMAP oldBufferBmp = (HBITMAP)SelectObject(hdcBuffer, hbmBuffer);
+
+   if (gameState.currentMode == GAME_MODE_MENU) {
+        RenderMenu(hdcBuffer, rect);
+    }
+   else if(gameState.currentMode == GAME_MODE_PLAYING || gameState.currentMode == GAME_OVER || gameState.isLevelCleared){
 
     // === RENDER WALLS ===
     SelectObject(hdcMem, wall);
@@ -190,6 +192,10 @@ void RefreshScreen(HWND hwnd){
      else if (gameState.isGameOver) {
         DrawGameOverScreen(hdcBuffer, rect);
     }
+
+   }
+
+    DrawTransitionWalls(hdcBuffer, rect);
 
     // === COPY TO SCREEN ===
     BitBlt(hdc, 0, 0, rect.right, rect.bottom, hdcBuffer, 0, 0, SRCCOPY);

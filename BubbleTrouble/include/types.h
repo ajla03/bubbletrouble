@@ -57,6 +57,8 @@ struct GameState{
     bool isLevelCleared;
     GameMode currentMode;
     int lives;
+    bool pendingHome;
+    bool pendingRestart;
 };
 
 struct HeartAnim{
@@ -76,4 +78,19 @@ struct Button {
    int x, y;
    int width, height;
    bool isHover;
+};
+
+
+enum TransitionState{
+ TRANSITION_NONE,
+ TRANSITION_CLOSING,
+ TRANSITION_OPENING,
+ TRANSITION_WAIT,
+ };
+
+struct AnimatedWalls{
+ int wallTopY ;
+ int wallBottomY;
+ float wallSpeed;
+ DWORD transitionWaitStart = 0;
 };

@@ -7,10 +7,10 @@ Projectile harpoon;
 StaticObject leftWall, rightWall, floorWall;
 StaticObject backgroundInfo;
 StaticObject levelPlaceholderInfo;
-StaticObject heartInfo, heartBgInfo, heartBorderInfo;
+StaticObject heartInfo, heartBgInfo, heartBorderInfo, animatedWall;
 Torch torchInfo;
 InputState inputState = {false};
-GameState gameState = {0, maxTime, false, false, GAME_MODE_MENU, MAX_LIVES};
+GameState gameState = {0, maxTime, false, false, GAME_MODE_MENU, MAX_LIVES, false, false};
 Balloon balloons[MAX_BALLOONS];
 HeartAnim hearts[5];
 
@@ -41,7 +41,8 @@ HBITMAP heartBorder = NULL;
 HBITMAP heartBorderMask = NULL;
 HBITMAP heartBkg = NULL;
 HBITMAP heartBkgMask = NULL;
-
+HBITMAP wall1 = NULL;
+HBITMAP wall2 = NULL;
 HBITMAP restartButton = NULL;
 HBITMAP restartButtonMask = NULL;
 HBITMAP homeButton = NULL;
@@ -54,3 +55,6 @@ HBITMAP menuCharacterMask = NULL;
 HBITMAP hButtonsHolder = NULL;
 HBITMAP hButtonsHolderMask = NULL;
 HCURSOR gameCursor = NULL;
+
+TransitionState transitionState = TRANSITION_NONE;
+AnimatedWalls animatedWalls = {0,0,12.0f};

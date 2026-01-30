@@ -36,6 +36,9 @@ IDB_HOME_MASK            BITMAP "../assets/homeButtonBlack.bmp"
 IDB_NEXT_MASK            BITMAP "../assets/nextButtonBlack.bmp"
 IDB_NEXT                 BITMAP "../assets/nextButtonWhite.bmp"
 
+IDB_WALL1                BITMAP "../assets/zid1.bmp"
+IDB_WALL2                BITMAP "../assets/zid2.bmp"
+
 IDR_MINI_FONT   RCDATA  "../assets/KenneyMiniSquare.ttf"
 
 IDB_MENU_SCREEN    BITMAP "../assets/menuscreen_clean.bmp"

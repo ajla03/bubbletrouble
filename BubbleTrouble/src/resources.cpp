@@ -32,6 +32,9 @@ void LoadBitmaps(HWND hwnd, HINSTANCE hInstance){
     nextButton = LoadBitmap(hInstance, MAKEINTRESOURCE(IDB_NEXT));
     nextButtonMask = LoadBitmap(hInstance, MAKEINTRESOURCE(IDB_NEXT_MASK));
 
+    wall1 = LoadBitmap(hInstance, MAKEINTRESOURCE(IDB_WALL1));
+    wall2 = LoadBitmap(hInstance, MAKEINTRESOURCE(IDB_WALL2));
+
     gameCursor =  LoadCursor(hInstance, MAKEINTRESOURCE(IDC_GAME_CURSOR));
 
     if (!character || !characterMask || !arrow || !arrowMask || !wall || !background || !torch || !torchMask || !levelPlaceholderWhite ) {
@@ -163,6 +166,12 @@ void LoadBitmaps(HWND hwnd, HINSTANCE hInstance){
         nextButtonInfo.width = bm.bmWidth;
         nextButtonInfo.height = bm.bmHeight;
         nextButtonInfo.isHover = false;
+    }
+
+    if(wall1){
+        GetObject(wall1, sizeof(BITMAP), &bm);
+        animatedWall.height = bm.bmHeight;
+        animatedWall.width = bm.bmWidth;
     }
 
     // === INPUT STATE SETUP ===

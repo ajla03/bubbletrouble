@@ -59,6 +59,8 @@ void Update(HWND hwnd){
     UpdateHearts();
 
     CheckCollisions();
+
+    UpdateWallTransition(hwnd);
 }
 
 void CheckHover(Button& button, int mx, int my){
@@ -71,4 +73,46 @@ void CheckHover(Button& button, int mx, int my){
         {
             button.isHover = false;
         }
+}
+
+void UpdateWallTransition(HWND hwnd){
+    if(transitionState == TRANSITION_CLOSING){
+        animatedWalls.wallTopY +=animatedWalls.wallSpeed;
+        animatedWalls.wallBottomY -=animatedWalls.wallSpeed;
+
+        if(animatedWalls.wallTopY + animatedWall.height >= animatedWalls.wallBottomY){
+
+            if(gameState.pendingRestart){
+                ResetGame(hwnd);
+            }
+
+            animatedWalls.transitionWaitStart = GetTickCount();
+            transitionState = TRANSITION_WAIT;
+        }
+     }else if (transitionState == TRANSITION_WAIT)
+    {
+        if (GetTickCount() - animatedWalls.transitionWaitStart >= 400)
+        {
+            if(gameState.pendingHome){
+                gameState.currentMode = GAME_MODE_MENU;
+                gameState.isGameOver = false;
+                gameState.isLevelCleared = false;
+            }
+
+            transitionState = TRANSITION_OPENING;
+        }
+    }
+     else if (transitionState == TRANSITION_OPENING)
+    {
+        animatedWalls.wallTopY -= animatedWalls.wallSpeed;
+        animatedWalls.wallBottomY += animatedWalls.wallSpeed;
+
+        if (animatedWalls.wallTopY <= -animatedWall.height)
+        {
+
+            transitionState = TRANSITION_NONE;
+            gameState.pendingHome = false;
+            gameState.pendingRestart = false;
+        }
+    }
 }

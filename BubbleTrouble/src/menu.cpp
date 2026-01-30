@@ -65,16 +65,8 @@ void InitializeMenu(HWND hwnd) {
     menuButtons[2].isHovered = false;
 }
 
-void RenderMenu(HWND hwnd) {
-    HDC hdc = GetDC(hwnd);
-    RECT rect;
-    GetClientRect(hwnd, &rect);
-
-    // Double buffering
-    HDC hdcBuffer = CreateCompatibleDC(hdc);
-    HDC hdcMem = CreateCompatibleDC(hdc);
-    HBITMAP hbmBuffer = CreateCompatibleBitmap(hdc, rect.right, rect.bottom);
-    HBITMAP oldBufferBmp = (HBITMAP)SelectObject(hdcBuffer, hbmBuffer);
+void RenderMenu(HDC hdcBuffer, RECT rect) {
+    HDC hdcMem = CreateCompatibleDC(hdcBuffer);
 
     // Render menu background
     if (menuScreen) {
@@ -221,15 +213,8 @@ void RenderMenu(HWND hwnd) {
         SelectObject(hdcMem, oldMemBmp);
     }
 
-    // Copy to screen
-    BitBlt(hdc, 0, 0, rect.right, rect.bottom, hdcBuffer, 0, 0, SRCCOPY);
-
     // Cleanup
-    SelectObject(hdcBuffer, oldBufferBmp);
-    DeleteObject(hbmBuffer);
     DeleteDC(hdcMem);
-    DeleteDC(hdcBuffer);
-    ReleaseDC(hwnd, hdc);
 }
 
 void HandleMenuClick(HWND hwnd, int x, int y) {
@@ -284,7 +269,7 @@ void ResetGame(HWND hwnd) {
     gameState.isLevelCleared = false;
     gameState.activeBalloonCount = 0;
     gameState.lives = MAX_LIVES;
-
+    gameState.currentMode = GAME_MODE_PLAYING;
     // Reset hero position
     RECT clientRect;
     GetClientRect(hwnd, &clientRect);

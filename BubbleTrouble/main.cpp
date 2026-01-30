@@ -124,7 +124,8 @@ LRESULT CALLBACK WindowProcedure(HWND hwnd, UINT message, WPARAM wParam, LPARAM 
                        my >= restartButtonInfo.y &&
                        my <= restartButtonInfo.y + restartButtonInfo.height)
                     {
-                        ResetGame(hwnd);
+                        gameState.pendingRestart = true;
+                        StartWallTransition(hwnd);
                         return 0;
                     }
                    if (mx >= homeButtonInfo.x &&
@@ -132,11 +133,8 @@ LRESULT CALLBACK WindowProcedure(HWND hwnd, UINT message, WPARAM wParam, LPARAM 
                         my >= homeButtonInfo.y &&
                         my <= homeButtonInfo.y + homeButtonInfo.height)
                     {
-                        gameState.currentMode = GAME_MODE_MENU;
-                        gameState.isGameOver = false;
-                        gameState.isLevelCleared = false;
-
-                        InvalidateRect(hwnd, NULL, FALSE);
+                        gameState.pendingHome = true;
+                        StartWallTransition(hwnd);
                         return 0;
                      }
                     if(mx >= nextButtonInfo.x &&
