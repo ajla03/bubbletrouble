@@ -55,6 +55,8 @@ HBITMAP menuCharacterMask = NULL;
 HBITMAP hButtonsHolder = NULL;
 HBITMAP hButtonsHolderMask = NULL;
 HCURSOR gameCursor = NULL;
+HBITMAP hMenuButton = NULL;
+HBITMAP hMenuButtonMask = NULL;
 
 TransitionState transitionState = TRANSITION_NONE;
 AnimatedWalls animatedWalls = {0,0,12.0f};

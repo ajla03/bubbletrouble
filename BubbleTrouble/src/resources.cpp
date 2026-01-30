@@ -24,6 +24,8 @@ void LoadBitmaps(HWND hwnd, HINSTANCE hInstance){
     menuCharacterMask = LoadBitmap(hInstance, MAKEINTRESOURCE(IDB_MENU_CHARACTER_MASK));
     hButtonsHolder = LoadBitmap(hInstance, MAKEINTRESOURCE(IDB_BUTTONS_HOLDER));
     hButtonsHolderMask = LoadBitmap(hInstance, MAKEINTRESOURCE(IDB_BUTTONS_HOLDER_MASK));
+    hMenuButton = LoadBitmap(hInstance, MAKEINTRESOURCE(IDB_MENU_BUTTON));
+    hMenuButtonMask = LoadBitmap(hInstance, MAKEINTRESOURCE(IDB_MENU_BUTTON_MASK));
 
     restartButton = LoadBitmap(hInstance, MAKEINTRESOURCE(IDB_RESTART));
     restartButtonMask = LoadBitmap(hInstance, MAKEINTRESOURCE(IDB_RESTART_MASK));

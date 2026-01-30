@@ -21,21 +21,21 @@ void InitializeMenu(HWND hwnd) {
     int screenHeight = clientRect.bottom;
     int screenWidth = clientRect.right;
 
-    // Button dimensions - responsive
-    int buttonWidth = screenWidth / 8;
-    int buttonHeight = screenHeight / 15;
-    int buttonSpacing = screenHeight / 25;
+    // Button dimensions - POVEĆANE DIMENZIJE
+    int buttonWidth = screenWidth / 5;      // Promenjeno sa /8 na /5 (veće)
+    int buttonHeight = screenHeight / 6;   // Promenjeno sa /15 na /10 (veće)
+    int buttonSpacing = -35;  // Promenjeno sa /25 na /20 (više razmaka)
 
-    // Minimum sizes
-    if (buttonWidth < 120) buttonWidth = 120;
-    if (buttonHeight < 45) buttonHeight = 45;
-    if (buttonSpacing < 20) buttonSpacing = 20;
+    // Minimum sizes - POVEĆANI MINIMUMI
+    if (buttonWidth < 200) buttonWidth = 200;   // Promenjeno sa 120 na 180
+    if (buttonHeight < 70) buttonHeight = 70;   // Promenjeno sa 45 na 60
+  //  if (buttonSpacing < 0) buttonSpacing = 0; // Promenjeno sa 20 na 25
 
     // Position menu on the LEFT side - responsive
     int leftSideCenter = clientRect.right / 3;  // 1/3 from left
 
     // Total height of all buttons
-    int totalButtonsHeight = (3 * buttonHeight) + (2 * buttonSpacing);
+    int totalButtonsHeight = (3 * buttonHeight) ;
 
     // Center vertically with small offset down
     int startY = (clientRect.bottom - totalButtonsHeight) / 2 + clientRect.bottom / 10;
@@ -65,8 +65,15 @@ void InitializeMenu(HWND hwnd) {
     menuButtons[2].isHovered = false;
 }
 
-void RenderMenu(HDC hdcBuffer, RECT rect) {
-    HDC hdcMem = CreateCompatibleDC(hdcBuffer);
+void RenderMenu(HDC hdc, RECT rect ) {
+
+    // Double buffering
+    HDC hdcBuffer = CreateCompatibleDC(hdc);
+    HDC hdcMem = CreateCompatibleDC(hdc);
+    HBITMAP hbmBuffer = CreateCompatibleBitmap(hdc, rect.right, rect.bottom);
+    HBITMAP oldBufferBmp = (HBITMAP)SelectObject(hdcBuffer, hbmBuffer);
+    SetStretchBltMode(hdcBuffer, HALFTONE);
+    SetBrushOrgEx(hdcBuffer, 0, 0, NULL);
 
     // Render menu background
     if (menuScreen) {
@@ -83,36 +90,6 @@ void RenderMenu(HDC hdcBuffer, RECT rect) {
         DeleteObject(hBrush);
     }
 
-    // === RENDER BUTTONS HOLDER FIRST (in background) ===
-    if (hButtonsHolder && hButtonsHolderMask) {
-        BITMAP bm;
-        GetObject(hButtonsHolder, sizeof(BITMAP), &bm);
-
-        int btnWidth = menuButtons[0].rect.right - menuButtons[0].rect.left;
-        int buttonsTop = menuButtons[0].rect.top;
-        int buttonsBottom = menuButtons[NUM_MENU_BUTTONS - 1].rect.bottom;
-        int buttonsHeight = buttonsBottom - buttonsTop;
-
-        int holderWidth = (int)(btnWidth * 1.6);
-        float aspectRatio = (float)bm.bmHeight * 1.1 / (float)bm.bmWidth;
-        int holderHeight = (int)(holderWidth * aspectRatio);
-
-        int holderX = (rect.right / 3) - (holderWidth / 2.1);
-        int buttonsCenterY = buttonsTop + buttonsHeight / 2;
-        int holderY = buttonsCenterY - (holderHeight / 1.7);
-
-        // Draw mask (SRCAND)
-        HBITMAP oldMemBmp = (HBITMAP)SelectObject(hdcMem, hButtonsHolderMask);
-        StretchBlt(hdcBuffer, holderX, holderY, holderWidth, holderHeight,
-                   hdcMem, 0, 0, bm.bmWidth, bm.bmHeight, SRCAND);
-
-        // Draw image (SRCPAINT)
-        SelectObject(hdcMem, hButtonsHolder);
-        StretchBlt(hdcBuffer, holderX, holderY, holderWidth, holderHeight,
-                   hdcMem, 0, 0, bm.bmWidth, bm.bmHeight, SRCPAINT);
-
-        SelectObject(hdcMem, oldMemBmp);
-    }
 
     // Render title "BUBBLE TROUBLE" - Responsive sizing
     SetBkMode(hdcBuffer, TRANSPARENT);
@@ -140,8 +117,55 @@ void RenderMenu(HDC hdcBuffer, RECT rect) {
     SelectObject(hdcBuffer, hOldTitleFont);
     DeleteObject(hTitleFont);
 
-    // Render buttons - Responsive font size
-    int buttonFontSize = max(18, rect.bottom / 25);
+    // === RENDER BUTTONS HOLDER FIRST (in background) ===
+   // === RENDER BUTTONS HOLDER FIRST (in background) ===
+    if (hButtonsHolder && hButtonsHolderMask) {
+        BITMAP bm;
+        GetObject(hButtonsHolder, sizeof(BITMAP), &bm);
+        float aspectRatio = (float)bm.bmWidth / (float)bm.bmHeight;
+
+        // 1. Izračunaj dimenzije dugmadi
+        int buttonsTop = menuButtons[0].rect.top;
+        int buttonsBottom = menuButtons[NUM_MENU_BUTTONS - 1].rect.bottom;
+        int buttonsTotalHeight = buttonsBottom - buttonsTop;
+        int oneButtonWidth = menuButtons[0].rect.right - menuButtons[0].rect.left;
+
+        // 2. LOGIKA SKALIRANJA:
+        // Prvo izračunaj veličinu holdera na osnovu ŠIRINE dugmeta
+        // (neka holder bude 50% širi od dugmeta da ima lufta sa strane)
+        int holderWidth = (int)(oneButtonWidth * 3);
+        int holderHeight = (int)(holderWidth / aspectRatio);
+
+        // 3. PROVJERA VISINE:
+        // Ako je tako izračunat holder prenizak da stanu sva dugmad,
+        // onda ga povećaj na osnovu visine dugmadi.
+        if (holderHeight < buttonsTotalHeight * 1.2) { // 1.2 znači 20% lufta gore/dole
+            holderHeight = (int)(buttonsTotalHeight * 1.2);
+            holderWidth = (int)(holderHeight * aspectRatio);
+        }
+
+        // 4. Centriranje (ovo ostaje isto kao prije)
+        int buttonsCenterX = menuButtons[0].rect.left + (oneButtonWidth / 2);
+        int holderX = buttonsCenterX - (holderWidth / 2) + (rect.right / 75); // Ostavio sam tvoj mali offset
+
+        int buttonsCenterY = buttonsTop + buttonsTotalHeight / 2;
+        int holderY = buttonsCenterY - (holderHeight / 1.95);
+
+        // Draw mask (SRCAND)
+        HBITMAP oldMemBmp = (HBITMAP)SelectObject(hdcMem, hButtonsHolderMask);
+        StretchBlt(hdcBuffer, holderX, holderY, holderWidth, holderHeight,
+                   hdcMem, 0, 0, bm.bmWidth, bm.bmHeight, SRCAND);
+
+        // Draw image (SRCPAINT)
+        SelectObject(hdcMem, hButtonsHolder);
+        StretchBlt(hdcBuffer, holderX, holderY, holderWidth, holderHeight,
+                   hdcMem, 0, 0, bm.bmWidth, bm.bmHeight, SRCPAINT);
+
+        SelectObject(hdcMem, oldMemBmp);
+    }
+
+    // === RENDER BUTTONS WITH BITMAP BACKGROUND ===
+    int buttonFontSize = max(16, rect.bottom / 30);  // Povećan font sa 18 na 20 i sa /25 na /20
     HFONT hButtonFont = CreateFont(buttonFontSize, 0, 0, 0, FW_BOLD, FALSE, FALSE, FALSE,
                                     DEFAULT_CHARSET, OUT_OUTLINE_PRECIS,
                                     CLIP_DEFAULT_PRECIS, ANTIALIASED_QUALITY,
@@ -151,29 +175,76 @@ void RenderMenu(HDC hdcBuffer, RECT rect) {
     for (int i = 0; i < NUM_MENU_BUTTONS; i++) {
         MenuButton* btn = &menuButtons[i];
 
-        // Button background with gradient effect
-        COLORREF btnColor;
-        if (btn->isHovered) {
-            btnColor = RGB(255, 100, 100);
+        // === RENDER BUTTON BITMAP INSTEAD OF DRAWN RECTANGLE ===
+        if (hMenuButton && hMenuButtonMask) {
+            BITMAP bm;
+            GetObject(hMenuButton, sizeof(BITMAP), &bm);
+
+            // Dimenzije dugmeta iz rect
+            int btnWidth = btn->rect.right - btn->rect.left;
+            int btnHeight = btn->rect.bottom - btn->rect.top;
+
+            // Render button background (mask first, then image)
+            SetStretchBltMode(hdcBuffer, HALFTONE);
+            SetBrushOrgEx(hdcBuffer, 0, 0, NULL);
+
+            // Draw mask (SRCAND)
+            HBITMAP oldMemBmp = (HBITMAP)SelectObject(hdcMem, hMenuButtonMask);
+            StretchBlt(hdcBuffer, btn->rect.left, btn->rect.top, btnWidth, btnHeight,
+                       hdcMem, 0, 0, bm.bmWidth, bm.bmHeight, SRCAND);
+
+            // Draw button image (SRCPAINT)
+            SelectObject(hdcMem, hMenuButton);
+            StretchBlt(hdcBuffer, btn->rect.left, btn->rect.top, btnWidth, btnHeight,
+                       hdcMem, 0, 0, bm.bmWidth, bm.bmHeight, SRCPAINT);
+
+            SelectObject(hdcMem, oldMemBmp);
+
+            /*// Optional: Add hover effect by drawing a semi-transparent overlay
+            if (btn->isHovered) {
+                // Lighter overlay for hover
+                HBRUSH hHoverBrush = CreateSolidBrush(RGB(255, 255, 255));
+                HPEN hHoverPen = CreatePen(PS_SOLID, 1, RGB(255, 255, 255));
+                HPEN hOldPen = (HPEN)SelectObject(hdcBuffer, hHoverPen);
+                HBRUSH hOldBrush = (HBRUSH)SelectObject(hdcBuffer, hHoverBrush);
+
+                // Set transparency (this won't work perfectly, but adds visual feedback)
+                SetROP2(hdcBuffer, R2_MERGEPEN);
+                Rectangle(hdcBuffer, btn->rect.left, btn->rect.top,
+                         btn->rect.right, btn->rect.bottom);
+                SetROP2(hdcBuffer, R2_COPYPEN);
+
+                SelectObject(hdcBuffer, hOldPen);
+                SelectObject(hdcBuffer, hOldBrush);
+                DeleteObject(hHoverPen);
+                DeleteObject(hHoverBrush);
+            }*/
         } else {
-            btnColor = RGB(200, 50, 50);
+            // Fallback: draw normal buttons if bitmap not loaded
+            COLORREF btnColor;
+            if (btn->isHovered) {
+                btnColor = RGB(255, 100, 100);
+            } else {
+                btnColor = RGB(200, 50, 50);
+            }
+
+            HBRUSH hBtnBrush = CreateSolidBrush(btnColor);
+            int borderWidth = max(2, rect.bottom / 350);
+            HPEN hBtnPen = CreatePen(PS_SOLID, borderWidth, RGB(255, 255, 0));
+            HPEN hOldPen = (HPEN)SelectObject(hdcBuffer, hBtnPen);
+            HBRUSH hOldBrush = (HBRUSH)SelectObject(hdcBuffer, hBtnBrush);
+
+            int cornerRadius = max(15, rect.bottom / 50);
+            RoundRect(hdcBuffer, btn->rect.left, btn->rect.top,
+                      btn->rect.right, btn->rect.bottom, cornerRadius, cornerRadius);
+
+            SelectObject(hdcBuffer, hOldPen);
+            SelectObject(hdcBuffer, hOldBrush);
+            DeleteObject(hBtnPen);
+            DeleteObject(hBtnBrush);
         }
 
-        HBRUSH hBtnBrush = CreateSolidBrush(btnColor);
-        int borderWidth = max(2, rect.bottom / 350);
-        HPEN hBtnPen = CreatePen(PS_SOLID, borderWidth, RGB(255, 255, 0));
-        HPEN hOldPen = (HPEN)SelectObject(hdcBuffer, hBtnPen);
-        HBRUSH hOldBrush = (HBRUSH)SelectObject(hdcBuffer, hBtnBrush);
-
-        int cornerRadius = max(15, rect.bottom / 50);
-        RoundRect(hdcBuffer, btn->rect.left, btn->rect.top,
-                  btn->rect.right, btn->rect.bottom, cornerRadius, cornerRadius);
-
-        SelectObject(hdcBuffer, hOldPen);
-        SelectObject(hdcBuffer, hOldBrush);
-        DeleteObject(hBtnPen);
-        DeleteObject(hBtnBrush);
-
+        // === RENDER TEXT ON TOP OF BUTTON ===
         // Button text shadow
         SetTextColor(hdcBuffer, RGB(0, 0, 0));
         SIZE textSize;
@@ -182,7 +253,7 @@ void RenderMenu(HDC hdcBuffer, RECT rect) {
         int textY = btn->rect.top + ((btn->rect.bottom - btn->rect.top) - textSize.cy) / 2;
         TextOut(hdcBuffer, textX + 2, textY + 2, btn->text, strlen(btn->text));
 
-        // Button text
+        // Button text (main)
         SetTextColor(hdcBuffer, RGB(255, 255, 0));
         TextOut(hdcBuffer, textX, textY, btn->text, strlen(btn->text));
     }
@@ -194,27 +265,38 @@ void RenderMenu(HDC hdcBuffer, RECT rect) {
     if (menuCharacter && menuCharacterMask) {
         BITMAP bm;
         GetObject(menuCharacter, sizeof(BITMAP), &bm);
+        int charHeight = (int)(rect.bottom * 0.75);
+        float aspectRatio = (float)bm.bmWidth / (float)bm.bmHeight;
+        int charWidth = (int)(charHeight * aspectRatio);
 
-        // Responsive character size
-        int charSize = max(150, min(rect.bottom / 2, rect.right / 4));
-        int charX = rect.right - charSize - max(50, rect.right / 10);
-        int charY = rect.bottom - charSize - max(30, rect.bottom / 25);
+        // Position on right side
+        int charX = rect.right - charWidth - max(30, rect.right / 20);
+        int charY = rect.bottom - charHeight - max(20, rect.bottom / 30);
+
+        SetStretchBltMode(hdcBuffer, HALFTONE);
+        SetBrushOrgEx(hdcBuffer, 0, 0, NULL);
 
         // Draw mask first (for transparency)
         HBITMAP oldMemBmp = (HBITMAP)SelectObject(hdcMem, menuCharacterMask);
-        StretchBlt(hdcBuffer, charX, charY, charSize, charSize,
+        StretchBlt(hdcBuffer, charX, charY, charWidth, charHeight,
                    hdcMem, 0, 0, bm.bmWidth, bm.bmHeight, SRCAND);
 
         // Draw character
         SelectObject(hdcMem, menuCharacter);
-        StretchBlt(hdcBuffer, charX, charY, charSize, charSize,
+        StretchBlt(hdcBuffer, charX, charY, charWidth, charHeight,
                    hdcMem, 0, 0, bm.bmWidth, bm.bmHeight, SRCPAINT);
 
         SelectObject(hdcMem, oldMemBmp);
     }
 
+    // Copy to screen
+    BitBlt(hdc, 0, 0, rect.right, rect.bottom, hdcBuffer, 0, 0, SRCCOPY);
+
     // Cleanup
+    SelectObject(hdcBuffer, oldBufferBmp);
+    DeleteObject(hbmBuffer);
     DeleteDC(hdcMem);
+    DeleteDC(hdcBuffer);
 }
 
 void HandleMenuClick(HWND hwnd, int x, int y) {
@@ -269,7 +351,7 @@ void ResetGame(HWND hwnd) {
     gameState.isLevelCleared = false;
     gameState.activeBalloonCount = 0;
     gameState.lives = MAX_LIVES;
-    gameState.currentMode = GAME_MODE_PLAYING;
+
     // Reset hero position
     RECT clientRect;
     GetClientRect(hwnd, &clientRect);

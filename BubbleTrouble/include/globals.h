@@ -29,6 +29,8 @@ extern HBITMAP nextButtonMask;
 extern HCURSOR gameCursor;
 extern HBITMAP wall1;
 extern HBITMAP wall2;
+extern HBITMAP hMenuButton;
+extern HBITMAP hMenuButtonMask;
 
 // ===== GAME OBJEKTI =====
 extern Projectile harpoon;
@@ -42,6 +44,7 @@ extern InputState inputState;
 extern GameState gameState;
 extern Balloon balloons[MAX_BALLOONS];
 extern HeartAnim hearts[5];
+
 
 // ===== UI =====
 extern MenuButton menuButtons[NUM_MENU_BUTTONS];
