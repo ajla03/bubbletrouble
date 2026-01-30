@@ -1,32 +1,15 @@
 #include <windows.h>
 #include <tchar.h>
 #include <wingdi.h>
-#include "resources.h"
+#include "resourceManager.h"
 #include "globals.h"
+#include "resources.h"
 #include "game.h"
 
 TCHAR szClassName[] = _T("CodeBlocksWindowsApp");
 
 LRESULT CALLBACK WindowProcedure(HWND, UINT, WPARAM, LPARAM);
 
-void LoadCustomFontFromResource(HINSTANCE hInst){
-    HRSRC hRes = FindResource(hInst, MAKEINTRESOURCE(IDR_MINI_FONT), RT_RCDATA);
-
-    if(!hRes) return;
-
-    DWORD size = SizeofResource(hInst, hRes);
-    HGLOBAL hMem = LoadResource(hInst, hRes);
-    void* data = LockResource(hMem);
-
-    DWORD fontCount;
-    hFontRes = AddFontMemResourceEx(
-        data,
-        size,
-        NULL,
-        &fontCount
-    );
-
-}
 
 int WINAPI WinMain(HINSTANCE hThisInstance, HINSTANCE hPrevInstance, LPSTR lpszArgument, int nCmdShow){
     HWND hwnd;
@@ -52,8 +35,6 @@ int WINAPI WinMain(HINSTANCE hThisInstance, HINSTANCE hPrevInstance, LPSTR lpszA
                           HWND_DESKTOP, NULL, hThisInstance, NULL);
 
     ShowWindow(hwnd, nCmdShow);
-
-    LoadCustomFontFromResource(hThisInstance);
 
     LoadBitmaps(hwnd, hThisInstance);
 
@@ -81,12 +62,12 @@ int WINAPI WinMain(HINSTANCE hThisInstance, HINSTANCE hPrevInstance, LPSTR lpszA
 LRESULT CALLBACK WindowProcedure(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam){
     switch (message){
         case WM_SETCURSOR: {
-         SetCursor(gameCursor);
+         SetCursor(gRes.gameCursor);
          return 0 ;
         }
         case WM_CREATE:
         {
-        hFont = CreateFont(
+        gRes.hFont = CreateFont(
             48, 0, 0, 0,
             FW_BOLD,
             FALSE, FALSE, FALSE,
@@ -176,7 +157,7 @@ LRESULT CALLBACK WindowProcedure(HWND hwnd, UINT message, WPARAM wParam, LPARAM 
             return 0;
         }
         case WM_DESTROY:
-            RemoveFontMemResourceEx(hFontRes);
+            RemoveFontMemResourceEx(gRes.hFontRes);
             PostQuitMessage(0);
             break;
         default:

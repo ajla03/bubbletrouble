@@ -1,0 +1,30 @@
+#pragma once
+#include <windows.h>
+
+struct ResourceManager{
+    HBITMAP character, characterMask;
+    HBITMAP arrow, arrowMask;
+    HBITMAP wall, wall1, wall2;
+    HBITMAP background;
+    HBITMAP torch, torchMask;
+    HBITMAP levelPlaceholderBlack, levelPlaceholderWhite;
+    HBITMAP heart, heartMask;
+    HBITMAP heartBkg, heartBkgMask;
+    HBITMAP heartBorder, heartBorderMask;
+    HBITMAP menuScreen, menuCharacter, menuCharacterMask;
+    HBITMAP hButtonsHolder, hButtonsHolderMask;
+    HBITMAP restartButton, restartButtonMask;
+    HBITMAP homeButton, homeButtonMask;
+    HBITMAP nextButton, nextButtonMask;
+    HBITMAP hMenuButton, hMenuButtonMask;
+
+    HCURSOR gameCursor;
+    HFONT hFont;
+    HANDLE hFontRes;
+
+    bool LoadAll(HINSTANCE hInstance);
+    void ReleaseAll();
+
+};
+
+extern ResourceManager gRes;

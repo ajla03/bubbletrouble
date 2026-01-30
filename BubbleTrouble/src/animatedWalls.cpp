@@ -1,4 +1,5 @@
 #include "globals.h"
+#include "resourceManager.h"
 #include "game.h"
 
 void StartWallTransition(HWND hwnd){
@@ -24,10 +25,10 @@ void DrawTransitionWalls(HDC hdc, RECT rect){
     SetStretchBltMode(hdc, HALFTONE);
     SetBrushOrgEx(hdc, 0, 0, NULL);
 
-    SelectObject(memDC, wall2);
+    SelectObject(memDC, gRes.wall2);
     StretchBlt(hdc, 0, animatedWalls.wallTopY, screenWidth, animatedWall.height, memDC, 0, 0, animatedWall.width, animatedWall.height, SRCCOPY);
 
-    SelectObject(memDC, wall1);
+    SelectObject(memDC, gRes.wall1);
     StretchBlt(hdc, 0, animatedWalls.wallBottomY, screenWidth, animatedWall.height, memDC, 0, 0, animatedWall.width, animatedWall.height, SRCCOPY);
 
     DeleteDC(memDC);

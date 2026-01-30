@@ -4,6 +4,7 @@
 #include <algorithm>
 #include "globals.h"
 #include "game.h"
+#include "resourceManager.h"
 
 // Helper macros if std::max/min don't work
 #ifndef max
@@ -76,10 +77,10 @@ void RenderMenu(HDC hdc, RECT rect ) {
     SetBrushOrgEx(hdcBuffer, 0, 0, NULL);
 
     // Render menu background
-    if (menuScreen) {
-        HBITMAP oldMemBmp = (HBITMAP)SelectObject(hdcMem, menuScreen);
+    if (gRes.menuScreen) {
+        HBITMAP oldMemBmp = (HBITMAP)SelectObject(hdcMem, gRes.menuScreen);
         BITMAP bm;
-        GetObject(menuScreen, sizeof(BITMAP), &bm);
+        GetObject(gRes.menuScreen, sizeof(BITMAP), &bm);
         StretchBlt(hdcBuffer, 0, 0, rect.right, rect.bottom,
                    hdcMem, 0, 0, bm.bmWidth, bm.bmHeight, SRCCOPY);
         SelectObject(hdcMem, oldMemBmp);
@@ -119,9 +120,9 @@ void RenderMenu(HDC hdc, RECT rect ) {
 
     // === RENDER BUTTONS HOLDER FIRST (in background) ===
    // === RENDER BUTTONS HOLDER FIRST (in background) ===
-    if (hButtonsHolder && hButtonsHolderMask) {
+    if (gRes.hButtonsHolder && gRes.hButtonsHolderMask) {
         BITMAP bm;
-        GetObject(hButtonsHolder, sizeof(BITMAP), &bm);
+        GetObject(gRes.hButtonsHolder, sizeof(BITMAP), &bm);
         float aspectRatio = (float)bm.bmWidth / (float)bm.bmHeight;
 
         // 1. Izračunaj dimenzije dugmadi
@@ -152,12 +153,12 @@ void RenderMenu(HDC hdc, RECT rect ) {
         int holderY = buttonsCenterY - (holderHeight / 1.95);
 
         // Draw mask (SRCAND)
-        HBITMAP oldMemBmp = (HBITMAP)SelectObject(hdcMem, hButtonsHolderMask);
+        HBITMAP oldMemBmp = (HBITMAP)SelectObject(hdcMem, gRes.hButtonsHolderMask);
         StretchBlt(hdcBuffer, holderX, holderY, holderWidth, holderHeight,
                    hdcMem, 0, 0, bm.bmWidth, bm.bmHeight, SRCAND);
 
         // Draw image (SRCPAINT)
-        SelectObject(hdcMem, hButtonsHolder);
+        SelectObject(hdcMem, gRes.hButtonsHolder);
         StretchBlt(hdcBuffer, holderX, holderY, holderWidth, holderHeight,
                    hdcMem, 0, 0, bm.bmWidth, bm.bmHeight, SRCPAINT);
 
@@ -176,9 +177,9 @@ void RenderMenu(HDC hdc, RECT rect ) {
         MenuButton* btn = &menuButtons[i];
 
         // === RENDER BUTTON BITMAP INSTEAD OF DRAWN RECTANGLE ===
-        if (hMenuButton && hMenuButtonMask) {
+        if (gRes.hMenuButton && gRes.hMenuButtonMask) {
             BITMAP bm;
-            GetObject(hMenuButton, sizeof(BITMAP), &bm);
+            GetObject(gRes.hMenuButton, sizeof(BITMAP), &bm);
 
             // Dimenzije dugmeta iz rect
             int btnWidth = btn->rect.right - btn->rect.left;
@@ -189,12 +190,12 @@ void RenderMenu(HDC hdc, RECT rect ) {
             SetBrushOrgEx(hdcBuffer, 0, 0, NULL);
 
             // Draw mask (SRCAND)
-            HBITMAP oldMemBmp = (HBITMAP)SelectObject(hdcMem, hMenuButtonMask);
+            HBITMAP oldMemBmp = (HBITMAP)SelectObject(hdcMem, gRes.hMenuButtonMask);
             StretchBlt(hdcBuffer, btn->rect.left, btn->rect.top, btnWidth, btnHeight,
                        hdcMem, 0, 0, bm.bmWidth, bm.bmHeight, SRCAND);
 
             // Draw button image (SRCPAINT)
-            SelectObject(hdcMem, hMenuButton);
+            SelectObject(hdcMem, gRes.hMenuButton);
             StretchBlt(hdcBuffer, btn->rect.left, btn->rect.top, btnWidth, btnHeight,
                        hdcMem, 0, 0, bm.bmWidth, bm.bmHeight, SRCPAINT);
 
@@ -262,9 +263,9 @@ void RenderMenu(HDC hdc, RECT rect ) {
     DeleteObject(hButtonFont);
 
     // === RENDER MENU CHARACTER ON RIGHT SIDE - RESPONSIVE ===
-    if (menuCharacter && menuCharacterMask) {
+    if (gRes.menuCharacter && gRes.menuCharacterMask) {
         BITMAP bm;
-        GetObject(menuCharacter, sizeof(BITMAP), &bm);
+        GetObject(gRes.menuCharacter, sizeof(BITMAP), &bm);
         int charHeight = (int)(rect.bottom * 0.75);
         float aspectRatio = (float)bm.bmWidth / (float)bm.bmHeight;
         int charWidth = (int)(charHeight * aspectRatio);
@@ -277,12 +278,12 @@ void RenderMenu(HDC hdc, RECT rect ) {
         SetBrushOrgEx(hdcBuffer, 0, 0, NULL);
 
         // Draw mask first (for transparency)
-        HBITMAP oldMemBmp = (HBITMAP)SelectObject(hdcMem, menuCharacterMask);
+        HBITMAP oldMemBmp = (HBITMAP)SelectObject(hdcMem, gRes.menuCharacterMask);
         StretchBlt(hdcBuffer, charX, charY, charWidth, charHeight,
                    hdcMem, 0, 0, bm.bmWidth, bm.bmHeight, SRCAND);
 
         // Draw character
-        SelectObject(hdcMem, menuCharacter);
+        SelectObject(hdcMem, gRes.menuCharacter);
         StretchBlt(hdcBuffer, charX, charY, charWidth, charHeight,
                    hdcMem, 0, 0, bm.bmWidth, bm.bmHeight, SRCPAINT);
 

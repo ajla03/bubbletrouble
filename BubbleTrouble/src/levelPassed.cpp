@@ -1,5 +1,6 @@
 #include "resources.h"
 #include "globals.h"
+#include "resourceManager.h"
 #include "game.h"
 
 void DrawLevelPassedScreen(HDC hdc, RECT rect){
@@ -26,7 +27,7 @@ void DrawLevelPassedScreen(HDC hdc, RECT rect){
         bf
     );
 
-    SelectObject(hdc, hFont);
+    SelectObject(hdc, gRes.hFont);
     SetBkMode(hdc, TRANSPARENT);
     SetTextColor(hdc, RGB(255, 255, 255));
 
@@ -50,9 +51,9 @@ void DrawLevelPassedScreen(HDC hdc, RECT rect){
     nextButtonInfo.x = homeButtonInfo.x + homeButtonInfo.width + 20;
     nextButtonInfo.y = h/3;
 
-    DrawButton(hdc, restartButton, restartButtonMask, restartButtonInfo);
-    DrawButton(hdc, homeButton, homeButtonMask, homeButtonInfo);
-    DrawButton(hdc, nextButton, nextButtonMask, nextButtonInfo);
+    DrawButton(hdc, gRes.restartButton, gRes.restartButtonMask, restartButtonInfo);
+    DrawButton(hdc, gRes.homeButton, gRes.homeButtonMask, homeButtonInfo);
+    DrawButton(hdc, gRes.nextButton, gRes.nextButtonMask, nextButtonInfo);
 
     // cleanup
     SelectObject(overlayDC, oldBmp);

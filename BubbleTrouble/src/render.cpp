@@ -1,5 +1,6 @@
 #include "resources.h"
 #include "globals.h"
+#include "resourceManager.h"
 #include "game.h"
 #include <windows.h>
 #include <algorithm>
@@ -23,7 +24,7 @@ void RefreshScreen(HWND hwnd){
    else if(gameState.currentMode == GAME_MODE_PLAYING || gameState.currentMode == GAME_OVER || gameState.isLevelCleared){
 
     // === RENDER WALLS ===
-    SelectObject(hdcMem, wall);
+    SelectObject(hdcMem, gRes.wall);
 
 
     for (int y = 0; y < rect.bottom; y += leftWall.height) {
@@ -33,7 +34,7 @@ void RefreshScreen(HWND hwnd){
     }
 
     // === RENDER BACKGROUND ===
-    SelectObject(hdcMem, background);
+    SelectObject(hdcMem, gRes.background);
 
     int tileW = backgroundInfo.width;
     int tileH = backgroundInfo.height;
@@ -100,17 +101,17 @@ void RefreshScreen(HWND hwnd){
     DrawHearts(hdcBuffer, rect, barHeight);
 
     // RENDER PLACEHOLDERA ZA LEVEL //
-    SelectObject(hdcMem, levelPlaceholderWhite);
+    SelectObject(hdcMem, gRes.levelPlaceholderWhite);
 
     int placeholderX = (rect.right / 2) - (levelPlaceholderInfo.width / 2);
     int placeholderY = rect.bottom - floorWall.height + levelPlaceholderInfo.height / 2 + barHeight;
     BitBlt(hdcBuffer, placeholderX, placeholderY, levelPlaceholderInfo.width, levelPlaceholderInfo.height, hdcMem, 0, 0, SRCAND);
 
-    SelectObject(hdcMem, levelPlaceholderBlack);
+    SelectObject(hdcMem, gRes.levelPlaceholderBlack);
     BitBlt(hdcBuffer, placeholderX, placeholderY, levelPlaceholderInfo.width, levelPlaceholderInfo.height, hdcMem, 0, 0, SRCPAINT);
 
     const char *levelText = "LEVEL 1";
-    HFONT oldFont = (HFONT) SelectObject(hdcBuffer, hFont);
+    HFONT oldFont = (HFONT) SelectObject(hdcBuffer, gRes.hFont);
     SetBkMode(hdcBuffer, TRANSPARENT);
     SetTextColor(hdcBuffer, RGB(0, 0, 0));
     SIZE textSize;
@@ -141,14 +142,14 @@ void RefreshScreen(HWND hwnd){
 
     int torchSrcX = torchInfo.currentFrame * torchInfo.width;
     int torchSrcY = torchInfo.currentRow * torchInfo.height;
-    SelectObject(hdcMem, torchMask);
+    SelectObject(hdcMem, gRes.torchMask);
     BitBlt(hdcBuffer, torchX1, torchY, torchInfo.width, torchInfo.height, hdcMem, torchSrcX, torchSrcY, SRCPAINT);
-    SelectObject(hdcMem, torch);
+    SelectObject(hdcMem, gRes.torch);
     BitBlt(hdcBuffer, torchX1, torchY, torchInfo.width, torchInfo.height, hdcMem, torchSrcX, torchSrcY, SRCAND);
 
-    SelectObject(hdcMem, torchMask);
+    SelectObject(hdcMem, gRes.torchMask);
     BitBlt(hdcBuffer, torchX2, torchY, torchInfo.width, torchInfo.height, hdcMem, torchSrcX, torchSrcY, SRCPAINT);
-    SelectObject(hdcMem, torch);
+    SelectObject(hdcMem, gRes.torch);
     BitBlt(hdcBuffer, torchX2, torchY, torchInfo.width, torchInfo.height, hdcMem, torchSrcX, torchSrcY, SRCAND);
 
 
@@ -164,11 +165,11 @@ void RefreshScreen(HWND hwnd){
         int visiblePart = std::min(harpoon.length, harpoon.height);
         int destY = rect.bottom - floorWall.height - visiblePart;
 
-        SelectObject(hdcMem, arrowMask);
+        SelectObject(hdcMem, gRes.arrowMask);
         StretchBlt(hdcBuffer, harpoon.x, destY, harpoon.width, visiblePart,
                    hdcMem, 0, 0, harpoon.width, visiblePart, SRCPAINT);
 
-        SelectObject(hdcMem, arrow);
+        SelectObject(hdcMem, gRes.arrow);
         StretchBlt(hdcBuffer, harpoon.x, destY, harpoon.width, visiblePart,
                    hdcMem, 0, 0, harpoon.width, visiblePart, SRCAND);
     }
@@ -178,10 +179,10 @@ void RefreshScreen(HWND hwnd){
     int srcX = hero.currentFrame * hero.width;
     int srcY = hero.currentRow * hero.height;
 
-    SelectObject(hdcMem, characterMask);
+    SelectObject(hdcMem, gRes.characterMask);
     BitBlt(hdcBuffer, hero.x, hero.y, hero.width, hero.height, hdcMem, srcX, srcY, SRCAND);
 
-    SelectObject(hdcMem, character);
+    SelectObject(hdcMem, gRes.character);
     BitBlt(hdcBuffer, hero.x, hero.y , hero.width, hero.height, hdcMem, srcX, srcY, SRCPAINT);
 
     // WELL DONE TEKST //
@@ -221,22 +222,22 @@ void DrawHearts(HDC hdc, RECT rect, int padding) {
         int y = startY;
 
         // === BACKGROUND  ===
-        HBITMAP oldBmp = (HBITMAP)SelectObject(hdcMem, heartBkgMask);
+        HBITMAP oldBmp = (HBITMAP)SelectObject(hdcMem, gRes.heartBkgMask);
         BitBlt(hdc, x, y, heartBgInfo.width, heartBgInfo.height, hdcMem, 0, 0, SRCPAINT);
-        SelectObject(hdcMem, heartBkg);
+        SelectObject(hdcMem, gRes.heartBkg);
         BitBlt(hdc, x, y, heartBgInfo.width, heartBgInfo.height, hdcMem, 0, 0, SRCAND);
 
         // === BORDER ===
-        SelectObject(hdcMem, heartBorderMask);
+        SelectObject(hdcMem, gRes.heartBorderMask);
         BitBlt(hdc, x, y, heartBorderInfo.width, heartBorderInfo.height, hdcMem, 0, 0, SRCPAINT);
-        SelectObject(hdcMem, heartBorder);
+        SelectObject(hdcMem, gRes.heartBorder);
         BitBlt(hdc, x, y, heartBorderInfo.width, heartBorderInfo.height, hdcMem, 0, 0, SRCAND);
 
         // === FILL  ===
         if (i < gameState.lives) {
             int srcX = hearts[i].currentFrame * heartInfo.width;
 
-            SelectObject(hdcMem, heartMask);
+            SelectObject(hdcMem, gRes.heartMask);
             BitBlt(
                 hdc,
                 x,
@@ -249,7 +250,7 @@ void DrawHearts(HDC hdc, RECT rect, int padding) {
                 SRCPAINT
             );
 
-            SelectObject(hdcMem, heart);
+            SelectObject(hdcMem, gRes.heart);
             BitBlt(
                 hdc,
                 x,

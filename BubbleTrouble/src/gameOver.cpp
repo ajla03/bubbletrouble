@@ -1,6 +1,8 @@
 #include "resources.h"
 #include "types.h"
 #include "globals.h"
+#include "resourceManager.h"
+
 
 
 void DrawButton(HDC hdc, HBITMAP bmp, HBITMAP mask, Button& button)
@@ -81,7 +83,7 @@ void DrawGameOverScreen(HDC hdc, RECT rect)
         bf
     );
 
-    SelectObject(hdc, hFont);
+    SelectObject(hdc, gRes.hFont);
     SetBkMode(hdc, TRANSPARENT);
     SetTextColor(hdc, RGB(255, 255, 255));
 
@@ -102,8 +104,8 @@ void DrawGameOverScreen(HDC hdc, RECT rect)
     homeButtonInfo.x = w/2 + 10;
     homeButtonInfo.y = h/3;
 
-    DrawButton(hdc, restartButton, restartButtonMask, restartButtonInfo);
-    DrawButton(hdc, homeButton, homeButtonMask, homeButtonInfo);
+    DrawButton(hdc,gRes.restartButton, gRes.restartButtonMask, restartButtonInfo);
+    DrawButton(hdc, gRes.homeButton, gRes.homeButtonMask, homeButtonInfo);
 
     // cleanup
     SelectObject(overlayDC, oldBmp);
