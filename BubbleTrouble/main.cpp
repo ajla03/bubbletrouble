@@ -2,7 +2,7 @@
 #include <tchar.h>
 #include <wingdi.h>
 #include "resourceManager.h"
-#include "globals.h"
+#include "gameContext.h"
 #include "resources.h"
 #include "game.h"
 
@@ -80,7 +80,7 @@ LRESULT CALLBACK WindowProcedure(HWND hwnd, UINT message, WPARAM wParam, LPARAM 
             );
         }
           case WM_SIZE: {
-            if (gameState.currentMode == GAME_MODE_MENU) {
+            if (gGame.gameState.currentMode == GAME_MODE_MENU) {
                 InitializeMenu(hwnd);
             }
             InvalidateRect(hwnd, NULL, FALSE);
@@ -97,37 +97,37 @@ LRESULT CALLBACK WindowProcedure(HWND hwnd, UINT message, WPARAM wParam, LPARAM 
         }
 
         case WM_LBUTTONDOWN: {
-            if (gameState.currentMode == GAME_OVER || gameState.isLevelCleared == true) {
+            if (gGame.gameState.currentMode == GAME_OVER || gGame.gameState.isLevelCleared == true) {
                 int mx = LOWORD(lParam);
                 int my = HIWORD(lParam);
-                   if (mx >= restartButtonInfo.x &&
-                       mx <= restartButtonInfo.x + restartButtonInfo.width &&
-                       my >= restartButtonInfo.y &&
-                       my <= restartButtonInfo.y + restartButtonInfo.height)
+                   if (mx >= gGame.restartButtonInfo.x &&
+                       mx <= gGame.restartButtonInfo.x + gGame.restartButtonInfo.width &&
+                       my >= gGame.restartButtonInfo.y &&
+                       my <= gGame.restartButtonInfo.y + gGame.restartButtonInfo.height)
                     {
-                        gameState.pendingRestart = true;
+                        gGame.gameState.pendingRestart = true;
                         StartWallTransition(hwnd);
                         return 0;
                     }
-                   if (mx >= homeButtonInfo.x &&
-                        mx <= homeButtonInfo.x + homeButtonInfo.width &&
-                        my >= homeButtonInfo.y &&
-                        my <= homeButtonInfo.y + homeButtonInfo.height)
+                   if (mx >= gGame.homeButtonInfo.x &&
+                        mx <= gGame.homeButtonInfo.x + gGame.homeButtonInfo.width &&
+                        my >= gGame.homeButtonInfo.y &&
+                        my <= gGame.homeButtonInfo.y + gGame.homeButtonInfo.height)
                     {
-                        gameState.pendingHome = true;
+                        gGame.gameState.pendingHome = true;
                         StartWallTransition(hwnd);
                         return 0;
                      }
-                    if(mx >= nextButtonInfo.x &&
-                       mx <= nextButtonInfo.x + nextButtonInfo.width &&
-                       my >= nextButtonInfo.y &&
-                       my <= nextButtonInfo.y + nextButtonInfo.height &&
-                       gameState.isLevelCleared == true){
+                    if(mx >= gGame.nextButtonInfo.x &&
+                       mx <=gGame.nextButtonInfo.x + gGame.nextButtonInfo.width &&
+                       my >= gGame.nextButtonInfo.y &&
+                       my <= gGame.nextButtonInfo.y + gGame.nextButtonInfo.height &&
+                       gGame.gameState.isLevelCleared == true){
 
                          MessageBox(hwnd, "Other levels arent implemented yet!", "Next level warning", MB_OK);
                          return 0;
                        }
-            }else if (gameState.currentMode == GAME_MODE_MENU) {
+            }else if (gGame.gameState.currentMode == GAME_MODE_MENU) {
                 int x = LOWORD(lParam);
                 int y = HIWORD(lParam);
                 HandleMenuClick(hwnd, x, y);
@@ -138,19 +138,19 @@ LRESULT CALLBACK WindowProcedure(HWND hwnd, UINT message, WPARAM wParam, LPARAM 
         case WM_MOUSEMOVE: {
             int x = LOWORD(lParam);
             int y = HIWORD(lParam);
-            if (gameState.currentMode == GAME_MODE_MENU) {
+            if (gGame.gameState.currentMode == GAME_MODE_MENU) {
                 HandleMenuMouseMove(hwnd, x, y);
-            }else if(gameState.currentMode == GAME_OVER || gameState.isLevelCleared == true){
-                CheckHover(homeButtonInfo, x, y);
-                CheckHover(restartButtonInfo, x, y);
-                CheckHover(nextButtonInfo, x, y);
+            }else if(gGame.gameState.currentMode == GAME_OVER || gGame.gameState.isLevelCleared == true){
+                CheckHover(gGame.homeButtonInfo, x, y);
+                CheckHover(gGame.restartButtonInfo, x, y);
+                CheckHover(gGame.nextButtonInfo, x, y);
             }
             return 0;
         }
 
         case WM_KEYDOWN: {
             if (wParam == VK_ESCAPE) {
-                gameState.currentMode = GAME_MODE_MENU;
+                gGame.gameState.currentMode = GAME_MODE_MENU;
                 InitializeMenu(hwnd);
                 InvalidateRect(hwnd, NULL, FALSE);
             }

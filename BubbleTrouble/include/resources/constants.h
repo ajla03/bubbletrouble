@@ -23,3 +23,4 @@
 // ==== KONSTANTA ZA MENU DUGMD ==== //
 #define NUM_MENU_BUTTONS 3
 
+#define HERO_INVINCIBLE_TIME 0.5f

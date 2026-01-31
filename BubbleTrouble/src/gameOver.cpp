@@ -1,6 +1,6 @@
 #include "resources.h"
 #include "types.h"
-#include "globals.h"
+#include "gameContext.h"
 #include "resourceManager.h"
 
 
@@ -99,13 +99,13 @@ void DrawGameOverScreen(HDC hdc, RECT rect)
         strlen(text)
     );
 
-    restartButtonInfo.x = w/2 - restartButtonInfo.width - 10;
-    restartButtonInfo.y = h/3;
-    homeButtonInfo.x = w/2 + 10;
-    homeButtonInfo.y = h/3;
+    gGame.restartButtonInfo.x = w/2 - gGame.restartButtonInfo.width - 10;
+    gGame.restartButtonInfo.y = h/3;
+    gGame.homeButtonInfo.x = w/2 + 10;
+    gGame.homeButtonInfo.y = h/3;
 
-    DrawButton(hdc,gRes.restartButton, gRes.restartButtonMask, restartButtonInfo);
-    DrawButton(hdc, gRes.homeButton, gRes.homeButtonMask, homeButtonInfo);
+    DrawButton(hdc,gRes.restartButton, gRes.restartButtonMask, gGame.restartButtonInfo);
+    DrawButton(hdc, gRes.homeButton, gRes.homeButtonMask, gGame.homeButtonInfo);
 
     // cleanup
     SelectObject(overlayDC, oldBmp);

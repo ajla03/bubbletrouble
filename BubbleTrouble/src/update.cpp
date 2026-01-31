@@ -1,55 +1,55 @@
 #include "resources.h"
-#include "globals.h"
+#include "gameContext.h"
 #include "game.h"
 #include <windows.h>
 
 void UpdateHeroCoolDown(float dt){
-    if(hero.heroHitCooldown > 0)
-        hero.heroHitCooldown -=dt;
+    if(gGame.hero.heroHitCooldown > 0)
+        gGame.hero.heroHitCooldown -=dt;
 }
 
 void UpdateHearts(){
- for (int i = 0; i < gameState.lives; i++) {
-    hearts[i].animCounter++;
+ for (int i = 0; i < gGame.gameState.lives; i++) {
+    gGame.hearts[i].animCounter++;
 
-    if (hearts[i].animCounter >= HEART_ANIM_SPEED) {
-        hearts[i].animCounter = 0;
-        hearts[i].currentFrame++;
+    if (gGame.hearts[i].animCounter >= HEART_ANIM_SPEED) {
+        gGame.hearts[i].animCounter = 0;
+        gGame.hearts[i].currentFrame++;
 
-        if (hearts[i].currentFrame >= HEART_FRAMES) {
-            hearts[i].currentFrame = 0;
+        if (gGame.hearts[i].currentFrame >= HEART_FRAMES) {
+            gGame.hearts[i].currentFrame = 0;
         }
     }
  }
 }
 
 void Update(HWND hwnd){
-     if (!gameState.isGameOver && gameState.timeLeft > 0 && !gameState.isLevelCleared) {
-        gameState.timeLeft -= 1.0;
-    } else if (gameState.timeLeft <= 0) {
-        gameState.timeLeft = 0;
-        gameState.isGameOver = true;
+     if (!gGame.gameState.isGameOver && gGame.gameState.timeLeft > 0 && !gGame.gameState.isLevelCleared) {
+        gGame.gameState.timeLeft -= 1.0;
+    } else if (gGame.gameState.timeLeft <= 0) {
+        gGame.gameState.timeLeft = 0;
+        gGame.gameState.isGameOver = true;
     }
-    if (harpoon.isActive){
+    if (gGame.harpoon.isActive){
         RECT rect;
         GetClientRect(hwnd, &rect);
-        harpoon.length += harpoon.dy;
-        harpoon.y = rect.bottom - floorWall.height;
+        gGame.harpoon.length += gGame.harpoon.dy;
+        gGame.harpoon.y = rect.bottom - gGame.floorWall.height;
 
-        if (harpoon.length >= rect.bottom){
-            harpoon.isActive = false;
+        if (gGame.harpoon.length >= rect.bottom){
+            gGame.harpoon.isActive = false;
         }
     }
 
     // update baklji
-    torchInfo.animCounter++;
-    if(torchInfo.animCounter > 5){
-    torchInfo.currentFrame++;
-    if (torchInfo.currentFrame >= 4) {
-        torchInfo.currentFrame = 0;
-        torchInfo.currentRow = (torchInfo.currentRow + 1) % 2;
+    gGame.torchInfo.animCounter++;
+    if(gGame.torchInfo.animCounter > 5){
+    gGame.torchInfo.currentFrame++;
+    if (gGame.torchInfo.currentFrame >= 4) {
+        gGame.torchInfo.currentFrame = 0;
+        gGame.torchInfo.currentRow = (gGame.torchInfo.currentRow + 1) % 2;
      }
-     torchInfo.animCounter = 0;
+     gGame.torchInfo.animCounter = 0;
     }
 
     UpdateHeroCoolDown(0.016f);
@@ -76,43 +76,43 @@ void CheckHover(Button& button, int mx, int my){
 }
 
 void UpdateWallTransition(HWND hwnd){
-    if(transitionState == TRANSITION_CLOSING){
-        animatedWalls.wallTopY +=animatedWalls.wallSpeed;
-        animatedWalls.wallBottomY -=animatedWalls.wallSpeed;
+    if(gGame.transitionState == TRANSITION_CLOSING){
+        gGame.animatedWalls.wallTopY +=gGame.animatedWalls.wallSpeed;
+        gGame.animatedWalls.wallBottomY -=gGame.animatedWalls.wallSpeed;
 
-        if(animatedWalls.wallTopY + animatedWall.height >= animatedWalls.wallBottomY){
+        if(gGame.animatedWalls.wallTopY + gGame.animatedWall.height >= gGame.animatedWalls.wallBottomY){
 
-            if(gameState.pendingRestart){
+            if(gGame.gameState.pendingRestart){
                 ResetGame(hwnd);
             }
 
-            animatedWalls.transitionWaitStart = GetTickCount();
-            transitionState = TRANSITION_WAIT;
+            gGame.animatedWalls.transitionWaitStart = GetTickCount();
+            gGame.transitionState = TRANSITION_WAIT;
         }
-     }else if (transitionState == TRANSITION_WAIT)
+     }else if (gGame.transitionState == TRANSITION_WAIT)
     {
-        if (GetTickCount() - animatedWalls.transitionWaitStart >= 400)
+        if (GetTickCount() - gGame.animatedWalls.transitionWaitStart >= 400)
         {
-            if(gameState.pendingHome){
-                gameState.currentMode = GAME_MODE_MENU;
-                gameState.isGameOver = false;
-                gameState.isLevelCleared = false;
+            if(gGame.gameState.pendingHome){
+                gGame.gameState.currentMode = GAME_MODE_MENU;
+                gGame.gameState.isGameOver = false;
+                gGame.gameState.isLevelCleared = false;
             }
 
-            transitionState = TRANSITION_OPENING;
+            gGame.transitionState = TRANSITION_OPENING;
         }
     }
-     else if (transitionState == TRANSITION_OPENING)
+     else if (gGame.transitionState == TRANSITION_OPENING)
     {
-        animatedWalls.wallTopY -= animatedWalls.wallSpeed;
-        animatedWalls.wallBottomY += animatedWalls.wallSpeed;
+        gGame.animatedWalls.wallTopY -= gGame.animatedWalls.wallSpeed;
+        gGame.animatedWalls.wallBottomY += gGame.animatedWalls.wallSpeed;
 
-        if (animatedWalls.wallTopY <= -animatedWall.height)
+        if (gGame.animatedWalls.wallTopY <= -gGame.animatedWall.height)
         {
 
-            transitionState = TRANSITION_NONE;
-            gameState.pendingHome = false;
-            gameState.pendingRestart = false;
+            gGame.transitionState = TRANSITION_NONE;
+            gGame.gameState.pendingHome = false;
+            gGame.gameState.pendingRestart = false;
         }
     }
 }

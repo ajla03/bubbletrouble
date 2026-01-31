@@ -1,24 +1,24 @@
 #include "resources.h"
-#include "globals.h"
+#include "gameContext.h"
 #include "game.h"
 #include <windows.h>
 #include <cmath>
 
 void UpdateBalloons(HWND hwnd) {
-    if(gameState.isGameOver)
+    if(gGame.gameState.isGameOver)
         return;
 
     RECT rect;
     GetClientRect(hwnd, &rect);
 
-    int FLOOR_Y = rect.bottom - floorWall.height;
-    int LEFT_WALL_X = leftWall.width;
-    int RIGHT_WALL_X = rect.right - rightWall.width;
+    int FLOOR_Y = rect.bottom - gGame.floorWall.height;
+    int LEFT_WALL_X = gGame.leftWall.width;
+    int RIGHT_WALL_X = rect.right - gGame.rightWall.width;
 
     for (int i = 0; i < MAX_BALLOONS; i++) {
-        if (!balloons[i].active) continue;
+        if (!gGame.balloons[i].active) continue;
 
-        Balloon* b = &balloons[i];
+        Balloon* b = &gGame.balloons[i];
 
         //gravitacija
         b->speedY += BALLOON_GRAVITY;
@@ -53,7 +53,7 @@ void UpdateBalloons(HWND hwnd) {
             b->speedY = 0.0f;
         }
 
-        float minBounce = hero.height + 40.0f;
+        float minBounce = gGame.hero.height + 40.0f;
         float estimatedPeak  = b->bounceSpeed * 12.0f;
         if(estimatedPeak < minBounce)
             b->bounceSpeed +=0.2f;
@@ -61,42 +61,42 @@ void UpdateBalloons(HWND hwnd) {
 }
 
 void CheckCollisions(){
-    float harpoonCenterX = harpoon.x + harpoon.width / 2.0f;
-    float harpoonTop = harpoon.y - harpoon.length;
-    float harpoonBottom = harpoon.y;
+    float harpoonCenterX = gGame.harpoon.x + gGame.harpoon.width / 2.0f;
+    float harpoonTop = gGame.harpoon.y - gGame.harpoon.length;
+    float harpoonBottom =gGame.harpoon.y;
 
     for (int i = 0; i < MAX_BALLOONS; i++) {
-        if (!balloons[i].active) continue;
+        if (!gGame.balloons[i].active) continue;
 
-        Balloon* b = &balloons[i];
+        Balloon* b = &gGame.balloons[i];
         // check collision with hero
-        float closestX = std::max(float(hero.x), std::min(b->x, (float)(hero.x + hero.width)));
-        float closestY = std::max((float)hero.y, std::min(b->y,(float)(hero.y + hero.height)));
+        float closestX = std::max(float(gGame.hero.x), std::min(b->x, (float)(gGame.hero.x + gGame.hero.width)));
+        float closestY = std::max((float)gGame.hero.y, std::min(b->y,(float)(gGame.hero.y + gGame.hero.height)));
         float dx = b->x - closestX;
         float dy = b->y - closestY;
         float distance = sqrt(dx*dx + dy*dy);
-        if(distance < b->radius && hero.heroHitCooldown <= 0) {
-            --gameState.lives;
-            hero.heroHitCooldown = HERO_INVINCIBLE_TIME;
-            if(gameState.lives==0){
-                gameState.isGameOver = true;
-                gameState.currentMode = GAME_OVER;
+        if(distance < b->radius && gGame.hero.heroHitCooldown <= 0) {
+            --gGame.gameState.lives;
+            gGame.hero.heroHitCooldown = HERO_INVINCIBLE_TIME;
+            if(gGame.gameState.lives==0){
+                gGame.gameState.isGameOver = true;
+                gGame.gameState.currentMode = GAME_OVER;
             }
             break;
         }
 
 
         // check collision with harpoon
-        if(harpoon.isActive){
+        if(gGame.harpoon.isActive){
 
         float distanceHarpoonX = fabs(b->x - harpoonCenterX);
 
         if (distanceHarpoonX <= b->radius) {
                 if (harpoonTop <= b->y + b->radius && harpoonBottom >= b->y - b->radius) {
                     SplitBalloon(i);
-                    if(gameState.activeBalloonCount == 0)
-                        gameState.isLevelCleared = true;
-                    harpoon.isActive = false;
+                    if(gGame.gameState.activeBalloonCount == 0)
+                        gGame.gameState.isLevelCleared = true;
+                    gGame.harpoon.isActive = false;
                     break;
                 }
             }
@@ -105,7 +105,7 @@ void CheckCollisions(){
 }
 
 void SplitBalloon(int index) {
-    Balloon* b = &balloons[index];
+    Balloon* b = &gGame.balloons[index];
     float newRadius = b->radius /2.0f;
 
     PlaySound(MAKEINTRESOURCE(IDR_BALLOON_POP),
@@ -116,17 +116,17 @@ void SplitBalloon(int index) {
 
     if (newRadius >= MIN_RADIUS) {
         for (int i = 0; i < MAX_BALLOONS; i++) {
-            if (!balloons[i].active) {
+            if (!gGame.balloons[i].active) {
                 InitBalloon(i, b->x - 10, b->y, newRadius, -3.5f, b->color);
-                balloons[i].speedY = -balloons[i].bounceSpeed * SPLIT_BOOST_FACTOR;
+                gGame.balloons[i].speedY = -gGame.balloons[i].bounceSpeed * SPLIT_BOOST_FACTOR;
                 break;
             }
         }
 
         for (int i = 0; i < MAX_BALLOONS; i++) {
-            if (!balloons[i].active) {
+            if (!gGame.balloons[i].active) {
                 InitBalloon(i, b->x + 10, b->y, newRadius, 3.5f, b->color);
-                balloons[i].speedY = -balloons[i].bounceSpeed * SPLIT_BOOST_FACTOR;
+                gGame.balloons[i].speedY = -gGame.balloons[i].bounceSpeed * SPLIT_BOOST_FACTOR;
 
                 break;
             }
@@ -134,7 +134,7 @@ void SplitBalloon(int index) {
     }
 
     b->active = false;
-    gameState.activeBalloonCount--;
+    gGame.gameState.activeBalloonCount--;
 }
 
 void DrawBalloonGDI(HDC hdc, Balloon* b) {

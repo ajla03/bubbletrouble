@@ -2,7 +2,7 @@
 #include <windows.h>
 #include <stdio.h>
 #include <algorithm>
-#include "globals.h"
+#include "gameContext.h"
 #include "game.h"
 #include "resourceManager.h"
 
@@ -42,28 +42,28 @@ void InitializeMenu(HWND hwnd) {
     int startY = (clientRect.bottom - totalButtonsHeight) / 2 + clientRect.bottom / 10;
 
     // 1 PLAYER button - centered on leftSideCenter
-    menuButtons[0].rect.left = leftSideCenter - buttonWidth / 2;
-    menuButtons[0].rect.top = startY;
-    menuButtons[0].rect.right = leftSideCenter + buttonWidth / 2;
-    menuButtons[0].rect.bottom = startY + buttonHeight;
-    menuButtons[0].text = "1 PLAYER";
-    menuButtons[0].isHovered = false;
+    gGame.menuButtons[0].rect.left = leftSideCenter - buttonWidth / 2;
+    gGame.menuButtons[0].rect.top = startY;
+    gGame.menuButtons[0].rect.right = leftSideCenter + buttonWidth / 2;
+    gGame.menuButtons[0].rect.bottom = startY + buttonHeight;
+    gGame.menuButtons[0].text = "1 PLAYER";
+    gGame.menuButtons[0].isHovered = false;
 
     // 2 PLAYERS button - centered on leftSideCenter
-    menuButtons[1].rect.left = leftSideCenter - buttonWidth / 2;
-    menuButtons[1].rect.top = startY + (buttonHeight + buttonSpacing);
-    menuButtons[1].rect.right = leftSideCenter + buttonWidth / 2;
-    menuButtons[1].rect.bottom = startY + (buttonHeight + buttonSpacing) + buttonHeight;
-    menuButtons[1].text = "2 PLAYERS";
-    menuButtons[1].isHovered = false;
+    gGame.menuButtons[1].rect.left = leftSideCenter - buttonWidth / 2;
+    gGame.menuButtons[1].rect.top = startY + (buttonHeight + buttonSpacing);
+    gGame.menuButtons[1].rect.right = leftSideCenter + buttonWidth / 2;
+    gGame.menuButtons[1].rect.bottom = startY + (buttonHeight + buttonSpacing) + buttonHeight;
+    gGame.menuButtons[1].text = "2 PLAYERS";
+    gGame.menuButtons[1].isHovered = false;
 
     // SETTINGS button - centered on leftSideCenter
-    menuButtons[2].rect.left = leftSideCenter - buttonWidth / 2;
-    menuButtons[2].rect.top = startY + 2 * (buttonHeight + buttonSpacing);
-    menuButtons[2].rect.right = leftSideCenter + buttonWidth / 2;
-    menuButtons[2].rect.bottom = startY + 2 * (buttonHeight + buttonSpacing) + buttonHeight;
-    menuButtons[2].text = "SETTINGS";
-    menuButtons[2].isHovered = false;
+    gGame.menuButtons[2].rect.left = leftSideCenter - buttonWidth / 2;
+    gGame.menuButtons[2].rect.top = startY + 2 * (buttonHeight + buttonSpacing);
+    gGame.menuButtons[2].rect.right = leftSideCenter + buttonWidth / 2;
+    gGame.menuButtons[2].rect.bottom = startY + 2 * (buttonHeight + buttonSpacing) + buttonHeight;
+    gGame.menuButtons[2].text = "SETTINGS";
+    gGame.menuButtons[2].isHovered = false;
 }
 
 void RenderMenu(HDC hdc, RECT rect ) {
@@ -126,10 +126,10 @@ void RenderMenu(HDC hdc, RECT rect ) {
         float aspectRatio = (float)bm.bmWidth / (float)bm.bmHeight;
 
         // 1. Izračunaj dimenzije dugmadi
-        int buttonsTop = menuButtons[0].rect.top;
-        int buttonsBottom = menuButtons[NUM_MENU_BUTTONS - 1].rect.bottom;
+        int buttonsTop = gGame.menuButtons[0].rect.top;
+        int buttonsBottom = gGame.menuButtons[NUM_MENU_BUTTONS - 1].rect.bottom;
         int buttonsTotalHeight = buttonsBottom - buttonsTop;
-        int oneButtonWidth = menuButtons[0].rect.right - menuButtons[0].rect.left;
+        int oneButtonWidth = gGame.menuButtons[0].rect.right - gGame.menuButtons[0].rect.left;
 
         // 2. LOGIKA SKALIRANJA:
         // Prvo izračunaj veličinu holdera na osnovu ŠIRINE dugmeta
@@ -146,7 +146,7 @@ void RenderMenu(HDC hdc, RECT rect ) {
         }
 
         // 4. Centriranje (ovo ostaje isto kao prije)
-        int buttonsCenterX = menuButtons[0].rect.left + (oneButtonWidth / 2);
+        int buttonsCenterX = gGame.menuButtons[0].rect.left + (oneButtonWidth / 2);
         int holderX = buttonsCenterX - (holderWidth / 2) + (rect.right / 75); // Ostavio sam tvoj mali offset
 
         int buttonsCenterY = buttonsTop + buttonsTotalHeight / 2;
@@ -174,7 +174,7 @@ void RenderMenu(HDC hdc, RECT rect ) {
     HFONT hOldButtonFont = (HFONT)SelectObject(hdcBuffer, hButtonFont);
 
     for (int i = 0; i < NUM_MENU_BUTTONS; i++) {
-        MenuButton* btn = &menuButtons[i];
+        MenuButton* btn = &gGame.menuButtons[i];
 
         // === RENDER BUTTON BITMAP INSTEAD OF DRAWN RECTANGLE ===
         if (gRes.hMenuButton && gRes.hMenuButtonMask) {
@@ -304,7 +304,7 @@ void HandleMenuClick(HWND hwnd, int x, int y) {
     POINT pt = {x, y};
 
     for (int i = 0; i < NUM_MENU_BUTTONS; i++) {
-        if (PtInRect(&menuButtons[i].rect, pt)) {
+        if (PtInRect(&gGame.menuButtons[i].rect, pt)) {
             switch(i) {
                 case 0: // 1 PLAYER
                     StartGame(hwnd);
@@ -326,10 +326,10 @@ void HandleMenuMouseMove(HWND hwnd, int x, int y) {
     bool needsRedraw = false;
 
     for (int i = 0; i < NUM_MENU_BUTTONS; i++) {
-        bool wasHovered = menuButtons[i].isHovered;
-        menuButtons[i].isHovered = PtInRect(&menuButtons[i].rect, pt);
+        bool wasHovered = gGame.menuButtons[i].isHovered;
+        gGame.menuButtons[i].isHovered = PtInRect(&gGame.menuButtons[i].rect, pt);
 
-        if (wasHovered != menuButtons[i].isHovered) {
+        if (wasHovered != gGame.menuButtons[i].isHovered) {
             needsRedraw = true;
         }
     }
@@ -340,34 +340,34 @@ void HandleMenuMouseMove(HWND hwnd, int x, int y) {
 }
 
 void StartGame(HWND hwnd) {
-    gameState.currentMode = GAME_MODE_PLAYING;
+    gGame.gameState.currentMode = GAME_MODE_PLAYING;
     ResetGame(hwnd);
     InvalidateRect(hwnd, NULL, FALSE);
 }
 
 void ResetGame(HWND hwnd) {
     // Reset game state
-    gameState.timeLeft = maxTime;
-    gameState.isGameOver = false;
-    gameState.isLevelCleared = false;
-    gameState.activeBalloonCount = 0;
-    gameState.lives = MAX_LIVES;
+    gGame.gameState.timeLeft = maxTime;
+    gGame.gameState.isGameOver = false;
+    gGame.gameState.isLevelCleared = false;
+    gGame.gameState.activeBalloonCount = 0;
+    gGame.gameState.lives = MAX_LIVES;
 
     // Reset hero position
     RECT clientRect;
     GetClientRect(hwnd, &clientRect);
-    hero.x = leftWall.width + hero.width;
-    hero.y = 100;
-    hero.currentRow = 2;
-    hero.currentFrame = 0;
+    gGame.hero.x = gGame.leftWall.width + gGame.hero.width;
+    gGame.hero.y = 100;
+    gGame.hero.currentRow = 2;
+    gGame.hero.currentFrame = 0;
 
     // Reset harpoon
-    harpoon.isActive = false;
-    harpoon.length = 0;
+    gGame.harpoon.isActive = false;
+    gGame.harpoon.length = 0;
 
     // Clear all balloons
     for (int i = 0; i < MAX_BALLOONS; i++) {
-        balloons[i].active = false;
+        gGame.balloons[i].active = false;
     }
 
     // Initialize starting balloons

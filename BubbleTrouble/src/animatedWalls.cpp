@@ -1,4 +1,4 @@
-#include "globals.h"
+#include "gameContext.h"
 #include "resourceManager.h"
 #include "game.h"
 
@@ -6,17 +6,17 @@ void StartWallTransition(HWND hwnd){
     RECT rect;
     GetClientRect(hwnd, &rect);
 
-    animatedWalls.wallTopY = -animatedWall.height;
-    animatedWalls.wallBottomY = rect.bottom;
+    gGame.animatedWalls.wallTopY = -gGame.animatedWall.height;
+    gGame.animatedWalls.wallBottomY = rect.bottom;
 
-    transitionState = TRANSITION_CLOSING;
+    gGame.transitionState = TRANSITION_CLOSING;
 
 }
 
 
 void DrawTransitionWalls(HDC hdc, RECT rect){
 
-    if(transitionState == TRANSITION_NONE)
+    if(gGame.transitionState == TRANSITION_NONE)
         return;
 
     HDC memDC = CreateCompatibleDC(hdc);
@@ -26,10 +26,10 @@ void DrawTransitionWalls(HDC hdc, RECT rect){
     SetBrushOrgEx(hdc, 0, 0, NULL);
 
     SelectObject(memDC, gRes.wall2);
-    StretchBlt(hdc, 0, animatedWalls.wallTopY, screenWidth, animatedWall.height, memDC, 0, 0, animatedWall.width, animatedWall.height, SRCCOPY);
+    StretchBlt(hdc, 0, gGame.animatedWalls.wallTopY, screenWidth, gGame.animatedWall.height, memDC, 0, 0, gGame.animatedWall.width, gGame.animatedWall.height, SRCCOPY);
 
     SelectObject(memDC, gRes.wall1);
-    StretchBlt(hdc, 0, animatedWalls.wallBottomY, screenWidth, animatedWall.height, memDC, 0, 0, animatedWall.width, animatedWall.height, SRCCOPY);
+    StretchBlt(hdc, 0, gGame.animatedWalls.wallBottomY, screenWidth, gGame.animatedWall.height, memDC, 0, 0, gGame.animatedWall.width, gGame.animatedWall.height, SRCCOPY);
 
     DeleteDC(memDC);
 }

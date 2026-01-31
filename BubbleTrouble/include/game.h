@@ -1,32 +1,50 @@
 #pragma once
 
-// ======== POMOCNE FUNKCIJE ======== //
+#pragma once
+#include <windows.h>
+
+// ================= SYSTEM =================
 void LoadCustomFont();
 void LoadBitmaps(HWND hwnd, HINSTANCE hInstance);
-void CheckInputs(HWND hwnd);
-void Update(HWND hwnd);
-void RefreshScreen(HWND hwnd);
 void RefreshSound();
 
+// ================= INPUT ==================
+void CheckInputs(HWND hwnd);
+
+// ================= GAME LOOP ==============
+void Update(HWND hwnd);
+void RefreshScreen(HWND hwnd);
+
+// ================= PHYSICS / HELPERS ======
 float GetBounceSpeedForRadius(float radius);
+
+// ================= BALLOONS ===============
 void InitBalloon(int index, float x, float y, float radius, float speedX, COLORREF color);
 void UpdateBalloons(HWND hwnd);
-void CheckCollisions();
 void SplitBalloon(int index);
 void DrawBalloonGDI(HDC hdc, Balloon* b);
 
+// ================= COLLISIONS =============
+void CheckCollisions();
+
+// ================= MENU ===================
 void InitializeMenu(HWND hwnd);
-void RenderMenu(HDC, RECT);
+void RenderMenu(HDC hdc, RECT rect);
 void HandleMenuClick(HWND hwnd, int x, int y);
 void HandleMenuMouseMove(HWND hwnd, int x, int y);
+
+// ================= GAME STATE =============
 void StartGame(HWND hwnd);
 void ResetGame(HWND hwnd);
 
+// ================= UI / SCREENS ===========
 void DrawGameOverScreen(HDC hdc, RECT rect);
 void DrawLevelPassedScreen(HDC hdc, RECT rect);
-void DrawButton(HDC hdc, HBITMAP bmp, HBITMAP mask, Button& info);
-void CheckHover(Button&, int, int);
 
+void DrawButton(HDC hdc, HBITMAP bmp, HBITMAP mask, Button& info);
+void CheckHover(Button& button, int x, int y);
+
+// ================= TRANSITIONS ============
 void StartWallTransition(HWND hwnd);
 void UpdateWallTransition(HWND hwnd);
-void DrawTransitionWalls(HDC hdc, RECT);
+void DrawTransitionWalls(HDC hdc, RECT rect);

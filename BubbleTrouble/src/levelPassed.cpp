@@ -1,5 +1,5 @@
 #include "resources.h"
-#include "globals.h"
+#include "gameContext.h"
 #include "resourceManager.h"
 #include "game.h"
 
@@ -44,16 +44,16 @@ void DrawLevelPassedScreen(HDC hdc, RECT rect){
     );
 
 
-    homeButtonInfo.x = w/2 - homeButtonInfo.width/2;
-    homeButtonInfo.y = h/3;
-    restartButtonInfo.x = homeButtonInfo.x - restartButtonInfo.width - 20;
-    restartButtonInfo.y = h/3;
-    nextButtonInfo.x = homeButtonInfo.x + homeButtonInfo.width + 20;
-    nextButtonInfo.y = h/3;
+    gGame.homeButtonInfo.x = w/2 - gGame.homeButtonInfo.width/2;
+    gGame.homeButtonInfo.y = h/3;
+    gGame.restartButtonInfo.x = gGame.homeButtonInfo.x - gGame.restartButtonInfo.width - 20;
+    gGame.restartButtonInfo.y = h/3;
+    gGame.nextButtonInfo.x = gGame.homeButtonInfo.x + gGame.homeButtonInfo.width + 20;
+    gGame.nextButtonInfo.y = h/3;
 
-    DrawButton(hdc, gRes.restartButton, gRes.restartButtonMask, restartButtonInfo);
-    DrawButton(hdc, gRes.homeButton, gRes.homeButtonMask, homeButtonInfo);
-    DrawButton(hdc, gRes.nextButton, gRes.nextButtonMask, nextButtonInfo);
+    DrawButton(hdc, gRes.restartButton, gRes.restartButtonMask, gGame.restartButtonInfo);
+    DrawButton(hdc, gRes.homeButton, gRes.homeButtonMask, gGame.homeButtonInfo);
+    DrawButton(hdc, gRes.nextButton, gRes.nextButtonMask, gGame.nextButtonInfo);
 
     // cleanup
     SelectObject(overlayDC, oldBmp);
