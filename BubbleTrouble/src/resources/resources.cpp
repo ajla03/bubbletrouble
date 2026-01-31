@@ -49,10 +49,10 @@ void LoadBitmaps(HWND hwnd, HINSTANCE hInstance){
     // === BACKGROUND SETUP ===
     if (gRes.background) {
         GetObject(gRes.background, sizeof(BITMAP), &bm);
-        gGame.backgroundInfo.width = bm.bmWidth;
-        gGame.backgroundInfo.height = bm.bmHeight;
-        gGame.backgroundInfo.x = 0;
-        gGame.backgroundInfo.y = 0;
+        CURRENT_LEVEL.backgroundInfo.width = bm.bmWidth;
+        CURRENT_LEVEL.backgroundInfo.height = bm.bmHeight;
+        CURRENT_LEVEL.backgroundInfo.x = 0;
+        CURRENT_LEVEL.backgroundInfo.y = 0;
     }
 
     if(gRes.torch){
@@ -149,15 +149,15 @@ float GetBounceSpeedForRadius(float radius){
 void InitBalloon(int index, float x, float y, float radius, float speedX, COLORREF color) {
     if (index >= MAX_BALLOONS) return;
 
-    gGame.balloons[index].x = x;
-    gGame.balloons[index].y = y;
-    gGame.balloons[index].radius = radius;
-    gGame.balloons[index].speedX = speedX * 0.85f;
-    gGame.balloons[index].speedY = 0.0f;
-    gGame.balloons[index].bounceSpeed = GetBounceSpeedForRadius(radius);
-    gGame.balloons[index].active = true;
-    gGame.balloons[index].color = color;
-    gGame.gameState.activeBalloonCount++;
+    CURRENT_LEVEL.balloons[index].x = x;
+    CURRENT_LEVEL.balloons[index].y = y;
+    CURRENT_LEVEL.balloons[index].radius = radius;
+    CURRENT_LEVEL.balloons[index].speedX = speedX * 0.85f;
+    CURRENT_LEVEL.balloons[index].speedY = 0.0f;
+    CURRENT_LEVEL.balloons[index].bounceSpeed = GetBounceSpeedForRadius(radius);
+    CURRENT_LEVEL.balloons[index].active = true;
+    CURRENT_LEVEL.balloons[index].color = color;
+    CURRENT_LEVEL.activeBalloonCount++;
 }
 
 

@@ -347,10 +347,10 @@ void StartGame(HWND hwnd) {
 
 void ResetGame(HWND hwnd) {
     // Reset game state
-    gGame.gameState.timeLeft = maxTime;
+    CURRENT_LEVEL.timeLeft = maxTime;
     gGame.gameState.isGameOver = false;
     gGame.gameState.isLevelCleared = false;
-    gGame.gameState.activeBalloonCount = 0;
+    CURRENT_LEVEL.activeBalloonCount = 0;
     gGame.gameState.lives = MAX_LIVES;
 
     // Reset hero position
@@ -367,7 +367,7 @@ void ResetGame(HWND hwnd) {
 
     // Clear all balloons
     for (int i = 0; i < MAX_BALLOONS; i++) {
-        gGame.balloons[i].active = false;
+        CURRENT_LEVEL.balloons[i].active = false;
     }
 
     // Initialize starting balloons

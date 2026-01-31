@@ -51,8 +51,6 @@ struct MenuButton {
 
 
 struct GameState{
-    int activeBalloonCount;
-    double timeLeft;
     bool isGameOver;
     bool isLevelCleared;
     GameMode currentMode;
@@ -94,3 +92,6 @@ struct AnimatedWalls{
  float wallSpeed;
  DWORD transitionWaitStart = 0;
 };
+
+
+

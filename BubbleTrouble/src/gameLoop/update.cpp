@@ -24,10 +24,10 @@ void UpdateHearts(){
 }
 
 void Update(HWND hwnd){
-     if (!gGame.gameState.isGameOver && gGame.gameState.timeLeft > 0 && !gGame.gameState.isLevelCleared) {
-        gGame.gameState.timeLeft -= 1.0;
-    } else if (gGame.gameState.timeLeft <= 0) {
-        gGame.gameState.timeLeft = 0;
+     if (!gGame.gameState.isGameOver && CURRENT_LEVEL.timeLeft > 0 && !gGame.gameState.isLevelCleared) {
+        CURRENT_LEVEL.timeLeft -= 1.0;
+    } else if (CURRENT_LEVEL.timeLeft <= 0) {
+        CURRENT_LEVEL.timeLeft = 0;
         gGame.gameState.isGameOver = true;
     }
     if (gGame.harpoon.isActive){

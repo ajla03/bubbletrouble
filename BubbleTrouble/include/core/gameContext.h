@@ -3,16 +3,27 @@
 #include "constants.h"
 #include <windows.h>
 
+struct Level{
+     StaticObject backgroundInfo;
+     Balloon balloons[MAX_BALLOONS];
+     int activeBalloonCount;
+     double timeLeft;
+};
 
 struct GameContext{
-    // ===== GAME OBJEKTI =====
+
+    // ======== LEVELS ====== //
+     Level levels[MAX_LEVELS];
+     int currentLevel;
+
+    // ===== SHARED GAME OBJEKTI =====
      Projectile harpoon;
      Hero hero;
+
      StaticObject leftWall, rightWall, floorWall, animatedWall;
-     StaticObject backgroundInfo;
      StaticObject levelPlaceholderInfo;
      StaticObject heartInfo, heartBgInfo, heartBorderInfo;
-     Balloon balloons[MAX_BALLOONS];
+
      HeartAnim hearts[5];
      Torch torchInfo;
      AnimatedWalls animatedWalls;

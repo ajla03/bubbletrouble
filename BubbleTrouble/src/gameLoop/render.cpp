@@ -36,8 +36,8 @@ void RefreshScreen(HWND hwnd){
     // === RENDER BACKGROUND ===
     SelectObject(hdcMem, gRes.background);
 
-    int tileW = gGame.backgroundInfo.width;
-    int tileH = gGame.backgroundInfo.height;
+    int tileW = CURRENT_LEVEL.backgroundInfo.width;
+    int tileH = CURRENT_LEVEL.backgroundInfo.height;
 
     int bgX = gGame.leftWall.width;
     int bgY = 0;
@@ -51,7 +51,7 @@ void RefreshScreen(HWND hwnd){
     DeleteObject(hpen);
 
 
-    StretchBlt(hdcBuffer, bgX, bgY, bgW, bgH, hdcMem, 0, 0, gGame.backgroundInfo.width, gGame.backgroundInfo.height, SRCCOPY);
+    StretchBlt(hdcBuffer, bgX, bgY, bgW, bgH, hdcMem, 0, 0, CURRENT_LEVEL.backgroundInfo.width, CURRENT_LEVEL.backgroundInfo.height, SRCCOPY);
 
     /*
     for(int y = bgY; y < bgY + bgH; y += tileH) {
@@ -76,8 +76,8 @@ void RefreshScreen(HWND hwnd){
     FillRect(hdcBuffer, &barBgRect, hDarkBrush);
     DeleteObject(hDarkBrush);
 
-    if (gGame.gameState.timeLeft < 0) gGame.gameState.timeLeft = 0;
-    int currentWidth = (int)((gGame.gameState.timeLeft / maxTime) * maxBarWidth);
+    if (CURRENT_LEVEL.timeLeft < 0) CURRENT_LEVEL.timeLeft = 0;
+    int currentWidth = (int)((CURRENT_LEVEL.timeLeft / maxTime) * maxBarWidth);
 
     HBRUSH hRedBrush = CreateSolidBrush(RGB(220, 0, 0));
     RECT barRect = {barX, barY, barX + currentWidth, barY + barHeight};
@@ -155,8 +155,8 @@ void RefreshScreen(HWND hwnd){
 
     //rendering balloons
      for (int i = 0; i < MAX_BALLOONS; i++) {
-        if (gGame.balloons[i].active) {
-            DrawBalloonGDI(hdcBuffer, &gGame.balloons[i]);
+        if (CURRENT_LEVEL.balloons[i].active) {
+            DrawBalloonGDI(hdcBuffer, &CURRENT_LEVEL.balloons[i]);
         }
     }
 
