@@ -8,6 +8,7 @@ struct Level{
      Balloon balloons[MAX_BALLOONS];
      int activeBalloonCount;
      double timeLeft;
+     int levelScore;
 };
 
 struct GameContext{
@@ -15,6 +16,8 @@ struct GameContext{
     // ======== LEVELS ====== //
      Level levels[MAX_LEVELS];
      int currentLevel;
+     int totalScore;
+     int displayScore;
 
     // ===== SHARED GAME OBJEKTI =====
      Projectile harpoon;

@@ -7,6 +7,8 @@ GameContext gGame = {
     // ===== LEVELS =====
     /* levels */ {},
     /* currentLevel */ 0,
+    /* totalScore */ 0,
+    /* displayScore */ 0,
 
     // ===== GAME OBJEKTI =====
     /* harpoon */ {},

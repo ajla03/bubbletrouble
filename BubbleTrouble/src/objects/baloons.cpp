@@ -1,8 +1,24 @@
 #include "resources.h"
 #include "gameContext.h"
 #include "game.h"
+#include "constants.h"
 #include <windows.h>
 #include <cmath>
+
+
+int CalculateTimeBonus()
+{
+    return (int)(CURRENT_LEVEL.timeLeft * BONUS_PER_SECOND);
+}
+
+
+int GetScoreForBalloon(float radius)
+{
+    if (radius >= 40.0f) return 100;
+    if (radius >= 25.0f) return 200;
+    return 400;
+}
+
 
 void UpdateBalloons(HWND hwnd) {
     if(gGame.gameState.isGameOver)
@@ -94,8 +110,12 @@ void CheckCollisions(){
         if (distanceHarpoonX <= b->radius) {
                 if (harpoonTop <= b->y + b->radius && harpoonBottom >= b->y - b->radius) {
                     SplitBalloon(i);
-                    if(CURRENT_LEVEL.activeBalloonCount == 0)
+                    if(CURRENT_LEVEL.activeBalloonCount == 0 && !gGame.gameState.isLevelCleared){
                         gGame.gameState.isLevelCleared = true;
+                         int timeBonus = CalculateTimeBonus();
+                         CURRENT_LEVEL.levelScore += timeBonus;
+                         gGame.totalScore += timeBonus;
+                    }
                     gGame.harpoon.isActive = false;
                     break;
                 }
@@ -106,6 +126,12 @@ void CheckCollisions(){
 
 void SplitBalloon(int index) {
     Balloon* b = &CURRENT_LEVEL.balloons[index];
+
+    int gainedScore = GetScoreForBalloon(b->radius);
+    CURRENT_LEVEL.levelScore += gainedScore;
+    gGame.totalScore += gainedScore;
+
+
     float newRadius = b->radius /2.0f;
 
     PlaySound(MAKEINTRESOURCE(IDR_BALLOON_POP),
@@ -135,6 +161,7 @@ void SplitBalloon(int index) {
 
     b->active = false;
     CURRENT_LEVEL.activeBalloonCount--;
+
 }
 
 void DrawBalloonGDI(HDC hdc, Balloon* b) {

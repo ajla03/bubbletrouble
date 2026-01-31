@@ -4,8 +4,12 @@
 #include "game.h"
 #include <windows.h>
 #include <algorithm>
+#include <cstdio>
+
 
 void DrawHearts(HDC, RECT, int);
+void DrawScore(HDC, RECT);
+
 
 void RefreshScreen(HWND hwnd){
     HDC hdc = GetDC(hwnd);
@@ -25,7 +29,6 @@ void RefreshScreen(HWND hwnd){
 
     // === RENDER WALLS ===
     SelectObject(hdcMem, gRes.wall);
-
 
     for (int y = 0; y < rect.bottom; y += gGame.leftWall.height) {
         for (int x = 0; x < rect.right; x += gGame.leftWall.width) {
@@ -99,6 +102,9 @@ void RefreshScreen(HWND hwnd){
 
     // ===== SRCA ===== //
     DrawHearts(hdcBuffer, rect, barHeight);
+
+    // ===== RENDER SCORE =====
+    DrawScore(hdcBuffer, rect);
 
     // RENDER PLACEHOLDERA ZA LEVEL //
     SelectObject(hdcMem, gRes.levelPlaceholderWhite);
@@ -299,6 +305,41 @@ void DrawHearts(HDC hdc, RECT rect, int padding) {
 
     DeleteDC(hdcMem);
 }
+
+void DrawScore(HDC hdc, RECT rect)
+{
+    HFONT oldFont = (HFONT)SelectObject(hdc, gRes.hFont);
+
+    SetBkMode(hdc, TRANSPARENT);
+    SetTextColor(hdc, RGB(255, 255, 255));
+
+    char scoreText[64];
+    sprintf(scoreText, "SCORE: %d", gGame.displayScore);
+
+    SIZE textSize;
+    GetTextExtentPoint32(
+        hdc,
+        scoreText,
+        lstrlen(scoreText),
+        &textSize
+    );
+
+    int padding = 20;
+
+    int x = rect.right - gGame.rightWall.width - textSize.cx - padding;
+    int y = padding;
+
+    TextOut(
+        hdc,
+        x,
+        y,
+        scoreText,
+        lstrlen(scoreText)
+    );
+
+    SelectObject(hdc, oldFont);
+}
+
 
 
 void RefreshSound(){

@@ -2,11 +2,24 @@
 #include "gameContext.h"
 #include "game.h"
 #include <windows.h>
+#include <iostream>
 
 void UpdateHeroCoolDown(float dt){
     if(gGame.hero.heroHitCooldown > 0)
         gGame.hero.heroHitCooldown -=dt;
 }
+
+void UpdateScoreAnimation()
+{
+    int diff = gGame.totalScore - gGame.displayScore;
+
+    if (diff > 0)
+    {
+        int step = std::max(1, diff / 10);
+        gGame.displayScore += step;
+    }
+}
+
 
 void UpdateHearts(){
  for (int i = 0; i < gGame.gameState.lives; i++) {
@@ -59,6 +72,8 @@ void Update(HWND hwnd){
     UpdateHearts();
 
     CheckCollisions();
+
+    UpdateScoreAnimation();
 
     UpdateWallTransition(hwnd);
 }

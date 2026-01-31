@@ -27,3 +27,5 @@
 
 #define MAX_LEVELS 4
 #define CURRENT_LEVEL gGame.levels[gGame.currentLevel]
+
+#define BONUS_PER_SECOND 50
