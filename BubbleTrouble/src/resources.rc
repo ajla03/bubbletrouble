@@ -68,3 +68,10 @@ IDB_PLAYER2_MENU_MASK BITMAP "../assets/bitmaps/player2_mask.bmp"
 
 IDB_SETTINGS_MENU    BITMAP  "../assets/bitmaps/settings.bmp"
 IDB_SETTINGS_MENU_MASK BITMAP "../assets/bitmaps/settings_mask.bmp"
+
+IDB_YELLOW_BUTTON       BITMAP  "../assets/bitmaps/yellowbutton.bmp"
+IDB_YELLOW_BUTTON_MASK  BITMAP  "../assets/bitmaps/yellowbutton_mask.bmp"
+IDB_GREEN_BUTTON        BITMAP  "../assets/bitmaps/greenbutton.bmp"
+IDB_GREEN_BUTTON_MASK   BITMAP  "../assets/bitmaps/greenbutton_mask.bmp"
+IDB_GREY_BUTTON         BITMAP  "../assets/bitmaps/greybutton.bmp"
+IDB_GREY_BUTTON_MASK    BITMAP  "../assets/bitmaps/greybutton_mask.bmp"

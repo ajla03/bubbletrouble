@@ -23,13 +23,13 @@ void InitializeMenu(HWND hwnd) {
     int screenWidth = clientRect.right;
 
     // Button dimensions - POVEĆANE DIMENZIJE
-    int buttonWidth = screenWidth / 5;      // Promenjeno sa /8 na /5 (veće)
-    int buttonHeight = screenHeight / 6;   // Promenjeno sa /15 na /10 (veće)
-    int buttonSpacing = -35;  // Promenjeno sa /25 na /20 (više razmaka)
+    int buttonWidth = screenWidth / 6;      // Promenjeno sa /8 na /5 (veće)
+    int buttonHeight = screenHeight / 8;   // Promenjeno sa /15 na /10 (veće)
+    int buttonSpacing = 2;  // Promenjeno sa /25 na /20 (više razmaka)
 
     // Minimum sizes - POVEĆANI MINIMUMI
-    if (buttonWidth < 200) buttonWidth = 200;   // Promenjeno sa 120 na 180
-    if (buttonHeight < 70) buttonHeight = 70;   // Promenjeno sa 45 na 60
+    if (buttonWidth < 150) buttonWidth = 150;   // Promenjeno sa 120 na 180
+    if (buttonHeight < 50) buttonHeight = 50;   // Promenjeno sa 45 na 60
   //  if (buttonSpacing < 0) buttonSpacing = 0; // Promenjeno sa 20 na 25
 
     // Position menu on the LEFT side - responsive
@@ -119,43 +119,36 @@ void RenderMenu(HDC hdc, RECT rect ) {
     DeleteObject(hTitleFont);
 
     // === RENDER BUTTONS HOLDER FIRST (in background) ===
-    if (gRes.hButtonsHolder && gRes.hButtonsHolderMask) {
+   if (gRes.hButtonsHolder && gRes.hButtonsHolderMask) {
         BITMAP bm;
         GetObject(gRes.hButtonsHolder, sizeof(BITMAP), &bm);
         float aspectRatio = (float)bm.bmWidth / (float)bm.bmHeight;
 
-        // 1. Izračunaj dimenzije dugmadi
         int buttonsTop = gGame.menuButtons[0].rect.top;
         int buttonsBottom = gGame.menuButtons[NUM_MENU_BUTTONS - 1].rect.bottom;
         int buttonsTotalHeight = buttonsBottom - buttonsTop;
         int oneButtonWidth = gGame.menuButtons[0].rect.right - gGame.menuButtons[0].rect.left;
 
-        // 2. LOGIKA SKALIRANJA:
-        int holderWidth = (int)(oneButtonWidth * 3);
+        int holderWidth = (int)(oneButtonWidth * 3.6);  // SMANJENO sa 3 na 2.5
         int holderHeight = (int)(holderWidth / aspectRatio);
 
-        // 3. PROVJERA VISINE:
-        if (holderHeight < buttonsTotalHeight * 1.2) {
-            holderHeight = (int)(buttonsTotalHeight * 1.2);
+        if (holderHeight < buttonsTotalHeight * 1.5) {  // sa 1.2 na 1.15
+            holderHeight = (int)(buttonsTotalHeight * 1.5);
             holderWidth = (int)(holderHeight * aspectRatio);
         }
 
-        // 4. Centriranje
         int buttonsCenterX = gGame.menuButtons[0].rect.left + (oneButtonWidth / 2);
         int holderX = buttonsCenterX - (holderWidth / 2) + (rect.right / 125);
-
         int buttonsCenterY = buttonsTop + buttonsTotalHeight / 2;
-        int holderY = buttonsCenterY - (holderHeight / 1.95);
+        int holderY = buttonsCenterY - (holderHeight / 2);
 
         SetStretchBltMode(hdcBuffer, HALFTONE);
         SetBrushOrgEx(hdcBuffer, 0, 0, NULL);
 
-        // Draw mask (SRCAND)
         HBITMAP oldMemBmp = (HBITMAP)SelectObject(hdcMem, gRes.hButtonsHolderMask);
         StretchBlt(hdcBuffer, holderX, holderY, holderWidth, holderHeight,
                    hdcMem, 0, 0, bm.bmWidth, bm.bmHeight, SRCAND);
 
-        // Draw image (SRCPAINT)
         SelectObject(hdcMem, gRes.hButtonsHolder);
         StretchBlt(hdcBuffer, holderX, holderY, holderWidth, holderHeight,
                    hdcMem, 0, 0, bm.bmWidth, bm.bmHeight, SRCPAINT);
@@ -163,8 +156,8 @@ void RenderMenu(HDC hdc, RECT rect ) {
         SelectObject(hdcMem, oldMemBmp);
     }
 
-    // === RENDER BUTTONS WITH BITMAP BACKGROUND ===
-    int buttonFontSize = max(16, rect.bottom / 30);
+    // === RENDER BUTTONS - SA RAZLIČITIM BOJAMA ===
+    int buttonFontSize = max(14, rect.bottom / 35);  // Manji font
     HFONT hButtonFont = CreateFont(buttonFontSize, 0, 0, 0, FW_BOLD, FALSE, FALSE, FALSE,
                                     DEFAULT_CHARSET, OUT_OUTLINE_PRECIS,
                                     CLIP_DEFAULT_PRECIS, ANTIALIASED_QUALITY,
@@ -174,10 +167,26 @@ void RenderMenu(HDC hdc, RECT rect ) {
     for (int i = 0; i < NUM_MENU_BUTTONS; i++) {
         MenuButton* btn = &gGame.menuButtons[i];
 
-        // === RENDER BUTTON BITMAP INSTEAD OF DRAWN RECTANGLE ===
-        if (gRes.hMenuButton && gRes.hMenuButtonMask) {
+        // ODABERI BUTTON BOJU NA OSNOVU INDEKSA
+        HBITMAP currentButton = NULL;
+        HBITMAP currentButtonMask = NULL;
+
+        if (i == 0) {  // 1 PLAYER - Yellow
+            currentButton = gRes.hYellowButton;
+            currentButtonMask = gRes.hYellowButtonMask;
+        }
+        else if (i == 1) {  // 2 PLAYERS - Green
+            currentButton = gRes.hGreenButton;
+            currentButtonMask = gRes.hGreenButtonMask;
+        }
+        else if (i == 2) {  // SETTINGS - Grey
+            currentButton = gRes.hGreyButton;
+            currentButtonMask = gRes.hGreyButtonMask;
+        }
+
+        if (currentButton && currentButtonMask) {
             BITMAP bm;
-            GetObject(gRes.hMenuButton, sizeof(BITMAP), &bm);
+            GetObject(currentButton, sizeof(BITMAP), &bm);
 
             int btnWidth = btn->rect.right - btn->rect.left;
             int btnHeight = btn->rect.bottom - btn->rect.top;
@@ -185,29 +194,25 @@ void RenderMenu(HDC hdc, RECT rect ) {
             SetStretchBltMode(hdcBuffer, HALFTONE);
             SetBrushOrgEx(hdcBuffer, 0, 0, NULL);
 
-            // Draw mask (SRCAND)
-            HBITMAP oldMemBmp = (HBITMAP)SelectObject(hdcMem, gRes.hMenuButtonMask);
+            HBITMAP oldMemBmp = (HBITMAP)SelectObject(hdcMem, currentButtonMask);
             StretchBlt(hdcBuffer, btn->rect.left, btn->rect.top, btnWidth, btnHeight,
                        hdcMem, 0, 0, bm.bmWidth, bm.bmHeight, SRCAND);
 
-            // Draw button image (SRCPAINT)
-            SelectObject(hdcMem, gRes.hMenuButton);
+            SelectObject(hdcMem, currentButton);
             StretchBlt(hdcBuffer, btn->rect.left, btn->rect.top, btnWidth, btnHeight,
                        hdcMem, 0, 0, bm.bmWidth, bm.bmHeight, SRCPAINT);
 
             SelectObject(hdcMem, oldMemBmp);
         } else {
-            // Fallback: draw normal buttons if bitmap not loaded
+            // Fallback ako nema bitmap
             COLORREF btnColor;
-            if (btn->isHovered) {
-                btnColor = RGB(255, 100, 100);
-            } else {
-                btnColor = RGB(200, 50, 50);
-            }
+            if (i == 0) btnColor = RGB(255, 200, 0);      // Yellow
+            else if (i == 1) btnColor = RGB(0, 200, 0);   // Green
+            else btnColor = RGB(150, 150, 150);           // Grey
 
             HBRUSH hBtnBrush = CreateSolidBrush(btnColor);
             int borderWidth = max(2, rect.bottom / 350);
-            HPEN hBtnPen = CreatePen(PS_SOLID, borderWidth, RGB(255, 255, 0));
+            HPEN hBtnPen = CreatePen(PS_SOLID, borderWidth, RGB(255, 255, 255));
             HPEN hOldPen = (HPEN)SelectObject(hdcBuffer, hBtnPen);
             HBRUSH hOldBrush = (HBRUSH)SelectObject(hdcBuffer, hBtnBrush);
 
@@ -221,7 +226,7 @@ void RenderMenu(HDC hdc, RECT rect ) {
             DeleteObject(hBtnBrush);
         }
 
-        // === RENDER TEXT ON TOP OF BUTTON ===
+        // === RENDER TEXT ===
         SetTextColor(hdcBuffer, RGB(0, 0, 0));
         SIZE textSize;
         GetTextExtentPoint32(hdcBuffer, btn->text, strlen(btn->text), &textSize);
@@ -229,13 +234,12 @@ void RenderMenu(HDC hdc, RECT rect ) {
         int textY = btn->rect.top + ((btn->rect.bottom - btn->rect.top) - textSize.cy) / 2;
         TextOut(hdcBuffer, textX + 2, textY + 2, btn->text, strlen(btn->text));
 
-        SetTextColor(hdcBuffer, RGB(255, 255, 0));
+        SetTextColor(hdcBuffer, RGB(255, 255, 255));  // Bijeli tekst
         TextOut(hdcBuffer, textX, textY, btn->text, strlen(btn->text));
     }
 
     SelectObject(hdcBuffer, hOldButtonFont);
     DeleteObject(hButtonFont);
-
     // === RENDER MENU CHARACTER ON RIGHT SIDE - RESPONSIVE ===
     // Odaberi koji karakter da prikaže na osnovu hovera
     HBITMAP currentChar = gRes.menuCharacter;

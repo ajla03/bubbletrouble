@@ -40,6 +40,12 @@
 #define IDB_PLAYER2_MENU_MASK   135
 #define IDB_SETTINGS_MENU       136
 #define IDB_SETTINGS_MENU_MASK  137
+#define IDB_YELLOW_BUTTON       138
+#define IDB_YELLOW_BUTTON_MASK  139
+#define IDB_GREEN_BUTTON        140
+#define IDB_GREEN_BUTTON_MASK   141
+#define IDB_GREY_BUTTON         142
+#define IDB_GREY_BUTTON_MASK    143
 // ============ KONSTANTE ZA HARPUN ============ //
 #define IDR_HARPOON_SOUND   201
 #define IDR_BALLOON_POP     202
