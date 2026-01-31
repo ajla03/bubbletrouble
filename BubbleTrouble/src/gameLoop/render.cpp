@@ -313,32 +313,42 @@ void DrawScore(HDC hdc, RECT rect)
     SetBkMode(hdc, TRANSPARENT);
     SetTextColor(hdc, RGB(255, 255, 255));
 
-    char scoreText[64];
-    sprintf(scoreText, "SCORE: %d", gGame.displayScore);
+    const char* label = "SCORE:";
+    char valueText[32];
+    sprintf(valueText, "%d", gGame.displayScore);
 
-    SIZE textSize;
+    SIZE labelSize;
     GetTextExtentPoint32(
         hdc,
-        scoreText,
-        lstrlen(scoreText),
-        &textSize
+        label,
+        lstrlen(label),
+        &labelSize
     );
 
-    int padding = 20;
+    int padding = 30;
 
-    int x = rect.right - gGame.rightWall.width - textSize.cx - padding;
+    int x = rect.right - gGame.rightWall.width - labelSize.cx - 120 - padding;
     int y = padding;
 
     TextOut(
         hdc,
         x,
         y,
-        scoreText,
-        lstrlen(scoreText)
+        label,
+        strlen(label)
+    );
+
+    TextOut(
+        hdc,
+        x + labelSize.cx + padding/3,
+        y,
+        valueText,
+        strlen(valueText)
     );
 
     SelectObject(hdc, oldFont);
 }
+
 
 
 
