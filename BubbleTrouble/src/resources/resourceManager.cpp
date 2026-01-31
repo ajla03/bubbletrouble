@@ -1,4 +1,4 @@
-#include "../../include/resources.h"
+#include "resources.h"
 #include "resourceManager.h"
 
 ResourceManager gRes = { 0 };

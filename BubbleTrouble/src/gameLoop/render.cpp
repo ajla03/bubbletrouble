@@ -103,17 +103,13 @@ void RefreshScreen(HWND hwnd){
     // RENDER PLACEHOLDERA ZA LEVEL //
     SelectObject(hdcMem, gRes.levelPlaceholderWhite);
 
-    int placeholderX = (rect.right / 2) - (gGame.levelPlaceholderInfo.width / 2);
-    int placeholderY = rect.bottom - gGame.floorWall.height + gGame.levelPlaceholderInfo.height / 2 + barHeight;
-    BitBlt(hdcBuffer, placeholderX, placeholderY, gGame.levelPlaceholderInfo.width, gGame.levelPlaceholderInfo.height, hdcMem, 0, 0, SRCAND);
-
-    SelectObject(hdcMem, gRes.levelPlaceholderBlack);
-    BitBlt(hdcBuffer, placeholderX, placeholderY, gGame.levelPlaceholderInfo.width, gGame.levelPlaceholderInfo.height, hdcMem, 0, 0, SRCPAINT);
-
     const char *levelText = "LEVEL 1";
+
+    // Font
     HFONT oldFont = (HFONT) SelectObject(hdcBuffer, gRes.hFont);
     SetBkMode(hdcBuffer, TRANSPARENT);
-    SetTextColor(hdcBuffer, RGB(0, 0, 0));
+    SetTextColor(hdcBuffer, RGB(60, 60, 60));
+
     SIZE textSize;
     GetTextExtentPoint32(
         hdcBuffer,
@@ -122,11 +118,45 @@ void RefreshScreen(HWND hwnd){
         &textSize
     );
 
-    int textX = placeholderX
-              + (gGame.levelPlaceholderInfo.width  - textSize.cx) / 2;
+    // Padding oko teksta
+    int paddingX = 40;
+    int paddingY = 20;
 
-    int textY = placeholderY
-              + (gGame.levelPlaceholderInfo.height - textSize.cy) / 2;
+    int boxW = textSize.cx + paddingX * 2;
+    int boxH = gGame.levelPlaceholderInfo.height;
+
+    int placeholderX = (rect.right / 2) - (boxW / 2);
+    int placeholderY = rect.bottom - gGame.floorWall.height + 2*barHeight;
+
+    SelectObject(hdcMem, gRes.levelPlaceholderWhite);
+    StretchBlt(
+        hdcBuffer,
+        placeholderX, placeholderY,
+        boxW, boxH,
+        hdcMem,
+        0, 0,
+        gGame.levelPlaceholderInfo.width,
+        gGame.levelPlaceholderInfo.height,
+        SRCAND
+    );
+
+    SelectObject(hdcMem, gRes.levelPlaceholderBlack);
+    StretchBlt(
+        hdcBuffer,
+        placeholderX, placeholderY,
+        boxW, boxH,
+        hdcMem,
+        0, 0,
+        gGame.levelPlaceholderInfo.width,
+        gGame.levelPlaceholderInfo.height,
+        SRCPAINT
+    );
+
+    TEXTMETRIC tm;
+    GetTextMetrics(hdcBuffer, &tm);
+
+    int textX = placeholderX + (boxW - textSize.cx) / 2;
+    int textY = placeholderY + (boxH - tm.tmHeight) / 2;
 
     TextOut(hdcBuffer, textX, textY, levelText, strlen(levelText));
 
@@ -137,7 +167,7 @@ void RefreshScreen(HWND hwnd){
 
     int torchGap = 10;
     int torchX1 = placeholderX - gGame.torchInfo.width - torchGap;
-    int torchX2 = placeholderX + gGame.levelPlaceholderInfo.width + torchGap;
+    int torchX2 = placeholderX + boxW + torchGap;
     int torchY = rect.bottom - gGame.floorWall.height + gGame.torchInfo.height/2 + barHeight;
 
     int torchSrcX = gGame.torchInfo.currentFrame * gGame.torchInfo.width;
