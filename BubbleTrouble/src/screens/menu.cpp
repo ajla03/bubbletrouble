@@ -119,7 +119,6 @@ void RenderMenu(HDC hdc, RECT rect ) {
     DeleteObject(hTitleFont);
 
     // === RENDER BUTTONS HOLDER FIRST (in background) ===
-   // === RENDER BUTTONS HOLDER FIRST (in background) ===
     if (gRes.hButtonsHolder && gRes.hButtonsHolderMask) {
         BITMAP bm;
         GetObject(gRes.hButtonsHolder, sizeof(BITMAP), &bm);
@@ -132,25 +131,24 @@ void RenderMenu(HDC hdc, RECT rect ) {
         int oneButtonWidth = gGame.menuButtons[0].rect.right - gGame.menuButtons[0].rect.left;
 
         // 2. LOGIKA SKALIRANJA:
-        // Prvo izračunaj veličinu holdera na osnovu ŠIRINE dugmeta
-        // (neka holder bude 50% širi od dugmeta da ima lufta sa strane)
         int holderWidth = (int)(oneButtonWidth * 3);
         int holderHeight = (int)(holderWidth / aspectRatio);
 
         // 3. PROVJERA VISINE:
-        // Ako je tako izračunat holder prenizak da stanu sva dugmad,
-        // onda ga povećaj na osnovu visine dugmadi.
-        if (holderHeight < buttonsTotalHeight * 1.2) { // 1.2 znači 20% lufta gore/dole
+        if (holderHeight < buttonsTotalHeight * 1.2) {
             holderHeight = (int)(buttonsTotalHeight * 1.2);
             holderWidth = (int)(holderHeight * aspectRatio);
         }
 
-        // 4. Centriranje (ovo ostaje isto kao prije)
+        // 4. Centriranje
         int buttonsCenterX = gGame.menuButtons[0].rect.left + (oneButtonWidth / 2);
-        int holderX = buttonsCenterX - (holderWidth / 2) + (rect.right / 75); // Ostavio sam tvoj mali offset
+        int holderX = buttonsCenterX - (holderWidth / 2) + (rect.right / 125);
 
         int buttonsCenterY = buttonsTop + buttonsTotalHeight / 2;
         int holderY = buttonsCenterY - (holderHeight / 1.95);
+
+        SetStretchBltMode(hdcBuffer, HALFTONE);
+        SetBrushOrgEx(hdcBuffer, 0, 0, NULL);
 
         // Draw mask (SRCAND)
         HBITMAP oldMemBmp = (HBITMAP)SelectObject(hdcMem, gRes.hButtonsHolderMask);
@@ -166,7 +164,7 @@ void RenderMenu(HDC hdc, RECT rect ) {
     }
 
     // === RENDER BUTTONS WITH BITMAP BACKGROUND ===
-    int buttonFontSize = max(16, rect.bottom / 30);  // Povećan font sa 18 na 20 i sa /25 na /20
+    int buttonFontSize = max(16, rect.bottom / 30);
     HFONT hButtonFont = CreateFont(buttonFontSize, 0, 0, 0, FW_BOLD, FALSE, FALSE, FALSE,
                                     DEFAULT_CHARSET, OUT_OUTLINE_PRECIS,
                                     CLIP_DEFAULT_PRECIS, ANTIALIASED_QUALITY,
@@ -181,11 +179,9 @@ void RenderMenu(HDC hdc, RECT rect ) {
             BITMAP bm;
             GetObject(gRes.hMenuButton, sizeof(BITMAP), &bm);
 
-            // Dimenzije dugmeta iz rect
             int btnWidth = btn->rect.right - btn->rect.left;
             int btnHeight = btn->rect.bottom - btn->rect.top;
 
-            // Render button background (mask first, then image)
             SetStretchBltMode(hdcBuffer, HALFTONE);
             SetBrushOrgEx(hdcBuffer, 0, 0, NULL);
 
@@ -200,26 +196,6 @@ void RenderMenu(HDC hdc, RECT rect ) {
                        hdcMem, 0, 0, bm.bmWidth, bm.bmHeight, SRCPAINT);
 
             SelectObject(hdcMem, oldMemBmp);
-
-            /*// Optional: Add hover effect by drawing a semi-transparent overlay
-            if (btn->isHovered) {
-                // Lighter overlay for hover
-                HBRUSH hHoverBrush = CreateSolidBrush(RGB(255, 255, 255));
-                HPEN hHoverPen = CreatePen(PS_SOLID, 1, RGB(255, 255, 255));
-                HPEN hOldPen = (HPEN)SelectObject(hdcBuffer, hHoverPen);
-                HBRUSH hOldBrush = (HBRUSH)SelectObject(hdcBuffer, hHoverBrush);
-
-                // Set transparency (this won't work perfectly, but adds visual feedback)
-                SetROP2(hdcBuffer, R2_MERGEPEN);
-                Rectangle(hdcBuffer, btn->rect.left, btn->rect.top,
-                         btn->rect.right, btn->rect.bottom);
-                SetROP2(hdcBuffer, R2_COPYPEN);
-
-                SelectObject(hdcBuffer, hOldPen);
-                SelectObject(hdcBuffer, hOldBrush);
-                DeleteObject(hHoverPen);
-                DeleteObject(hHoverBrush);
-            }*/
         } else {
             // Fallback: draw normal buttons if bitmap not loaded
             COLORREF btnColor;
@@ -246,7 +222,6 @@ void RenderMenu(HDC hdc, RECT rect ) {
         }
 
         // === RENDER TEXT ON TOP OF BUTTON ===
-        // Button text shadow
         SetTextColor(hdcBuffer, RGB(0, 0, 0));
         SIZE textSize;
         GetTextExtentPoint32(hdcBuffer, btn->text, strlen(btn->text), &textSize);
@@ -254,7 +229,6 @@ void RenderMenu(HDC hdc, RECT rect ) {
         int textY = btn->rect.top + ((btn->rect.bottom - btn->rect.top) - textSize.cy) / 2;
         TextOut(hdcBuffer, textX + 2, textY + 2, btn->text, strlen(btn->text));
 
-        // Button text (main)
         SetTextColor(hdcBuffer, RGB(255, 255, 0));
         TextOut(hdcBuffer, textX, textY, btn->text, strlen(btn->text));
     }
@@ -263,27 +237,71 @@ void RenderMenu(HDC hdc, RECT rect ) {
     DeleteObject(hButtonFont);
 
     // === RENDER MENU CHARACTER ON RIGHT SIDE - RESPONSIVE ===
-    if (gRes.menuCharacter && gRes.menuCharacterMask) {
-        BITMAP bm;
-        GetObject(gRes.menuCharacter, sizeof(BITMAP), &bm);
-        int charHeight = (int)(rect.bottom * 0.75);
-        float aspectRatio = (float)bm.bmWidth / (float)bm.bmHeight;
-        int charWidth = (int)(charHeight * aspectRatio);
+    // Odaberi koji karakter da prikaže na osnovu hovera
+    HBITMAP currentChar = gRes.menuCharacter;
+    HBITMAP currentCharMask = gRes.menuCharacterMask;
+    bool isPlayer2 = false;
 
-        // Position on right side
-        int charX = rect.right - charWidth - max(30, rect.right / 20);
-        int charY = rect.bottom - charHeight - max(20, rect.bottom / 30);
+    // Ako je hover na "1 PLAYER" dugmeta, prikaži player1 karaktera
+    if (gGame.menuButtons[0].isHovered && gRes.player1MenuChar && gRes.player1MenuCharMask) {
+        currentChar = gRes.player1MenuChar;
+        currentCharMask = gRes.player1MenuCharMask;
+    }
+    // Ako je hover na "2 PLAYERS" dugmeta, prikaži player2 karaktera
+    else if (gGame.menuButtons[1].isHovered && gRes.player2MenuChar && gRes.player2MenuCharMask) {
+        currentChar = gRes.player2MenuChar;
+        currentCharMask = gRes.player2MenuCharMask;
+        isPlayer2 = true;
+    }
+    // Settings karakter se iscrtava ISTO kao player1 / default (desna strana, iste dimenzije)
+    else if (gGame.menuButtons[2].isHovered && gRes.settingsMenuChar && gRes.settingsMenuCharMask) {
+        currentChar = gRes.settingsMenuChar;
+        currentCharMask = gRes.settingsMenuCharMask;
+    }
+
+    if (currentChar && currentCharMask) {
+        BITMAP bm;
+        GetObject(currentChar, sizeof(BITMAP), &bm);
+
+        int charHeight, charWidth;
+        int charX, charY;
+        float aspectRatio = (float)bm.bmWidth / (float)bm.bmHeight;
+
+        if (isPlayer2) {
+            // SPECIJALNO SKALIRANJE ZA PLAYER 2 - veći i pored menija
+            charHeight = (int)(rect.bottom * 1.3);  // 65% visine ekrana
+            charWidth = (int)(charHeight * aspectRatio);
+
+            // Pozicioniranje pored buttons holder-a
+            int buttonsRight = gGame.menuButtons[0].rect.right + (gGame.menuButtons[0].rect.right - gGame.menuButtons[0].rect.left) / 2;
+            int gap = -100;  // Razmak između menija i karaktera
+
+            charX = buttonsRight + gap;
+            charY = rect.bottom - charHeight * 0.8;  // Stoji na podu ekrana
+        }
+        else {
+            // NORMALNO SKALIRANJE - koristi se za:
+            // - default menuCharacter (bez hovera)
+            // - player1MenuChar (hover na "1 PLAYER")
+            // - settingsMenuChar (hover na "SETTINGS")
+            charHeight = (int)(rect.bottom * 0.75);
+            charWidth = (int)(charHeight * aspectRatio);
+
+            // Position on right side
+            charX = rect.right - charWidth - max(30, rect.right / 20);
+            charY = rect.bottom - charHeight - max(20, rect.bottom / 30);
+        }
 
         SetStretchBltMode(hdcBuffer, HALFTONE);
         SetBrushOrgEx(hdcBuffer, 0, 0, NULL);
 
         // Draw mask first (for transparency)
-        HBITMAP oldMemBmp = (HBITMAP)SelectObject(hdcMem, gRes.menuCharacterMask);
+        HBITMAP oldMemBmp = (HBITMAP)SelectObject(hdcMem, currentCharMask);
         StretchBlt(hdcBuffer, charX, charY, charWidth, charHeight,
                    hdcMem, 0, 0, bm.bmWidth, bm.bmHeight, SRCAND);
 
         // Draw character
-        SelectObject(hdcMem, gRes.menuCharacter);
+        SelectObject(hdcMem, currentChar);
         StretchBlt(hdcBuffer, charX, charY, charWidth, charHeight,
                    hdcMem, 0, 0, bm.bmWidth, bm.bmHeight, SRCPAINT);
 

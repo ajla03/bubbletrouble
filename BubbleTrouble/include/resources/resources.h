@@ -34,6 +34,12 @@
 #define IDB_WALL2           129
 #define IDB_MENU_BUTTON 130
 #define IDB_MENU_BUTTON_MASK 131
+#define IDB_PLAYER1_MENU        132
+#define IDB_PLAYER1_MENU_MASK   133
+#define IDB_PLAYER2_MENU        134
+#define IDB_PLAYER2_MENU_MASK   135
+#define IDB_SETTINGS_MENU       136
+#define IDB_SETTINGS_MENU_MASK  137
 // ============ KONSTANTE ZA HARPUN ============ //
 #define IDR_HARPOON_SOUND   201
 #define IDR_BALLOON_POP     202

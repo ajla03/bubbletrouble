@@ -107,3 +107,102 @@
 	"globals.h"
 	"game.h"
 
+1769863665 source:c:\users\amina\desktop\ovdjed_idu_pullovi\bubbletrouble\bubbletrouble\main.cpp
+	<windows.h>
+	<tchar.h>
+	<wingdi.h>
+	"resourceManager.h"
+	"gameContext.h"
+	"resources.h"
+	"game.h"
+
+1769866346 source:c:\users\amina\desktop\ovdjed_idu_pullovi\bubbletrouble\bubbletrouble\src\resources.rc
+	"../include/resources/resources.h"
+
+1769866935 c:\users\amina\desktop\ovdjed_idu_pullovi\bubbletrouble\bubbletrouble\include\resources\resources.h
+	<windows.h>
+
+1769863665 source:c:\users\amina\desktop\ovdjed_idu_pullovi\bubbletrouble\bubbletrouble\src\resources\globals.cpp
+
+1769866935 c:\users\amina\desktop\ovdjed_idu_pullovi\bubbletrouble\bubbletrouble\include\resources\resourcemanager.h
+	<windows.h>
+
+1769863665 c:\users\amina\desktop\ovdjed_idu_pullovi\bubbletrouble\bubbletrouble\include\core\gamecontext.h
+	"types.h"
+	"constants.h"
+	<windows.h>
+
+1769863665 c:\users\amina\desktop\ovdjed_idu_pullovi\bubbletrouble\bubbletrouble\include\objects\types.h
+	<windows.h>
+
+1769863665 c:\users\amina\desktop\ovdjed_idu_pullovi\bubbletrouble\bubbletrouble\include\resources\constants.h
+
+1769863665 c:\users\amina\desktop\ovdjed_idu_pullovi\bubbletrouble\bubbletrouble\include\core\game.h
+	<windows.h>
+
+1769865606 source:c:\users\amina\desktop\ovdjed_idu_pullovi\bubbletrouble\bubbletrouble\src\core\gamecontext.cpp
+	"gameContext.h"
+
+1769863665 source:c:\users\amina\desktop\ovdjed_idu_pullovi\bubbletrouble\bubbletrouble\src\gameloop\input.cpp
+	"resources.h"
+	"gameContext.h"
+	"constants.h"
+	<windows.h>
+
+1769863665 source:c:\users\amina\desktop\ovdjed_idu_pullovi\bubbletrouble\bubbletrouble\src\gameloop\render.cpp
+	"resources.h"
+	"gameContext.h"
+	"resourceManager.h"
+	"game.h"
+	<windows.h>
+	<algorithm>
+
+1769863665 source:c:\users\amina\desktop\ovdjed_idu_pullovi\bubbletrouble\bubbletrouble\src\gameloop\update.cpp
+	"resources.h"
+	"gameContext.h"
+	"game.h"
+	<windows.h>
+
+1769863665 source:c:\users\amina\desktop\ovdjed_idu_pullovi\bubbletrouble\bubbletrouble\src\objects\animatedwalls.cpp
+	"gameContext.h"
+	"resourceManager.h"
+	"game.h"
+
+1769863665 source:c:\users\amina\desktop\ovdjed_idu_pullovi\bubbletrouble\bubbletrouble\src\objects\baloons.cpp
+	"resources.h"
+	"gameContext.h"
+	"game.h"
+	<windows.h>
+	<cmath>
+
+1769863665 source:c:\users\amina\desktop\ovdjed_idu_pullovi\bubbletrouble\bubbletrouble\src\resources\resources.cpp
+	"resources.h"
+	"gameContext.h"
+	"resourceManager.h"
+	"game.h"
+
+1769863665 source:c:\users\amina\desktop\ovdjed_idu_pullovi\bubbletrouble\bubbletrouble\src\screens\gameover.cpp
+	"resources.h"
+	"types.h"
+	"gameContext.h"
+	"resourceManager.h"
+
+1769863665 source:c:\users\amina\desktop\ovdjed_idu_pullovi\bubbletrouble\bubbletrouble\src\screens\levelpassed.cpp
+	"resources.h"
+	"gameContext.h"
+	"resourceManager.h"
+	"game.h"
+
+1769866935 source:c:\users\amina\desktop\ovdjed_idu_pullovi\bubbletrouble\bubbletrouble\src\resources\resourcemanager.cpp
+	"resources.h"
+	"resourceManager.h"
+
+1769866607 source:c:\users\amina\desktop\ovdjed_idu_pullovi\bubbletrouble\bubbletrouble\src\screens\menu.cpp
+	"resources.h"
+	<windows.h>
+	<stdio.h>
+	<algorithm>
+	"gameContext.h"
+	"game.h"
+	"resourceManager.h"
+

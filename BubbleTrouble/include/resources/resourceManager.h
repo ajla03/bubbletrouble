@@ -17,6 +17,9 @@ struct ResourceManager{
     HBITMAP homeButton, homeButtonMask;
     HBITMAP nextButton, nextButtonMask;
     HBITMAP hMenuButton, hMenuButtonMask;
+    HBITMAP player1MenuChar, player1MenuCharMask;
+    HBITMAP player2MenuChar, player2MenuCharMask;
+    HBITMAP settingsMenuChar, settingsMenuCharMask;
 
     HCURSOR gameCursor;
     HFONT hFont;
