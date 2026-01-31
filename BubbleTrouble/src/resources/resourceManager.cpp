@@ -40,6 +40,20 @@ bool ResourceManager::LoadAll(HINSTANCE hInstance) {
     heartBkg        = LoadBitmap(hInstance, MAKEINTRESOURCE(IDB_HEART_BKG));
     heartBkgMask    = LoadBitmap(hInstance, MAKEINTRESOURCE(IDB_HEART_BKG_MASK));
 
+    player1MenuChar     = LoadBitmap(hInstance, MAKEINTRESOURCE(IDB_PLAYER1_MENU));
+    player1MenuCharMask = LoadBitmap(hInstance, MAKEINTRESOURCE(IDB_PLAYER1_MENU_MASK));
+    player2MenuChar     = LoadBitmap(hInstance, MAKEINTRESOURCE(IDB_PLAYER2_MENU));
+    player2MenuCharMask = LoadBitmap(hInstance, MAKEINTRESOURCE(IDB_PLAYER2_MENU_MASK));
+    settingsMenuChar    = LoadBitmap(hInstance, MAKEINTRESOURCE(IDB_SETTINGS_MENU));
+    settingsMenuCharMask= LoadBitmap(hInstance, MAKEINTRESOURCE(IDB_SETTINGS_MENU_MASK));
+
+    hYellowButton     = LoadBitmap(hInstance, MAKEINTRESOURCE(IDB_YELLOW_BUTTON));
+    hYellowButtonMask = LoadBitmap(hInstance, MAKEINTRESOURCE(IDB_YELLOW_BUTTON_MASK));
+    hGreenButton      = LoadBitmap(hInstance, MAKEINTRESOURCE(IDB_GREEN_BUTTON));
+    hGreenButtonMask  = LoadBitmap(hInstance, MAKEINTRESOURCE(IDB_GREEN_BUTTON_MASK));
+    hGreyButton       = LoadBitmap(hInstance, MAKEINTRESOURCE(IDB_GREY_BUTTON));
+    hGreyButtonMask   = LoadBitmap(hInstance, MAKEINTRESOURCE(IDB_GREY_BUTTON_MASK));
+
     gameCursor = LoadCursor(hInstance, MAKEINTRESOURCE(IDC_GAME_CURSOR));
 
     HRSRC hRes = FindResource(hInstance, MAKEINTRESOURCE(IDR_MINI_FONT), RT_RCDATA);
