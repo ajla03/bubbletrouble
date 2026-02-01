@@ -10,6 +10,8 @@ bool ResourceManager::LoadAll(HINSTANCE hInstance) {
     arrowMask     = LoadBitmap(hInstance, MAKEINTRESOURCE(IDB_ARROW_MASK));
     wall          = LoadBitmap(hInstance, MAKEINTRESOURCE(IDB_WALL));
     background    = LoadBitmap(hInstance, MAKEINTRESOURCE(IDB_BACKGROUND));
+    hBgLevel2     = LoadBitmap(hInstance, MAKEINTRESOURCE(IDB_BACKGROUND_LEVEL2));
+
     torch         = LoadBitmap(hInstance, MAKEINTRESOURCE(IDB_TORCH));
     torchMask     = LoadBitmap(hInstance, MAKEINTRESOURCE(IDB_TORCH_MASK));
     levelPlaceholderWhite = LoadBitmap(hInstance, MAKEINTRESOURCE(IDB_LEVEL_WHITE));

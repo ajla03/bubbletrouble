@@ -87,8 +87,13 @@ void DrawGameOverScreen(HDC hdc, RECT rect)
     SetBkMode(hdc, TRANSPARENT);
     SetTextColor(hdc, RGB(255, 255, 255));
 
-    const char* text = "GAME OVER";
+    const char* text;
+    if(gGame.currentLevel <= 1 )
+    text = "GAME PASSED! :)";
+    else
+        text = "GAME OVER";
     SIZE sz;
+
     GetTextExtentPoint32(hdc, text, strlen(text), &sz);
 
     TextOut(

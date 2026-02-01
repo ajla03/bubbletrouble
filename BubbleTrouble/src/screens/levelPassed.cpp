@@ -32,6 +32,7 @@ void DrawLevelPassedScreen(HDC hdc, RECT rect){
     SetTextColor(hdc, RGB(255, 255, 255));
 
     const char* text = "LEVEL PASSED!";
+
     SIZE sz;
     GetTextExtentPoint32(hdc, text, strlen(text), &sz);
 

@@ -57,6 +57,7 @@ struct GameState{
     int lives;
     bool pendingHome;
     bool pendingRestart;
+    bool pendingNextLevel;
 };
 
 struct HeartAnim{

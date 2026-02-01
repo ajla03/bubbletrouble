@@ -23,6 +23,7 @@ struct ResourceManager{
     HBITMAP hYellowButton, hYellowButtonMask;
     HBITMAP hGreenButton, hGreenButtonMask;
     HBITMAP hGreyButton, hGreyButtonMask;
+    HBITMAP hBgLevel2;
     HCURSOR gameCursor;
     HFONT hFont;
     HANDLE hFontRes;

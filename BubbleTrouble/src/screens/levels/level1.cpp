@@ -32,3 +32,4 @@ void RenderLevel1(HDC hdcBuffer, RECT rect)
     DeleteDC(hdcMem);
 }
 
+

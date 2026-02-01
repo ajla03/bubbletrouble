@@ -14,9 +14,9 @@ int CalculateTimeBonus()
 
 int GetScoreForBalloon(float radius)
 {
-    if (radius >= 40.0f) return 100;
-    if (radius >= 25.0f) return 200;
-    return 400;
+    if (radius >= 40.0f) return 10;
+    if (radius >= 25.0f) return 20;
+    return 40;
 }
 
 

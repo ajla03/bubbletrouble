@@ -34,6 +34,7 @@ void HandleMenuMouseMove(HWND hwnd, int x, int y);
 // ================= GAME STATE =============
 void StartGame(HWND hwnd);
 void ResetGame(HWND hwnd);
+void ResetBetweenLevels(HWND hwnd);
 
 // ================= UI / SCREENS ===========
 void DrawGameOverScreen(HDC hdc, RECT rect);
@@ -44,6 +45,8 @@ void DrawScore(HDC, RECT);
 void DrawButton(HDC hdc, HBITMAP bmp, HBITMAP mask, Button& info);
 void CheckHover(Button& button, int x, int y);
 
+void InitLevel(HWND hwnd);
+void InitLevel2(HWND hwnd);
 void RenderLevel1(HDC hdcBuffer, RECT rect);
 void RenderLevel2(HDC hdcBuffer, RECT rect);
 void RenderGameUI(HDC hdcBuffer, RECT rect);

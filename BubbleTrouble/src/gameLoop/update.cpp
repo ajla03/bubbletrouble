@@ -100,7 +100,6 @@ void UpdateWallTransition(HWND hwnd){
             if(gGame.gameState.pendingRestart){
                 ResetGame(hwnd);
             }
-
             gGame.animatedWalls.transitionWaitStart = GetTickCount();
             gGame.transitionState = TRANSITION_WAIT;
         }
@@ -112,6 +111,10 @@ void UpdateWallTransition(HWND hwnd){
                 gGame.gameState.currentMode = GAME_MODE_MENU;
                 gGame.gameState.isGameOver = false;
                 gGame.gameState.isLevelCleared = false;
+            }else if(gGame.gameState.pendingNextLevel){
+                gGame.currentLevel++;
+                ResetBetweenLevels(hwnd);
+                InitLevel(hwnd);
             }
 
             gGame.transitionState = TRANSITION_OPENING;
@@ -128,6 +131,7 @@ void UpdateWallTransition(HWND hwnd){
             gGame.transitionState = TRANSITION_NONE;
             gGame.gameState.pendingHome = false;
             gGame.gameState.pendingRestart = false;
+            gGame.gameState.pendingNextLevel = false;
         }
     }
 }

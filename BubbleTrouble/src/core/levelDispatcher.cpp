@@ -11,3 +11,15 @@ void RenderLevel(HDC hdcBuffer, RECT rect){
         break;
     }
 }
+
+
+void InitLevel(HWND hwnd){
+  switch (gGame.currentLevel) {
+    case 0:
+       // level 1 nam se inicjalizuje u resources.cpp ? Da prebacimo ovdje or not ?
+        break;
+    case 1:
+        InitLevel2(hwnd);
+        break;
+    }
+}

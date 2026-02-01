@@ -3,7 +3,7 @@
 #include "gameContext.h"
 #include <algorithm>
 #include <stdio.h>
-
+#include <string>
 
 void RenderGameUI(HDC hdc, RECT rect)
 {
@@ -97,8 +97,7 @@ void RenderGameUI(HDC hdc, RECT rect)
     // === RENDER PLACEHOLDER ZA LEVEL ===
     SelectObject(hdcMem, gRes.levelPlaceholderWhite);
 
-    const char *levelText = "LEVEL 1";
-
+    std::string levelText = "LEVEL " + std::to_string(gGame.currentLevel+1);
     // Font
     HFONT oldFont = (HFONT)SelectObject(hdc, gRes.hFont);
     SetBkMode(hdc, TRANSPARENT);
@@ -107,8 +106,8 @@ void RenderGameUI(HDC hdc, RECT rect)
     SIZE textSize;
     GetTextExtentPoint32(
         hdc,
-        levelText,
-        strlen(levelText),
+        levelText.c_str(),
+        levelText.length(),
         &textSize
     );
 
@@ -155,7 +154,7 @@ void RenderGameUI(HDC hdc, RECT rect)
     int textX = placeholderX + (boxW - textSize.cx) / 2;
     int textY = placeholderY + (boxH - tm.tmHeight) / 2;
 
-    TextOut(hdc, textX, textY, levelText, strlen(levelText));
+    TextOut(hdc, textX, textY, levelText.c_str(), levelText.length());
 
     SelectObject(hdc, oldFont);
 
@@ -225,9 +224,9 @@ void RenderGameUI(HDC hdc, RECT rect)
     }
 
     // === OVERLAY TEXT ===
-    if (gGame.gameState.isLevelCleared)
+    if (gGame.gameState.isLevelCleared && gGame.currentLevel < 1)
         DrawLevelPassedScreen(hdc, rect);
-    else if (gGame.gameState.isGameOver)
+    else if (gGame.gameState.isGameOver || gGame.currentLevel >=1 && gGame.gameState.isLevelCleared)
         DrawGameOverScreen(hdc, rect);
 
     DeleteDC(hdcMem);

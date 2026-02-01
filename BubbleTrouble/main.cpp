@@ -124,7 +124,8 @@ LRESULT CALLBACK WindowProcedure(HWND hwnd, UINT message, WPARAM wParam, LPARAM 
                        my <= gGame.nextButtonInfo.y + gGame.nextButtonInfo.height &&
                        gGame.gameState.isLevelCleared == true){
 
-                         MessageBox(hwnd, "Other levels arent implemented yet!", "Next level warning", MB_OK);
+                        gGame.gameState.pendingNextLevel = true;
+                        StartWallTransition(hwnd);
                          return 0;
                        }
             }else if (gGame.gameState.currentMode == GAME_MODE_MENU) {
