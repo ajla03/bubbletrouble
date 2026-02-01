@@ -19,12 +19,11 @@ void RenderGameUI(HDC hdc, RECT rect)
     SelectObject(hdcMem, gRes.wall);
     for (int y = bgY; y < bgH; y += gGame.leftWall.height) {
         BitBlt(hdc,
-               0, y,                                    // destinacija
-               gGame.leftWall.width, gGame.leftWall.height,  // dest velièina
+               0, y,
+               gGame.leftWall.width, gGame.leftWall.height,
                hdcMem,
-               0, 0,                                    // source offset (poèinjes od 0,0 u bitmap)
+               0, 0,
                SRCCOPY);
-        // BitBlt automatski crta samo leftWall.width x leftWall.height pikela iz source
     }
 
     // === RIGHT WALL ===
@@ -34,7 +33,7 @@ void RenderGameUI(HDC hdc, RECT rect)
                rightX, y,
                gGame.rightWall.width, gGame.rightWall.height,
                hdcMem,
-               0, 0,   // ili npr. bm.bmWidth - rightWall.width ako hoces desnu stranu tila
+               0, 0,
                SRCCOPY);
     }
 
@@ -42,7 +41,7 @@ void RenderGameUI(HDC hdc, RECT rect)
     for (int x = 0; x < rect.right; x += gGame.floorWall.width) {
         BitBlt(hdc,
                x, bgH,
-               gGame.floorWall.width, gGame.floorWall.height,  // samo 32px visina
+               gGame.floorWall.width, gGame.floorWall.height,
                hdcMem,
                0, 0,
                SRCCOPY);
@@ -224,9 +223,9 @@ void RenderGameUI(HDC hdc, RECT rect)
     }
 
     // === OVERLAY TEXT ===
-    if (gGame.gameState.isLevelCleared && gGame.currentLevel < 1)
+    if (gGame.gameState.isLevelCleared && gGame.currentLevel < 2)
         DrawLevelPassedScreen(hdc, rect);
-    else if (gGame.gameState.isGameOver || gGame.currentLevel >=1 && gGame.gameState.isLevelCleared)
+    else if (gGame.gameState.isGameOver || gGame.currentLevel >=2 && gGame.gameState.isLevelCleared)
         DrawGameOverScreen(hdc, rect);
 
     DeleteDC(hdcMem);

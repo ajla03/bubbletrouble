@@ -4,6 +4,40 @@
 #include <windows.h>
 
 
+bool AABB(float ax, float ay, float aw, float ah,
+          float bx, float by, float bw, float bh)
+{
+    return (ax + aw > bx) &&
+           (ax < bx + bw) &&
+           (ay + ah > by) &&
+           (ay < by + bh);
+
+
+}
+
+void CheckHeroDoorCollision(){
+ if(!CURRENT_LEVEL.door.active) return;
+
+ StaticObject* d = &CURRENT_LEVEL.door;
+ Hero* h = &gGame.hero;
+
+    if (d->width <= 0 || d->height <= 0)
+        return;
+
+
+    if (AABB(h->x, h->y, h->width, h->height,
+             d->x, d->y, d->width, d->height))
+    {
+        if (h->x < d->x)
+            h->x = d->x - h->width;
+        else
+            h->x = d->x + d->width;
+
+        return;
+    }
+
+}
+
 void CheckInputs(HWND hwnd){
     if(gGame.gameState.isGameOver || gGame.gameState.isLevelCleared)
         return;
@@ -35,6 +69,9 @@ void CheckInputs(HWND hwnd){
     if (gGame.hero.x > desnaGranica) {
         gGame.hero.x = desnaGranica;
     }
+
+    // ===== CHECK ZA VRATA ===== //
+    CheckHeroDoorCollision();
 
     // === ANIMATION ===
     if(isMoving) {

@@ -5,6 +5,8 @@
 
 struct Level{
      StaticObject backgroundInfo;
+     Pillar longWall;
+     Door door;
      Balloon balloons[MAX_BALLOONS];
      int activeBalloonCount;
      double timeLeft;

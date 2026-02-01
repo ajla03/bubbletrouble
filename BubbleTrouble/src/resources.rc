@@ -10,6 +10,7 @@ IDB_ARROW_MASK  BITMAP "../assets/bitmaps/arrowBlack1.bmp"
 IDB_WALL        BITMAP "../assets/bitmaps/wall3.bmp"
 IDB_BACKGROUND  BITMAP "../assets/bitmaps/bg.bmp"
 IDB_BACKGROUND_LEVEL2  BITMAP "../assets/bitmaps/bgImage3.bmp"
+IDB_LONG_WALL          BITMAP  "../assets/bitmaps/stub.bmp"
 
 IDB_TORCH       BITMAP "../assets/bitmaps/torchWhite.bmp"
 IDB_TORCH_MASK  BITMAP "../assets/bitmaps/torchBlack.bmp"
@@ -40,6 +41,11 @@ IDB_NEXT                 BITMAP "../assets/bitmaps/nextButtonWhite.bmp"
 
 IDB_WALL1                BITMAP "../assets/bitmaps/zid1.bmp"
 IDB_WALL2                BITMAP "../assets/bitmaps/zid2.bmp"
+
+IDB_DOOR                 BITMAP "../assets/bitmaps/doorWhite.bmp"
+IDB_DOOR_MASK            BITMAP "../assets/bitmaps/doorBlack.bmp"
+IDB_DOOR_CLOSED          BITMAP "../assets/bitmaps/doorClosedWhite.bmp"
+IDB_DOOR_CLOSED_MASK     BITMAP "../assets/bitmaps/doorClosedBlack.bmp"
 
 IDR_MINI_FONT   RCDATA  "../assets/font/KenneyMiniSquare.ttf"
 

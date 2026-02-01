@@ -47,6 +47,9 @@
 #define IDB_GREY_BUTTON         142
 #define IDB_GREY_BUTTON_MASK    143
 #define IDB_BACKGROUND_LEVEL2   144
+#define IDB_LONG_WALL           145
+#define IDB_DOOR_CLOSED         146
+#define IDB_DOOR_CLOSED_MASK    147
 // ============ KONSTANTE ZA HARPUN ============ //
 #define IDR_HARPOON_SOUND   201
 #define IDR_BALLOON_POP     202

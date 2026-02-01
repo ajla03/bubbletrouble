@@ -34,6 +34,7 @@ bool ResourceManager::LoadAll(HINSTANCE hInstance) {
 
     wall1 = LoadBitmap(hInstance, MAKEINTRESOURCE(IDB_WALL1));
     wall2 = LoadBitmap(hInstance, MAKEINTRESOURCE(IDB_WALL2));
+    longWall= LoadBitmap(hInstance, MAKEINTRESOURCE(IDB_LONG_WALL));
 
     heart           = LoadBitmap(hInstance, MAKEINTRESOURCE(IDB_HEART));
     heartMask       = LoadBitmap(hInstance, MAKEINTRESOURCE(IDB_HEART_MASK));
@@ -55,6 +56,9 @@ bool ResourceManager::LoadAll(HINSTANCE hInstance) {
     hGreenButtonMask  = LoadBitmap(hInstance, MAKEINTRESOURCE(IDB_GREEN_BUTTON_MASK));
     hGreyButton       = LoadBitmap(hInstance, MAKEINTRESOURCE(IDB_GREY_BUTTON));
     hGreyButtonMask   = LoadBitmap(hInstance, MAKEINTRESOURCE(IDB_GREY_BUTTON_MASK));
+
+    doorClosed = LoadBitmap(hInstance, MAKEINTRESOURCE(IDB_DOOR_CLOSED));
+    doorClosedMask = LoadBitmap(hInstance, MAKEINTRESOURCE(IDB_DOOR_CLOSED_MASK));
 
     gameCursor = LoadCursor(hInstance, MAKEINTRESOURCE(IDC_GAME_CURSOR));
 

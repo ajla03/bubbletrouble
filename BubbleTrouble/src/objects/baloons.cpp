@@ -3,6 +3,7 @@
 #include "game.h"
 #include "constants.h"
 #include <windows.h>
+#include <algorithm>
 #include <cmath>
 
 
@@ -18,6 +19,41 @@ int GetScoreForBalloon(float radius)
     if (radius >= 25.0f) return 20;
     return 40;
 }
+
+void ResolveBalloonPillarCollision(Balloon* b, StaticObject* wall){
+  if(wall->width <= 0) return;
+
+  bool collisionX = (b->x + b->radius > wall->x) && (b->x - b->radius < wall->x + wall->width);
+  bool collisionY = (b->y + b->radius > wall->y) && (b->y - b->radius < wall->y + wall->height);
+
+  if(collisionX && collisionY){
+    float penLeft   = (b->x + b->radius) - wall->x;                     // Udarac u LIJEVU stranu zida
+    float penRight  = (wall->x + wall->width) - (b->x - b->radius);     // Udarac u DESNU stranu zida
+    float penTop    = (b->y + b->radius) - wall->y;                     // Udarac u VRH zida
+    float penBottom = (wall->y + wall->height) - (b->y - b->radius);    // Udarac u DNO zida
+
+    float minPen = std::min({penLeft, penRight, penTop, penBottom});
+
+
+    if (minPen == penLeft) {
+            b->x = wall->x - b->radius;
+            b->speedX = -b->speedX; // Forsiraj negativnu brzinu (lijevo)
+        }
+        else if (minPen == penRight) {
+            b->x = wall->x + wall->width + b->radius;
+            b->speedX = -b->speedX;  // Forsiraj pozitivnu brzinu (desno)
+        }
+        else if (minPen == penTop) {
+            b->y = wall->y - b->radius;
+            b->speedY = -b->bounceSpeed;
+        }
+        else if (minPen == penBottom) {
+            b->y = wall->y + wall->height + b->radius;
+            b->speedY = fabs(b->speedY);
+        }
+    }
+}
+
 
 
 void UpdateBalloons(HWND hwnd) {
@@ -69,10 +105,24 @@ void UpdateBalloons(HWND hwnd) {
             b->speedY = 0.0f;
         }
 
+        // ===== PREPREKE UNUTAR NIVOA ===== //
+        ResolveBalloonPillarCollision(b, &CURRENT_LEVEL.longWall);
+        if(CURRENT_LEVEL.door.active)
+            ResolveBalloonPillarCollision(b, &CURRENT_LEVEL.door);
+
+        /*
+        AKO DODAMO VISE ZIDOVA ONDA CEMO IMATI NESTO OVAKO :
+        for(int j = 0; j < CURRENT_LEVEL.numExtraWalls; j++) {
+             ResolveBalloonPillarCollision(b, &CURRENT_LEVEL.extraWalls[j]);
+        }
+        */
+
         float minBounce = gGame.hero.height + 40.0f;
         float estimatedPeak  = b->bounceSpeed * 12.0f;
-        if(estimatedPeak < minBounce)
+        /*if(estimatedPeak < minBounce)
             b->bounceSpeed +=0.2f;
+          */
+
     }
 }
 

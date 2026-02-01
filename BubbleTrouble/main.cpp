@@ -83,6 +83,8 @@ LRESULT CALLBACK WindowProcedure(HWND hwnd, UINT message, WPARAM wParam, LPARAM 
             if (gGame.gameState.currentMode == GAME_MODE_MENU) {
                 InitializeMenu(hwnd);
             }
+            if(gGame.currentLevel == 2)
+                RecalculateLevel3Layout(hwnd);
             InvalidateRect(hwnd, NULL, FALSE);
             return 0;
         }

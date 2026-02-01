@@ -47,8 +47,11 @@ void CheckHover(Button& button, int x, int y);
 
 void InitLevel(HWND hwnd);
 void InitLevel2(HWND hwnd);
+void InitLevel3(HWND hwnd);
+void RecalculateLevel3Layout(HWND);
 void RenderLevel1(HDC hdcBuffer, RECT rect);
 void RenderLevel2(HDC hdcBuffer, RECT rect);
+void RenderLevel3(HDC hdcBuffer, RECT rect);
 void RenderGameUI(HDC hdcBuffer, RECT rect);
 void RenderLevel(HDC, RECT);
 

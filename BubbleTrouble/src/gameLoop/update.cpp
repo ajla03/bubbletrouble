@@ -20,6 +20,20 @@ void UpdateScoreAnimation()
     }
 }
 
+bool AreSectionBalloonsDestroyed(float left, float right)
+{
+    for (int i = 0; i < MAX_BALLOONS; i++)
+    {
+        Balloon* b = &CURRENT_LEVEL.balloons[i];
+        if (!b->active) continue;
+
+        if (b->x > left && b->x < right)
+            return false;
+    }
+    return true;
+}
+
+
 
 void UpdateHearts(){
  for (int i = 0; i < gGame.gameState.lives; i++) {
@@ -63,6 +77,18 @@ void Update(HWND hwnd){
         gGame.torchInfo.currentRow = (gGame.torchInfo.currentRow + 1) % 2;
      }
      gGame.torchInfo.animCounter = 0;
+    }
+
+
+    // ==== update aktivnih vrata ====== //
+    if(CURRENT_LEVEL.door.width > 0 && CURRENT_LEVEL.door.height > 0){
+        float sectionLeft  = gGame.leftWall.width;
+        float sectionRight = CURRENT_LEVEL.longWall.x;
+
+        if (AreSectionBalloonsDestroyed(sectionLeft, sectionRight))
+        {
+            CURRENT_LEVEL.door.active = false;
+        }
     }
 
     UpdateHeroCoolDown(0.016f);
