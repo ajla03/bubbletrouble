@@ -8,13 +8,15 @@ void RenderLevel3(HDC hdcBuffer, RECT rect){
     HDC hdcMem = CreateCompatibleDC(hdcBuffer);
 
     // === BACKGROUND ===
-    SelectObject(hdcMem, gRes.hBgLevel2);
+    SelectObject(hdcMem, gRes.hBgLevel3);
 
     int bgX = gGame.leftWall.width;
     int bgY = 0;
     int bgW = rect.right - gGame.leftWall.width - gGame.rightWall.width;
     int bgH = rect.bottom - gGame.floorWall.height;
 
+    SetStretchBltMode(hdcBuffer, HALFTONE);
+    SetBrushOrgEx(hdcBuffer, 0, 0, NULL);
     StretchBlt(
         hdcBuffer, bgX, bgY, bgW, bgH,
         hdcMem, 0, 0,
@@ -48,10 +50,35 @@ void RenderLevel3(HDC hdcBuffer, RECT rect){
             CURRENT_LEVEL.door.originalWidth,
             CURRENT_LEVEL.door.originalHeight,
             SRCPAINT);
-    }
+    }else{
+        SelectObject(hdcMem, gRes.door);
+        StretchBlt(hdcBuffer,
+            CURRENT_LEVEL.door.x,
+            CURRENT_LEVEL.door.y,
+            CURRENT_LEVEL.door.width,
+            CURRENT_LEVEL.door.height,
+            hdcMem,
+            0, 0,
+            CURRENT_LEVEL.door.originalWidth,
+            CURRENT_LEVEL.door.originalHeight,
+            SRCAND);
 
+        SelectObject(hdcMem, gRes.doorMask);
+        StretchBlt(hdcBuffer,
+            CURRENT_LEVEL.door.x,
+            CURRENT_LEVEL.door.y,
+            CURRENT_LEVEL.door.width,
+            CURRENT_LEVEL.door.height,
+            hdcMem,
+            0, 0,
+            CURRENT_LEVEL.door.originalWidth,
+            CURRENT_LEVEL.door.originalHeight,
+            SRCPAINT);
+    }
     // === PILLAR ===
     SelectObject(hdcMem, gRes.longWall);
+    SetStretchBltMode(hdcBuffer, HALFTONE);
+    SetBrushOrgEx(hdcBuffer, 0, 0, NULL);
     StretchBlt(
         hdcBuffer,
         CURRENT_LEVEL.longWall.x,
@@ -78,7 +105,7 @@ void InitLevel3(HWND hwnd){
   RECT rect;
   GetClientRect(hwnd, &rect);
 
-  if(gRes.hBgLevel2){
+  if(gRes.hBgLevel3){
     BITMAP bm;
     GetObject(gRes.hBgLevel2, sizeof(BITMAP), &bm);
     CURRENT_LEVEL.backgroundInfo.width = bm.bmWidth;

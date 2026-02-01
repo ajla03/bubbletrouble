@@ -14,6 +14,8 @@ void RenderLevel2(HDC hdcBuffer, RECT rect){
     int bgW = rect.right - gGame.leftWall.width - gGame.rightWall.width;
     int bgH = rect.bottom - gGame.floorWall.height;
 
+    SetStretchBltMode(hdcBuffer, HALFTONE);
+    SetBrushOrgEx(hdcBuffer, 0, 0, NULL);
     StretchBlt(
         hdcBuffer, bgX, bgY, bgW, bgH,
         hdcMem, 0, 0,

@@ -15,6 +15,7 @@ void RenderGameUI(HDC hdc, RECT rect)
     int bgW = rect.right - gGame.leftWall.width - gGame.rightWall.width;
     int bgH = rect.bottom - gGame.floorWall.height;
 
+
    // === LEFT WALL ===
     SelectObject(hdcMem, gRes.wall);
     for (int y = bgY; y < bgH; y += gGame.leftWall.height) {
@@ -46,6 +47,7 @@ void RenderGameUI(HDC hdc, RECT rect)
                0, 0,
                SRCCOPY);
     }
+
 
     // === TIME BAR ===
     int barHeight = 25;

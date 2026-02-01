@@ -50,6 +50,10 @@
 #define IDB_LONG_WALL           145
 #define IDB_DOOR_CLOSED         146
 #define IDB_DOOR_CLOSED_MASK    147
+#define IDB_DOOR                148
+#define IDB_DOOR_MASK           149
+#define IDB_BACKGROUND_LEVEL3   150
+
 // ============ KONSTANTE ZA HARPUN ============ //
 #define IDR_HARPOON_SOUND   201
 #define IDR_BALLOON_POP     202

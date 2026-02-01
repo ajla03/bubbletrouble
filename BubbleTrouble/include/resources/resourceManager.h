@@ -23,9 +23,9 @@ struct ResourceManager{
     HBITMAP hYellowButton, hYellowButtonMask;
     HBITMAP hGreenButton, hGreenButtonMask;
     HBITMAP hGreyButton, hGreyButtonMask;
-    HBITMAP hBgLevel2;
+    HBITMAP hBgLevel2, hBgLevel3;
     HBITMAP longWall;
-    HBITMAP doorClosed, doorClosedMask;
+    HBITMAP doorClosed, doorClosedMask, door, doorMask;
     HCURSOR gameCursor;
     HFONT hFont;
     HANDLE hFontRes;

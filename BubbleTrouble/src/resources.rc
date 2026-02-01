@@ -10,6 +10,7 @@ IDB_ARROW_MASK  BITMAP "../assets/bitmaps/arrowBlack1.bmp"
 IDB_WALL        BITMAP "../assets/bitmaps/wall3.bmp"
 IDB_BACKGROUND  BITMAP "../assets/bitmaps/bg.bmp"
 IDB_BACKGROUND_LEVEL2  BITMAP "../assets/bitmaps/bgImage3.bmp"
+IDB_BACKGROUND_LEVEL3  BITMAP "../assets/bitmaps/bgImage4.bmp"
 IDB_LONG_WALL          BITMAP  "../assets/bitmaps/stub.bmp"
 
 IDB_TORCH       BITMAP "../assets/bitmaps/torchWhite.bmp"

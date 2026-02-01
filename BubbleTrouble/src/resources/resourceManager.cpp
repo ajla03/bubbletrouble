@@ -11,6 +11,7 @@ bool ResourceManager::LoadAll(HINSTANCE hInstance) {
     wall          = LoadBitmap(hInstance, MAKEINTRESOURCE(IDB_WALL));
     background    = LoadBitmap(hInstance, MAKEINTRESOURCE(IDB_BACKGROUND));
     hBgLevel2     = LoadBitmap(hInstance, MAKEINTRESOURCE(IDB_BACKGROUND_LEVEL2));
+    hBgLevel3     = LoadBitmap(hInstance, MAKEINTRESOURCE(IDB_BACKGROUND_LEVEL3));
 
     torch         = LoadBitmap(hInstance, MAKEINTRESOURCE(IDB_TORCH));
     torchMask     = LoadBitmap(hInstance, MAKEINTRESOURCE(IDB_TORCH_MASK));
@@ -59,6 +60,8 @@ bool ResourceManager::LoadAll(HINSTANCE hInstance) {
 
     doorClosed = LoadBitmap(hInstance, MAKEINTRESOURCE(IDB_DOOR_CLOSED));
     doorClosedMask = LoadBitmap(hInstance, MAKEINTRESOURCE(IDB_DOOR_CLOSED_MASK));
+    door  = LoadBitmap(hInstance, MAKEINTRESOURCE(IDB_DOOR));
+    doorMask = LoadBitmap(hInstance, MAKEINTRESOURCE(IDB_DOOR_MASK));
 
     gameCursor = LoadCursor(hInstance, MAKEINTRESOURCE(IDC_GAME_CURSOR));
 
