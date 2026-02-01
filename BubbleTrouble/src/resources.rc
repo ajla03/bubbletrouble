@@ -7,7 +7,7 @@ IDB_HERO_MASK   BITMAP "../assets/bitmaps/hero1_mask.bmp"
 IDB_ARROW       BITMAP "../assets/bitmaps/arrowWhite1.bmp"
 IDB_ARROW_MASK  BITMAP "../assets/bitmaps/arrowBlack1.bmp"
 
-IDB_WALL        BITMAP "../assets/bitmaps/bg11.bmp"
+IDB_WALL        BITMAP "../assets/bitmaps/wall3.bmp"
 IDB_BACKGROUND  BITMAP "../assets/bitmaps/bg.bmp"
 
 IDB_TORCH       BITMAP "../assets/bitmaps/torchWhite.bmp"

@@ -68,14 +68,14 @@ void LoadBitmaps(HWND hwnd, HINSTANCE hInstance){
     if (gRes.wall) {
         GetObject(gRes.wall, sizeof(BITMAP), &bm);
 
-        gGame.leftWall.width = bm.bmWidth /2 ;
+        gGame.leftWall.width = bm.bmWidth/13;
         gGame.leftWall.height = bm.bmHeight;
 
-        gGame.rightWall.width = bm.bmWidth / 2;
+        gGame.rightWall.width = bm.bmWidth/13;
         gGame.rightWall.height = bm.bmHeight;
 
         gGame.floorWall.width = bm.bmWidth;
-        gGame.floorWall.height = bm.bmHeight*1.5;
+        gGame.floorWall.height = bm.bmHeight/3.5;
     }
 
 

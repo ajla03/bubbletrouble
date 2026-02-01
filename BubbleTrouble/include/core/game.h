@@ -1,13 +1,11 @@
 #pragma once
-
-#pragma once
 #include <windows.h>
+#include "types.h"
 
 // ================= SYSTEM =================
 void LoadCustomFont();
 void LoadBitmaps(HWND hwnd, HINSTANCE hInstance);
 void RefreshSound();
-
 // ================= INPUT ==================
 void CheckInputs(HWND hwnd);
 
@@ -40,9 +38,16 @@ void ResetGame(HWND hwnd);
 // ================= UI / SCREENS ===========
 void DrawGameOverScreen(HDC hdc, RECT rect);
 void DrawLevelPassedScreen(HDC hdc, RECT rect);
+void DrawHearts(HDC, RECT, int);
+void DrawScore(HDC, RECT);
 
 void DrawButton(HDC hdc, HBITMAP bmp, HBITMAP mask, Button& info);
 void CheckHover(Button& button, int x, int y);
+
+void RenderLevel1(HDC hdcBuffer, RECT rect);
+void RenderLevel2(HDC hdcBuffer, RECT rect);
+void RenderGameUI(HDC hdcBuffer, RECT rect);
+void RenderLevel(HDC, RECT);
 
 // ================= TRANSITIONS ============
 void StartWallTransition(HWND hwnd);
