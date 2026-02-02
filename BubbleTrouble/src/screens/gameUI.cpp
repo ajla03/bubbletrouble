@@ -5,48 +5,48 @@
 #include <stdio.h>
 #include <string>
 
-void RenderGameUI(HDC hdc, RECT rect)
-{
-    HDC hdcMem = CreateCompatibleDC(hdc);
 
-    // === WALLS ===
+void RenderWalls(HDC hdc, RECT rect){
+    int tileW = gGame.floorWall.width;
+    int tileH = gGame.leftWall.height;
+
     int bgX = gGame.leftWall.width;
     int bgY = 0;
     int bgW = rect.right - gGame.leftWall.width - gGame.rightWall.width;
     int bgH = rect.bottom - gGame.floorWall.height;
 
+    SetStretchBltMode(hdc, HALFTONE);
+    SetBrushOrgEx(hdc, 0, 0, NULL);
+    SelectObject(gRes.hdcMem, gRes.wall);
+    StretchBlt(hdc, 0, 0, rect.right, rect.bottom, gRes.hdcMem, 0, 0, tileW, tileH, SRCCOPY);
 
-   // === LEFT WALL ===
-    SelectObject(hdcMem, gRes.wall);
-    for (int y = bgY; y < bgH; y += gGame.leftWall.height) {
-        BitBlt(hdc,
-               0, y,
-               gGame.leftWall.width, gGame.leftWall.height,
-               hdcMem,
-               0, 0,
-               SRCCOPY);
-    }
+    // BIJELI OKVIR
+    HPEN hPen = CreatePen(PS_SOLID, 2, RGB(255, 255, 255));
+    HBRUSH hOldBrush = (HBRUSH)SelectObject(hdc, GetStockObject(NULL_BRUSH));
+    HPEN hOldPen = (HPEN)SelectObject(hdc, hPen);
 
-    // === RIGHT WALL ===
-    int rightX = bgX + bgW;
-    for (int y = 0; y < bgH; y += gGame.rightWall.height) {
-        BitBlt(hdc,
-               rightX, y,
-               gGame.rightWall.width, gGame.rightWall.height,
-               hdcMem,
-               0, 0,
-               SRCCOPY);
-    }
+    Rectangle(
+        hdc,
+        bgX - 1,
+        bgY,
+        bgX + bgW + 2,
+        bgY + bgH + 3
+    );
 
-    // === FLOOR ===
-    for (int x = 0; x < rect.right; x += gGame.floorWall.width) {
-        BitBlt(hdc,
-               x, bgH,
-               gGame.floorWall.width, gGame.floorWall.height,
-               hdcMem,
-               0, 0,
-               SRCCOPY);
-    }
+    SelectObject(hdc, hOldPen);
+    SelectObject(hdc, hOldBrush);
+    DeleteObject(hPen);
+
+}
+
+
+void RenderGameUI(HDC hdc, RECT rect)
+{
+
+    int bgX = gGame.leftWall.width;
+    int bgY = 0;
+    int bgW = rect.right - gGame.leftWall.width - gGame.rightWall.width;
+    int bgH = rect.bottom - gGame.floorWall.height;
 
 
     // === TIME BAR ===
@@ -68,19 +68,16 @@ void RenderGameUI(HDC hdc, RECT rect)
 
     int currentWidth = (int)((CURRENT_LEVEL.timeLeft / maxTime) * maxBarWidth);
 
-    // Crven dio (g��wna traka)
     HBRUSH hRedBrush = CreateSolidBrush(RGB(220, 0, 0));
     RECT barRect = { barX, barY, barX + currentWidth, barY + barHeight };
     FillRect(hdc, &barRect, hRedBrush);
     DeleteObject(hRedBrush);
 
-    // Svetli vrh (highlight)
     HBRUSH hLightRedBrush = CreateSolidBrush(RGB(255, 60, 60));
     RECT topBar = { barX, barY, barX + currentWidth, barY + 5 };
     FillRect(hdc, &topBar, hLightRedBrush);
     DeleteObject(hLightRedBrush);
 
-    // Ivica (okvir trake)
     HPEN hWhitePen = CreatePen(PS_SOLID, 1, RGB(255, 255, 255));
     HPEN hOldPen = (HPEN)SelectObject(hdc, hWhitePen);
     HBRUSH hOldBrush = (HBRUSH)SelectObject(hdc, GetStockObject(NULL_BRUSH));
@@ -96,7 +93,7 @@ void RenderGameUI(HDC hdc, RECT rect)
     DrawScore(hdc, rect);
 
     // === RENDER PLACEHOLDER ZA LEVEL ===
-    SelectObject(hdcMem, gRes.levelPlaceholderWhite);
+    SelectObject(gRes.hdcMem, gRes.levelPlaceholderWhite);
 
     std::string levelText = "LEVEL " + std::to_string(gGame.currentLevel+1);
     // Font
@@ -116,19 +113,21 @@ void RenderGameUI(HDC hdc, RECT rect)
     int paddingX = 40;
     int paddingY = 20;
 
-    int boxW = textSize.cx + paddingX * 2;
-    int boxH = gGame.levelPlaceholderInfo.height;
+    int boxW = textSize.cx + paddingX;
+    int boxH = gGame.floorWall.height / 2;
 
     int placeholderX = (rect.right / 2) - (boxW / 2);
-    int placeholderY = rect.bottom - gGame.floorWall.height + 2 * barHeight;
+    int floorTop = rect.bottom - gGame.floorWall.height + barHeight;
 
+    int placeholderY =
+    floorTop + (gGame.floorWall.height - boxH) / 2;
     // Maska
-    SelectObject(hdcMem, gRes.levelPlaceholderWhite);
+    SelectObject(gRes.hdcMem, gRes.levelPlaceholderWhite);
     StretchBlt(
         hdc,
         placeholderX, placeholderY,
         boxW, boxH,
-        hdcMem,
+        gRes.hdcMem,
         0, 0,
         gGame.levelPlaceholderInfo.width,
         gGame.levelPlaceholderInfo.height,
@@ -136,12 +135,12 @@ void RenderGameUI(HDC hdc, RECT rect)
     );
 
     // Bitmap
-    SelectObject(hdcMem, gRes.levelPlaceholderBlack);
+    SelectObject(gRes.hdcMem, gRes.levelPlaceholderBlack);
     StretchBlt(
         hdc,
         placeholderX, placeholderY,
         boxW, boxH,
-        hdcMem,
+        gRes.hdcMem,
         0, 0,
         gGame.levelPlaceholderInfo.width,
         gGame.levelPlaceholderInfo.height,
@@ -159,36 +158,51 @@ void RenderGameUI(HDC hdc, RECT rect)
 
     SelectObject(hdc, oldFont);
 
+    // PLAYER PLACEHOLDER //
+    int heartsTop = rect.bottom - gGame.floorWall.height + barHeight*2 + 10;
+
+    int playerY =heartsTop + gGame.heartBgInfo.height + 10;
+
+    DrawPlayerPlaceholder(
+        hdc,
+        rect,
+        "PLAYER 1",
+        gGame.leftWall.width,
+        playerY,
+        RGB(180, 0, 0),
+        gGame.heartBgInfo.height + 6
+    );
+
     // === RENDER BAKLJI ===
     int torchGap = 10;
     int torchX1 = placeholderX - gGame.torchInfo.width - torchGap;
     int torchX2 = placeholderX + boxW + torchGap;
-    int torchY = rect.bottom - gGame.floorWall.height + gGame.torchInfo.height / 2 + barHeight;
+    int torchY = rect.bottom - gGame.floorWall.height + gGame.torchInfo.height / 2 + barHeight*2;
 
     int torchSrcX = gGame.torchInfo.currentFrame * gGame.torchInfo.width;
     int torchSrcY = gGame.torchInfo.currentRow * gGame.torchInfo.height;
 
     // Lijeva baklja
-    SelectObject(hdcMem, gRes.torchMask);
+    SelectObject(gRes.hdcMem, gRes.torchMask);
     BitBlt(hdc, torchX1, torchY,
            gGame.torchInfo.width, gGame.torchInfo.height,
-           hdcMem, torchSrcX, torchSrcY, SRCPAINT);
+           gRes.hdcMem, torchSrcX, torchSrcY, SRCPAINT);
 
-    SelectObject(hdcMem, gRes.torch);
+    SelectObject(gRes.hdcMem, gRes.torch);
     BitBlt(hdc, torchX1, torchY,
            gGame.torchInfo.width, gGame.torchInfo.height,
-           hdcMem, torchSrcX, torchSrcY, SRCAND);
+           gRes.hdcMem, torchSrcX, torchSrcY, SRCAND);
 
     // Desna baklja
-    SelectObject(hdcMem, gRes.torchMask);
+    SelectObject(gRes.hdcMem, gRes.torchMask);
     BitBlt(hdc, torchX2, torchY,
            gGame.torchInfo.width, gGame.torchInfo.height,
-           hdcMem, torchSrcX, torchSrcY, SRCPAINT);
+           gRes.hdcMem, torchSrcX, torchSrcY, SRCPAINT);
 
-    SelectObject(hdcMem, gRes.torch);
+    SelectObject(gRes.hdcMem, gRes.torch);
     BitBlt(hdc, torchX2, torchY,
            gGame.torchInfo.width, gGame.torchInfo.height,
-           hdcMem, torchSrcX, torchSrcY, SRCAND);
+           gRes.hdcMem, torchSrcX, torchSrcY, SRCAND);
 
     // === HERO ===
     gGame.hero.y = rect.bottom - gGame.floorWall.height - gGame.hero.height;
@@ -196,31 +210,31 @@ void RenderGameUI(HDC hdc, RECT rect)
     int srcX = gGame.hero.currentFrame * gGame.hero.width;
     int srcY = gGame.hero.currentRow * gGame.hero.height;
 
-    SelectObject(hdcMem, gRes.characterMask);
+    SelectObject(gRes.hdcMem, gRes.characterMask);
     BitBlt(hdc, gGame.hero.x, gGame.hero.y,
            gGame.hero.width, gGame.hero.height,
-           hdcMem, srcX, srcY, SRCAND);
+           gRes.hdcMem, srcX, srcY, SRCAND);
 
-    SelectObject(hdcMem, gRes.character);
+    SelectObject(gRes.hdcMem, gRes.character);
     BitBlt(hdc, gGame.hero.x, gGame.hero.y,
            gGame.hero.width, gGame.hero.height,
-           hdcMem, srcX, srcY, SRCPAINT);
+           gRes.hdcMem, srcX, srcY, SRCPAINT);
 
     // === HARPOON ===
     if (gGame.harpoon.isActive) {
         int visible = std::min(gGame.harpoon.length, gGame.harpoon.height);
         int y = rect.bottom - gGame.floorWall.height - visible;
 
-        SelectObject(hdcMem, gRes.arrowMask);
+        SelectObject(gRes.hdcMem, gRes.arrowMask);
         StretchBlt(hdc, gGame.harpoon.x, y,
                    gGame.harpoon.width, visible,
-                   hdcMem, 0, 0,
+                   gRes.hdcMem, 0, 0,
                    gGame.harpoon.width, visible, SRCPAINT);
 
-        SelectObject(hdcMem, gRes.arrow);
+        SelectObject(gRes.hdcMem, gRes.arrow);
         StretchBlt(hdc, gGame.harpoon.x, y,
                    gGame.harpoon.width, visible,
-                   hdcMem, 0, 0,
+                   gRes.hdcMem, 0, 0,
                    gGame.harpoon.width, visible, SRCAND);
     }
 
@@ -230,7 +244,6 @@ void RenderGameUI(HDC hdc, RECT rect)
     else if (gGame.gameState.isGameOver || gGame.currentLevel >= 4 && gGame.gameState.isLevelCleared)
         DrawGameOverScreen(hdc, rect);
 
-    DeleteDC(hdcMem);
 }
 
 
@@ -239,59 +252,56 @@ void DrawHearts(HDC hdc, RECT rect, int padding) {
     int startY = rect.bottom - gGame.floorWall.height + padding + gGame.heartInfo.height;
     int gap = 5;
 
-    HDC hdcMem = CreateCompatibleDC(hdc);
-
     for (int i = 0; i < 5 ; i++) {
         int x = startX + i * (gGame.heartInfo.width + gap);
         int y = startY;
 
         // === BACKGROUND  ===
-        HBITMAP oldBmp = (HBITMAP)SelectObject(hdcMem, gRes.heartBkgMask);
-        BitBlt(hdc, x, y, gGame.heartBgInfo.width, gGame.heartBgInfo.height, hdcMem, 0, 0, SRCPAINT);
-        SelectObject(hdcMem, gRes.heartBkg);
-        BitBlt(hdc, x, y, gGame.heartBgInfo.width, gGame.heartBgInfo.height, hdcMem, 0, 0, SRCAND);
+        HBITMAP oldBmp = (HBITMAP)SelectObject(gRes.hdcMem, gRes.heartBkgMask);
+        BitBlt(hdc, x, y, gGame.heartBgInfo.width, gGame.heartBgInfo.height, gRes.hdcMem, 0, 0, SRCPAINT);
+        SelectObject(gRes.hdcMem, gRes.heartBkg);
+        BitBlt(hdc, x, y, gGame.heartBgInfo.width, gGame.heartBgInfo.height, gRes.hdcMem, 0, 0, SRCAND);
 
         // === BORDER ===
-        SelectObject(hdcMem, gRes.heartBorderMask);
-        BitBlt(hdc, x, y, gGame.heartBorderInfo.width, gGame.heartBorderInfo.height, hdcMem, 0, 0, SRCPAINT);
-        SelectObject(hdcMem, gRes.heartBorder);
-        BitBlt(hdc, x, y, gGame.heartBorderInfo.width, gGame.heartBorderInfo.height, hdcMem, 0, 0, SRCAND);
+        SelectObject(gRes.hdcMem, gRes.heartBorderMask);
+        BitBlt(hdc, x, y, gGame.heartBorderInfo.width, gGame.heartBorderInfo.height, gRes.hdcMem, 0, 0, SRCPAINT);
+        SelectObject(gRes.hdcMem, gRes.heartBorder);
+        BitBlt(hdc, x, y, gGame.heartBorderInfo.width, gGame.heartBorderInfo.height, gRes.hdcMem, 0, 0, SRCAND);
 
         // === FILL  ===
         if (i < gGame.gameState.lives) {
             int srcX = gGame.hearts[i].currentFrame * gGame.heartInfo.width;
 
-            SelectObject(hdcMem, gRes.heartMask);
+            SelectObject(gRes.hdcMem, gRes.heartMask);
             BitBlt(
                 hdc,
                 x,
                 y,
                 gGame.heartInfo.width,
                 gGame.heartInfo.height,
-                hdcMem,
+                gRes.hdcMem,
                 srcX,
                 0,
                 SRCPAINT
             );
 
-            SelectObject(hdcMem, gRes.heart);
+            SelectObject(gRes.hdcMem, gRes.heart);
             BitBlt(
                 hdc,
                 x,
                 y,
                 gGame.heartInfo.width,
                 gGame.heartInfo.height,
-                hdcMem,
+                gRes.hdcMem,
                 srcX,
                 0,
                 SRCAND
             );
         }
 
-        SelectObject(hdcMem, oldBmp);
+        SelectObject(gRes.hdcMem, oldBmp);
     }
 
-    DeleteDC(hdcMem);
 }
 
 void DrawScore(HDC hdc, RECT rect)
@@ -336,3 +346,70 @@ void DrawScore(HDC hdc, RECT rect)
 
     SelectObject(hdc, oldFont);
 }
+
+void DrawPlayerPlaceholder(
+    HDC hdc,
+    RECT rect,
+    const std::string& text,
+    int x,
+    int y,
+    COLORREF textColor,
+    int boxHeight
+) {
+    HFONT oldFont = (HFONT)SelectObject(hdc, gRes.hFont);
+    SetBkMode(hdc, TRANSPARENT);
+    SetTextColor(hdc, textColor);
+
+    SIZE textSize;
+    GetTextExtentPoint32(
+        hdc,
+        text.c_str(),
+        text.length(),
+        &textSize
+    );
+
+    int paddingX = 30;
+    int boxW = textSize.cx + paddingX;
+    int boxH = boxHeight + 10;
+
+    SelectObject(gRes.hdcMem, gRes.levelPlaceholderWhite);
+    StretchBlt(
+        hdc,
+        x, y,
+        boxW, boxH,
+        gRes.hdcMem,
+        0, 0,
+        gGame.levelPlaceholderInfo.width,
+        gGame.levelPlaceholderInfo.height,
+        SRCAND
+    );
+
+    SelectObject(gRes.hdcMem, gRes.levelPlaceholderBlack);
+    StretchBlt(
+        hdc,
+        x, y,
+        boxW, boxH,
+        gRes.hdcMem,
+        0, 0,
+        gGame.levelPlaceholderInfo.width,
+        gGame.levelPlaceholderInfo.height,
+        SRCPAINT
+    );
+
+    TEXTMETRIC tm;
+    GetTextMetrics(hdc, &tm);
+
+    int textX = x + (boxW - textSize.cx) / 2;
+    int textY = y + (boxH - tm.tmHeight) / 2;
+
+    TextOut(
+        hdc,
+        textX,
+        textY,
+        text.c_str(),
+        text.length()
+    );
+
+    SelectObject(hdc, oldFont);
+}
+

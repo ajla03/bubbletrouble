@@ -4,10 +4,8 @@
 #include <stdio.h>
 
 void RenderLevel4(HDC hdcBuffer, RECT rect){
-    HDC hdcMem = CreateCompatibleDC(hdcBuffer);
-
     // === BACKGROUND ===
-    SelectObject(hdcMem, gRes.hBgLevel2);
+    SelectObject(gRes.hdcMem, gRes.hBgLevel2);
 
     int bgX = gGame.leftWall.width;
     int bgY = 0;
@@ -18,7 +16,7 @@ void RenderLevel4(HDC hdcBuffer, RECT rect){
     SetBrushOrgEx(hdcBuffer, 0, 0, NULL);
     StretchBlt(
         hdcBuffer, bgX, bgY, bgW, bgH,
-        hdcMem, 0, 0,
+        gRes.hdcMem, 0, 0,
         CURRENT_LEVEL.backgroundInfo.width,
         CURRENT_LEVEL.backgroundInfo.height,
         SRCCOPY
@@ -26,7 +24,7 @@ void RenderLevel4(HDC hdcBuffer, RECT rect){
 
     // === FIRST PILLAR (LEFT) ===
     if(CURRENT_LEVEL.pillar1.width > 0){
-        SelectObject(hdcMem, gRes.longWall);
+        SelectObject(gRes.hdcMem, gRes.longWall);
         SetStretchBltMode(hdcBuffer, HALFTONE);
         SetBrushOrgEx(hdcBuffer, 0, 0, NULL);
         StretchBlt(
@@ -35,7 +33,7 @@ void RenderLevel4(HDC hdcBuffer, RECT rect){
             CURRENT_LEVEL.pillar1.y,
             CURRENT_LEVEL.pillar1.width,
             CURRENT_LEVEL.pillar1.height,
-            hdcMem,
+            gRes.hdcMem,
             0, 0,
             CURRENT_LEVEL.pillar1.originalWidth,
             CURRENT_LEVEL.pillar1.originalHeight,
@@ -45,7 +43,7 @@ void RenderLevel4(HDC hdcBuffer, RECT rect){
 
     // === SECOND PILLAR (RIGHT) ===
     if(CURRENT_LEVEL.pillar2.width > 0){
-        SelectObject(hdcMem, gRes.longWall);
+        SelectObject(gRes.hdcMem, gRes.longWall);
         SetStretchBltMode(hdcBuffer, HALFTONE);
         SetBrushOrgEx(hdcBuffer, 0, 0, NULL);
         StretchBlt(
@@ -54,7 +52,7 @@ void RenderLevel4(HDC hdcBuffer, RECT rect){
             CURRENT_LEVEL.pillar2.y,
             CURRENT_LEVEL.pillar2.width,
             CURRENT_LEVEL.pillar2.height,
-            hdcMem,
+            gRes.hdcMem,
             0, 0,
             CURRENT_LEVEL.pillar2.originalWidth,
             CURRENT_LEVEL.pillar2.originalHeight,
@@ -68,8 +66,6 @@ void RenderLevel4(HDC hdcBuffer, RECT rect){
             DrawBalloonGDI(hdcBuffer, &CURRENT_LEVEL.balloons[i]);
         }
     }
-
-    DeleteDC(hdcMem);
 }
 
 void InitLevel4(HWND hwnd){

@@ -4,10 +4,8 @@
 
 void RenderLevel1(HDC hdcBuffer, RECT rect)
 {
-    HDC hdcMem = CreateCompatibleDC(hdcBuffer);
-
     // === BACKGROUND ===
-    SelectObject(hdcMem, gRes.background);
+    SelectObject(gRes.hdcMem, gRes.background);
 
     int bgX = gGame.leftWall.width;
     int bgY = 0;
@@ -16,7 +14,7 @@ void RenderLevel1(HDC hdcBuffer, RECT rect)
 
     StretchBlt(
         hdcBuffer, bgX, bgY, bgW, bgH,
-        hdcMem, 0, 0,
+        gRes.hdcMem, 0, 0,
         CURRENT_LEVEL.backgroundInfo.width,
         CURRENT_LEVEL.backgroundInfo.height,
         SRCCOPY
@@ -28,8 +26,6 @@ void RenderLevel1(HDC hdcBuffer, RECT rect)
             DrawBalloonGDI(hdcBuffer, &CURRENT_LEVEL.balloons[i]);
         }
     }
-
-    DeleteDC(hdcMem);
 }
 
 

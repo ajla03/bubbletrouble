@@ -8,13 +8,11 @@
 
 void DrawButton(HDC hdc, HBITMAP bmp, HBITMAP mask, Button& button)
 {
-    HDC memDC = CreateCompatibleDC(hdc);
+    SelectObject(gRes.hdcMem, mask);
+    BitBlt(hdc, button.x, button.y, button.width, button.height, gRes.hdcMem, 0, 0, SRCPAINT);
 
-    SelectObject(memDC, mask);
-    BitBlt(hdc, button.x, button.y, button.width, button.height, memDC, 0, 0, SRCPAINT);
-
-    SelectObject(memDC, bmp);
-    BitBlt(hdc, button.x, button.y, button.width, button.height, memDC, 0, 0, SRCAND);
+    SelectObject(gRes.hdcMem, bmp);
+    BitBlt(hdc, button.x, button.y, button.width, button.height, gRes.hdcMem, 0, 0, SRCAND);
 
  if (button.isHover)
     {
@@ -56,7 +54,6 @@ void DrawButton(HDC hdc, HBITMAP bmp, HBITMAP mask, Button& button)
         DeleteDC(overlayDC);
     }
 
-    DeleteDC(memDC);;
 }
 
 void DrawGameOverScreen(HDC hdc, RECT rect)

@@ -5,10 +5,9 @@
 
 
 void RenderLevel3(HDC hdcBuffer, RECT rect){
-    HDC hdcMem = CreateCompatibleDC(hdcBuffer);
 
     // === BACKGROUND ===
-    SelectObject(hdcMem, gRes.hBgLevel3);
+    SelectObject(gRes.hdcMem, gRes.hBgLevel3);
 
     int bgX = gGame.leftWall.width;
     int bgY = 0;
@@ -19,7 +18,7 @@ void RenderLevel3(HDC hdcBuffer, RECT rect){
     SetBrushOrgEx(hdcBuffer, 0, 0, NULL);
     StretchBlt(
         hdcBuffer, bgX, bgY, bgW, bgH,
-        hdcMem, 0, 0,
+        gRes.hdcMem, 0, 0,
         CURRENT_LEVEL.backgroundInfo.width,
         CURRENT_LEVEL.backgroundInfo.height,
         SRCCOPY
@@ -27,56 +26,56 @@ void RenderLevel3(HDC hdcBuffer, RECT rect){
 
     // === DOOR ===
     if(CURRENT_LEVEL.door.active){
-        SelectObject(hdcMem, gRes.doorClosed);
+        SelectObject(gRes.hdcMem, gRes.doorClosed);
         StretchBlt(hdcBuffer,
             CURRENT_LEVEL.door.x,
             CURRENT_LEVEL.door.y,
             CURRENT_LEVEL.door.width,
             CURRENT_LEVEL.door.height,
-            hdcMem,
+            gRes.hdcMem,
             0, 0,
             CURRENT_LEVEL.door.originalWidth,
             CURRENT_LEVEL.door.originalHeight,
             SRCAND);
 
-        SelectObject(hdcMem, gRes.doorClosedMask);
+        SelectObject(gRes.hdcMem, gRes.doorClosedMask);
         StretchBlt(hdcBuffer,
             CURRENT_LEVEL.door.x,
             CURRENT_LEVEL.door.y,
             CURRENT_LEVEL.door.width,
             CURRENT_LEVEL.door.height,
-            hdcMem,
+            gRes.hdcMem,
             0, 0,
             CURRENT_LEVEL.door.originalWidth,
             CURRENT_LEVEL.door.originalHeight,
             SRCPAINT);
     }else{
-        SelectObject(hdcMem, gRes.door);
+        SelectObject(gRes.hdcMem, gRes.door);
         StretchBlt(hdcBuffer,
             CURRENT_LEVEL.door.x,
             CURRENT_LEVEL.door.y,
             CURRENT_LEVEL.door.width,
             CURRENT_LEVEL.door.height,
-            hdcMem,
+            gRes.hdcMem,
             0, 0,
             CURRENT_LEVEL.door.originalWidth,
             CURRENT_LEVEL.door.originalHeight,
             SRCAND);
 
-        SelectObject(hdcMem, gRes.doorMask);
+        SelectObject(gRes.hdcMem, gRes.doorMask);
         StretchBlt(hdcBuffer,
             CURRENT_LEVEL.door.x,
             CURRENT_LEVEL.door.y,
             CURRENT_LEVEL.door.width,
             CURRENT_LEVEL.door.height,
-            hdcMem,
+            gRes.hdcMem,
             0, 0,
             CURRENT_LEVEL.door.originalWidth,
             CURRENT_LEVEL.door.originalHeight,
             SRCPAINT);
     }
     // === PILLAR ===
-    SelectObject(hdcMem, gRes.longWall);
+    SelectObject(gRes.hdcMem, gRes.longWall);
     SetStretchBltMode(hdcBuffer, HALFTONE);
     SetBrushOrgEx(hdcBuffer, 0, 0, NULL);
     StretchBlt(
@@ -85,7 +84,7 @@ void RenderLevel3(HDC hdcBuffer, RECT rect){
         CURRENT_LEVEL.longWall.y,
         CURRENT_LEVEL.longWall.width,
         CURRENT_LEVEL.longWall.height,
-        hdcMem,
+        gRes.hdcMem,
         0, 0,
         CURRENT_LEVEL.longWall.originalWidth,
         CURRENT_LEVEL.longWall.originalHeight,
@@ -98,7 +97,6 @@ void RenderLevel3(HDC hdcBuffer, RECT rect){
             DrawBalloonGDI(hdcBuffer, &CURRENT_LEVEL.balloons[i]);
         }
     }
-    DeleteDC(hdcMem);
 }
 
 void InitLevel3(HWND hwnd){
@@ -129,8 +127,8 @@ void InitLevel3(HWND hwnd){
   for(int i=0;i<MAX_BALLOONS;i++)
         CURRENT_LEVEL.balloons[i].active = false;
 
-  InitBalloon(0, rect.right/4, 100, 20, 2.5f, RGB(255, 0, 0));    // Crvena
-  InitBalloon(1, 3*rect.right/4, 150, 40, -2.0f, RGB(0, 255, 0));   // Zelena
+  InitBalloon(0, rect.right/4, 100, 20, 3.5f, RGB(255, 0, 0));    // Crvena
+  InitBalloon(1, 3*rect.right/4, 150, 40, -3.0f, RGB(0, 255, 0));   // Zelena
   //InitBalloon(2, 600, 120, 80, 3.0f, RGB(0, 100, 255));  // Plava
 
 }

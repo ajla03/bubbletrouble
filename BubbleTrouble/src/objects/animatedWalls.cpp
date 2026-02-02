@@ -19,17 +19,15 @@ void DrawTransitionWalls(HDC hdc, RECT rect){
     if(gGame.transitionState == TRANSITION_NONE)
         return;
 
-    HDC memDC = CreateCompatibleDC(hdc);
     int screenWidth = rect.right;
 
     SetStretchBltMode(hdc, HALFTONE);
     SetBrushOrgEx(hdc, 0, 0, NULL);
 
-    SelectObject(memDC, gRes.wall2);
-    StretchBlt(hdc, 0, gGame.animatedWalls.wallTopY, screenWidth, gGame.animatedWall.height, memDC, 0, 0, gGame.animatedWall.width, gGame.animatedWall.height, SRCCOPY);
+    SelectObject(gRes.hdcMem, gRes.wall2);
+    StretchBlt(hdc, 0, gGame.animatedWalls.wallTopY, screenWidth, gGame.animatedWall.height, gRes.hdcMem, 0, 0, gGame.animatedWall.width, gGame.animatedWall.height, SRCCOPY);
 
-    SelectObject(memDC, gRes.wall1);
-    StretchBlt(hdc, 0, gGame.animatedWalls.wallBottomY, screenWidth, gGame.animatedWall.height, memDC, 0, 0, gGame.animatedWall.width, gGame.animatedWall.height, SRCCOPY);
+    SelectObject(gRes.hdcMem, gRes.wall1);
+    StretchBlt(hdc, 0, gGame.animatedWalls.wallBottomY, screenWidth, gGame.animatedWall.height, gRes.hdcMem, 0, 0, gGame.animatedWall.width, gGame.animatedWall.height, SRCCOPY);
 
-    DeleteDC(memDC);
 }

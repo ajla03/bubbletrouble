@@ -123,9 +123,9 @@ void UpdateBalloons(HWND hwnd) {
 
         float minBounce = gGame.hero.height + 40.0f;
         float estimatedPeak  = b->bounceSpeed * 12.0f;
-        /*if(estimatedPeak < minBounce)
+        if(estimatedPeak < minBounce)
             b->bounceSpeed +=0.2f;
-          */
+
 
     }
 }

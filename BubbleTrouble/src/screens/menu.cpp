@@ -470,4 +470,8 @@ void ResetBetweenLevels(HWND hwnd) {
     gGame.harpoon.isActive = false;
     gGame.harpoon.length = 0;
 
+     // Clear all balloons
+    for (int i = 0; i < MAX_BALLOONS; i++) {
+        CURRENT_LEVEL.balloons[i].active = false;
+    }
 }

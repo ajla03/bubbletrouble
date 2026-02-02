@@ -38,7 +38,7 @@ int WINAPI WinMain(HINSTANCE hThisInstance, HINSTANCE hPrevInstance, LPSTR lpszA
 
     LoadBitmaps(hwnd, hThisInstance);
 
-    float targetFPS = 60.0f;
+    float targetFPS = 65.0f;
     DWORD frameTimeMs = (DWORD) (1000.0f / targetFPS);
     while (1){
         DWORD start = GetTickCount();
@@ -60,9 +60,13 @@ int WINAPI WinMain(HINSTANCE hThisInstance, HINSTANCE hPrevInstance, LPSTR lpszA
 }
 
 LRESULT CALLBACK WindowProcedure(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam){
+   static int prevClientW = 0;
+   static int prevClientH = 0;
+
     switch (message){
         case WM_SETCURSOR: {
          SetCursor(gRes.gameCursor);
+
          return 0 ;
         }
         case WM_CREATE:
@@ -78,8 +82,25 @@ LRESULT CALLBACK WindowProcedure(HWND hwnd, UINT message, WPARAM wParam, LPARAM 
             VARIABLE_PITCH,
             TEXT("Kenney Mini Square")
             );
+            HDC hdc = GetDC(hwnd);
+            gRes.InitMemDC(hdc);
+            ReleaseDC(hwnd, hdc);
         }
           case WM_SIZE: {
+            int newW = LOWORD(lParam);
+            int newH = HIWORD(lParam);
+
+
+            UpdateLayout(
+                prevClientW,
+                prevClientH,
+                newW,
+                newH
+            );
+
+            prevClientW = newW;
+            prevClientH = newH;
+
             if (gGame.gameState.currentMode == GAME_MODE_MENU) {
                 InitializeMenu(hwnd);
             }

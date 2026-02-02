@@ -28,10 +28,12 @@ struct ResourceManager{
     HBITMAP doorClosed, doorClosedMask, door, doorMask;
     HCURSOR gameCursor;
     HBITMAP logo, logoMask;
+    HDC hdcMem;
 
     HFONT hFont;
     HANDLE hFontRes;
 
+    void InitMemDC(HDC hdc);
     bool LoadAll(HINSTANCE hInstance);
     void ReleaseAll();
 
