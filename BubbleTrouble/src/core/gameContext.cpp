@@ -23,6 +23,7 @@ GameContext gGame = {
     /* heartBorderInfo */ {},
     /* hearts */ {},
     /* torchInfo */ {},
+    /* playerHolderInfo */ {},
     /* animatedWalls */ { 0, 0, 12.0f },
     /* logoInfo */ {},
 

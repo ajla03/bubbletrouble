@@ -19,8 +19,8 @@ IDB_TORCH_MASK  BITMAP "../assets/bitmaps/torchBlack.bmp"
 IDR_HARPOON_SOUND  WAVE "../assets/sounds/shoot.wav"
 IDR_BALLOON_POP    WAVE "../assets/sounds/bubble-pop-06-351337.wav"
 
-IDB_LEVEL_WHITE       BITMAP "../assets/bitmaps/levelPlaceholderWhite.bmp"
-IDB_LEVEL_BLACK       BITMAP "../assets/bitmaps/levelPlaceholderBlack.bmp"
+IDB_LEVEL_WHITE       BITMAP "../assets/bitmaps/playerHolderWhite.bmp"
+IDB_LEVEL_BLACK       BITMAP "../assets/bitmaps/playerHolderBlack.bmp"
 
 IDB_HEART_MASK    BITMAP "../assets/bitmaps/heartBlack.bmp"
 IDB_HEART         BITMAP "../assets/bitmaps/heartWhite.bmp"

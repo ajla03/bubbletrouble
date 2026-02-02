@@ -40,8 +40,8 @@ void ResetBetweenLevels(HWND hwnd);
 // ================= UI / SCREENS ===========
 void DrawGameOverScreen(HDC hdc, RECT rect);
 void DrawLevelPassedScreen(HDC hdc, RECT rect);
-void DrawHearts(HDC, RECT, int);
-void DrawScore(HDC, RECT);
+void DrawHearts(HDC hdc, RECT rect, int barHeight);
+void DrawScore(HDC hdc, RECT rect);
 void DrawPlayerPlaceholder(
     HDC hdc,
     RECT rect,

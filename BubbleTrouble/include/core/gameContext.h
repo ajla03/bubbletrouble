@@ -32,6 +32,7 @@ struct GameContext{
 
      StaticObject leftWall, rightWall, floorWall, animatedWall;
      StaticObject levelPlaceholderInfo;
+     StaticObject playerHolderInfo;
      StaticObject heartInfo, heartBgInfo, heartBorderInfo;
 
      HeartAnim hearts[5];

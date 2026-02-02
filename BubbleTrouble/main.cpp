@@ -72,7 +72,7 @@ LRESULT CALLBACK WindowProcedure(HWND hwnd, UINT message, WPARAM wParam, LPARAM 
         case WM_CREATE:
         {
         gRes.hFont = CreateFont(
-            48, 0, 0, 0,
+            32, 0, 0, 0,
             FW_BOLD,
             FALSE, FALSE, FALSE,
             DEFAULT_CHARSET,

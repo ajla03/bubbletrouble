@@ -57,10 +57,15 @@ void RenderStaticUI(HDC hdc, RECT rect) {
 
         SelectObject(CURRENT_LEVEL.hdcCache, oldFont);
 
+
         // PLAYER PLACEHOLDER //
         int heartsTop = rect.bottom - gGame.floorWall.height + barHeight*2 + 10;
         int playerY = heartsTop + gGame.heartBgInfo.height + 10;
 
+        gGame.playerHolderInfo.x = gGame.leftWall.width;
+        gGame.playerHolderInfo.y = playerY;
+        gGame.playerHolderInfo.width = boxW;
+        gGame.playerHolderInfo.height= boxH;
         DrawPlayerPlaceholder(CURRENT_LEVEL.hdcCache, rect, "PLAYER 1", gGame.leftWall.width, playerY,
                              RGB(180, 0, 0), gGame.heartBgInfo.height + 6);
 
@@ -250,7 +255,7 @@ void RenderDynamicGameUI(HDC hdc, RECT rect)
 void DrawHearts(HDC hdc, RECT rect, int padding) {
     int startX = gGame.leftWall.width;
     int startY = rect.bottom - gGame.floorWall.height + padding + gGame.heartInfo.height;
-    int gap = 5;
+    int gap = 20;
 
     for (int i = 0; i < 5 ; i++) {
         int x = startX + i * (gGame.heartInfo.width + gap);

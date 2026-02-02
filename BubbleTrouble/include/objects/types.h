@@ -24,6 +24,8 @@ struct StaticObject{
  int width, height;
 };
 
+
+
 struct Door : public StaticObject{
  int originalWidth, originalHeight;
  bool active = true;
@@ -32,6 +34,8 @@ struct Door : public StaticObject{
 struct Pillar : public StaticObject{
  int originalWidth, originalHeight;
 };
+
+
 
 struct Balloon {
     float x, y;
