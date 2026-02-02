@@ -30,14 +30,51 @@
 		</Build>
 		<Compiler>
 			<Add option="-Wall" />
+			<Add directory="C:/Users/Amina/Desktop/precommit/BubbleTrouble/BubbleTrouble/src/screens/levels" />
+			<Add directory="C:/Users/Amina/Desktop/precommit/BubbleTrouble/BubbleTrouble/src/resources" />
+			<Add directory="C:/Users/Amina/Desktop/precommit/BubbleTrouble/BubbleTrouble/src/objects" />
+			<Add directory="C:/Users/Amina/Desktop/precommit/BubbleTrouble/BubbleTrouble/src/gameLoop" />
+			<Add directory="C:/Users/Amina/Desktop/precommit/BubbleTrouble/BubbleTrouble/src/core" />
+			<Add directory="C:/Users/Amina/Desktop/precommit/BubbleTrouble/BubbleTrouble/include/core" />
+			<Add directory="C:/Users/Amina/Desktop/precommit/BubbleTrouble/BubbleTrouble/include/objects" />
+			<Add directory="C:/Users/Amina/Desktop/precommit/BubbleTrouble/BubbleTrouble/include/resources" />
+			<Add directory="C:/Users/Amina/Desktop/precommit/BubbleTrouble/BubbleTrouble/src" />
 		</Compiler>
 		<Linker>
 			<Add library="gdi32" />
 			<Add library="user32" />
 			<Add library="kernel32" />
 			<Add library="comctl32" />
+			<Add library="msimg32" />
+			<Add library="winmm" />
 		</Linker>
+		<Unit filename="include/core/game.h" />
+		<Unit filename="include/core/gameContext.h" />
+		<Unit filename="include/objects/types.h" />
+		<Unit filename="include/resources/constants.h" />
+		<Unit filename="include/resources/resourceManager.h" />
+		<Unit filename="include/resources/resources.h" />
 		<Unit filename="main.cpp" />
+		<Unit filename="src/core/gameContext.cpp" />
+		<Unit filename="src/core/levelDispatcher.cpp" />
+		<Unit filename="src/gameLoop/input.cpp" />
+		<Unit filename="src/gameLoop/render.cpp" />
+		<Unit filename="src/gameLoop/update.cpp" />
+		<Unit filename="src/objects/animatedWalls.cpp" />
+		<Unit filename="src/objects/baloons.cpp" />
+		<Unit filename="src/resources.rc">
+			<Option compilerVar="WINDRES" />
+		</Unit>
+		<Unit filename="src/resources/globals.cpp" />
+		<Unit filename="src/resources/resourceManager.cpp" />
+		<Unit filename="src/resources/resources.cpp" />
+		<Unit filename="src/screens/gameOver.cpp" />
+		<Unit filename="src/screens/gameUI.cpp" />
+		<Unit filename="src/screens/levelPassed.cpp" />
+		<Unit filename="src/screens/levels/level1.cpp" />
+		<Unit filename="src/screens/levels/level2.cpp" />
+		<Unit filename="src/screens/levels/level3.cpp" />
+		<Unit filename="src/screens/menu.cpp" />
 		<Extensions />
 	</Project>
 </CodeBlocks_project_file>

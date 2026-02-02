@@ -37,6 +37,22 @@ void CheckHeroDoorCollision(){
     }
 
 }
+void CheckHeroPillarCollision(StaticObject* pillar){
+ if(pillar->width <= 0 || pillar->height <= 0) return;
+
+ Hero* h = &gGame.hero;
+
+    if (AABB(h->x, h->y, h->width, h->height,
+             pillar->x, pillar->y, pillar->width, pillar->height))
+    {
+        if (h->x < pillar->x)
+            h->x = pillar->x - h->width;
+        else
+            h->x = pillar->x + pillar->width;
+
+        return;
+    }
+}
 
 void CheckInputs(HWND hwnd){
     if(gGame.gameState.isGameOver || gGame.gameState.isLevelCleared)
@@ -72,6 +88,11 @@ void CheckInputs(HWND hwnd){
 
     // ===== CHECK ZA VRATA ===== //
     CheckHeroDoorCollision();
+
+    // ===== CHECK ZA STUBOVE (Level 4) ===== //
+    CheckHeroPillarCollision(&CURRENT_LEVEL.pillar1);
+    CheckHeroPillarCollision(&CURRENT_LEVEL.pillar2);
+
 
     // === ANIMATION ===
     if(isMoving) {

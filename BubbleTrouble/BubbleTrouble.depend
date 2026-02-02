@@ -62,7 +62,7 @@
 	"globals.h"
 	"game.h"
 
-1769996916 source:c:\users\amina\desktop\precommit\bubbletrouble\bubbletrouble\src\resources.rc
+1769997343 source:c:\users\amina\desktop\precommit\bubbletrouble\bubbletrouble\src\resources.rc
 	"../include/resources/resources.h"
 
 1769777226 source:c:\users\amina\desktop\precommit\bubbletrouble\bubbletrouble\src\update.cpp
@@ -210,12 +210,12 @@
 1769996805 c:\users\amina\desktop\precommit\bubbletrouble\bubbletrouble\include\resources\resourcemanager.h
 	<windows.h>
 
-1769996805 c:\users\amina\desktop\precommit\bubbletrouble\bubbletrouble\include\core\gamecontext.h
+1770032285 c:\users\amina\desktop\precommit\bubbletrouble\bubbletrouble\include\core\gamecontext.h
 	"types.h"
 	"constants.h"
 	<windows.h>
 
-1769995706 c:\users\amina\desktop\precommit\bubbletrouble\bubbletrouble\include\objects\types.h
+1770030077 c:\users\amina\desktop\precommit\bubbletrouble\bubbletrouble\include\objects\types.h
 	<windows.h>
 
 1769995706 c:\users\amina\desktop\precommit\bubbletrouble\bubbletrouble\include\resources\constants.h
@@ -223,7 +223,7 @@
 1769996805 c:\users\amina\desktop\precommit\bubbletrouble\bubbletrouble\include\resources\resources.h
 	<windows.h>
 
-1769995706 c:\users\amina\desktop\precommit\bubbletrouble\bubbletrouble\include\core\game.h
+1770030508 c:\users\amina\desktop\precommit\bubbletrouble\bubbletrouble\include\core\game.h
 	<windows.h>
 	"types.h"
 
@@ -239,11 +239,12 @@
 	"resourceManager.h"
 	"game.h"
 
-1769995707 source:c:\users\amina\desktop\precommit\bubbletrouble\bubbletrouble\src\screens\gameover.cpp
+1770030604 source:c:\users\amina\desktop\precommit\bubbletrouble\bubbletrouble\src\screens\gameover.cpp
 	"resources.h"
 	"types.h"
 	"gameContext.h"
 	"resourceManager.h"
+	<wingdi.h>
 
 1769995707 source:c:\users\amina\desktop\precommit\bubbletrouble\bubbletrouble\src\screens\levelpassed.cpp
 	"resources.h"
@@ -251,7 +252,7 @@
 	"resourceManager.h"
 	"game.h"
 
-1769996805 source:c:\users\amina\desktop\precommit\bubbletrouble\bubbletrouble\src\screens\menu.cpp
+1770028410 source:c:\users\amina\desktop\precommit\bubbletrouble\bubbletrouble\src\screens\menu.cpp
 	"resources.h"
 	<windows.h>
 	<stdio.h>
@@ -263,11 +264,11 @@
 1769996805 source:c:\users\amina\desktop\precommit\bubbletrouble\bubbletrouble\src\core\gamecontext.cpp
 	"gameContext.h"
 
-1769995707 source:c:\users\amina\desktop\precommit\bubbletrouble\bubbletrouble\src\core\leveldispatcher.cpp
+1770029722 source:c:\users\amina\desktop\precommit\bubbletrouble\bubbletrouble\src\core\leveldispatcher.cpp
 	"game.h"
 	"gameContext.h"
 
-1769995707 source:c:\users\amina\desktop\precommit\bubbletrouble\bubbletrouble\src\gameloop\input.cpp
+1770030508 source:c:\users\amina\desktop\precommit\bubbletrouble\bubbletrouble\src\gameloop\input.cpp
 	"resources.h"
 	"gameContext.h"
 	"constants.h"
@@ -282,7 +283,7 @@
 	<algorithm>
 	<cstdio>
 
-1769997223 source:c:\users\amina\desktop\precommit\bubbletrouble\bubbletrouble\src\gameloop\update.cpp
+1770029722 source:c:\users\amina\desktop\precommit\bubbletrouble\bubbletrouble\src\gameloop\update.cpp
 	"resources.h"
 	"gameContext.h"
 	"game.h"
@@ -294,7 +295,7 @@
 	"resourceManager.h"
 	"game.h"
 
-1769995707 source:c:\users\amina\desktop\precommit\bubbletrouble\bubbletrouble\src\objects\baloons.cpp
+1770032285 source:c:\users\amina\desktop\precommit\bubbletrouble\bubbletrouble\src\objects\baloons.cpp
 	"resources.h"
 	"gameContext.h"
 	"game.h"
@@ -303,7 +304,7 @@
 	<algorithm>
 	<cmath>
 
-1769995707 source:c:\users\amina\desktop\precommit\bubbletrouble\bubbletrouble\src\screens\gameui.cpp
+1770031739 source:c:\users\amina\desktop\precommit\bubbletrouble\bubbletrouble\src\screens\gameui.cpp
 	"game.h"
 	"resourceManager.h"
 	"gameContext.h"
@@ -323,6 +324,12 @@
 	<stdio.h>
 
 1769995707 source:c:\users\amina\desktop\precommit\bubbletrouble\bubbletrouble\src\screens\levels\level3.cpp
+	"game.h"
+	"resourceManager.h"
+	"gameContext.h"
+	<stdio.h>
+
+1770029722 source:c:\users\amina\desktop\precommit\bubbletrouble\bubbletrouble\src\screens\levels\level4.cpp
 	"game.h"
 	"resourceManager.h"
 	"gameContext.h"

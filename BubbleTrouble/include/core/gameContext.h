@@ -11,6 +11,8 @@ struct Level{
      int activeBalloonCount;
      double timeLeft;
      int levelScore;
+     Pillar pillar1;
+     Pillar pillar2;
 };
 
 struct GameContext{
@@ -49,5 +51,3 @@ struct GameContext{
 };
 
 extern GameContext gGame;
-
-

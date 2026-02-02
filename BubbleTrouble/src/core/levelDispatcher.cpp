@@ -12,6 +12,9 @@ void RenderLevel(HDC hdcBuffer, RECT rect){
     case 2:
         RenderLevel3(hdcBuffer, rect);
         break;
+    case 3:
+        RenderLevel4(hdcBuffer, rect);
+        break;
     }
 }
 
@@ -26,6 +29,9 @@ void InitLevel(HWND hwnd){
         break;
     case 2:
         InitLevel3(hwnd);
+        break;
+    case 3:
+        InitLevel4(hwnd);
         break;
     }
 }

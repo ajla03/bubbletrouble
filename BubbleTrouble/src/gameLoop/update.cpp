@@ -90,7 +90,57 @@ void Update(HWND hwnd){
             CURRENT_LEVEL.door.active = false;
         }
     }
+// ==== Level 4: update stubova ====== //
+    if(gGame.currentLevel == 3) {  // Level 4 je index 3
+        RECT rect;
+        GetClientRect(hwnd, &rect);
 
+        // Prvobitno su postojala 3 velika balona:
+        // Balon 0 (index 0) - u sekciji 1
+        // Balon 1 (index 1) - u sekciji 2
+        // Balon 2 (index 2) - u sekciji 3
+
+        // Provjeravamo da li su baloni na pozicijama 0, 1, 2 potpuno uništeni
+        // Provjera za balon 0 (sekcija 1):
+        // Trebamo da provjerimo da li postoje aktivni baloni koji su potekli od balona 0
+
+        // Za prvi stub: provjeravamo da li je balon 0 (i svi njegovi dijelovi) uništen
+        if(CURRENT_LEVEL.pillar1.width > 0) {
+            bool balloon0Destroyed = true;
+
+            // Balon 0 i svi njegovi mali dijelovi će biti u prvim pozicijama niza
+            // Provjeri da li balon 0 još postoji ili bilo koji mali balon žute boje (RGB(255, 200, 0))
+            for(int i = 0; i < MAX_BALLOONS; i++) {
+                if(CURRENT_LEVEL.balloons[i].active &&
+                   CURRENT_LEVEL.balloons[i].color == RGB(255, 200, 0)) {
+                    balloon0Destroyed = false;
+                    break;
+                }
+            }
+
+            if(balloon0Destroyed) {
+                CURRENT_LEVEL.pillar1.width = 0;  // Ukloni prvi stub
+            }
+        }
+
+        // Za drugi stub: provjeravamo da li je balon 1 (i svi njegovi dijelovi) uništen
+        if(CURRENT_LEVEL.pillar2.width > 0) {
+            bool balloon1Destroyed = true;
+
+            // Provjeri da li balon 1 još postoji ili bilo koji mali balon narandžaste boje (RGB(255, 100, 0))
+            for(int i = 0; i < MAX_BALLOONS; i++) {
+                if(CURRENT_LEVEL.balloons[i].active &&
+                   CURRENT_LEVEL.balloons[i].color == RGB(255, 100, 0)) {
+                    balloon1Destroyed = false;
+                    break;
+                }
+            }
+
+            if(balloon1Destroyed) {
+                CURRENT_LEVEL.pillar2.width = 0;  // Ukloni drugi stub
+            }
+        }
+    }
     UpdateHeroCoolDown(0.016f);
 
     UpdateBalloons(hwnd);

@@ -62,13 +62,13 @@ void RenderGameUI(HDC hdc, RECT rect)
     FillRect(hdc, &barBgRect, hDarkBrush);
     DeleteObject(hDarkBrush);
 
-    // Ogranièenje vremena na 0
+    // Ograniï¿½enje vremena na 0
     if (CURRENT_LEVEL.timeLeft < 0)
         CURRENT_LEVEL.timeLeft = 0;
 
     int currentWidth = (int)((CURRENT_LEVEL.timeLeft / maxTime) * maxBarWidth);
 
-    // Crven dio (g³ówna traka)
+    // Crven dio (gï¿½ï¿½wna traka)
     HBRUSH hRedBrush = CreateSolidBrush(RGB(220, 0, 0));
     RECT barRect = { barX, barY, barX + currentWidth, barY + barHeight };
     FillRect(hdc, &barRect, hRedBrush);
@@ -225,9 +225,9 @@ void RenderGameUI(HDC hdc, RECT rect)
     }
 
     // === OVERLAY TEXT ===
-    if (gGame.gameState.isLevelCleared && gGame.currentLevel < 2)
+    if (gGame.gameState.isLevelCleared && gGame.currentLevel < 3)
         DrawLevelPassedScreen(hdc, rect);
-    else if (gGame.gameState.isGameOver || gGame.currentLevel >=2 && gGame.gameState.isLevelCleared)
+    else if (gGame.gameState.isGameOver || gGame.currentLevel >= 3 && gGame.gameState.isLevelCleared)
         DrawGameOverScreen(hdc, rect);
 
     DeleteDC(hdcMem);
@@ -336,5 +336,3 @@ void DrawScore(HDC hdc, RECT rect)
 
     SelectObject(hdc, oldFont);
 }
-
-

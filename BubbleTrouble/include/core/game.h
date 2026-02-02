@@ -8,7 +8,8 @@ void LoadBitmaps(HWND hwnd, HINSTANCE hInstance);
 void RefreshSound();
 // ================= INPUT ==================
 void CheckInputs(HWND hwnd);
-
+void CheckHeroDoorCollision();
+void CheckHeroPillarCollision(StaticObject* pillar);
 // ================= GAME LOOP ==============
 void Update(HWND hwnd);
 void RefreshScreen(HWND hwnd);
@@ -54,6 +55,9 @@ void RenderLevel2(HDC hdcBuffer, RECT rect);
 void RenderLevel3(HDC hdcBuffer, RECT rect);
 void RenderGameUI(HDC hdcBuffer, RECT rect);
 void RenderLevel(HDC, RECT);
+void RenderLevel4(HDC hdcBuffer, RECT rect);
+void InitLevel4(HWND hwnd);
+void RecalculateLevel4Layout(HWND hwnd);
 
 // ================= TRANSITIONS ============
 void StartWallTransition(HWND hwnd);

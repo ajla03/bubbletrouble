@@ -105,11 +105,15 @@ void UpdateBalloons(HWND hwnd) {
             b->speedY = 0.0f;
         }
 
+
         // ===== PREPREKE UNUTAR NIVOA ===== //
         ResolveBalloonPillarCollision(b, &CURRENT_LEVEL.longWall);
         if(CURRENT_LEVEL.door.active)
             ResolveBalloonPillarCollision(b, &CURRENT_LEVEL.door);
 
+        // Level 4 pillars
+        ResolveBalloonPillarCollision(b, &CURRENT_LEVEL.pillar1);
+        ResolveBalloonPillarCollision(b, &CURRENT_LEVEL.pillar2);
         /*
         AKO DODAMO VISE ZIDOVA ONDA CEMO IMATI NESTO OVAKO :
         for(int j = 0; j < CURRENT_LEVEL.numExtraWalls; j++) {
