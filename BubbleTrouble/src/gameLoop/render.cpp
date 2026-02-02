@@ -7,40 +7,25 @@
 #include <cstdio>
 
 
-
-void RefreshScreen(HWND hwnd){
+void RefreshScreen(HWND hwnd) {
     HDC hdc = GetDC(hwnd);
     RECT rect;
     GetClientRect(hwnd, &rect);
 
-
-    HDC hdcBuffer = CreateCompatibleDC(hdc);
-    HBITMAP hbmBuffer = CreateCompatibleBitmap(hdc, rect.right, rect.bottom);
-    HBITMAP oldBufferBmp = (HBITMAP)SelectObject(hdcBuffer, hbmBuffer);
-
-    if(gGame.gameState.currentMode == GAME_MODE_MENU){
-       RenderMenu(hdcBuffer, rect);
-       DrawTransitionWalls(hdcBuffer, rect);
-
-    }else{
-        RenderStaticUI(hdcBuffer, rect);
-        RenderLevel(hdcBuffer, rect);
-        RenderDynamicGameUI(hdcBuffer, rect);
-        DrawTransitionWalls(hdcBuffer, rect);
+    if(gGame.gameState.currentMode == GAME_MODE_MENU) {
+        RenderMenu(gRes.hdcBuffer, rect);
+        DrawTransitionWalls(gRes.hdcBuffer, rect);
+    } else {
+        RenderStaticUI(gRes.hdcBuffer, rect);
+        RenderLevel(gRes.hdcBuffer, rect);
+        RenderDynamicGameUI(gRes.hdcBuffer, rect);
+        DrawTransitionWalls(gRes.hdcBuffer, rect);
     }
 
-    // === COPY TO SCREEN ===
-    BitBlt(hdc, 0, 0, rect.right, rect.bottom, hdcBuffer, 0, 0, SRCCOPY);
+    BitBlt(hdc, 0, 0, rect.right, rect.bottom, gRes.hdcBuffer, 0, 0, SRCCOPY);
 
-    // Cleanup
-    SelectObject(hdcBuffer, oldBufferBmp);
-    DeleteObject(hbmBuffer);
-    DeleteDC(hdcBuffer);
     ReleaseDC(hwnd, hdc);
 }
-
-
-
 
 
 

@@ -38,7 +38,7 @@ int WINAPI WinMain(HINSTANCE hThisInstance, HINSTANCE hPrevInstance, LPSTR lpszA
 
     LoadBitmaps(hwnd, hThisInstance);
 
-    float targetFPS = 65.0f;
+    float targetFPS = 60.0f;
     DWORD frameTimeMs = (DWORD) (1000.0f / targetFPS);
     while (1){
         DWORD start = GetTickCount();
@@ -108,6 +108,10 @@ LRESULT CALLBACK WindowProcedure(HWND hwnd, UINT message, WPARAM wParam, LPARAM 
                 RecalculateLevel3Layout(hwnd);
 
             CURRENT_LEVEL.staticRedraw = true;
+
+            HDC hdc = GetDC(hwnd);
+            gRes.UpdateDC(hdc, hwnd);
+            ReleaseDC(hwnd, hdc);
 
             return 0;
 

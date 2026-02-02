@@ -174,6 +174,8 @@ void UpdateWallTransition(HWND hwnd){
                 gGame.gameState.currentMode = GAME_MODE_MENU;
                 gGame.gameState.isGameOver = false;
                 gGame.gameState.isLevelCleared = false;
+                // dodala
+                ResetGame(hwnd);
             }else if(gGame.gameState.pendingNextLevel){
 
                 if (CURRENT_LEVEL.hdcCache) { printf("DELETED DC"); DeleteDC(CURRENT_LEVEL.hdcCache);}

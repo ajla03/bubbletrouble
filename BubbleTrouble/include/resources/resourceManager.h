@@ -28,7 +28,8 @@ struct ResourceManager{
     HBITMAP doorClosed, doorClosedMask, door, doorMask;
     HCURSOR gameCursor;
     HBITMAP logo, logoMask;
-    HDC hdcMem;
+    HDC hdcMem, hdcBuffer;
+    HBITMAP hbmBuffer, hOldBufferBmp;
   //, hdcBuffer;
 //    HBITMAP oldBufferBmp, hbmBuffer;
 
