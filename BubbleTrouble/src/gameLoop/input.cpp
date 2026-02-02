@@ -117,6 +117,7 @@ void CheckInputs(HWND hwnd){
         gGame.harpoon.length = 0;
         gGame.harpoon.x = gGame.hero.x + (gGame.hero.width / 2) - (gGame.harpoon.width / 2);
         gGame.harpoon.y = rect.bottom - gGame.floorWall.height;
+        if(gGame.gameState.currentMode == GAME_MODE_PLAYING)
         PlaySound(MAKEINTRESOURCE(IDR_HARPOON_SOUND), GetModuleHandle(NULL),
               SND_RESOURCE | SND_ASYNC);
     }
