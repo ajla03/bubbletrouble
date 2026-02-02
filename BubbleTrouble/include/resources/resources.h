@@ -59,6 +59,7 @@
 // ============ KONSTANTE ZA HARPUN ============ //
 #define IDR_HARPOON_SOUND   201
 #define IDR_BALLOON_POP     202
+#define IDR_SLIDING_SOUND   203
 #define IDR_MINI_FONT       301
 #define IDC_GAME_CURSOR     401
 
