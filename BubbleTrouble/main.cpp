@@ -63,6 +63,7 @@ LRESULT CALLBACK WindowProcedure(HWND hwnd, UINT message, WPARAM wParam, LPARAM 
     switch (message){
         case WM_SETCURSOR: {
          SetCursor(gRes.gameCursor);
+
          return 0 ;
         }
         case WM_CREATE:
@@ -78,6 +79,9 @@ LRESULT CALLBACK WindowProcedure(HWND hwnd, UINT message, WPARAM wParam, LPARAM 
             VARIABLE_PITCH,
             TEXT("Kenney Mini Square")
             );
+            HDC hdc = GetDC(hwnd);
+            gRes.InitMemDC(hdc);
+            ReleaseDC(hwnd, hdc);
         }
           case WM_SIZE: {
             if (gGame.gameState.currentMode == GAME_MODE_MENU) {

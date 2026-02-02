@@ -7,8 +7,6 @@
 
 
 void RenderWalls(HDC hdc, RECT rect){
-    HDC hdcMem = CreateCompatibleDC(hdc);
-
     int tileW = gGame.floorWall.width;
     int tileH = gGame.leftWall.height;
 
@@ -19,8 +17,8 @@ void RenderWalls(HDC hdc, RECT rect){
 
     SetStretchBltMode(hdc, HALFTONE);
     SetBrushOrgEx(hdc, 0, 0, NULL);
-    SelectObject(hdcMem, gRes.wall);
-    StretchBlt(hdc, 0, 0, rect.right, rect.bottom, hdcMem, 0, 0, tileW, tileH, SRCCOPY);
+    SelectObject(gRes.hdcMem, gRes.wall);
+    StretchBlt(hdc, 0, 0, rect.right, rect.bottom, gRes.hdcMem, 0, 0, tileW, tileH, SRCCOPY);
 
     // BIJELI OKVIR
     HPEN hPen = CreatePen(PS_SOLID, 2, RGB(255, 255, 255));
@@ -39,13 +37,11 @@ void RenderWalls(HDC hdc, RECT rect){
     SelectObject(hdc, hOldBrush);
     DeleteObject(hPen);
 
-    DeleteDC(hdcMem);
 }
 
 
 void RenderGameUI(HDC hdc, RECT rect)
 {
-    HDC hdcMem = CreateCompatibleDC(hdc);
 
     int bgX = gGame.leftWall.width;
     int bgY = 0;
@@ -97,7 +93,7 @@ void RenderGameUI(HDC hdc, RECT rect)
     DrawScore(hdc, rect);
 
     // === RENDER PLACEHOLDER ZA LEVEL ===
-    SelectObject(hdcMem, gRes.levelPlaceholderWhite);
+    SelectObject(gRes.hdcMem, gRes.levelPlaceholderWhite);
 
     std::string levelText = "LEVEL " + std::to_string(gGame.currentLevel+1);
     // Font
@@ -124,12 +120,12 @@ void RenderGameUI(HDC hdc, RECT rect)
     int placeholderY = rect.bottom - gGame.floorWall.height + 2 * barHeight;
 
     // Maska
-    SelectObject(hdcMem, gRes.levelPlaceholderWhite);
+    SelectObject(gRes.hdcMem, gRes.levelPlaceholderWhite);
     StretchBlt(
         hdc,
         placeholderX, placeholderY,
         boxW, boxH,
-        hdcMem,
+        gRes.hdcMem,
         0, 0,
         gGame.levelPlaceholderInfo.width,
         gGame.levelPlaceholderInfo.height,
@@ -137,12 +133,12 @@ void RenderGameUI(HDC hdc, RECT rect)
     );
 
     // Bitmap
-    SelectObject(hdcMem, gRes.levelPlaceholderBlack);
+    SelectObject(gRes.hdcMem, gRes.levelPlaceholderBlack);
     StretchBlt(
         hdc,
         placeholderX, placeholderY,
         boxW, boxH,
-        hdcMem,
+        gRes.hdcMem,
         0, 0,
         gGame.levelPlaceholderInfo.width,
         gGame.levelPlaceholderInfo.height,
@@ -170,26 +166,26 @@ void RenderGameUI(HDC hdc, RECT rect)
     int torchSrcY = gGame.torchInfo.currentRow * gGame.torchInfo.height;
 
     // Lijeva baklja
-    SelectObject(hdcMem, gRes.torchMask);
+    SelectObject(gRes.hdcMem, gRes.torchMask);
     BitBlt(hdc, torchX1, torchY,
            gGame.torchInfo.width, gGame.torchInfo.height,
-           hdcMem, torchSrcX, torchSrcY, SRCPAINT);
+           gRes.hdcMem, torchSrcX, torchSrcY, SRCPAINT);
 
-    SelectObject(hdcMem, gRes.torch);
+    SelectObject(gRes.hdcMem, gRes.torch);
     BitBlt(hdc, torchX1, torchY,
            gGame.torchInfo.width, gGame.torchInfo.height,
-           hdcMem, torchSrcX, torchSrcY, SRCAND);
+           gRes.hdcMem, torchSrcX, torchSrcY, SRCAND);
 
     // Desna baklja
-    SelectObject(hdcMem, gRes.torchMask);
+    SelectObject(gRes.hdcMem, gRes.torchMask);
     BitBlt(hdc, torchX2, torchY,
            gGame.torchInfo.width, gGame.torchInfo.height,
-           hdcMem, torchSrcX, torchSrcY, SRCPAINT);
+           gRes.hdcMem, torchSrcX, torchSrcY, SRCPAINT);
 
-    SelectObject(hdcMem, gRes.torch);
+    SelectObject(gRes.hdcMem, gRes.torch);
     BitBlt(hdc, torchX2, torchY,
            gGame.torchInfo.width, gGame.torchInfo.height,
-           hdcMem, torchSrcX, torchSrcY, SRCAND);
+           gRes.hdcMem, torchSrcX, torchSrcY, SRCAND);
 
     // === HERO ===
     gGame.hero.y = rect.bottom - gGame.floorWall.height - gGame.hero.height;
@@ -197,31 +193,31 @@ void RenderGameUI(HDC hdc, RECT rect)
     int srcX = gGame.hero.currentFrame * gGame.hero.width;
     int srcY = gGame.hero.currentRow * gGame.hero.height;
 
-    SelectObject(hdcMem, gRes.characterMask);
+    SelectObject(gRes.hdcMem, gRes.characterMask);
     BitBlt(hdc, gGame.hero.x, gGame.hero.y,
            gGame.hero.width, gGame.hero.height,
-           hdcMem, srcX, srcY, SRCAND);
+           gRes.hdcMem, srcX, srcY, SRCAND);
 
-    SelectObject(hdcMem, gRes.character);
+    SelectObject(gRes.hdcMem, gRes.character);
     BitBlt(hdc, gGame.hero.x, gGame.hero.y,
            gGame.hero.width, gGame.hero.height,
-           hdcMem, srcX, srcY, SRCPAINT);
+           gRes.hdcMem, srcX, srcY, SRCPAINT);
 
     // === HARPOON ===
     if (gGame.harpoon.isActive) {
         int visible = std::min(gGame.harpoon.length, gGame.harpoon.height);
         int y = rect.bottom - gGame.floorWall.height - visible;
 
-        SelectObject(hdcMem, gRes.arrowMask);
+        SelectObject(gRes.hdcMem, gRes.arrowMask);
         StretchBlt(hdc, gGame.harpoon.x, y,
                    gGame.harpoon.width, visible,
-                   hdcMem, 0, 0,
+                   gRes.hdcMem, 0, 0,
                    gGame.harpoon.width, visible, SRCPAINT);
 
-        SelectObject(hdcMem, gRes.arrow);
+        SelectObject(gRes.hdcMem, gRes.arrow);
         StretchBlt(hdc, gGame.harpoon.x, y,
                    gGame.harpoon.width, visible,
-                   hdcMem, 0, 0,
+                   gRes.hdcMem, 0, 0,
                    gGame.harpoon.width, visible, SRCAND);
     }
 
@@ -231,7 +227,6 @@ void RenderGameUI(HDC hdc, RECT rect)
     else if (gGame.gameState.isGameOver || gGame.currentLevel >= 4 && gGame.gameState.isLevelCleared)
         DrawGameOverScreen(hdc, rect);
 
-    DeleteDC(hdcMem);
 }
 
 
@@ -240,59 +235,56 @@ void DrawHearts(HDC hdc, RECT rect, int padding) {
     int startY = rect.bottom - gGame.floorWall.height + padding + gGame.heartInfo.height;
     int gap = 5;
 
-    HDC hdcMem = CreateCompatibleDC(hdc);
-
     for (int i = 0; i < 5 ; i++) {
         int x = startX + i * (gGame.heartInfo.width + gap);
         int y = startY;
 
         // === BACKGROUND  ===
-        HBITMAP oldBmp = (HBITMAP)SelectObject(hdcMem, gRes.heartBkgMask);
-        BitBlt(hdc, x, y, gGame.heartBgInfo.width, gGame.heartBgInfo.height, hdcMem, 0, 0, SRCPAINT);
-        SelectObject(hdcMem, gRes.heartBkg);
-        BitBlt(hdc, x, y, gGame.heartBgInfo.width, gGame.heartBgInfo.height, hdcMem, 0, 0, SRCAND);
+        HBITMAP oldBmp = (HBITMAP)SelectObject(gRes.hdcMem, gRes.heartBkgMask);
+        BitBlt(hdc, x, y, gGame.heartBgInfo.width, gGame.heartBgInfo.height, gRes.hdcMem, 0, 0, SRCPAINT);
+        SelectObject(gRes.hdcMem, gRes.heartBkg);
+        BitBlt(hdc, x, y, gGame.heartBgInfo.width, gGame.heartBgInfo.height, gRes.hdcMem, 0, 0, SRCAND);
 
         // === BORDER ===
-        SelectObject(hdcMem, gRes.heartBorderMask);
-        BitBlt(hdc, x, y, gGame.heartBorderInfo.width, gGame.heartBorderInfo.height, hdcMem, 0, 0, SRCPAINT);
-        SelectObject(hdcMem, gRes.heartBorder);
-        BitBlt(hdc, x, y, gGame.heartBorderInfo.width, gGame.heartBorderInfo.height, hdcMem, 0, 0, SRCAND);
+        SelectObject(gRes.hdcMem, gRes.heartBorderMask);
+        BitBlt(hdc, x, y, gGame.heartBorderInfo.width, gGame.heartBorderInfo.height, gRes.hdcMem, 0, 0, SRCPAINT);
+        SelectObject(gRes.hdcMem, gRes.heartBorder);
+        BitBlt(hdc, x, y, gGame.heartBorderInfo.width, gGame.heartBorderInfo.height, gRes.hdcMem, 0, 0, SRCAND);
 
         // === FILL  ===
         if (i < gGame.gameState.lives) {
             int srcX = gGame.hearts[i].currentFrame * gGame.heartInfo.width;
 
-            SelectObject(hdcMem, gRes.heartMask);
+            SelectObject(gRes.hdcMem, gRes.heartMask);
             BitBlt(
                 hdc,
                 x,
                 y,
                 gGame.heartInfo.width,
                 gGame.heartInfo.height,
-                hdcMem,
+                gRes.hdcMem,
                 srcX,
                 0,
                 SRCPAINT
             );
 
-            SelectObject(hdcMem, gRes.heart);
+            SelectObject(gRes.hdcMem, gRes.heart);
             BitBlt(
                 hdc,
                 x,
                 y,
                 gGame.heartInfo.width,
                 gGame.heartInfo.height,
-                hdcMem,
+                gRes.hdcMem,
                 srcX,
                 0,
                 SRCAND
             );
         }
 
-        SelectObject(hdcMem, oldBmp);
+        SelectObject(gRes.hdcMem, oldBmp);
     }
 
-    DeleteDC(hdcMem);
 }
 
 void DrawScore(HDC hdc, RECT rect)

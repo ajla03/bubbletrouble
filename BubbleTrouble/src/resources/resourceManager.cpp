@@ -94,5 +94,11 @@ void ResourceManager::ReleaseAll() {
     HBITMAP* bmps = (HBITMAP*)this;
     for (int i = 0; i < sizeof(ResourceManager) / sizeof(HBITMAP); i++) {
         if (bmps[i]) DeleteObject(bmps[i]);
+
+        DeleteObject(hdcMem);
     }
+}
+
+void ResourceManager::InitMemDC(HDC hdc){
+  hdcMem = CreateCompatibleDC(hdc);
 }
