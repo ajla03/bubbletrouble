@@ -55,6 +55,7 @@ void RenderLevel2(HDC hdcBuffer, RECT rect);
 void RenderLevel3(HDC hdcBuffer, RECT rect);
 void RenderGameUI(HDC hdcBuffer, RECT rect);
 void RenderLevel(HDC, RECT);
+void RenderWalls(HDC, RECT);
 void RenderLevel4(HDC hdcBuffer, RECT rect);
 void InitLevel4(HWND hwnd);
 void RecalculateLevel4Layout(HWND hwnd);

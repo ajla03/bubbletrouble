@@ -5,48 +5,52 @@
 #include <stdio.h>
 #include <string>
 
-void RenderGameUI(HDC hdc, RECT rect)
-{
+
+void RenderWalls(HDC hdc, RECT rect){
     HDC hdcMem = CreateCompatibleDC(hdc);
 
-    // === WALLS ===
+    int tileW = gGame.floorWall.width;
+    int tileH = gGame.leftWall.height;
+
     int bgX = gGame.leftWall.width;
     int bgY = 0;
     int bgW = rect.right - gGame.leftWall.width - gGame.rightWall.width;
     int bgH = rect.bottom - gGame.floorWall.height;
 
-
-   // === LEFT WALL ===
+    SetStretchBltMode(hdc, HALFTONE);
+    SetBrushOrgEx(hdc, 0, 0, NULL);
     SelectObject(hdcMem, gRes.wall);
-    for (int y = bgY; y < bgH; y += gGame.leftWall.height) {
-        BitBlt(hdc,
-               0, y,
-               gGame.leftWall.width, gGame.leftWall.height,
-               hdcMem,
-               0, 0,
-               SRCCOPY);
-    }
+    StretchBlt(hdc, 0, 0, rect.right, rect.bottom, hdcMem, 0, 0, tileW, tileH, SRCCOPY);
 
-    // === RIGHT WALL ===
-    int rightX = bgX + bgW;
-    for (int y = 0; y < bgH; y += gGame.rightWall.height) {
-        BitBlt(hdc,
-               rightX, y,
-               gGame.rightWall.width, gGame.rightWall.height,
-               hdcMem,
-               0, 0,
-               SRCCOPY);
-    }
+    // BIJELI OKVIR
+    HPEN hPen = CreatePen(PS_SOLID, 2, RGB(255, 255, 255));
+    HBRUSH hOldBrush = (HBRUSH)SelectObject(hdc, GetStockObject(NULL_BRUSH));
+    HPEN hOldPen = (HPEN)SelectObject(hdc, hPen);
 
-    // === FLOOR ===
-    for (int x = 0; x < rect.right; x += gGame.floorWall.width) {
-        BitBlt(hdc,
-               x, bgH,
-               gGame.floorWall.width, gGame.floorWall.height,
-               hdcMem,
-               0, 0,
-               SRCCOPY);
-    }
+    Rectangle(
+        hdc,
+        bgX - 1,
+        bgY,
+        bgX + bgW + 2,
+        bgY + bgH + 3
+    );
+
+    SelectObject(hdc, hOldPen);
+    SelectObject(hdc, hOldBrush);
+    DeleteObject(hPen);
+
+    DeleteDC(hdcMem);
+}
+
+
+void RenderGameUI(HDC hdc, RECT rect)
+{
+    HDC hdcMem = CreateCompatibleDC(hdc);
+
+    int bgX = gGame.leftWall.width;
+    int bgY = 0;
+    int bgW = rect.right - gGame.leftWall.width - gGame.rightWall.width;
+    int bgH = rect.bottom - gGame.floorWall.height;
 
 
     // === TIME BAR ===
@@ -68,19 +72,16 @@ void RenderGameUI(HDC hdc, RECT rect)
 
     int currentWidth = (int)((CURRENT_LEVEL.timeLeft / maxTime) * maxBarWidth);
 
-    // Crven dio (g��wna traka)
     HBRUSH hRedBrush = CreateSolidBrush(RGB(220, 0, 0));
     RECT barRect = { barX, barY, barX + currentWidth, barY + barHeight };
     FillRect(hdc, &barRect, hRedBrush);
     DeleteObject(hRedBrush);
 
-    // Svetli vrh (highlight)
     HBRUSH hLightRedBrush = CreateSolidBrush(RGB(255, 60, 60));
     RECT topBar = { barX, barY, barX + currentWidth, barY + 5 };
     FillRect(hdc, &topBar, hLightRedBrush);
     DeleteObject(hLightRedBrush);
 
-    // Ivica (okvir trake)
     HPEN hWhitePen = CreatePen(PS_SOLID, 1, RGB(255, 255, 255));
     HPEN hOldPen = (HPEN)SelectObject(hdc, hWhitePen);
     HBRUSH hOldBrush = (HBRUSH)SelectObject(hdc, GetStockObject(NULL_BRUSH));

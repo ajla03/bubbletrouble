@@ -161,6 +161,7 @@ void UpdateWallTransition(HWND hwnd){
             if(gGame.gameState.pendingRestart){
                 ResetGame(hwnd);
             }
+
             gGame.animatedWalls.transitionWaitStart = GetTickCount();
             gGame.transitionState = TRANSITION_WAIT;
         }

@@ -22,6 +22,7 @@ void RefreshScreen(HWND hwnd){
     if(gGame.gameState.currentMode == GAME_MODE_MENU){
         RenderMenu(hdcBuffer, rect);
     }else{
+        RenderWalls(hdcBuffer, rect);
         RenderLevel(hdcBuffer, rect);
         RenderGameUI(hdcBuffer, rect);
         DrawTransitionWalls(hdcBuffer, rect);
