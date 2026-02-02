@@ -226,9 +226,9 @@ void RenderGameUI(HDC hdc, RECT rect)
     }
 
     // === OVERLAY TEXT ===
-    if (gGame.gameState.isLevelCleared && gGame.currentLevel < 3)
+    if (gGame.gameState.isLevelCleared && gGame.currentLevel < 4)
         DrawLevelPassedScreen(hdc, rect);
-    else if (gGame.gameState.isGameOver || gGame.currentLevel >= 3 && gGame.gameState.isLevelCleared)
+    else if (gGame.gameState.isGameOver || gGame.currentLevel >= 4 && gGame.gameState.isLevelCleared)
         DrawGameOverScreen(hdc, rect);
 
     DeleteDC(hdcMem);

@@ -89,7 +89,7 @@ void DrawGameOverScreen(HDC hdc, RECT rect)
     SetTextColor(hdc, RGB(255, 255, 255));
 
     const char* text;
-    if(gGame.currentLevel <= 3 && gGame.gameState.isLevelCleared)
+    if(gGame.currentLevel <= 4 && gGame.gameState.isLevelCleared)
     text = "GAME PASSED! :)";
     else
         text = "GAME OVER";

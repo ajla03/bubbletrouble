@@ -59,6 +59,8 @@ void RenderWalls(HDC, RECT);
 void RenderLevel4(HDC hdcBuffer, RECT rect);
 void InitLevel4(HWND hwnd);
 void RecalculateLevel4Layout(HWND hwnd);
+void RenderLevel5(HDC hdcBuffer, RECT rect);
+void InitLevel5(HWND hwnd);
 
 // ================= TRANSITIONS ============
 void StartWallTransition(HWND hwnd);
