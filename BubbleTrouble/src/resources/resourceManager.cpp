@@ -100,35 +100,44 @@ void ResourceManager::ReleaseAll() {
         //DeleteDC(hdcBuffer);
     }
 
-    DeleteObject(hdcMem);
+    if (hdcBuffer) {
+        SelectObject(hdcBuffer, hOldBufferBmp);
+        DeleteObject(hbmBuffer);
+        DeleteDC(hdcBuffer);
+    }
 
+    if (hdcMem) DeleteDC(hdcMem);
 }
 
 void ResourceManager::Init(HDC hdc, HWND hwnd){
   hdcMem = CreateCompatibleDC(hdc);
 
- /*
   hdcBuffer = CreateCompatibleDC(hdc);
   RECT rect;
   GetClientRect(hwnd, &rect);
   hbmBuffer = CreateCompatibleBitmap(hdc, rect.right, rect.bottom);
-  oldBufferBmp = (HBITMAP)SelectObject(hdcBuffer, hbmBuffer);
-*/
+  hOldBufferBmp = (HBITMAP)SelectObject(hdcBuffer, hbmBuffer);
 }
 
 
 void ResourceManager::UpdateDC(HDC hdc, HWND hwnd){
 
-   DeleteObject(hdcMem);
-   //SelectObject(hdcBuffer, oldBufferBmp);
-   //DeleteObject(hbmBuffer);
-   //DeleteDC(hdcBuffer);
+  if (hdcBuffer) {
+        SelectObject(hdcBuffer, hOldBufferBmp);
+        DeleteObject(hbmBuffer);
+        DeleteDC(hdcBuffer);
+    }
+    if (hdcMem) {
+        DeleteDC(hdcMem);
+    }
 
-  hdcMem = CreateCompatibleDC(hdc);
-  //hdcBuffer = CreateCompatibleDC(hdc);
-  //RECT rect;
-  //GetClientRect(hwnd, &rect);
-  //hbmBuffer = CreateCompatibleBitmap(hdc, rect.right, rect.bottom);
-  //oldBufferBmp = (HBITMAP)SelectObject(hdcBuffer, hbmBuffer);
+    RECT rect;
+    GetClientRect(hwnd, &rect);
+
+    hdcMem = CreateCompatibleDC(hdc);
+    hdcBuffer = CreateCompatibleDC(hdc);
+
+    hbmBuffer = CreateCompatibleBitmap(hdc, rect.right, rect.bottom);
+    hOldBufferBmp = (HBITMAP)SelectObject(hdcBuffer, hbmBuffer);
 }
 

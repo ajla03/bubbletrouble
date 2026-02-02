@@ -96,7 +96,7 @@ void LoadBitmaps(HWND hwnd, HINSTANCE hInstance){
         gGame.hero.height = bm.bmHeight / 3;
         gGame.hero.x = gGame.leftWall.width + gGame.hero.width;
         gGame.hero.y = 100;
-        gGame.hero.dx = 4;
+        gGame.hero.dx = 5;
         gGame.hero.dy = 3;
         gGame.hero.currentRow = 2;
         gGame.hero.currentFrame = 0;
