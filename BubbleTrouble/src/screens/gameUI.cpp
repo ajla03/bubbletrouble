@@ -30,10 +30,12 @@ void RenderStaticUI(HDC hdc, RECT rect) {
         SIZE textSize;
         GetTextExtentPoint32(CURRENT_LEVEL.hdcCache, levelText.c_str(), levelText.length(), &textSize);
 
-        int paddingX = 40;
-        int boxW = textSize.cx + paddingX * 2;
-        int boxH = gGame.floorWall.height / 2;
+
         int barHeight = 25;
+        int paddingX = 30;
+        int boxW = textSize.cx + paddingX;
+        int boxH = textSize.cy + paddingX;
+
 
         int placeholderX = (rect.right / 2) - (boxW / 2);
         int floorTop = rect.bottom - gGame.floorWall.height + barHeight;
@@ -173,10 +175,9 @@ void RenderDynamicGameUI(HDC hdc, RECT rect)
     int placeholderX = (rect.right / 2) - (boxW / 2);
 
     // === RENDER BAKLJI ===
-    int torchGap = 20;
-    int torchX1 = placeholderX - gGame.torchInfo.width - torchGap*2;
-    int torchX2 = placeholderX + boxW + torchGap*2;
-    int torchY = rect.bottom - gGame.floorWall.height + gGame.torchInfo.height / 2 + barHeight*2;
+    int torchX1 = gGame.leftWall.width/2 - gGame.torchInfo.width/2 ;
+    int torchX2 = 3*gGame.leftWall.width/2 + bgW - gGame.torchInfo.width/2;
+    int torchY = bgH / 2 ;
 
     int torchSrcX = gGame.torchInfo.currentFrame * gGame.torchInfo.width;
     int torchSrcY = gGame.torchInfo.currentRow * gGame.torchInfo.height;
