@@ -32,6 +32,8 @@ struct GameContext{
      HeartAnim hearts[5];
      Torch torchInfo;
      AnimatedWalls animatedWalls;
+     StaticObject logoInfo;
+
 
     // UI
      MenuButton menuButtons[NUM_MENU_BUTTONS];

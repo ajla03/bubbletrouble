@@ -23,7 +23,7 @@ void InitializeMenu(HWND hwnd) {
     int screenWidth = clientRect.right;
 
     // Button dimensions - POVEĆANE DIMENZIJE
-    int buttonWidth = screenWidth / 6;      // Promenjeno sa /8 na /5 (veće)
+    int buttonWidth = screenWidth /8 ;      // Promenjeno sa /8 na /5 (veće)
     int buttonHeight = screenHeight / 8;   // Promenjeno sa /15 na /10 (veće)
     int buttonSpacing = 2;  // Promenjeno sa /25 na /20 (više razmaka)
 
@@ -33,13 +33,13 @@ void InitializeMenu(HWND hwnd) {
   //  if (buttonSpacing < 0) buttonSpacing = 0; // Promenjeno sa 20 na 25
 
     // Position menu on the LEFT side - responsive
-    int leftSideCenter = clientRect.right / 3;  // 1/3 from left
+    int leftSideCenter = clientRect.right / 4.5;  // Pomjeren kao prozor gore
 
     // Total height of all buttons
     int totalButtonsHeight = (3 * buttonHeight) ;
 
     // Center vertically with small offset down
-    int startY = (clientRect.bottom - totalButtonsHeight) / 2 + clientRect.bottom / 10;
+    int startY = clientRect.bottom / 4.5;  // Gore kao prozor
 
     // 1 PLAYER button - centered on leftSideCenter
     gGame.menuButtons[0].rect.left = leftSideCenter - buttonWidth / 2;
@@ -92,31 +92,68 @@ void RenderMenu(HDC hdc, RECT rect ) {
     }
 
 
-    // Render title "BUBBLE TROUBLE" - Responsive sizing
-    SetBkMode(hdcBuffer, TRANSPARENT);
-    int titleFontSize = max(40, rect.bottom / 10);
-    HFONT hTitleFont = CreateFont(titleFontSize, 0, 0, 0, FW_BOLD, FALSE, FALSE, FALSE,
-                                   DEFAULT_CHARSET, OUT_OUTLINE_PRECIS,
-                                   CLIP_DEFAULT_PRECIS, ANTIALIASED_QUALITY,
-                                   VARIABLE_PITCH, TEXT("Arial Black"));
-    HFONT hOldTitleFont = (HFONT)SelectObject(hdcBuffer, hTitleFont);
+    // === RENDER LOGO UMESTO TEKSTA ===
+    if (gRes.logo && gRes.logoMask) {
+        BITMAP bm;
+        GetObject(gRes.logo, sizeof(BITMAP), &bm);
 
-    const char* title = "BUBBLE TROUBLE";
-    SIZE titleSize;
-    GetTextExtentPoint32(hdcBuffer, title, strlen(title), &titleSize);
-    int titleX = (rect.right - titleSize.cx) / 2;
-    int titleY = max(50, rect.bottom / 12);
+        // Responsive sizing - logo će biti mnogo veći (preko polovine ekrana)
+        int logoWidth = rect.right / 1.8;  // Povećano sa /2.5 na /1.8
+        int logoHeight = (int)(logoWidth * ((float)bm.bmHeight / (float)bm.bmWidth));
 
-    // Shadow for title
-    SetTextColor(hdcBuffer, RGB(0, 0, 0));
-    TextOut(hdcBuffer, titleX + 3, titleY + 3, title, strlen(title));
+        // Ako je logo previsok, smanji ga
+        int maxLogoHeight = rect.bottom / 3;  // Povećano sa /4 na /3
+        if (logoHeight > maxLogoHeight) {
+            logoHeight = maxLogoHeight;
+            logoWidth = (int)(logoHeight * ((float)bm.bmWidth / (float)bm.bmHeight));
+        }
 
-    // Main title
-    SetTextColor(hdcBuffer, RGB(255, 255, 0));
-    TextOut(hdcBuffer, titleX, titleY, title, strlen(title));
+        // Centriran horizontalno, blizu vrha ekrana
+        int logoX = (rect.right - logoWidth) / 1.1;
+        int logoY = rect.bottom / 50;  // Smanji djelilac = gore, povećaj = dolje
 
-    SelectObject(hdcBuffer, hOldTitleFont);
-    DeleteObject(hTitleFont);
+        SetStretchBltMode(hdcBuffer, HALFTONE);
+        SetBrushOrgEx(hdcBuffer, 0, 0, NULL);
+        SetStretchBltMode(hdcBuffer, HALFTONE);
+        SetBrushOrgEx(hdcBuffer, 0, 0, NULL);
+        // Prvo mask (SRCAND)
+        HBITMAP oldMemBmp = (HBITMAP)SelectObject(hdcMem, gRes.logoMask);
+        StretchBlt(hdcBuffer, logoX, logoY, logoWidth, logoHeight,
+                   hdcMem, 0, 0, bm.bmWidth, bm.bmHeight, SRCAND);
+
+        // Zatim logo (SRCPAINT)
+        SelectObject(hdcMem, gRes.logo);
+        StretchBlt(hdcBuffer, logoX, logoY, logoWidth, logoHeight,
+                   hdcMem, 0, 0, bm.bmWidth, bm.bmHeight, SRCPAINT);
+
+        SelectObject(hdcMem, oldMemBmp);
+    } else {
+        // Fallback - ako nema logo, prikaži tekst kao prije
+        SetBkMode(hdcBuffer, TRANSPARENT);
+        int titleFontSize = max(40, rect.bottom / 10);
+        HFONT hTitleFont = CreateFont(titleFontSize, 0, 0, 0, FW_BOLD, FALSE, FALSE, FALSE,
+                                       DEFAULT_CHARSET, OUT_OUTLINE_PRECIS,
+                                       CLIP_DEFAULT_PRECIS, ANTIALIASED_QUALITY,
+                                       VARIABLE_PITCH, TEXT("Arial Black"));
+        HFONT hOldTitleFont = (HFONT)SelectObject(hdcBuffer, hTitleFont);
+
+        const char* title = "BUBBLE TROUBLE";
+        SIZE titleSize;
+        GetTextExtentPoint32(hdcBuffer, title, strlen(title), &titleSize);
+        int titleX = (rect.right - titleSize.cx) / 2;
+        int titleY = max(50, rect.bottom / 12);
+
+        // Shadow for title
+        SetTextColor(hdcBuffer, RGB(0, 0, 0));
+        TextOut(hdcBuffer, titleX + 3, titleY + 3, title, strlen(title));
+
+        // Main title
+        SetTextColor(hdcBuffer, RGB(255, 255, 0));
+        TextOut(hdcBuffer, titleX, titleY, title, strlen(title));
+
+        SelectObject(hdcBuffer, hOldTitleFont);
+        DeleteObject(hTitleFont);
+    }
 
     // === RENDER BUTTONS HOLDER FIRST (in background) ===
    if (gRes.hButtonsHolder && gRes.hButtonsHolderMask) {
@@ -129,18 +166,18 @@ void RenderMenu(HDC hdc, RECT rect ) {
         int buttonsTotalHeight = buttonsBottom - buttonsTop;
         int oneButtonWidth = gGame.menuButtons[0].rect.right - gGame.menuButtons[0].rect.left;
 
-        int holderWidth = (int)(oneButtonWidth * 3.6);  // SMANJENO sa 3 na 2.5
+        int holderWidth = (int)(oneButtonWidth * 2.8);  // Smanjen sa 3.6 na 2.8
         int holderHeight = (int)(holderWidth / aspectRatio);
 
-        if (holderHeight < buttonsTotalHeight * 1.5) {  // sa 1.2 na 1.15
-            holderHeight = (int)(buttonsTotalHeight * 1.5);
+        if (holderHeight < buttonsTotalHeight * 1.7) {  // sa 1.5 na 1.4
+            holderHeight = (int)(buttonsTotalHeight * 1.7);
             holderWidth = (int)(holderHeight * aspectRatio);
         }
 
         int buttonsCenterX = gGame.menuButtons[0].rect.left + (oneButtonWidth / 2);
-        int holderX = buttonsCenterX - (holderWidth / 2) + (rect.right / 125);
+        int holderX = buttonsCenterX - (holderWidth / 2);  // Jednostavno centrirano bez dodatnih offseta
         int buttonsCenterY = buttonsTop + buttonsTotalHeight / 2;
-        int holderY = buttonsCenterY - (holderHeight / 2);
+        int holderY = buttonsCenterY - (holderHeight / 2);  // Jednostavno centrirano bez dodatnih offseta
 
         SetStretchBltMode(hdcBuffer, HALFTONE);
         SetBrushOrgEx(hdcBuffer, 0, 0, NULL);
@@ -203,6 +240,18 @@ void RenderMenu(HDC hdc, RECT rect ) {
                        hdcMem, 0, 0, bm.bmWidth, bm.bmHeight, SRCPAINT);
 
             SelectObject(hdcMem, oldMemBmp);
+
+            // === RENDER TEXT NAKON BUTTONA ===
+            SetBkMode(hdcBuffer, TRANSPARENT);  // VAŽNO - transparent pozadina
+            SetTextColor(hdcBuffer, RGB(0, 0, 0));
+            SIZE textSize;
+            GetTextExtentPoint32(hdcBuffer, btn->text, strlen(btn->text), &textSize);
+            int textX = btn->rect.left + ((btn->rect.right - btn->rect.left) - textSize.cx) / 2;
+            int textY = btn->rect.top + ((btn->rect.bottom - btn->rect.top) - textSize.cy) / 2;
+            TextOut(hdcBuffer, textX + 2, textY + 2, btn->text, strlen(btn->text));
+
+            SetTextColor(hdcBuffer, RGB(255, 255, 255));  // Bijeli tekst
+            TextOut(hdcBuffer, textX, textY, btn->text, strlen(btn->text));
         } else {
             // Fallback ako nema bitmap
             COLORREF btnColor;
@@ -224,18 +273,19 @@ void RenderMenu(HDC hdc, RECT rect ) {
             SelectObject(hdcBuffer, hOldBrush);
             DeleteObject(hBtnPen);
             DeleteObject(hBtnBrush);
+
+            // === RENDER TEXT NAKON FALLBACK BUTTONA ===
+            SetBkMode(hdcBuffer, TRANSPARENT);
+            SetTextColor(hdcBuffer, RGB(0, 0, 0));
+            SIZE textSize;
+            GetTextExtentPoint32(hdcBuffer, btn->text, strlen(btn->text), &textSize);
+            int textX = btn->rect.left + ((btn->rect.right - btn->rect.left) - textSize.cx) / 2;
+            int textY = btn->rect.top + ((btn->rect.bottom - btn->rect.top) - textSize.cy) / 2;
+            TextOut(hdcBuffer, textX + 2, textY + 2, btn->text, strlen(btn->text));
+
+            SetTextColor(hdcBuffer, RGB(255, 255, 255));  // Bijeli tekst
+            TextOut(hdcBuffer, textX, textY, btn->text, strlen(btn->text));
         }
-
-        // === RENDER TEXT ===
-        SetTextColor(hdcBuffer, RGB(0, 0, 0));
-        SIZE textSize;
-        GetTextExtentPoint32(hdcBuffer, btn->text, strlen(btn->text), &textSize);
-        int textX = btn->rect.left + ((btn->rect.right - btn->rect.left) - textSize.cx) / 2;
-        int textY = btn->rect.top + ((btn->rect.bottom - btn->rect.top) - textSize.cy) / 2;
-        TextOut(hdcBuffer, textX + 2, textY + 2, btn->text, strlen(btn->text));
-
-        SetTextColor(hdcBuffer, RGB(255, 255, 255));  // Bijeli tekst
-        TextOut(hdcBuffer, textX, textY, btn->text, strlen(btn->text));
     }
 
     SelectObject(hdcBuffer, hOldButtonFont);
@@ -292,7 +342,7 @@ void RenderMenu(HDC hdc, RECT rect ) {
             charWidth = (int)(charHeight * aspectRatio);
 
             // Position on right side
-            charX = rect.right - charWidth - max(30, rect.right / 20);
+            charX =rect.right * 0.2;
             charY = rect.bottom - charHeight - max(20, rect.bottom / 30);
         }
 
@@ -374,10 +424,6 @@ void ResetGame(HWND hwnd) {
     gGame.gameState.isLevelCleared = false;
     CURRENT_LEVEL.activeBalloonCount = 0;
     gGame.gameState.lives = MAX_LIVES;
-    CURRENT_LEVEL.levelScore = 0;
-    gGame.totalScore = 0;
-    gGame.displayScore = 0;
-    gGame.currentLevel = 0;
 
     // Reset hero position
     RECT clientRect;
@@ -398,27 +444,4 @@ void ResetGame(HWND hwnd) {
 
     // Initialize starting balloons
     InitBalloon(1, 400, 150, 40, -2.0f, RGB(0, 255, 0));
-}
-
-void ResetBetweenLevels(HWND hwnd) {
-    // Reset vremena
-    CURRENT_LEVEL.timeLeft = maxTime;
-
-    // Reset stanja
-    gGame.gameState.isGameOver = false;
-    gGame.gameState.isLevelCleared = false;
-    CURRENT_LEVEL.activeBalloonCount = 0;
-
-    // Reset heroja
-    RECT clientRect;
-    GetClientRect(hwnd, &clientRect);
-    gGame.hero.x = gGame.leftWall.width + gGame.hero.width;
-    gGame.hero.y = 100;
-    gGame.hero.currentRow = 2;
-    gGame.hero.currentFrame = 0;
-
-    // Reset harpune
-    gGame.harpoon.isActive = false;
-    gGame.harpoon.length = 0;
-
 }

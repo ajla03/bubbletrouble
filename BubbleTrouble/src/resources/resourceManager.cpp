@@ -33,6 +33,9 @@ bool ResourceManager::LoadAll(HINSTANCE hInstance) {
     nextButton        = LoadBitmap(hInstance, MAKEINTRESOURCE(IDB_NEXT));
     nextButtonMask    = LoadBitmap(hInstance, MAKEINTRESOURCE(IDB_NEXT_MASK));
 
+    logo          = LoadBitmap(hInstance, MAKEINTRESOURCE(IDB_LOGO));
+    logoMask      = LoadBitmap(hInstance, MAKEINTRESOURCE(IDB_LOGO_MASK));
+
     wall1 = LoadBitmap(hInstance, MAKEINTRESOURCE(IDB_WALL1));
     wall2 = LoadBitmap(hInstance, MAKEINTRESOURCE(IDB_WALL2));
     longWall= LoadBitmap(hInstance, MAKEINTRESOURCE(IDB_LONG_WALL));

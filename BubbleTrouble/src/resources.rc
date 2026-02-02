@@ -50,7 +50,7 @@ IDB_DOOR_CLOSED_MASK     BITMAP "../assets/bitmaps/doorClosedBlack.bmp"
 
 IDR_MINI_FONT   RCDATA  "../assets/font/KenneyMiniSquare.ttf"
 
-IDB_MENU_SCREEN    BITMAP "../assets/bitmaps/menuscreen_clean.bmp"
+IDB_MENU_SCREEN    BITMAP "../assets/bitmaps/menuscreen.bmp"
 
 IDB_MENU_CHARACTER      BITMAP "../assets/bitmaps/start-screen.bmp"
 IDB_MENU_CHARACTER_MASK  BITMAP "../assets/bitmaps/start-screen_mask.bmp"
@@ -61,9 +61,9 @@ IDB_MENU_CHARACTER_MASK  BITMAP "../assets/bitmaps/start-screen_mask.bmp"
 
 IDC_GAME_CURSOR   CURSOR   "../assets/cursor/pinkBubble.cur"
 
-IDB_BUTTONS_HOLDER BITMAP "../assets/bitmaps/menu.bmp"
+IDB_BUTTONS_HOLDER BITMAP "../assets/bitmaps/meni1.bmp"
 
-IDB_BUTTONS_HOLDER_MASK BITMAP "../assets/bitmaps/menu_mask.bmp"
+IDB_BUTTONS_HOLDER_MASK BITMAP "../assets/bitmaps/meni1_mask.bmp"
 
 IDB_MENU_BUTTON      BITMAP "../assets/bitmaps/button.bmp"
 IDB_MENU_BUTTON_MASK BITMAP "../assets/bitmaps/button_mask.bmp"
@@ -83,3 +83,5 @@ IDB_GREEN_BUTTON        BITMAP  "../assets/bitmaps/greenbutton.bmp"
 IDB_GREEN_BUTTON_MASK   BITMAP  "../assets/bitmaps/greenbutton_mask.bmp"
 IDB_GREY_BUTTON         BITMAP  "../assets/bitmaps/greybutton.bmp"
 IDB_GREY_BUTTON_MASK    BITMAP  "../assets/bitmaps/greybutton_mask.bmp"
+IDB_LOGO            BITMAP  "../assets/bitmaps/logoo.bmp"
+IDB_LOGO_MASK       BITMAP  "../assets/bitmaps/logoo_mask.bmp"

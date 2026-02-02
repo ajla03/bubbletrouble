@@ -27,6 +27,8 @@ struct ResourceManager{
     HBITMAP longWall;
     HBITMAP doorClosed, doorClosedMask, door, doorMask;
     HCURSOR gameCursor;
+    HBITMAP logo, logoMask;
+
     HFONT hFont;
     HANDLE hFontRes;
 

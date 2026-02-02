@@ -24,6 +24,7 @@ GameContext gGame = {
     /* hearts */ {},
     /* torchInfo */ {},
     /* animatedWalls */ { 0, 0, 12.0f },
+    /* logoInfo */ {},
 
     // ===== UI =====
     /* menuButtons */ {},
