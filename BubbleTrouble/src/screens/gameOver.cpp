@@ -2,6 +2,7 @@
 #include "types.h"
 #include "gameContext.h"
 #include "resourceManager.h"
+#include <wingdi.h>
 
 
 

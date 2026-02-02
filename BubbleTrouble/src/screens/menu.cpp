@@ -445,3 +445,26 @@ void ResetGame(HWND hwnd) {
     // Initialize starting balloons
     InitBalloon(1, 400, 150, 40, -2.0f, RGB(0, 255, 0));
 }
+
+void ResetBetweenLevels(HWND hwnd) {
+    // Reset vremena
+    CURRENT_LEVEL.timeLeft = maxTime;
+
+    // Reset stanja
+    gGame.gameState.isGameOver = false;
+    gGame.gameState.isLevelCleared = false;
+    CURRENT_LEVEL.activeBalloonCount = 0;
+
+    // Reset heroja
+    RECT clientRect;
+    GetClientRect(hwnd, &clientRect);
+    gGame.hero.x = gGame.leftWall.width + gGame.hero.width;
+    gGame.hero.y = 100;
+    gGame.hero.currentRow = 2;
+    gGame.hero.currentFrame = 0;
+
+    // Reset harpune
+    gGame.harpoon.isActive = false;
+    gGame.harpoon.length = 0;
+
+}
