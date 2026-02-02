@@ -424,6 +424,9 @@ void ResetGame(HWND hwnd) {
     gGame.gameState.isLevelCleared = false;
     CURRENT_LEVEL.activeBalloonCount = 0;
     gGame.gameState.lives = MAX_LIVES;
+    gGame.totalScore = 0;
+    gGame.displayScore = 0;
+    gGame.currentLevel = 0;
 
     // Reset hero position
     RECT clientRect;
