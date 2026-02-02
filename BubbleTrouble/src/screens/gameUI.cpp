@@ -113,12 +113,14 @@ void RenderGameUI(HDC hdc, RECT rect)
     int paddingX = 40;
     int paddingY = 20;
 
-    int boxW = textSize.cx + paddingX * 2;
-    int boxH = gGame.levelPlaceholderInfo.height;
+    int boxW = textSize.cx + paddingX;
+    int boxH = gGame.floorWall.height / 2;
 
     int placeholderX = (rect.right / 2) - (boxW / 2);
-    int placeholderY = rect.bottom - gGame.floorWall.height + 2 * barHeight;
+    int floorTop = rect.bottom - gGame.floorWall.height + barHeight;
 
+    int placeholderY =
+    floorTop + (gGame.floorWall.height - boxH) / 2;
     // Maska
     SelectObject(gRes.hdcMem, gRes.levelPlaceholderWhite);
     StretchBlt(
@@ -156,11 +158,26 @@ void RenderGameUI(HDC hdc, RECT rect)
 
     SelectObject(hdc, oldFont);
 
+    // PLAYER PLACEHOLDER //
+    int heartsTop = rect.bottom - gGame.floorWall.height + barHeight*2 + 10;
+
+    int playerY =heartsTop + gGame.heartBgInfo.height + 10;
+
+    DrawPlayerPlaceholder(
+        hdc,
+        rect,
+        "PLAYER 1",
+        gGame.leftWall.width,
+        playerY,
+        RGB(180, 0, 0),
+        gGame.heartBgInfo.height + 6
+    );
+
     // === RENDER BAKLJI ===
     int torchGap = 10;
     int torchX1 = placeholderX - gGame.torchInfo.width - torchGap;
     int torchX2 = placeholderX + boxW + torchGap;
-    int torchY = rect.bottom - gGame.floorWall.height + gGame.torchInfo.height / 2 + barHeight;
+    int torchY = rect.bottom - gGame.floorWall.height + gGame.torchInfo.height / 2 + barHeight*2;
 
     int torchSrcX = gGame.torchInfo.currentFrame * gGame.torchInfo.width;
     int torchSrcY = gGame.torchInfo.currentRow * gGame.torchInfo.height;
@@ -329,3 +346,70 @@ void DrawScore(HDC hdc, RECT rect)
 
     SelectObject(hdc, oldFont);
 }
+
+void DrawPlayerPlaceholder(
+    HDC hdc,
+    RECT rect,
+    const std::string& text,
+    int x,
+    int y,
+    COLORREF textColor,
+    int boxHeight
+) {
+    HFONT oldFont = (HFONT)SelectObject(hdc, gRes.hFont);
+    SetBkMode(hdc, TRANSPARENT);
+    SetTextColor(hdc, textColor);
+
+    SIZE textSize;
+    GetTextExtentPoint32(
+        hdc,
+        text.c_str(),
+        text.length(),
+        &textSize
+    );
+
+    int paddingX = 30;
+    int boxW = textSize.cx + paddingX;
+    int boxH = boxHeight + 10;
+
+    SelectObject(gRes.hdcMem, gRes.levelPlaceholderWhite);
+    StretchBlt(
+        hdc,
+        x, y,
+        boxW, boxH,
+        gRes.hdcMem,
+        0, 0,
+        gGame.levelPlaceholderInfo.width,
+        gGame.levelPlaceholderInfo.height,
+        SRCAND
+    );
+
+    SelectObject(gRes.hdcMem, gRes.levelPlaceholderBlack);
+    StretchBlt(
+        hdc,
+        x, y,
+        boxW, boxH,
+        gRes.hdcMem,
+        0, 0,
+        gGame.levelPlaceholderInfo.width,
+        gGame.levelPlaceholderInfo.height,
+        SRCPAINT
+    );
+
+    TEXTMETRIC tm;
+    GetTextMetrics(hdc, &tm);
+
+    int textX = x + (boxW - textSize.cx) / 2;
+    int textY = y + (boxH - tm.tmHeight) / 2;
+
+    TextOut(
+        hdc,
+        textX,
+        textY,
+        text.c_str(),
+        text.length()
+    );
+
+    SelectObject(hdc, oldFont);
+}
+

@@ -1,7 +1,7 @@
 #pragma once
 #include <windows.h>
 #include "types.h"
-
+#include <string>
 // ================= SYSTEM =================
 void LoadCustomFont();
 void LoadBitmaps(HWND hwnd, HINSTANCE hInstance);
@@ -42,6 +42,16 @@ void DrawGameOverScreen(HDC hdc, RECT rect);
 void DrawLevelPassedScreen(HDC hdc, RECT rect);
 void DrawHearts(HDC, RECT, int);
 void DrawScore(HDC, RECT);
+void DrawPlayerPlaceholder(
+    HDC hdc,
+    RECT rect,
+    const std::string& text,
+    int x,
+    int y,
+    COLORREF textColor,
+    int boxHeight
+);
+
 
 void DrawButton(HDC hdc, HBITMAP bmp, HBITMAP mask, Button& info);
 void CheckHover(Button& button, int x, int y);
