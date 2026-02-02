@@ -85,3 +85,5 @@ IDB_GREY_BUTTON         BITMAP  "../assets/bitmaps/greybutton.bmp"
 IDB_GREY_BUTTON_MASK    BITMAP  "../assets/bitmaps/greybutton_mask.bmp"
 IDB_LOGO            BITMAP  "../assets/bitmaps/logoo.bmp"
 IDB_LOGO_MASK       BITMAP  "../assets/bitmaps/logoo_mask.bmp"
+
+IDR_SLIDING_SOUND  WAVE "../assets/sounds/Sliding-audio.wav"

@@ -1,6 +1,8 @@
 #include "gameContext.h"
 #include "resourceManager.h"
 #include "game.h"
+#include "resources.h"
+
 
 void StartWallTransition(HWND hwnd){
     RECT rect;
@@ -10,6 +12,10 @@ void StartWallTransition(HWND hwnd){
     gGame.animatedWalls.wallBottomY = rect.bottom;
 
     gGame.transitionState = TRANSITION_CLOSING;
+  PlaySound(MAKEINTRESOURCE(IDR_SLIDING_SOUND),
+                                  GetModuleHandle(NULL),
+                                  SND_RESOURCE | SND_ASYNC | SND_NODEFAULT);
+
 
 }
 
