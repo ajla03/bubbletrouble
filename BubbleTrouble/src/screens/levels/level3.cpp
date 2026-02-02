@@ -127,8 +127,8 @@ void InitLevel3(HWND hwnd){
   for(int i=0;i<MAX_BALLOONS;i++)
         CURRENT_LEVEL.balloons[i].active = false;
 
-  InitBalloon(0, rect.right/4, 100, 20, 2.5f, RGB(255, 0, 0));    // Crvena
-  InitBalloon(1, 3*rect.right/4, 150, 40, -2.0f, RGB(0, 255, 0));   // Zelena
+  InitBalloon(0, rect.right/4, 100, 20, 3.5f, RGB(255, 0, 0));    // Crvena
+  InitBalloon(1, 3*rect.right/4, 150, 40, -3.0f, RGB(0, 255, 0));   // Zelena
   //InitBalloon(2, 600, 120, 80, 3.0f, RGB(0, 100, 255));  // Plava
 
 }

@@ -38,7 +38,7 @@ int WINAPI WinMain(HINSTANCE hThisInstance, HINSTANCE hPrevInstance, LPSTR lpszA
 
     LoadBitmaps(hwnd, hThisInstance);
 
-    float targetFPS = 60.0f;
+    float targetFPS = 65.0f;
     DWORD frameTimeMs = (DWORD) (1000.0f / targetFPS);
     while (1){
         DWORD start = GetTickCount();
