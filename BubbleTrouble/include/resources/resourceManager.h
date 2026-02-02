@@ -29,11 +29,14 @@ struct ResourceManager{
     HCURSOR gameCursor;
     HBITMAP logo, logoMask;
     HDC hdcMem;
+  //, hdcBuffer;
+//    HBITMAP oldBufferBmp, hbmBuffer;
 
     HFONT hFont;
     HANDLE hFontRes;
 
-    void InitMemDC(HDC hdc);
+    void Init(HDC hdc, HWND hwnd);
+    void UpdateDC(HDC hdc, HWND hwnd);
     bool LoadAll(HINSTANCE hInstance);
     void ReleaseAll();
 

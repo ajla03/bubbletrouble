@@ -95,10 +95,40 @@ void ResourceManager::ReleaseAll() {
     for (int i = 0; i < sizeof(ResourceManager) / sizeof(HBITMAP); i++) {
         if (bmps[i]) DeleteObject(bmps[i]);
 
-        DeleteObject(hdcMem);
+     //   SelectObject(hdcBuffer, oldBufferBmp);
+       // DeleteObject(hbmBuffer);
+        //DeleteDC(hdcBuffer);
     }
+
+    DeleteObject(hdcMem);
+
 }
 
-void ResourceManager::InitMemDC(HDC hdc){
+void ResourceManager::Init(HDC hdc, HWND hwnd){
   hdcMem = CreateCompatibleDC(hdc);
+
+ /*
+  hdcBuffer = CreateCompatibleDC(hdc);
+  RECT rect;
+  GetClientRect(hwnd, &rect);
+  hbmBuffer = CreateCompatibleBitmap(hdc, rect.right, rect.bottom);
+  oldBufferBmp = (HBITMAP)SelectObject(hdcBuffer, hbmBuffer);
+*/
 }
+
+
+void ResourceManager::UpdateDC(HDC hdc, HWND hwnd){
+
+   DeleteObject(hdcMem);
+   //SelectObject(hdcBuffer, oldBufferBmp);
+   //DeleteObject(hbmBuffer);
+   //DeleteDC(hdcBuffer);
+
+  hdcMem = CreateCompatibleDC(hdc);
+  //hdcBuffer = CreateCompatibleDC(hdc);
+  //RECT rect;
+  //GetClientRect(hwnd, &rect);
+  //hbmBuffer = CreateCompatibleBitmap(hdc, rect.right, rect.bottom);
+  //oldBufferBmp = (HBITMAP)SelectObject(hdcBuffer, hbmBuffer);
+}
+

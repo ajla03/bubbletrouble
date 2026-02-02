@@ -67,12 +67,15 @@ void InitializeMenu(HWND hwnd) {
 }
 
 void RenderMenu(HDC hdc, RECT rect ) {
-
-    // Double buffering
+    // 1. Inicijalizacija Double bufferinga
     HDC hdcBuffer = CreateCompatibleDC(hdc);
     HDC hdcMem = CreateCompatibleDC(hdc);
     HBITMAP hbmBuffer = CreateCompatibleBitmap(hdc, rect.right, rect.bottom);
+
+    // OBAVEZNO: Spasi originalne objekte da bi ih mogao vratiti na kraju
+    HBITMAP oldMemBmpAtStart = (HBITMAP)GetCurrentObject(hdcMem, OBJ_BITMAP);
     HBITMAP oldBufferBmp = (HBITMAP)SelectObject(hdcBuffer, hbmBuffer);
+
     SetStretchBltMode(hdcBuffer, HALFTONE);
     SetBrushOrgEx(hdcBuffer, 0, 0, NULL);
 
@@ -83,39 +86,30 @@ void RenderMenu(HDC hdc, RECT rect ) {
         GetObject(gRes.menuScreen, sizeof(BITMAP), &bm);
         StretchBlt(hdcBuffer, 0, 0, rect.right, rect.bottom,
                    hdcMem, 0, 0, bm.bmWidth, bm.bmHeight, SRCCOPY);
-        SelectObject(hdcMem, oldMemBmp);
+        SelectObject(hdcMem, oldMemBmp); // Vraćamo odmah nakon upotrebe
     } else {
-        // Fallback if no background - dark blue background
         HBRUSH hBrush = CreateSolidBrush(RGB(50, 50, 100));
         FillRect(hdcBuffer, &rect, hBrush);
-        DeleteObject(hBrush);
+        DeleteObject(hBrush); // Obrisano
     }
-
 
     // === RENDER LOGO UMESTO TEKSTA ===
     if (gRes.logo && gRes.logoMask) {
         BITMAP bm;
         GetObject(gRes.logo, sizeof(BITMAP), &bm);
 
-        // Responsive sizing - logo će biti mnogo veći (preko polovine ekrana)
-        int logoWidth = rect.right / 1.8;  // Povećano sa /2.5 na /1.8
+        int logoWidth = rect.right / 1.8;
         int logoHeight = (int)(logoWidth * ((float)bm.bmHeight / (float)bm.bmWidth));
 
-        // Ako je logo previsok, smanji ga
-        int maxLogoHeight = rect.bottom / 3;  // Povećano sa /4 na /3
+        int maxLogoHeight = rect.bottom / 3;
         if (logoHeight > maxLogoHeight) {
             logoHeight = maxLogoHeight;
             logoWidth = (int)(logoHeight * ((float)bm.bmWidth / (float)bm.bmHeight));
         }
 
-        // Centriran horizontalno, blizu vrha ekrana
         int logoX = (rect.right - logoWidth) / 1.1;
-        int logoY = rect.bottom / 50;  // Smanji djelilac = gore, povećaj = dolje
+        int logoY = rect.bottom / 50;
 
-        SetStretchBltMode(hdcBuffer, HALFTONE);
-        SetBrushOrgEx(hdcBuffer, 0, 0, NULL);
-        SetStretchBltMode(hdcBuffer, HALFTONE);
-        SetBrushOrgEx(hdcBuffer, 0, 0, NULL);
         // Prvo mask (SRCAND)
         HBITMAP oldMemBmp = (HBITMAP)SelectObject(hdcMem, gRes.logoMask);
         StretchBlt(hdcBuffer, logoX, logoY, logoWidth, logoHeight,
@@ -126,9 +120,8 @@ void RenderMenu(HDC hdc, RECT rect ) {
         StretchBlt(hdcBuffer, logoX, logoY, logoWidth, logoHeight,
                    hdcMem, 0, 0, bm.bmWidth, bm.bmHeight, SRCPAINT);
 
-        SelectObject(hdcMem, oldMemBmp);
+        SelectObject(hdcMem, oldMemBmp); // Vraćamo
     } else {
-        // Fallback - ako nema logo, prikaži tekst kao prije
         SetBkMode(hdcBuffer, TRANSPARENT);
         int titleFontSize = max(40, rect.bottom / 10);
         HFONT hTitleFont = CreateFont(titleFontSize, 0, 0, 0, FW_BOLD, FALSE, FALSE, FALSE,
@@ -139,24 +132,21 @@ void RenderMenu(HDC hdc, RECT rect ) {
 
         const char* title = "BUBBLE TROUBLE";
         SIZE titleSize;
-        GetTextExtentPoint32(hdcBuffer, title, strlen(title), &titleSize);
+        GetTextExtentPoint32(hdcBuffer, title, (int)strlen(title), &titleSize);
         int titleX = (rect.right - titleSize.cx) / 2;
         int titleY = max(50, rect.bottom / 12);
 
-        // Shadow for title
         SetTextColor(hdcBuffer, RGB(0, 0, 0));
-        TextOut(hdcBuffer, titleX + 3, titleY + 3, title, strlen(title));
-
-        // Main title
+        TextOut(hdcBuffer, titleX + 3, titleY + 3, title, (int)strlen(title));
         SetTextColor(hdcBuffer, RGB(255, 255, 0));
-        TextOut(hdcBuffer, titleX, titleY, title, strlen(title));
+        TextOut(hdcBuffer, titleX, titleY, title, (int)strlen(title));
 
         SelectObject(hdcBuffer, hOldTitleFont);
-        DeleteObject(hTitleFont);
+        DeleteObject(hTitleFont); // Obrisano
     }
 
-    // === RENDER BUTTONS HOLDER FIRST (in background) ===
-   if (gRes.hButtonsHolder && gRes.hButtonsHolderMask) {
+    // === RENDER BUTTONS HOLDER FIRST ===
+    if (gRes.hButtonsHolder && gRes.hButtonsHolderMask) {
         BITMAP bm;
         GetObject(gRes.hButtonsHolder, sizeof(BITMAP), &bm);
         float aspectRatio = (float)bm.bmWidth / (float)bm.bmHeight;
@@ -166,21 +156,18 @@ void RenderMenu(HDC hdc, RECT rect ) {
         int buttonsTotalHeight = buttonsBottom - buttonsTop;
         int oneButtonWidth = gGame.menuButtons[0].rect.right - gGame.menuButtons[0].rect.left;
 
-        int holderWidth = (int)(oneButtonWidth * 2.8);  // Smanjen sa 3.6 na 2.8
+        int holderWidth = (int)(oneButtonWidth * 2.8);
         int holderHeight = (int)(holderWidth / aspectRatio);
 
-        if (holderHeight < buttonsTotalHeight * 1.7) {  // sa 1.5 na 1.4
+        if (holderHeight < buttonsTotalHeight * 1.7) {
             holderHeight = (int)(buttonsTotalHeight * 1.7);
             holderWidth = (int)(holderHeight * aspectRatio);
         }
 
         int buttonsCenterX = gGame.menuButtons[0].rect.left + (oneButtonWidth / 2);
-        int holderX = buttonsCenterX - (holderWidth / 2);  // Jednostavno centrirano bez dodatnih offseta
+        int holderX = buttonsCenterX - (holderWidth / 2);
         int buttonsCenterY = buttonsTop + buttonsTotalHeight / 2;
-        int holderY = buttonsCenterY - (holderHeight / 2);  // Jednostavno centrirano bez dodatnih offseta
-
-        SetStretchBltMode(hdcBuffer, HALFTONE);
-        SetBrushOrgEx(hdcBuffer, 0, 0, NULL);
+        int holderY = buttonsCenterY - (holderHeight / 2);
 
         HBITMAP oldMemBmp = (HBITMAP)SelectObject(hdcMem, gRes.hButtonsHolderMask);
         StretchBlt(hdcBuffer, holderX, holderY, holderWidth, holderHeight,
@@ -190,11 +177,11 @@ void RenderMenu(HDC hdc, RECT rect ) {
         StretchBlt(hdcBuffer, holderX, holderY, holderWidth, holderHeight,
                    hdcMem, 0, 0, bm.bmWidth, bm.bmHeight, SRCPAINT);
 
-        SelectObject(hdcMem, oldMemBmp);
+        SelectObject(hdcMem, oldMemBmp); // Vraćamo
     }
 
-    // === RENDER BUTTONS - SA RAZLIČITIM BOJAMA ===
-    int buttonFontSize = max(14, rect.bottom / 35);  // Manji font
+    // === RENDER BUTTONS ===
+    int buttonFontSize = max(14, rect.bottom / 35);
     HFONT hButtonFont = CreateFont(buttonFontSize, 0, 0, 0, FW_BOLD, FALSE, FALSE, FALSE,
                                     DEFAULT_CHARSET, OUT_OUTLINE_PRECIS,
                                     CLIP_DEFAULT_PRECIS, ANTIALIASED_QUALITY,
@@ -203,33 +190,14 @@ void RenderMenu(HDC hdc, RECT rect ) {
 
     for (int i = 0; i < NUM_MENU_BUTTONS; i++) {
         MenuButton* btn = &gGame.menuButtons[i];
-
-        // ODABERI BUTTON BOJU NA OSNOVU INDEKSA
-        HBITMAP currentButton = NULL;
-        HBITMAP currentButtonMask = NULL;
-
-        if (i == 0) {  // 1 PLAYER - Yellow
-            currentButton = gRes.hYellowButton;
-            currentButtonMask = gRes.hYellowButtonMask;
-        }
-        else if (i == 1) {  // 2 PLAYERS - Green
-            currentButton = gRes.hGreenButton;
-            currentButtonMask = gRes.hGreenButtonMask;
-        }
-        else if (i == 2) {  // SETTINGS - Grey
-            currentButton = gRes.hGreyButton;
-            currentButtonMask = gRes.hGreyButtonMask;
-        }
+        HBITMAP currentButton = (i == 0) ? gRes.hYellowButton : (i == 1 ? gRes.hGreenButton : gRes.hGreyButton);
+        HBITMAP currentButtonMask = (i == 0) ? gRes.hYellowButtonMask : (i == 1 ? gRes.hGreenButtonMask : gRes.hGreyButtonMask);
 
         if (currentButton && currentButtonMask) {
             BITMAP bm;
             GetObject(currentButton, sizeof(BITMAP), &bm);
-
             int btnWidth = btn->rect.right - btn->rect.left;
             int btnHeight = btn->rect.bottom - btn->rect.top;
-
-            SetStretchBltMode(hdcBuffer, HALFTONE);
-            SetBrushOrgEx(hdcBuffer, 0, 0, NULL);
 
             HBITMAP oldMemBmp = (HBITMAP)SelectObject(hdcMem, currentButtonMask);
             StretchBlt(hdcBuffer, btn->rect.left, btn->rect.top, btnWidth, btnHeight,
@@ -239,29 +207,11 @@ void RenderMenu(HDC hdc, RECT rect ) {
             StretchBlt(hdcBuffer, btn->rect.left, btn->rect.top, btnWidth, btnHeight,
                        hdcMem, 0, 0, bm.bmWidth, bm.bmHeight, SRCPAINT);
 
-            SelectObject(hdcMem, oldMemBmp);
-
-            // === RENDER TEXT NAKON BUTTONA ===
-            SetBkMode(hdcBuffer, TRANSPARENT);  // VAŽNO - transparent pozadina
-            SetTextColor(hdcBuffer, RGB(0, 0, 0));
-            SIZE textSize;
-            GetTextExtentPoint32(hdcBuffer, btn->text, strlen(btn->text), &textSize);
-            int textX = btn->rect.left + ((btn->rect.right - btn->rect.left) - textSize.cx) / 2;
-            int textY = btn->rect.top + ((btn->rect.bottom - btn->rect.top) - textSize.cy) / 2;
-            TextOut(hdcBuffer, textX + 2, textY + 2, btn->text, strlen(btn->text));
-
-            SetTextColor(hdcBuffer, RGB(255, 255, 255));  // Bijeli tekst
-            TextOut(hdcBuffer, textX, textY, btn->text, strlen(btn->text));
+            SelectObject(hdcMem, oldMemBmp); // Vraćamo
         } else {
-            // Fallback ako nema bitmap
-            COLORREF btnColor;
-            if (i == 0) btnColor = RGB(255, 200, 0);      // Yellow
-            else if (i == 1) btnColor = RGB(0, 200, 0);   // Green
-            else btnColor = RGB(150, 150, 150);           // Grey
-
+            COLORREF btnColor = (i == 0) ? RGB(255, 200, 0) : (i == 1 ? RGB(0, 200, 0) : RGB(150, 150, 150));
             HBRUSH hBtnBrush = CreateSolidBrush(btnColor);
-            int borderWidth = max(2, rect.bottom / 350);
-            HPEN hBtnPen = CreatePen(PS_SOLID, borderWidth, RGB(255, 255, 255));
+            HPEN hBtnPen = CreatePen(PS_SOLID, max(2, rect.bottom / 350), RGB(255, 255, 255));
             HPEN hOldPen = (HPEN)SelectObject(hdcBuffer, hBtnPen);
             HBRUSH hOldBrush = (HBRUSH)SelectObject(hdcBuffer, hBtnBrush);
 
@@ -271,104 +221,69 @@ void RenderMenu(HDC hdc, RECT rect ) {
 
             SelectObject(hdcBuffer, hOldPen);
             SelectObject(hdcBuffer, hOldBrush);
-            DeleteObject(hBtnPen);
-            DeleteObject(hBtnBrush);
-
-            // === RENDER TEXT NAKON FALLBACK BUTTONA ===
-            SetBkMode(hdcBuffer, TRANSPARENT);
-            SetTextColor(hdcBuffer, RGB(0, 0, 0));
-            SIZE textSize;
-            GetTextExtentPoint32(hdcBuffer, btn->text, strlen(btn->text), &textSize);
-            int textX = btn->rect.left + ((btn->rect.right - btn->rect.left) - textSize.cx) / 2;
-            int textY = btn->rect.top + ((btn->rect.bottom - btn->rect.top) - textSize.cy) / 2;
-            TextOut(hdcBuffer, textX + 2, textY + 2, btn->text, strlen(btn->text));
-
-            SetTextColor(hdcBuffer, RGB(255, 255, 255));  // Bijeli tekst
-            TextOut(hdcBuffer, textX, textY, btn->text, strlen(btn->text));
+            DeleteObject(hBtnPen); // Obrisano
+            DeleteObject(hBtnBrush); // Obrisano
         }
+
+        SetBkMode(hdcBuffer, TRANSPARENT);
+        SIZE textSize;
+        GetTextExtentPoint32(hdcBuffer, btn->text, (int)strlen(btn->text), &textSize);
+        int textX = btn->rect.left + ((btn->rect.right - btn->rect.left) - textSize.cx) / 2;
+        int textY = btn->rect.top + ((btn->rect.bottom - btn->rect.top) - textSize.cy) / 2;
+
+        SetTextColor(hdcBuffer, RGB(0, 0, 0));
+        TextOut(hdcBuffer, textX + 2, textY + 2, btn->text, (int)strlen(btn->text));
+        SetTextColor(hdcBuffer, RGB(255, 255, 255));
+        TextOut(hdcBuffer, textX, textY, btn->text, (int)strlen(btn->text));
     }
 
-    SelectObject(hdcBuffer, hOldButtonFont);
-    DeleteObject(hButtonFont);
-    // === RENDER MENU CHARACTER ON RIGHT SIDE - RESPONSIVE ===
-    // Odaberi koji karakter da prikaže na osnovu hovera
+    // === RENDER CHARACTER ===
     HBITMAP currentChar = gRes.menuCharacter;
     HBITMAP currentCharMask = gRes.menuCharacterMask;
     bool isPlayer2 = false;
 
-    // Ako je hover na "1 PLAYER" dugmeta, prikaži player1 karaktera
-    if (gGame.menuButtons[0].isHovered && gRes.player1MenuChar && gRes.player1MenuCharMask) {
-        currentChar = gRes.player1MenuChar;
-        currentCharMask = gRes.player1MenuCharMask;
-    }
-    // Ako je hover na "2 PLAYERS" dugmeta, prikaži player2 karaktera
-    else if (gGame.menuButtons[1].isHovered && gRes.player2MenuChar && gRes.player2MenuCharMask) {
-        currentChar = gRes.player2MenuChar;
-        currentCharMask = gRes.player2MenuCharMask;
-        isPlayer2 = true;
-    }
-    // Settings karakter se iscrtava ISTO kao player1 / default (desna strana, iste dimenzije)
-    else if (gGame.menuButtons[2].isHovered && gRes.settingsMenuChar && gRes.settingsMenuCharMask) {
-        currentChar = gRes.settingsMenuChar;
-        currentCharMask = gRes.settingsMenuCharMask;
-    }
+    if (gGame.menuButtons[0].isHovered) { currentChar = gRes.player1MenuChar; currentCharMask = gRes.player1MenuCharMask; }
+    else if (gGame.menuButtons[1].isHovered) { currentChar = gRes.player2MenuChar; currentCharMask = gRes.player2MenuCharMask; isPlayer2 = true; }
+    else if (gGame.menuButtons[2].isHovered) { currentChar = gRes.settingsMenuChar; currentCharMask = gRes.settingsMenuCharMask; }
 
     if (currentChar && currentCharMask) {
         BITMAP bm;
         GetObject(currentChar, sizeof(BITMAP), &bm);
-
-        int charHeight, charWidth;
-        int charX, charY;
         float aspectRatio = (float)bm.bmWidth / (float)bm.bmHeight;
+        int charW, charH, charX, charY;
 
         if (isPlayer2) {
-            // SPECIJALNO SKALIRANJE ZA PLAYER 2 - veći i pored menija
-            charHeight = (int)(rect.bottom * 1.3);  // 65% visine ekrana
-            charWidth = (int)(charHeight * aspectRatio);
-
-            // Pozicioniranje pored buttons holder-a
-            int buttonsRight = gGame.menuButtons[0].rect.right + (gGame.menuButtons[0].rect.right - gGame.menuButtons[0].rect.left) / 2;
-            int gap = -100;  // Razmak između menija i karaktera
-
-            charX = buttonsRight + gap;
-            charY = rect.bottom - charHeight * 0.8;  // Stoji na podu ekrana
-        }
-        else {
-            // NORMALNO SKALIRANJE - koristi se za:
-            // - default menuCharacter (bez hovera)
-            // - player1MenuChar (hover na "1 PLAYER")
-            // - settingsMenuChar (hover na "SETTINGS")
-            charHeight = (int)(rect.bottom * 0.75);
-            charWidth = (int)(charHeight * aspectRatio);
-
-            // Position on right side
-            charX =rect.right * 0.2;
-            charY = rect.bottom - charHeight - max(20, rect.bottom / 30);
+            charH = (int)(rect.bottom * 1.3);
+            charW = (int)(charH * aspectRatio);
+            charX = gGame.menuButtons[0].rect.right + (-100);
+            charY = rect.bottom - (int)(charH * 0.8);
+        } else {
+            charH = (int)(rect.bottom * 0.75);
+            charW = (int)(charH * aspectRatio);
+            charX = (int)(rect.right * 0.2);
+            charY = rect.bottom - charH - max(20, rect.bottom / 30);
         }
 
-        SetStretchBltMode(hdcBuffer, HALFTONE);
-        SetBrushOrgEx(hdcBuffer, 0, 0, NULL);
-
-        // Draw mask first (for transparency)
         HBITMAP oldMemBmp = (HBITMAP)SelectObject(hdcMem, currentCharMask);
-        StretchBlt(hdcBuffer, charX, charY, charWidth, charHeight,
-                   hdcMem, 0, 0, bm.bmWidth, bm.bmHeight, SRCAND);
-
-        // Draw character
+        StretchBlt(hdcBuffer, charX, charY, charW, charH, hdcMem, 0, 0, bm.bmWidth, bm.bmHeight, SRCAND);
         SelectObject(hdcMem, currentChar);
-        StretchBlt(hdcBuffer, charX, charY, charWidth, charHeight,
-                   hdcMem, 0, 0, bm.bmWidth, bm.bmHeight, SRCPAINT);
-
-        SelectObject(hdcMem, oldMemBmp);
+        StretchBlt(hdcBuffer, charX, charY, charW, charH, hdcMem, 0, 0, bm.bmWidth, bm.bmHeight, SRCPAINT);
+        SelectObject(hdcMem, oldMemBmp); // Vraćamo
     }
 
     // Copy to screen
     BitBlt(hdc, 0, 0, rect.right, rect.bottom, hdcBuffer, 0, 0, SRCCOPY);
 
-    // Cleanup
-    SelectObject(hdcBuffer, oldBufferBmp);
-    DeleteObject(hbmBuffer);
-    DeleteDC(hdcMem);
+    // === ČIŠĆENJE (CLEANUP) - REDOSLIJED JE KLJUČAN ===
+    SelectObject(hdcBuffer, hOldButtonFont);
+    DeleteObject(hButtonFont); // Brišemo font
+
+    SelectObject(hdcBuffer, oldBufferBmp); // Vraćamo originalnu bitmapu u hdcBuffer
+    DeleteObject(hbmBuffer);               // Tek sad brišemo buffer bitmapu
+
+    SelectObject(hdcMem, oldMemBmpAtStart); // Vraćamo originalnu bitmapu u hdcMem
+
+    DeleteDC(hdcMem);                      // Brišemo DC-ove
     DeleteDC(hdcBuffer);
 }
 
@@ -426,7 +341,20 @@ void ResetGame(HWND hwnd) {
     gGame.gameState.lives = MAX_LIVES;
     gGame.totalScore = 0;
     gGame.displayScore = 0;
+
+    if (CURRENT_LEVEL.hdcCache) DeleteDC(CURRENT_LEVEL.hdcCache);
+    if (CURRENT_LEVEL.hStaticCache) DeleteObject(CURRENT_LEVEL.hStaticCache);
+    CURRENT_LEVEL.hdcCache = NULL;
+    CURRENT_LEVEL.hStaticCache = NULL;
+    CURRENT_LEVEL.staticRedraw = true;
+
     gGame.currentLevel = 0;
+
+    if (CURRENT_LEVEL.hdcCache) DeleteDC(CURRENT_LEVEL.hdcCache);
+    if (CURRENT_LEVEL.hStaticCache) DeleteObject(CURRENT_LEVEL.hStaticCache);
+    CURRENT_LEVEL.hdcCache = NULL;
+    CURRENT_LEVEL.hStaticCache = NULL;
+    CURRENT_LEVEL.staticRedraw = true;
 
     // Reset hero position
     RECT clientRect;
@@ -452,11 +380,22 @@ void ResetGame(HWND hwnd) {
 void ResetBetweenLevels(HWND hwnd) {
     // Reset vremena
     CURRENT_LEVEL.timeLeft = maxTime;
-
     // Reset stanja
     gGame.gameState.isGameOver = false;
     gGame.gameState.isLevelCleared = false;
     CURRENT_LEVEL.activeBalloonCount = 0;
+
+    /*
+    if (CURRENT_LEVEL.hdcCache) {
+        DeleteDC(CURRENT_LEVEL.hdcCache);
+        CURRENT_LEVEL.hdcCache = NULL;
+    }
+    if (CURRENT_LEVEL.hStaticCache) {
+        DeleteObject(CURRENT_LEVEL.hStaticCache);
+        CURRENT_LEVEL.hStaticCache = NULL;
+    }
+    */
+    CURRENT_LEVEL.staticRedraw = true;
 
     // Reset heroja
     RECT clientRect;

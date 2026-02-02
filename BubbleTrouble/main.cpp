@@ -83,7 +83,7 @@ LRESULT CALLBACK WindowProcedure(HWND hwnd, UINT message, WPARAM wParam, LPARAM 
             TEXT("Kenney Mini Square")
             );
             HDC hdc = GetDC(hwnd);
-            gRes.InitMemDC(hdc);
+            gRes.Init(hdc, hwnd);
             ReleaseDC(hwnd, hdc);
         }
           case WM_SIZE: {
@@ -106,8 +106,11 @@ LRESULT CALLBACK WindowProcedure(HWND hwnd, UINT message, WPARAM wParam, LPARAM 
             }
             if(gGame.currentLevel == 2)
                 RecalculateLevel3Layout(hwnd);
-            InvalidateRect(hwnd, NULL, FALSE);
+
+            CURRENT_LEVEL.staticRedraw = true;
+
             return 0;
+
         }
         break;
 
@@ -176,7 +179,7 @@ LRESULT CALLBACK WindowProcedure(HWND hwnd, UINT message, WPARAM wParam, LPARAM 
             if (wParam == VK_ESCAPE) {
                 gGame.gameState.currentMode = GAME_MODE_MENU;
                 InitializeMenu(hwnd);
-                InvalidateRect(hwnd, NULL, FALSE);
+                //InvalidateRect(hwnd, NULL, FALSE);
             }
             return 0;
         }

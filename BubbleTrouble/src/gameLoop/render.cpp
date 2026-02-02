@@ -13,20 +13,19 @@ void RefreshScreen(HWND hwnd){
     RECT rect;
     GetClientRect(hwnd, &rect);
 
-    // Double buffering setup
+
     HDC hdcBuffer = CreateCompatibleDC(hdc);
     HBITMAP hbmBuffer = CreateCompatibleBitmap(hdc, rect.right, rect.bottom);
     HBITMAP oldBufferBmp = (HBITMAP)SelectObject(hdcBuffer, hbmBuffer);
 
-
     if(gGame.gameState.currentMode == GAME_MODE_MENU){
-        RenderMenu(hdcBuffer, rect);
-        DrawTransitionWalls(hdcBuffer, rect);
+       RenderMenu(hdcBuffer, rect);
+       DrawTransitionWalls(hdcBuffer, rect);
 
     }else{
-        RenderWalls(hdcBuffer, rect);
+        RenderStaticUI(hdcBuffer, rect);
         RenderLevel(hdcBuffer, rect);
-        RenderGameUI(hdcBuffer, rect);
+        RenderDynamicGameUI(hdcBuffer, rect);
         DrawTransitionWalls(hdcBuffer, rect);
     }
 

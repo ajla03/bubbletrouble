@@ -51,6 +51,7 @@ void UpdateHearts(){
 }
 
 void Update(HWND hwnd){
+    printf("GDI Objects: %ld\n", GetGuiResources(GetCurrentProcess(), GR_GDIOBJECTS));
      if (!gGame.gameState.isGameOver && CURRENT_LEVEL.timeLeft > 0 && !gGame.gameState.isLevelCleared) {
         CURRENT_LEVEL.timeLeft -= 1.0;
     } else if (CURRENT_LEVEL.timeLeft <= 0) {
@@ -174,6 +175,9 @@ void UpdateWallTransition(HWND hwnd){
                 gGame.gameState.isGameOver = false;
                 gGame.gameState.isLevelCleared = false;
             }else if(gGame.gameState.pendingNextLevel){
+
+                if (CURRENT_LEVEL.hdcCache) { printf("DELETED DC"); DeleteDC(CURRENT_LEVEL.hdcCache);}
+                if (CURRENT_LEVEL.hStaticCache) DeleteObject(CURRENT_LEVEL.hStaticCache);
                 gGame.currentLevel++;
                 ResetBetweenLevels(hwnd);
                 InitLevel(hwnd);

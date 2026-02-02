@@ -13,6 +13,9 @@ struct Level{
      int levelScore;
      Pillar pillar1;
      Pillar pillar2;
+     HBITMAP hStaticCache = NULL;
+     HDC hdcCache = NULL;
+     bool staticRedraw = true;
 };
 
 struct GameContext{

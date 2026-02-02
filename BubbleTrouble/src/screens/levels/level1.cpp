@@ -26,6 +26,7 @@ void RenderLevel1(HDC hdcBuffer, RECT rect)
             DrawBalloonGDI(hdcBuffer, &CURRENT_LEVEL.balloons[i]);
         }
     }
+
 }
 
 

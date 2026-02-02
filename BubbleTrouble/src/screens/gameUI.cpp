@@ -6,6 +6,68 @@
 #include <string>
 
 
+
+void RenderStaticUI(HDC hdc, RECT rect) {
+    if (CURRENT_LEVEL.hStaticCache == NULL  || CURRENT_LEVEL.staticRedraw) {
+
+        if (CURRENT_LEVEL.hdcCache) DeleteDC(CURRENT_LEVEL.hdcCache);
+        if (CURRENT_LEVEL.hStaticCache) DeleteObject(CURRENT_LEVEL.hStaticCache);
+
+        CURRENT_LEVEL.hdcCache = CreateCompatibleDC(hdc);
+        CURRENT_LEVEL.hStaticCache = CreateCompatibleBitmap(hdc, rect.right, rect.bottom);
+        SelectObject(CURRENT_LEVEL.hdcCache, CURRENT_LEVEL.hStaticCache);
+
+        RenderWalls(CURRENT_LEVEL.hdcCache, rect);
+
+        // === RENDER PLACEHOLDER ZA LEVEL ===
+        SelectObject(gRes.hdcMem, gRes.levelPlaceholderWhite);
+
+        std::string levelText = "LEVEL " + std::to_string(gGame.currentLevel+1);
+        HFONT oldFont = (HFONT)SelectObject(CURRENT_LEVEL.hdcCache, gRes.hFont);
+        SetBkMode(CURRENT_LEVEL.hdcCache, TRANSPARENT);
+        SetTextColor(CURRENT_LEVEL.hdcCache, RGB(60, 60, 60));
+
+        SIZE textSize;
+        GetTextExtentPoint32(CURRENT_LEVEL.hdcCache, levelText.c_str(), levelText.length(), &textSize);
+
+        int paddingX = 40;
+        int boxW = textSize.cx + paddingX * 2;
+        int boxH = gGame.floorWall.height / 2;
+        int barHeight = 25;
+
+        int placeholderX = (rect.right / 2) - (boxW / 2);
+        int floorTop = rect.bottom - gGame.floorWall.height + barHeight;
+        int placeholderY = floorTop + (gGame.floorWall.height - boxH) / 2;
+
+        SelectObject(gRes.hdcMem, gRes.levelPlaceholderWhite);
+        StretchBlt(CURRENT_LEVEL.hdcCache, placeholderX, placeholderY, boxW, boxH, gRes.hdcMem, 0, 0,
+                   gGame.levelPlaceholderInfo.width, gGame.levelPlaceholderInfo.height, SRCAND);
+
+        SelectObject(gRes.hdcMem, gRes.levelPlaceholderBlack);
+        StretchBlt(CURRENT_LEVEL.hdcCache, placeholderX, placeholderY, boxW, boxH, gRes.hdcMem, 0, 0,
+                   gGame.levelPlaceholderInfo.width, gGame.levelPlaceholderInfo.height, SRCPAINT);
+
+        TEXTMETRIC tm;
+        GetTextMetrics(CURRENT_LEVEL.hdcCache, &tm);
+        int textX = placeholderX + (boxW - textSize.cx) / 2;
+        int textY = placeholderY + (boxH - tm.tmHeight) / 2;
+        TextOut(CURRENT_LEVEL.hdcCache, textX, textY, levelText.c_str(), levelText.length());
+
+        SelectObject(CURRENT_LEVEL.hdcCache, oldFont);
+
+        // PLAYER PLACEHOLDER //
+        int heartsTop = rect.bottom - gGame.floorWall.height + barHeight*2 + 10;
+        int playerY = heartsTop + gGame.heartBgInfo.height + 10;
+
+        DrawPlayerPlaceholder(CURRENT_LEVEL.hdcCache, rect, "PLAYER 1", gGame.leftWall.width, playerY,
+                             RGB(180, 0, 0), gGame.heartBgInfo.height + 6);
+
+        CURRENT_LEVEL.staticRedraw = false;
+    }
+
+    BitBlt(hdc, 0, 0, rect.right, rect.bottom, CURRENT_LEVEL.hdcCache, 0, 0, SRCCOPY);
+}
+
 void RenderWalls(HDC hdc, RECT rect){
     int tileW = gGame.floorWall.width;
     int tileH = gGame.leftWall.height;
@@ -40,7 +102,7 @@ void RenderWalls(HDC hdc, RECT rect){
 }
 
 
-void RenderGameUI(HDC hdc, RECT rect)
+void RenderDynamicGameUI(HDC hdc, RECT rect)
 {
 
     int bgX = gGame.leftWall.width;
@@ -92,14 +154,8 @@ void RenderGameUI(HDC hdc, RECT rect)
     DrawHearts(hdc, rect, barHeight);
     DrawScore(hdc, rect);
 
-    // === RENDER PLACEHOLDER ZA LEVEL ===
-    SelectObject(gRes.hdcMem, gRes.levelPlaceholderWhite);
 
     std::string levelText = "LEVEL " + std::to_string(gGame.currentLevel+1);
-    // Font
-    HFONT oldFont = (HFONT)SelectObject(hdc, gRes.hFont);
-    SetBkMode(hdc, TRANSPARENT);
-    SetTextColor(hdc, RGB(60, 60, 60));
 
     SIZE textSize;
     GetTextExtentPoint32(
@@ -113,70 +169,13 @@ void RenderGameUI(HDC hdc, RECT rect)
     int paddingX = 40;
     int paddingY = 20;
 
-    int boxW = textSize.cx + paddingX;
-    int boxH = gGame.floorWall.height / 2;
-
+    int boxW = textSize.cx + paddingX * 2;
     int placeholderX = (rect.right / 2) - (boxW / 2);
-    int floorTop = rect.bottom - gGame.floorWall.height + barHeight;
-
-    int placeholderY =
-    floorTop + (gGame.floorWall.height - boxH) / 2;
-    // Maska
-    SelectObject(gRes.hdcMem, gRes.levelPlaceholderWhite);
-    StretchBlt(
-        hdc,
-        placeholderX, placeholderY,
-        boxW, boxH,
-        gRes.hdcMem,
-        0, 0,
-        gGame.levelPlaceholderInfo.width,
-        gGame.levelPlaceholderInfo.height,
-        SRCAND
-    );
-
-    // Bitmap
-    SelectObject(gRes.hdcMem, gRes.levelPlaceholderBlack);
-    StretchBlt(
-        hdc,
-        placeholderX, placeholderY,
-        boxW, boxH,
-        gRes.hdcMem,
-        0, 0,
-        gGame.levelPlaceholderInfo.width,
-        gGame.levelPlaceholderInfo.height,
-        SRCPAINT
-    );
-
-    // Tekst centriran u placeholder
-    TEXTMETRIC tm;
-    GetTextMetrics(hdc, &tm);
-
-    int textX = placeholderX + (boxW - textSize.cx) / 2;
-    int textY = placeholderY + (boxH - tm.tmHeight) / 2;
-
-    TextOut(hdc, textX, textY, levelText.c_str(), levelText.length());
-
-    SelectObject(hdc, oldFont);
-
-    // PLAYER PLACEHOLDER //
-    int heartsTop = rect.bottom - gGame.floorWall.height + barHeight*2 + 10;
-
-    int playerY =heartsTop + gGame.heartBgInfo.height + 10;
-
-    DrawPlayerPlaceholder(
-        hdc,
-        rect,
-        "PLAYER 1",
-        gGame.leftWall.width,
-        playerY,
-        RGB(180, 0, 0),
-        gGame.heartBgInfo.height + 6
-    );
 
     // === RENDER BAKLJI ===
-    int torchGap = 10;
-    int torchX1 = placeholderX - gGame.torchInfo.width - torchGap;
-    int torchX2 = placeholderX + boxW + torchGap;
+    int torchGap = 20;
+    int torchX1 = placeholderX - gGame.torchInfo.width - torchGap*2;
+    int torchX2 = placeholderX + boxW + torchGap*2;
     int torchY = rect.bottom - gGame.floorWall.height + gGame.torchInfo.height / 2 + barHeight*2;
 
     int torchSrcX = gGame.torchInfo.currentFrame * gGame.torchInfo.width;
