@@ -197,3 +197,70 @@ void UpdateWallTransition(HWND hwnd){
         }
     }
 }
+
+void UpdateLayout(int oldW, int oldH, int newW, int newH)
+{
+    if (oldW <= 0 || oldH <= 0)
+        return;
+
+    int oldBgX = gGame.leftWall.width;
+    int oldBgW = oldW - gGame.leftWall.width - gGame.rightWall.width;
+    int oldBgH = oldH - gGame.floorWall.height;
+
+    int newBgX = gGame.leftWall.width;
+    int newBgW = newW - gGame.leftWall.width - gGame.rightWall.width;
+    int newBgH = newH - gGame.floorWall.height;
+
+    float scaleX = (float)newBgW / (float)oldBgW;
+    float scaleY = (float)newBgH / (float)oldBgH;
+
+    Level& lvl = gGame.levels[gGame.currentLevel];
+
+    for (int i = 0; i < MAX_BALLOONS; i++)
+    {
+        if(!lvl.balloons[i].active) continue;
+
+        Balloon& b = lvl.balloons[i];
+
+        int localX = b.x - oldBgX;
+        int localY = b.y;
+
+        localX = (int)(localX * scaleX);
+        localY = (int)(localY * scaleY);
+
+        b.x = newBgX + localX;
+        b.y = localY;
+    }
+
+    // UPDATE HERO
+    {
+        int localX = gGame.hero.x - oldBgX;
+        int localY = gGame.hero.y;
+
+        localX = (int)(localX * scaleX);
+        localY = (int)(localY * scaleY);
+
+        gGame.hero.x = newBgX + localX;
+        gGame.hero.y = localY;
+
+        // opcionalno: update grounded Y
+        gGame.hero.y = newH - gGame.floorWall.height - gGame.hero.height;
+    }
+
+    // UPDATE HARPOON
+
+    if (gGame.harpoon.isActive)
+    {
+        int localX = gGame.harpoon.x - oldBgX;
+        int localY = gGame.harpoon.y;
+
+        localX = (int)(localX * scaleX);
+        localY = (int)(localY * scaleY);
+
+        gGame.harpoon.x = newBgX + localX;
+        gGame.harpoon.y = localY;
+    }
+
+}
+
+

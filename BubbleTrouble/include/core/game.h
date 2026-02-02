@@ -76,3 +76,6 @@ void InitLevel5(HWND hwnd);
 void StartWallTransition(HWND hwnd);
 void UpdateWallTransition(HWND hwnd);
 void DrawTransitionWalls(HDC hdc, RECT rect);
+
+//================== UPDATE =================
+void UpdateLayout(int oldW, int oldH, int newW, int newH);

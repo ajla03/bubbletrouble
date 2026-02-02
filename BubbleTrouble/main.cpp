@@ -60,6 +60,9 @@ int WINAPI WinMain(HINSTANCE hThisInstance, HINSTANCE hPrevInstance, LPSTR lpszA
 }
 
 LRESULT CALLBACK WindowProcedure(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam){
+   static int prevClientW = 0;
+   static int prevClientH = 0;
+
     switch (message){
         case WM_SETCURSOR: {
          SetCursor(gRes.gameCursor);
@@ -84,6 +87,20 @@ LRESULT CALLBACK WindowProcedure(HWND hwnd, UINT message, WPARAM wParam, LPARAM 
             ReleaseDC(hwnd, hdc);
         }
           case WM_SIZE: {
+            int newW = LOWORD(lParam);
+            int newH = HIWORD(lParam);
+
+
+            UpdateLayout(
+                prevClientW,
+                prevClientH,
+                newW,
+                newH
+            );
+
+            prevClientW = newW;
+            prevClientH = newH;
+
             if (gGame.gameState.currentMode == GAME_MODE_MENU) {
                 InitializeMenu(hwnd);
             }

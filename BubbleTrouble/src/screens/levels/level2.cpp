@@ -4,10 +4,8 @@
 #include <stdio.h>
 
 void RenderLevel2(HDC hdcBuffer, RECT rect){
-    HDC hdcMem = CreateCompatibleDC(hdcBuffer);
-
     // === BACKGROUND ===
-    SelectObject(hdcMem, gRes.hBgLevel2);
+    SelectObject(gRes.hdcMem, gRes.hBgLevel2);
 
     int bgX = gGame.leftWall.width;
     int bgY = 0;
@@ -18,7 +16,7 @@ void RenderLevel2(HDC hdcBuffer, RECT rect){
     SetBrushOrgEx(hdcBuffer, 0, 0, NULL);
     StretchBlt(
         hdcBuffer, bgX, bgY, bgW, bgH,
-        hdcMem, 0, 0,
+        gRes.hdcMem, 0, 0,
         CURRENT_LEVEL.backgroundInfo.width,
         CURRENT_LEVEL.backgroundInfo.height,
         SRCCOPY
@@ -30,7 +28,6 @@ void RenderLevel2(HDC hdcBuffer, RECT rect){
             DrawBalloonGDI(hdcBuffer, &CURRENT_LEVEL.balloons[i]);
         }
     }
-    DeleteDC(hdcMem);
 }
 
 void InitLevel2(HWND hwnd){
