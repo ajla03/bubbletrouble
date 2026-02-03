@@ -182,35 +182,64 @@ void RenderDynamicGameUI(HDC hdc, RECT rect)
     int placeholderX = (rect.right / 2) - (boxW / 2);
 
     // === RENDER BAKLJI ===
-    int torchX1 = gGame.leftWall.width/2 - gGame.torchInfo.width/2 ;
-    int torchX2 = 3*gGame.leftWall.width/2 + bgW - gGame.torchInfo.width/2;
-    int torchY = bgH / 2 ;
+    float torchScale = 1.3f;
+
+    int torchW = (int)(gGame.torchInfo.width  * torchScale);
+    int torchH = (int)(gGame.torchInfo.height * torchScale);
+
+    int torchX1 = gGame.leftWall.width/2 - torchW/2;
+    int torchX2 = 3*gGame.leftWall.width/2 + bgW -  torchW/2;
+    int torchY = bgH / 2 - torchH / 2;
 
     int torchSrcX = gGame.torchInfo.currentFrame * gGame.torchInfo.width;
     int torchSrcY = gGame.torchInfo.currentRow * gGame.torchInfo.height;
 
     // Lijeva baklja
     SelectObject(gRes.hdcMem, gRes.torchMask);
-    BitBlt(hdc, torchX1, torchY,
-           gGame.torchInfo.width, gGame.torchInfo.height,
-           gRes.hdcMem, torchSrcX, torchSrcY, SRCPAINT);
-
+    StretchBlt(
+        hdc,
+        torchX1, torchY,
+        torchW, torchH,
+        gRes.hdcMem,
+        torchSrcX, torchSrcY,
+        gGame.torchInfo.width,
+        gGame.torchInfo.height,
+        SRCPAINT
+    );
     SelectObject(gRes.hdcMem, gRes.torch);
-    BitBlt(hdc, torchX1, torchY,
-           gGame.torchInfo.width, gGame.torchInfo.height,
-           gRes.hdcMem, torchSrcX, torchSrcY, SRCAND);
-
+    StretchBlt(
+        hdc,
+        torchX1, torchY,
+        torchW, torchH,
+        gRes.hdcMem,
+        torchSrcX, torchSrcY,
+        gGame.torchInfo.width,
+        gGame.torchInfo.height,
+        SRCAND
+    );
     // Desna baklja
     SelectObject(gRes.hdcMem, gRes.torchMask);
-    BitBlt(hdc, torchX2, torchY,
-           gGame.torchInfo.width, gGame.torchInfo.height,
-           gRes.hdcMem, torchSrcX, torchSrcY, SRCPAINT);
-
+    StretchBlt(
+        hdc,
+        torchX2, torchY,
+        torchW, torchH,
+        gRes.hdcMem,
+        torchSrcX, torchSrcY,
+        gGame.torchInfo.width,
+        gGame.torchInfo.height,
+        SRCPAINT
+    );
     SelectObject(gRes.hdcMem, gRes.torch);
-    BitBlt(hdc, torchX2, torchY,
-           gGame.torchInfo.width, gGame.torchInfo.height,
-           gRes.hdcMem, torchSrcX, torchSrcY, SRCAND);
-
+   StretchBlt(
+        hdc,
+        torchX2, torchY,
+        torchW, torchH,
+        gRes.hdcMem,
+        torchSrcX, torchSrcY,
+        gGame.torchInfo.width,
+        gGame.torchInfo.height,
+        SRCAND
+    );
     // === HERO ===
     gGame.hero.y = rect.bottom - gGame.floorWall.height - gGame.hero.height;
 
@@ -257,7 +286,7 @@ void RenderDynamicGameUI(HDC hdc, RECT rect)
 void DrawHeartsAndScore(HDC hdc, RECT rect, int padding) {
     int startX = gGame.leftWall.width;
     int startY = rect.bottom - gGame.floorWall.height + padding + gGame.heartInfo.height;
-    int gap = 20;
+    int gap = 30;
 
     int endX = 0 ;
     for (int i = 0; i < 5 ; i++) {
@@ -311,15 +340,15 @@ void DrawHeartsAndScore(HDC hdc, RECT rect, int padding) {
         // ========= SCORE ========= //
         int  gap = 10;
         x = gGame.playerHolderInfo.x + gGame.playerHolderInfo.width + gap;
-        y = gGame.playerHolderInfo.y ;
+        y = gGame.playerHolderInfo.y + 5  ;
         int boxW = x - endX;
-        int boxH = gGame.playerHolderInfo.height;
+        int boxH = gGame.playerHolderInfo.height - 8;
         SelectObject(gRes.hdcMem, gRes.scoreHolder);
 
         SetStretchBltMode(hdc, COLORONCOLOR);
         StretchBlt(
             hdc,
-            x, y,
+            x, y ,
             boxW, boxH,
             gRes.hdcMem,
             0, 0,
@@ -327,13 +356,13 @@ void DrawHeartsAndScore(HDC hdc, RECT rect, int padding) {
             gGame.scoreHolderInfo.height,
             SRCCOPY
         );
-        HPEN hDarkPen = CreatePen(PS_SOLID, 2, RGB(50, 50, 50));
+        HPEN hDarkPen = CreatePen(PS_SOLID, 2, RGB(100, 100, 100));
         HPEN hOldPen = (HPEN)SelectObject(hdc, hDarkPen);
 
-        RoundRect(
+       RoundRect(
             hdc,
-            x - 2,
-            y - 2,
+            x -2,
+            y -2,
             x + boxW + 2,
             y + boxH + 2,
             4, 4
@@ -345,7 +374,7 @@ void DrawHeartsAndScore(HDC hdc, RECT rect, int padding) {
         HFONT oldFont = (HFONT)SelectObject(hdc, gRes.hFont);
 
         SetBkMode(hdc, TRANSPARENT);
-        SetTextColor(hdc, RGB(255, 255, 255));
+        SetTextColor(hdc, RGB(70, 70, 70));
 
         char valueText[32];
         sprintf(valueText, "%d", gGame.displayScore);
