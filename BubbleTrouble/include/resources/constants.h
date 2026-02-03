@@ -35,3 +35,7 @@
 #define POWERUP_SPAWN_MIN_TIME 2000
 #define POWERUP_SPAWN_MAX_TIME 3000
 #define POWERUP_SIZE 30
+
+// ==== TIME POWERUP KONSTANTE ==== //
+#define TIME_BONUS_AMOUNT 500.0       // Koliko vremena dodaje
+#define TIME_POWERUP_SPAWN_CHANCE 30  // 30% šansa za time, 70% za life

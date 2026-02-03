@@ -45,6 +45,9 @@ bool ResourceManager::LoadAll(HINSTANCE hInstance) {
     lifePowerup = LoadBitmap(hInstance, MAKEINTRESOURCE(IDB_LIFEPU));
     lifePowerupMask = LoadBitmap(hInstance, MAKEINTRESOURCE(IDB_LIFEPU_MASK));
 
+    timePowerup = LoadBitmap(hInstance, MAKEINTRESOURCE(IDB_TIMEPU));
+    timePowerupMask = LoadBitmap(hInstance, MAKEINTRESOURCE(IDB_TIMEPU_MASK));
+
     wall1 = LoadBitmap(hInstance, MAKEINTRESOURCE(IDB_WALL1));
     wall2 = LoadBitmap(hInstance, MAKEINTRESOURCE(IDB_WALL2));
     longWall= LoadBitmap(hInstance, MAKEINTRESOURCE(IDB_LONG_WALL));

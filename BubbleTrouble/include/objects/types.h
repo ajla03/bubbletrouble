@@ -114,9 +114,7 @@ struct AnimatedWalls{
 };
 enum PowerUpType {
        POWERUP_EXTRA_LIFE,
-       POWERUP_SLOW_TIME,
-       POWERUP_DOUBLE_SHOT,
-       POWERUP_SHIELD
+       POWERUP_EXTRA_TIME,
    };
 
 struct PowerUp {

@@ -100,3 +100,6 @@ IDR_DAMAGE_SOUND   WAVE "../assets/sounds/damage.wav"
 
 IDB_LIFEPU_MASK       BITMAP  "../assets/bitmaps/life_powerup_mask.bmp"
 IDB_LIFEPU      BITMAP  "../assets/bitmaps/life_powerup.bmp"
+
+IDB_TIMEPU_MASK       BITMAP  "../assets/bitmaps/clock_mask.bmp"
+IDB_TIMEPU      BITMAP  "../assets/bitmaps/clock.bmp"

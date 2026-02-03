@@ -40,7 +40,15 @@ void SpawnPowerup(HWND hwnd) {
             p->y = 0;
 
             p->speedY = POWERUP_FALL_SPEED;
-            p->type = POWERUP_EXTRA_LIFE;
+
+            // === RANDOM POWERUP TIP === //
+            int randomChance = rand() % 100;
+            if(randomChance < TIME_POWERUP_SPAWN_CHANCE) {
+                p->type = POWERUP_EXTRA_TIME;  // 30% šansa za vreme
+            } else {
+                p->type = POWERUP_EXTRA_LIFE;  // 70% šansa za život
+            }
+
             p->active = true;
             p->width = POWERUP_SIZE;
             p->height = POWERUP_SIZE;
@@ -116,54 +124,63 @@ void ApplyPowerup(PowerUpType type) {
             }
             break;
 
-        case POWERUP_SHIELD:
-            gGame.gameState.hasShield = true;
-            gGame.gameState.shieldTimeLeft = 300;
-            break;
-
-        case POWERUP_DOUBLE_SHOT:
-            gGame.gameState.hasDoubleShot = true;
-            gGame.gameState.doubleShotTimeLeft = 600;
-            break;
-
-        case POWERUP_SLOW_TIME:
+        case POWERUP_EXTRA_TIME:
+            // Dodaj vreme, ali nemoj preći maxTime
+            CURRENT_LEVEL.timeLeft += TIME_BONUS_AMOUNT;
+            if(CURRENT_LEVEL.timeLeft > maxTime) {
+                CURRENT_LEVEL.timeLeft = maxTime;
+            }
             break;
     }
 }
 
-// ===== NOVO: JEDNOSTAVNIJE REŠENJE SA TransparentBlt ===== //
 void DrawPowerups(HDC hdc, RECT rect) {
     for(int i = 0; i < MAX_POWERUPS; i++) {
         if(!CURRENT_LEVEL.powerups[i].active) continue;
 
         PowerUp* p = &CURRENT_LEVEL.powerups[i];
 
-        if(!gRes.lifePowerup) {
-            // Fallback - crveni kvadrat
-            HBRUSH redBrush = CreateSolidBrush(RGB(255, 0, 0));
+        // Odaberi odgovarajuću bitmapu za tip powerup-a
+        HBITMAP bitmapToUse = NULL;
+
+        switch(p->type) {
+            case POWERUP_EXTRA_LIFE:
+                bitmapToUse = gRes.lifePowerupMask;
+                break;
+            case POWERUP_EXTRA_TIME:
+                bitmapToUse = gRes.timePowerupMask;
+                break;
+            default:
+                bitmapToUse = gRes.lifePowerupMask; // Fallback
+                break;
+        }
+
+        if(!bitmapToUse) {
+            // Fallback - obojeni kvadrat zavisno od tipa
+            COLORREF color = (p->type == POWERUP_EXTRA_TIME) ? RGB(0, 200, 255) : RGB(255, 0, 0);
+            HBRUSH brush = CreateSolidBrush(color);
             RECT r = { (int)p->x, (int)p->y,
                        (int)(p->x + p->width), (int)(p->y + p->height) };
-            FillRect(hdc, &r, redBrush);
-            DeleteObject(redBrush);
+            FillRect(hdc, &r, brush);
+            DeleteObject(brush);
             continue;
         }
 
         // Uzmi dimenzije originalne bitmape
         BITMAP bm;
-        GetObject(gRes.lifePowerup, sizeof(BITMAP), &bm);
+        GetObject(bitmapToUse, sizeof(BITMAP), &bm);
 
-        SelectObject(gRes.hdcMem, gRes.lifePowerupMask);
+        SelectObject(gRes.hdcMem, bitmapToUse);
 
-        // TransparentBlt - NAJJEDNOSTAVNIJE REŠENJE!
-        // Automatski tretira belu boju (255,255,255) kao providnu
+        // TransparentBlt - automatski tretira belu kao providnu
         TransparentBlt(
-            hdc,                     // destinacija
-            (int)p->x, (int)p->y,   // pozicija
-            p->width, p->height,     // željena veličina
-            gRes.hdcMem,             // source DC
-            0, 0,                    // source pozicija
-            bm.bmWidth, bm.bmHeight, // source dimenzije
-            RGB(255, 255, 255)       // providna boja (bela)
+            hdc,
+            (int)p->x, (int)p->y,
+            p->width, p->height,
+            gRes.hdcMem,
+            0, 0,
+            bm.bmWidth, bm.bmHeight,
+            RGB(255, 255, 255)  // bela = providna
         );
     }
 }
