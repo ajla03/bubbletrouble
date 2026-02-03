@@ -44,8 +44,11 @@ GameContext gGame = {
         GAME_MODE_MENU,
         MAX_LIVES,
         false,
-        false
+        false,
+        false,
+        0,
+        false,
+        0
     },
     /* transitionState */ TRANSITION_NONE
 };
-

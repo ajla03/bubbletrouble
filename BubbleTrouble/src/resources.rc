@@ -97,3 +97,6 @@ IDB_LOGO_MASK       BITMAP  "../assets/bitmaps/logoo_mask.bmp"
 
 IDR_SLIDING_SOUND  WAVE "../assets/sounds/Sliding-audio.wav"
 IDR_DAMAGE_SOUND   WAVE "../assets/sounds/damage.wav"
+
+IDB_LIFEPU_MASK       BITMAP  "../assets/bitmaps/life_powerup_mask.bmp"
+IDB_LIFEPU      BITMAP  "../assets/bitmaps/life_powerup.bmp"

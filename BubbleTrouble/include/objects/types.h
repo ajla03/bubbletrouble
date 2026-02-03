@@ -73,6 +73,10 @@ struct GameState{
     bool pendingRestart;
     bool pendingNextLevel;
     bool popupSettings;
+    bool hasShield;
+    int shieldTimeLeft;
+    bool hasDoubleShot;
+    int doubleShotTimeLeft;
 };
 
 struct HeartAnim{
@@ -108,5 +112,18 @@ struct AnimatedWalls{
  float wallSpeed;
  DWORD transitionWaitStart = 0;
 };
+enum PowerUpType {
+       POWERUP_EXTRA_LIFE,
+       POWERUP_SLOW_TIME,
+       POWERUP_DOUBLE_SHOT,
+       POWERUP_SHIELD
+   };
 
-
+struct PowerUp {
+   float x, y;
+   float speedY;
+   PowerUpType type;
+   bool active;
+   int width, height;
+   DWORD spawnTime;
+};

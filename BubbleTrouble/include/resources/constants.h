@@ -29,3 +29,9 @@
 #define CURRENT_LEVEL gGame.levels[gGame.currentLevel]
 
 #define BONUS_PER_SECOND 5
+
+#define MAX_POWERUPS 5
+#define POWERUP_FALL_SPEED 2.0f
+#define POWERUP_SPAWN_MIN_TIME 2000
+#define POWERUP_SPAWN_MAX_TIME 3000
+#define POWERUP_SIZE 30

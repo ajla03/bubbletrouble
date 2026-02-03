@@ -31,6 +31,12 @@ void InitializeMenu(HWND hwnd);
 void RenderMenu(HDC hdc, RECT rect);
 void HandleMenuClick(HWND hwnd, int x, int y);
 void HandleMenuMouseMove(HWND hwnd, int x, int y);
+// ================= POWERUPS ===============
+void InitPowerupSystem();
+void SpawnPowerup(HWND hwnd);
+void UpdatePowerups(HWND hwnd);
+void ApplyPowerup(PowerUpType type);
+void DrawPowerups(HDC hdc, RECT rect);
 
 // ================= GAME STATE =============
 void StartGame(HWND hwnd);

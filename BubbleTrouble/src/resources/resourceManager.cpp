@@ -17,7 +17,7 @@ bool ResourceManager::LoadAll(HINSTANCE hInstance) {
     torchMask     = LoadBitmap(hInstance, MAKEINTRESOURCE(IDB_TORCH_MASK));
     levelPlaceholderWhite = LoadBitmap(hInstance, MAKEINTRESOURCE(IDB_LEVEL_WHITE));
     levelPlaceholderBlack = LoadBitmap(hInstance, MAKEINTRESOURCE(IDB_LEVEL_BLACK));
-    scoreHolder = LoadBitmap(hInstance, MAKEINTRESOURCE(IDB_SCORE_HOLDER));
+     scoreHolder = LoadBitmap(hInstance, MAKEINTRESOURCE(IDB_SCORE_HOLDER));
 
     menuScreen        = LoadBitmap(hInstance, MAKEINTRESOURCE(IDB_MENU_SCREEN));
     menuCharacter     = LoadBitmap(hInstance, MAKEINTRESOURCE(IDB_MENU_CHARACTER));
@@ -41,6 +41,9 @@ bool ResourceManager::LoadAll(HINSTANCE hInstance) {
 
     logo          = LoadBitmap(hInstance, MAKEINTRESOURCE(IDB_LOGO));
     logoMask      = LoadBitmap(hInstance, MAKEINTRESOURCE(IDB_LOGO_MASK));
+
+    lifePowerup = LoadBitmap(hInstance, MAKEINTRESOURCE(IDB_LIFEPU));
+    lifePowerupMask = LoadBitmap(hInstance, MAKEINTRESOURCE(IDB_LIFEPU_MASK));
 
     wall1 = LoadBitmap(hInstance, MAKEINTRESOURCE(IDB_WALL1));
     wall2 = LoadBitmap(hInstance, MAKEINTRESOURCE(IDB_WALL2));
@@ -89,7 +92,7 @@ bool ResourceManager::LoadAll(HINSTANCE hInstance) {
     );
 
     if (!character || !background || !heart || !restartButton) {
-        MessageBox(NULL, "Ne mogu da uèitam sve resurse!", "Greška", MB_ICONERROR);
+        MessageBox(NULL, "Ne mogu da uï¿½itam sve resurse!", "Greï¿½ka", MB_ICONERROR);
         return false;
     }
 
@@ -146,4 +149,3 @@ void ResourceManager::UpdateDC(HDC hdc, HWND hwnd){
     hbmBuffer = CreateCompatibleBitmap(hdc, rect.right, rect.bottom);
     hOldBufferBmp = (HBITMAP)SelectObject(hdcBuffer, hbmBuffer);
 }
-

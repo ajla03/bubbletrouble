@@ -136,11 +136,26 @@ void Update(HWND hwnd){
             }
         }
     }
+     if(gGame.gameState.hasShield && gGame.gameState.shieldTimeLeft > 0) {
+        gGame.gameState.shieldTimeLeft--;
+        if(gGame.gameState.shieldTimeLeft <= 0) {
+            gGame.gameState.hasShield = false;
+        }
+    }
+
+    if(gGame.gameState.hasDoubleShot && gGame.gameState.doubleShotTimeLeft > 0) {
+        gGame.gameState.doubleShotTimeLeft--;
+        if(gGame.gameState.doubleShotTimeLeft <= 0) {
+            gGame.gameState.hasDoubleShot = false;
+        }
+    }
     UpdateHeroCoolDown(0.016f);
 
     UpdateBalloons(hwnd);
 
     UpdateHearts();
+
+    UpdatePowerups(hwnd);
 
     CheckCollisions();
 

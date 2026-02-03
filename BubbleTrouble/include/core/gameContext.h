@@ -16,6 +16,11 @@ struct Level{
      HBITMAP hStaticCache = NULL;
      HDC hdcCache = NULL;
      bool staticRedraw = true;
+
+     PowerUp powerups[MAX_POWERUPS];
+     int activePowerupCount;
+     DWORD lastPowerupSpawn;
+     DWORD nextPowerupSpawnTime;
 };
 
 struct GameContext{
