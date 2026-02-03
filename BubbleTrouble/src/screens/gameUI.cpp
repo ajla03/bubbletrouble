@@ -40,12 +40,14 @@ void RenderStaticUI(HDC hdc, RECT rect) {
         int placeholderX = (rect.right / 2) - (boxW / 2);
         int floorTop = rect.bottom - gGame.floorWall.height + barHeight;
         int placeholderY = floorTop + (gGame.floorWall.height - boxH) / 2;
-
         SelectObject(gRes.hdcMem, gRes.levelPlaceholderWhite);
+
+        SetStretchBltMode(CURRENT_LEVEL.hdcCache, COLORONCOLOR);
         StretchBlt(CURRENT_LEVEL.hdcCache, placeholderX, placeholderY, boxW, boxH, gRes.hdcMem, 0, 0,
                    gGame.levelPlaceholderInfo.width, gGame.levelPlaceholderInfo.height, SRCAND);
 
         SelectObject(gRes.hdcMem, gRes.levelPlaceholderBlack);
+
         StretchBlt(CURRENT_LEVEL.hdcCache, placeholderX, placeholderY, boxW, boxH, gRes.hdcMem, 0, 0,
                    gGame.levelPlaceholderInfo.width, gGame.levelPlaceholderInfo.height, SRCPAINT);
 
@@ -313,6 +315,8 @@ void DrawHeartsAndScore(HDC hdc, RECT rect, int padding) {
         int boxW = x - endX;
         int boxH = gGame.playerHolderInfo.height;
         SelectObject(gRes.hdcMem, gRes.scoreHolder);
+
+        SetStretchBltMode(hdc, COLORONCOLOR);
         StretchBlt(
             hdc,
             x, y,
@@ -414,6 +418,7 @@ void DrawPlayerPlaceholder(
     gGame.playerHolderInfo.height = boxH;
 
     SelectObject(gRes.hdcMem, gRes.levelPlaceholderWhite);
+    SetStretchBltMode(hdc, COLORONCOLOR);
     StretchBlt(
         hdc,
         x, y,
