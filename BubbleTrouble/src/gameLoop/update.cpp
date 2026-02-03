@@ -51,13 +51,14 @@ void UpdateHearts(){
 }
 
 void Update(HWND hwnd){
-    if((gGame.gameState.currentMode == GAME_MODE_PAUSE && gGame.gameState.pendingHome)
-       || gGame.transitionState == TRANSITION_CLOSING || gGame.transitionState==TRANSITION_WAIT)
+    if(gGame.gameState.pendingHome || gGame.transitionState == TRANSITION_CLOSING || gGame.transitionState == TRANSITION_WAIT )
        {
         UpdateWallTransition(hwnd);
-
+        return;
        }
-    else if(gGame.gameState.currentMode == GAME_MODE_PAUSE) return;
+    else if(gGame.gameState.currentMode == GAME_MODE_PAUSE || gGame.gameState.currentMode == GAME_OVER ) return;
+
+    printf("%d", gGame.gameState.currentMode);
 
     printf("GDI Objects: %ld\n", GetGuiResources(GetCurrentProcess(), GR_GDIOBJECTS));
      if (!gGame.gameState.isGameOver && CURRENT_LEVEL.timeLeft > 0 && !gGame.gameState.isLevelCleared) {

@@ -140,12 +140,14 @@ void CheckCollisions(){
 
         Balloon* b = &CURRENT_LEVEL.balloons[i];
         // check collision with hero
-        float closestX = std::max(float(gGame.hero.x + 5), std::min(b->x, (float)(gGame.hero.x + gGame.hero.width + 5 )));
+        float closestX = std::max(float(gGame.hero.x + 5), std::min(b->x, (float)(gGame.hero.x + gGame.hero.width - 5)));
         float closestY = std::max((float)gGame.hero.y, std::min(b->y,(float)(gGame.hero.y + gGame.hero.height)));
         float dx = b->x - closestX;
         float dy = b->y - closestY;
         float distance = sqrt(dx*dx + dy*dy);
+
         if(distance < b->radius && gGame.hero.heroHitCooldown <= 0){
+              PlaySound(MAKEINTRESOURCE(IDR_DAMAGE_SOUND), GetModuleHandle(NULL), SND_RESOURCE | SND_ASYNC);
             --gGame.gameState.lives;
             gGame.hero.heroHitCooldown = HERO_INVINCIBLE_TIME;
             if(gGame.gameState.lives==0){
