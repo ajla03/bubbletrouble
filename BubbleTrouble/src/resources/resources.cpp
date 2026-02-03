@@ -148,6 +148,14 @@ void LoadBitmaps(HWND hwnd, HINSTANCE hInstance){
         gGame.pauseButtonInfo.isHover = false;
     }
 
+     if(gRes.soundButton){
+        GetObject(gRes.soundButton, sizeof(BITMAP), &bm);
+        gGame.soundButtonInfo.width = bm.bmWidth;
+        gGame.soundButtonInfo.height = bm.bmHeight;
+        gGame.soundButtonInfo.y = 15;
+        gGame.soundButtonInfo.isHover = false;
+    }
+
     if(gRes.wall1){
         GetObject(gRes.wall1, sizeof(BITMAP), &bm);
         gGame.animatedWall.height = bm.bmHeight;

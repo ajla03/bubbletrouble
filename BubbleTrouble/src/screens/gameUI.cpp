@@ -125,6 +125,10 @@ void RenderDynamicGameUI(HDC hdc, RECT rect)
     gGame.pauseButtonInfo.x = bgX + 15;
     DrawButton(hdc, gRes.pauseButton, gRes.pauseButtonMask, gGame.pauseButtonInfo);
 
+    // SOUND BUTTON //
+    gGame.soundButtonInfo.x = gGame.pauseButtonInfo.x + gGame.pauseButtonInfo.width + 15;
+    DrawButton(hdc, gRes.soundButton, gRes.soundButtonMask, gGame.soundButtonInfo);
+
     // === TIME BAR ===
     int barHeight = 25;
     int barGap = 8;

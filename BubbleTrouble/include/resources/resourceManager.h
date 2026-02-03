@@ -19,6 +19,7 @@ struct ResourceManager{
     HBITMAP nextButton, nextButtonMask;
     HBITMAP pauseButton, pauseButtonMask;
     HBITMAP unpauseButton, unpauseButtonMask;
+    HBITMAP soundButton, soundButtonMask;
     HBITMAP hMenuButton, hMenuButtonMask;
     HBITMAP player1MenuChar, player1MenuCharMask;
     HBITMAP player2MenuChar, player2MenuCharMask;
