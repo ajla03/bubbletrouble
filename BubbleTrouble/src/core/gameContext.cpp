@@ -18,6 +18,7 @@ GameContext gGame = {
     /* floorWall */ {},
     /* animatedWall */ {},
     /* levelPlaceholderInfo */ {},
+    /* scoreHolderInfo */  {},
     /* heartInfo */ {},
     /* heartBgInfo */ {},
     /* heartBorderInfo */ {},

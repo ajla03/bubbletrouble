@@ -17,6 +17,7 @@ bool ResourceManager::LoadAll(HINSTANCE hInstance) {
     torchMask     = LoadBitmap(hInstance, MAKEINTRESOURCE(IDB_TORCH_MASK));
     levelPlaceholderWhite = LoadBitmap(hInstance, MAKEINTRESOURCE(IDB_LEVEL_WHITE));
     levelPlaceholderBlack = LoadBitmap(hInstance, MAKEINTRESOURCE(IDB_LEVEL_BLACK));
+    scoreHolder = LoadBitmap(hInstance, MAKEINTRESOURCE(IDB_SCORE_HOLDER));
 
     menuScreen        = LoadBitmap(hInstance, MAKEINTRESOURCE(IDB_MENU_SCREEN));
     menuCharacter     = LoadBitmap(hInstance, MAKEINTRESOURCE(IDB_MENU_CHARACTER));

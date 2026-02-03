@@ -55,6 +55,7 @@
 #define IDB_BACKGROUND_LEVEL3   150
 #define IDB_LOGO            151
 #define IDB_LOGO_MASK       152
+#define IDB_SCORE_HOLDER    153
 
 // ============ KONSTANTE ZA HARPUN ============ //
 #define IDR_HARPOON_SOUND   201

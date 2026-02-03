@@ -8,6 +8,7 @@ struct ResourceManager{
     HBITMAP background;
     HBITMAP torch, torchMask;
     HBITMAP levelPlaceholderBlack, levelPlaceholderWhite;
+    HBITMAP scoreHolder;
     HBITMAP heart, heartMask;
     HBITMAP heartBkg, heartBkgMask;
     HBITMAP heartBorder, heartBorderMask;

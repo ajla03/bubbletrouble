@@ -66,8 +66,10 @@ void RenderStaticUI(HDC hdc, RECT rect) {
         gGame.playerHolderInfo.y = playerY;
         gGame.playerHolderInfo.width = boxW;
         gGame.playerHolderInfo.height= boxH;
+
         DrawPlayerPlaceholder(CURRENT_LEVEL.hdcCache, rect, "PLAYER 1", gGame.leftWall.width, playerY,
                              RGB(180, 0, 0), gGame.heartBgInfo.height + 6);
+
 
         CURRENT_LEVEL.staticRedraw = false;
     }
@@ -158,9 +160,7 @@ void RenderDynamicGameUI(HDC hdc, RECT rect)
     DeleteObject(hWhitePen);
 
     // === HEARTS & SCORE ===
-    DrawHearts(hdc, rect, barHeight);
-    DrawScore(hdc, rect);
-
+    DrawHeartsAndScore(hdc, rect, barHeight);
 
     std::string levelText = "LEVEL " + std::to_string(gGame.currentLevel+1);
 
@@ -252,14 +252,16 @@ void RenderDynamicGameUI(HDC hdc, RECT rect)
 }
 
 
-void DrawHearts(HDC hdc, RECT rect, int padding) {
+void DrawHeartsAndScore(HDC hdc, RECT rect, int padding) {
     int startX = gGame.leftWall.width;
     int startY = rect.bottom - gGame.floorWall.height + padding + gGame.heartInfo.height;
     int gap = 20;
 
+    int endX = 0 ;
     for (int i = 0; i < 5 ; i++) {
         int x = startX + i * (gGame.heartInfo.width + gap);
         int y = startY;
+        endX = startX + gGame.heartBgInfo.width;
 
         // === BACKGROUND  ===
         HBITMAP oldBmp = (HBITMAP)SelectObject(gRes.hdcMem, gRes.heartBkgMask);
@@ -304,53 +306,82 @@ void DrawHearts(HDC hdc, RECT rect, int padding) {
             );
         }
 
+        // ========= SCORE ========= //
+        int  gap = 10;
+        x = gGame.playerHolderInfo.x + gGame.playerHolderInfo.width + gap;
+        y = gGame.playerHolderInfo.y ;
+        int boxW = x - endX;
+        int boxH = gGame.playerHolderInfo.height;
+        SelectObject(gRes.hdcMem, gRes.scoreHolder);
+        StretchBlt(
+            hdc,
+            x, y,
+            boxW, boxH,
+            gRes.hdcMem,
+            0, 0,
+            gGame.scoreHolderInfo.width,
+            gGame.scoreHolderInfo.height,
+            SRCCOPY
+        );
+        HPEN hDarkPen = CreatePen(PS_SOLID, 2, RGB(50, 50, 50));
+        HPEN hOldPen = (HPEN)SelectObject(hdc, hDarkPen);
+
+        RoundRect(
+            hdc,
+            x - 2,
+            y - 2,
+            x + boxW + 2,
+            y + boxH + 2,
+            4, 4
+        );
+
+        SelectObject(hdc, hOldPen);
+        DeleteObject(hDarkPen);
+
+        HFONT oldFont = (HFONT)SelectObject(hdc, gRes.hFont);
+
+        SetBkMode(hdc, TRANSPARENT);
+        SetTextColor(hdc, RGB(255, 255, 255));
+
+        char valueText[32];
+        sprintf(valueText, "%d", gGame.displayScore);
+        SIZE textSize;
+        GetTextExtentPoint32(
+            hdc,
+            valueText,
+            lstrlen(valueText),
+            &textSize
+        );
+
+        TextOut(
+            hdc,
+            x + padding/3,
+            y + boxH/2 - textSize.cy/2,
+            valueText,
+            strlen(valueText)
+        );
+
+        SelectObject(hdc, oldFont);
+
+        /*
+        SelectObject(gRes.hdcMem, gRes.levelPlaceholderBlack);
+        StretchBlt(
+            hdc,
+            x, y,
+            boxW, boxH,
+            gRes.hdcMem,
+            0, 0,
+            gGame.levelPlaceholderInfo.width,
+            gGame.levelPlaceholderInfo.height,
+            SRCPAINT
+        );
+        */
+
         SelectObject(gRes.hdcMem, oldBmp);
+
     }
-
 }
 
-void DrawScore(HDC hdc, RECT rect)
-{
-    HFONT oldFont = (HFONT)SelectObject(hdc, gRes.hFont);
-
-    SetBkMode(hdc, TRANSPARENT);
-    SetTextColor(hdc, RGB(255, 255, 255));
-
-    const char* label = "SCORE:";
-    char valueText[32];
-    sprintf(valueText, "%d", gGame.displayScore);
-
-    SIZE labelSize;
-    GetTextExtentPoint32(
-        hdc,
-        label,
-        lstrlen(label),
-        &labelSize
-    );
-
-    int padding = 30;
-
-    int x = rect.right - gGame.rightWall.width - labelSize.cx - 120 - padding;
-    int y = padding;
-
-    TextOut(
-        hdc,
-        x,
-        y,
-        label,
-        strlen(label)
-    );
-
-    TextOut(
-        hdc,
-        x + labelSize.cx + padding/3,
-        y,
-        valueText,
-        strlen(valueText)
-    );
-
-    SelectObject(hdc, oldFont);
-}
 
 void DrawPlayerPlaceholder(
     HDC hdc,
@@ -376,6 +407,11 @@ void DrawPlayerPlaceholder(
     int paddingX = 30;
     int boxW = textSize.cx + paddingX;
     int boxH = boxHeight + 10;
+
+    gGame.playerHolderInfo.x = x;
+    gGame.playerHolderInfo.y = y;
+    gGame.playerHolderInfo.width = boxW;
+    gGame.playerHolderInfo.height = boxH;
 
     SelectObject(gRes.hdcMem, gRes.levelPlaceholderWhite);
     StretchBlt(

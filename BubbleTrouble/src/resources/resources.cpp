@@ -89,6 +89,15 @@ void LoadBitmaps(HWND hwnd, HINSTANCE hInstance){
         gGame.levelPlaceholderInfo.y = 0;
     }
 
+    // ======= SCORE HOLDER ======== //
+    if(gRes.scoreHolder){
+        GetObject(gRes.scoreHolder, sizeof(BITMAP), &bm);
+
+        gGame.scoreHolderInfo.height = bm.bmHeight;
+        gGame.scoreHolderInfo.width = bm.bmWidth;
+        gGame.scoreHolderInfo.x = 0;
+        gGame.scoreHolderInfo.y = 0;
+    }
     // === HERO SETUP ===
     if (gRes.character) {
         GetObject(gRes.character, sizeof(BITMAP), &bm);
@@ -129,6 +138,7 @@ void LoadBitmaps(HWND hwnd, HINSTANCE hInstance){
         gGame.animatedWall.height = bm.bmHeight;
         gGame.animatedWall.width = bm.bmWidth;
     }
+
 
     // === INPUT STATE SETUP ===
     gGame.inputState.wasSpacePressed = false;
