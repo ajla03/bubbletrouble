@@ -72,6 +72,7 @@ struct GameState{
     bool pendingHome;
     bool pendingRestart;
     bool pendingNextLevel;
+    bool popupSettings;
 };
 
 struct HeartAnim{

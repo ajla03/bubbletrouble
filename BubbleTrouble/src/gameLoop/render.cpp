@@ -14,6 +14,8 @@ void RefreshScreen(HWND hwnd) {
 
     if(gGame.gameState.currentMode == GAME_MODE_MENU) {
         RenderMenu(gRes.hdcBuffer, rect);
+        if(gGame.gameState.popupSettings)
+            RenderSettings(gRes.hdcBuffer, rect);
         DrawTransitionWalls(gRes.hdcBuffer, rect);
     } else {
         RenderStaticUI(gRes.hdcBuffer, rect);

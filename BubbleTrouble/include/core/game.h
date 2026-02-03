@@ -75,6 +75,8 @@ void InitLevel5(HWND hwnd);
 void RenderLevel6(HDC hdcBuffer, RECT rect);
 void InitLevel6(HWND hwnd);
 
+void RenderSettings(HDC, RECT);
+
 // ================= TRANSITIONS ============
 void StartWallTransition(HWND hwnd);
 void UpdateWallTransition(HWND hwnd);
