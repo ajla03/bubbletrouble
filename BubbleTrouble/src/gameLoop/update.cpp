@@ -51,6 +51,14 @@ void UpdateHearts(){
 }
 
 void Update(HWND hwnd){
+    if((gGame.gameState.currentMode == GAME_MODE_PAUSE && gGame.gameState.pendingHome)
+       || gGame.transitionState == TRANSITION_CLOSING || gGame.transitionState==TRANSITION_WAIT)
+       {
+        UpdateWallTransition(hwnd);
+
+       }
+    else if(gGame.gameState.currentMode == GAME_MODE_PAUSE) return;
+
     printf("GDI Objects: %ld\n", GetGuiResources(GetCurrentProcess(), GR_GDIOBJECTS));
      if (!gGame.gameState.isGameOver && CURRENT_LEVEL.timeLeft > 0 && !gGame.gameState.isLevelCleared) {
         CURRENT_LEVEL.timeLeft -= 1.0;
@@ -138,6 +146,7 @@ void Update(HWND hwnd){
     UpdateScoreAnimation();
 
     UpdateWallTransition(hwnd);
+
 }
 
 void CheckHover(Button& button, int mx, int my){
@@ -174,15 +183,15 @@ void UpdateWallTransition(HWND hwnd){
                 gGame.gameState.currentMode = GAME_MODE_MENU;
                 gGame.gameState.isGameOver = false;
                 gGame.gameState.isLevelCleared = false;
-                // dodala
                 ResetGame(hwnd);
             }else if(gGame.gameState.pendingNextLevel){
-
                 if (CURRENT_LEVEL.hdcCache) { printf("DELETED DC"); DeleteDC(CURRENT_LEVEL.hdcCache);}
                 if (CURRENT_LEVEL.hStaticCache) DeleteObject(CURRENT_LEVEL.hStaticCache);
                 gGame.currentLevel++;
                 ResetBetweenLevels(hwnd);
                 InitLevel(hwnd);
+            }else if(gGame.gameState.pendingRestart){
+                gGame.gameState.currentMode = GAME_MODE_PLAYING;
             }
 
             gGame.transitionState = TRANSITION_OPENING;
@@ -195,6 +204,7 @@ void UpdateWallTransition(HWND hwnd){
 
         if (gGame.animatedWalls.wallTopY <= -gGame.animatedWall.height)
         {
+
 
             gGame.transitionState = TRANSITION_NONE;
             gGame.gameState.pendingHome = false;

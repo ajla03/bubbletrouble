@@ -133,6 +133,21 @@ void LoadBitmaps(HWND hwnd, HINSTANCE hInstance){
         gGame.nextButtonInfo.isHover = false;
     }
 
+    if(gRes.pauseButton){
+        GetObject(gRes.pauseButton, sizeof(BITMAP), &bm);
+        gGame.pauseButtonInfo.width = bm.bmWidth;
+        gGame.pauseButtonInfo.height = bm.bmHeight;
+        gGame.pauseButtonInfo.y = 15;
+        gGame.pauseButtonInfo.isHover = false;
+    }
+
+     if(gRes.unpauseButton){
+        GetObject(gRes.unpauseButton, sizeof(BITMAP), &bm);
+        gGame.unpauseButtonInfo.width = bm.bmWidth;
+        gGame.unpauseButtonInfo.height = bm.bmHeight;
+        gGame.pauseButtonInfo.isHover = false;
+    }
+
     if(gRes.wall1){
         GetObject(gRes.wall1, sizeof(BITMAP), &bm);
         gGame.animatedWall.height = bm.bmHeight;

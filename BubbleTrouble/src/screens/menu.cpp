@@ -341,6 +341,7 @@ void ResetGame(HWND hwnd) {
     gGame.gameState.lives = MAX_LIVES;
     gGame.totalScore = 0;
     gGame.displayScore = 0;
+    gGame.pauseButtonInfo.isHover = false;
 
     if (CURRENT_LEVEL.hdcCache) DeleteDC(CURRENT_LEVEL.hdcCache);
     if (CURRENT_LEVEL.hStaticCache) DeleteObject(CURRENT_LEVEL.hStaticCache);
@@ -379,10 +380,14 @@ void ResetGame(HWND hwnd) {
 
 void ResetBetweenLevels(HWND hwnd) {
     // Reset vremena
+
     CURRENT_LEVEL.timeLeft = maxTime;
     // Reset stanja
     gGame.gameState.isGameOver = false;
     gGame.gameState.isLevelCleared = false;
+    gGame.pauseButtonInfo.isHover = false;
+    gGame.gameState.currentMode = GAME_MODE_PLAYING;
+
     CURRENT_LEVEL.activeBalloonCount = 0;
 
     /*

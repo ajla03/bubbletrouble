@@ -121,6 +121,9 @@ void RenderDynamicGameUI(HDC hdc, RECT rect)
     int bgW = rect.right - gGame.leftWall.width - gGame.rightWall.width;
     int bgH = rect.bottom - gGame.floorWall.height;
 
+    // PAUSE BUTTON //
+    gGame.pauseButtonInfo.x = bgX + 15;
+    DrawButton(hdc, gRes.pauseButton, gRes.pauseButtonMask, gGame.pauseButtonInfo);
 
     // === TIME BAR ===
     int barHeight = 25;
@@ -279,6 +282,9 @@ void RenderDynamicGameUI(HDC hdc, RECT rect)
         DrawLevelPassedScreen(hdc, rect);
     else if (gGame.gameState.isGameOver || gGame.currentLevel >= 4 && gGame.gameState.isLevelCleared)
         DrawGameOverScreen(hdc, rect);
+    else if(gGame.gameState.currentMode == GAME_MODE_PAUSE ){
+        DrawPausedScreen(hdc, rect);
+    }
 
 }
 

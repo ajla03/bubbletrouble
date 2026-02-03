@@ -56,7 +56,10 @@
 #define IDB_LOGO            151
 #define IDB_LOGO_MASK       152
 #define IDB_SCORE_HOLDER    153
-
+#define IDB_PAUSE           154
+#define IDB_PAUSE_MASK      155
+#define IDB_UNPAUSE         156
+#define IDB_UNPAUSE_MASK    157
 // ============ KONSTANTE ZA HARPUN ============ //
 #define IDR_HARPOON_SOUND   201
 #define IDR_BALLOON_POP     202

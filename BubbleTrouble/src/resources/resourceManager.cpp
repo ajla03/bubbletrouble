@@ -26,7 +26,10 @@ bool ResourceManager::LoadAll(HINSTANCE hInstance) {
     hButtonsHolderMask= LoadBitmap(hInstance, MAKEINTRESOURCE(IDB_BUTTONS_HOLDER_MASK));
     hMenuButton       = LoadBitmap(hInstance, MAKEINTRESOURCE(IDB_MENU_BUTTON));
     hMenuButtonMask   = LoadBitmap(hInstance, MAKEINTRESOURCE(IDB_MENU_BUTTON_MASK));
-
+    pauseButton = LoadBitmap(hInstance, MAKEINTRESOURCE(IDB_PAUSE));
+    pauseButtonMask =  LoadBitmap(hInstance, MAKEINTRESOURCE(IDB_PAUSE_MASK));
+    unpauseButton = LoadBitmap(hInstance, MAKEINTRESOURCE(IDB_UNPAUSE));
+    unpauseButtonMask =  LoadBitmap(hInstance, MAKEINTRESOURCE(IDB_UNPAUSE_MASK));
     restartButton     = LoadBitmap(hInstance, MAKEINTRESOURCE(IDB_RESTART));
     restartButtonMask = LoadBitmap(hInstance, MAKEINTRESOURCE(IDB_RESTART_MASK));
     homeButton        = LoadBitmap(hInstance, MAKEINTRESOURCE(IDB_HOME));

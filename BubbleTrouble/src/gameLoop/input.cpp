@@ -55,7 +55,7 @@ void CheckHeroPillarCollision(StaticObject* pillar){
 }
 
 void CheckInputs(HWND hwnd){
-    if(gGame.gameState.isGameOver || gGame.gameState.isLevelCleared)
+    if(gGame.gameState.currentMode != GAME_MODE_PLAYING || gGame.transitionState== TRANSITION_WAIT || gGame.transitionState == TRANSITION_CLOSING)
         return;
 
     RECT rect;

@@ -40,6 +40,12 @@ IDB_HOME_MASK            BITMAP "../assets/bitmaps/homeButtonBlack.bmp"
 IDB_NEXT_MASK            BITMAP "../assets/bitmaps/nextButtonBlack.bmp"
 IDB_NEXT                 BITMAP "../assets/bitmaps/nextButtonWhite.bmp"
 
+IDB_PAUSE_MASK            BITMAP "../assets/bitmaps/pauseBlack.bmp"
+IDB_PAUSE                 BITMAP "../assets/bitmaps/pauseWhite.bmp"
+
+IDB_UNPAUSE_MASK            BITMAP "../assets/bitmaps/unpauseBlack.bmp"
+IDB_UNPAUSE                 BITMAP "../assets/bitmaps/unpauseWhite.bmp"
+
 IDB_WALL1                BITMAP "../assets/bitmaps/zid1.bmp"
 IDB_WALL2                BITMAP "../assets/bitmaps/zid2.bmp"
 

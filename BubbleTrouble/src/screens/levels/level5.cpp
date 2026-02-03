@@ -52,8 +52,8 @@ void InitLevel5(HWND hwnd){
     float centerX = gGame.leftWall.width + bgW / 2;
     float centerY = bgH / 2;
 
-    float yellowRadius = 80.0f;   // Dovoljno veliki za više cijepanja
-    float redRadius = 160.0f;      // 4x veći od žutog
+    float yellowRadius = 50.0f;   // Dovoljno veliki za više cijepanja
+    float redRadius = 80.0f;      // 4x veći od žutog
 
     float yellowLeftX = gGame.leftWall.width + bgW / 4;
     float yellowRightX = gGame.leftWall.width + 3 * bgW / 4;

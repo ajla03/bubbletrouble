@@ -33,7 +33,8 @@ GameContext gGame = {
     /* restartButtonInfo */ {},
     /* homeButtonInfo */ {},
     /* nextButtonInfo */ {},
-
+    /* pauseButtonInfo */ {},
+    /* unpauseButtonInfo */ {},
     // ===== STATE =====
     /* inputState */ {},
     /* gameState */ {
