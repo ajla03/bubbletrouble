@@ -1,101 +1,10 @@
 #include "resources.h"
 #include "types.h"
 #include "gameContext.h"
+#include "game.h"
 #include "resourceManager.h"
 #include <wingdi.h>
 
-
-void DrawButton(HDC hdc, HBITMAP bmp, HBITMAP mask, Button& button)
-{
-    // maska
-    SelectObject(gRes.hdcMem, mask);
-    BitBlt(hdc, button.x, button.y, button.width, button.height, gRes.hdcMem, 0, 0, SRCPAINT);
-
-    // bitmap
-    SelectObject(gRes.hdcMem, bmp);
-    BitBlt(hdc, button.x, button.y, button.width, button.height, gRes.hdcMem, 0, 0, SRCAND);
-
-    // SOUND OFF
-    if (bmp == gRes.soundButton && !gGame.soundState.soundEffectsOn)
-    {
-        HRGN rgn = CreateEllipticRgn(
-            button.x,
-            button.y,
-            button.x + button.width,
-            button.y + button.height
-        );
-
-        SelectClipRgn(hdc, rgn);
-
-        BLENDFUNCTION bf{};
-        bf.BlendOp = AC_SRC_OVER;
-        bf.SourceConstantAlpha = 80;
-
-        HDC overlayDC = CreateCompatibleDC(hdc);
-        HBITMAP overlayBmp = CreateCompatibleBitmap(hdc, button.width, button.height);
-        HBITMAP oldBmp = (HBITMAP)SelectObject(overlayDC, overlayBmp);
-
-        RECT r{ 0, 0, button.width, button.height };
-        FillRect(overlayDC, &r, (HBRUSH)GetStockObject(BLACK_BRUSH));
-
-        AlphaBlend(
-            hdc,
-            button.x, button.y,
-            button.width, button.height,
-            overlayDC,
-            0, 0,
-            button.width, button.height,
-            bf
-        );
-
-        SelectObject(overlayDC, oldBmp);
-        SelectClipRgn(hdc, NULL);
-        DeleteObject(rgn);
-        DeleteObject(overlayBmp);
-        DeleteDC(overlayDC);
-    }
-    // HOVER (
-    if (button.isHover)
-    {
-        HRGN rgn = CreateEllipticRgn(
-            button.x,
-            button.y,
-            button.x + button.width,
-            button.y + button.height
-        );
-
-        SelectClipRgn(hdc, rgn);
-
-        HBRUSH brush = CreateSolidBrush(RGB(255, 255, 255));
-        BLENDFUNCTION bf{};
-        bf.BlendOp = AC_SRC_OVER;
-        bf.SourceConstantAlpha = 60;
-
-        HDC overlayDC = CreateCompatibleDC(hdc);
-        HBITMAP overlayBmp = CreateCompatibleBitmap(hdc, button.width, button.height);
-        HBITMAP oldBmp = (HBITMAP)SelectObject(overlayDC, overlayBmp);
-
-        RECT r = { 0, 0, button.width, button.height };
-        FillRect(overlayDC, &r, brush);
-
-        AlphaBlend(
-            hdc,
-            button.x, button.y,
-            button.width, button.height,
-            overlayDC,
-            0, 0,
-            button.width, button.height,
-            bf
-        );
-
-        SelectObject(overlayDC, oldBmp);
-        SelectClipRgn(hdc, NULL);
-        DeleteObject(rgn);
-        DeleteObject(brush);
-        DeleteObject(overlayBmp);
-        DeleteDC(overlayDC);
-    }
-}
 
 
 void DrawGameOverScreen(HDC hdc, RECT rect)

@@ -20,20 +20,6 @@ void UpdateScoreAnimation()
     }
 }
 
-bool AreSectionBalloonsDestroyed(float left, float right)
-{
-    for (int i = 0; i < MAX_BALLOONS; i++)
-    {
-        Balloon* b = &CURRENT_LEVEL.balloons[i];
-        if (!b->active) continue;
-
-        if (b->x > left && b->x < right)
-            return false;
-    }
-    return true;
-}
-
-
 
 void UpdateHearts(){
  for (int i = 0; i < gGame.gameState.lives; i++) {
@@ -163,18 +149,6 @@ void Update(HWND hwnd){
 
     UpdateWallTransition(hwnd);
 
-}
-
-void CheckHover(Button& button, int mx, int my){
- if (mx >= button.x && mx <= button.x + button.width &&
-            my >= button.y  && my <= button.y + button.height)
-        {
-            button.isHover = true;
-        }
-        else
-        {
-            button.isHover = false;
-        }
 }
 
 void UpdateWallTransition(HWND hwnd){

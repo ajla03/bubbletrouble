@@ -6,6 +6,45 @@
 #include <algorithm>
 #include <cmath>
 
+// Moved from resources.cpp
+float GetBounceSpeedForRadius(float radius)
+{
+    float t = radius / MAX_RADIUS;
+    return MIN_BOUNCE_SPEED + t * (MAX_BOUNCE_SPEED - MIN_BOUNCE_SPEED);
+}
+
+// Moved from resources.cpp
+void InitBalloon(int index, float x, float y, float radius, float speedX, COLORREF color)
+{
+    if (index >= MAX_BALLOONS) return;
+
+    CURRENT_LEVEL.balloons[index].x = x;
+    CURRENT_LEVEL.balloons[index].y = y;
+    CURRENT_LEVEL.balloons[index].radius = radius;
+    CURRENT_LEVEL.balloons[index].speedX = speedX * 0.85f;
+    CURRENT_LEVEL.balloons[index].speedY = 0.0f;
+    CURRENT_LEVEL.balloons[index].bounceSpeed = GetBounceSpeedForRadius(radius);
+    CURRENT_LEVEL.balloons[index].active = true;
+    CURRENT_LEVEL.balloons[index].color = color;
+    CURRENT_LEVEL.activeBalloonCount++;
+    CURRENT_LEVEL.balloons[index].isFrozen = false;
+    CURRENT_LEVEL.balloons[index].frozenSpeedX = 0.0f;
+    CURRENT_LEVEL.balloons[index].frozenSpeedY = 0.0f;
+}
+
+// Moved from update.cpp
+bool AreSectionBalloonsDestroyed(float left, float right)
+{
+    for (int i = 0; i < MAX_BALLOONS; i++)
+    {
+        Balloon* b = &CURRENT_LEVEL.balloons[i];
+        if (!b->active) continue;
+
+        if (b->x > left && b->x < right)
+            return false;
+    }
+    return true;
+}
 
 int CalculateTimeBonus()
 {
