@@ -1,6 +1,7 @@
 #include "resources.h"
 #include "gameContext.h"
 #include "constants.h"
+#include "game.h"
 #include <windows.h>
 
 
@@ -124,3 +125,138 @@ void CheckInputs(HWND hwnd){
 
     gGame.inputState.wasSpacePressed = isSpacePressed;
 }
+
+
+bool IsPointInButton(const Button& btn, int x, int y)
+{
+    return x >= btn.x &&
+           x <= btn.x + btn.width &&
+           y >= btn.y &&
+           y <= btn.y + btn.height;
+}
+
+void HandleMouseClick(HWND hwnd, int mx, int my)
+{
+    const auto& mode = gGame.gameState.currentMode;
+
+    if (mode == GAME_OVER || gGame.gameState.isLevelCleared)
+    {
+        HandleEndScreenClick(hwnd, mx, my);
+        return;
+    }
+
+    if (mode == GAME_MODE_MENU)
+    {
+        HandleMenuClick(hwnd, mx, my);
+        return;
+    }
+
+    if (mode == GAME_MODE_PLAYING)
+    {
+        HandlePlayingClick(hwnd, mx, my);
+        return;
+    }
+
+    if (mode == GAME_MODE_PAUSE)
+    {
+        HandlePauseClick(hwnd, mx, my);
+        return;
+    }
+}
+
+
+void HandlePlayingClick(HWND hwnd, int mx, int my)
+{
+    if (IsPointInButton(gGame.pauseButtonInfo, mx, my))
+    {
+        gGame.gameState.currentMode = GAME_MODE_PAUSE;
+        return;
+    }
+
+    if (IsPointInButton(gGame.soundButtonInfo, mx, my))
+    {
+        gGame.soundState.soundOn = !gGame.soundState.soundOn;
+        return;
+    }
+}
+
+
+void HandlePauseClick(HWND hwnd, int mx, int my)
+{
+    if (IsPointInButton(gGame.unpauseButtonInfo, mx, my))
+    {
+        gGame.gameState.currentMode = GAME_MODE_PLAYING;
+        return;
+    }
+
+    if (IsPointInButton(gGame.homeButtonInfo, mx, my))
+    {
+        gGame.gameState.pendingHome = true;
+        StartWallTransition(hwnd);
+    }
+}
+
+void HandleEndScreenClick(HWND hwnd, int mx, int my)
+{
+    if (IsPointInButton(gGame.restartButtonInfo, mx, my))
+    {
+        gGame.gameState.pendingRestart = true;
+        StartWallTransition(hwnd);
+        return;
+    }
+
+    if (IsPointInButton(gGame.homeButtonInfo, mx, my))
+    {
+        gGame.gameState.pendingHome = true;
+        StartWallTransition(hwnd);
+        return;
+    }
+
+    if (gGame.gameState.isLevelCleared &&
+        IsPointInButton(gGame.nextButtonInfo, mx, my))
+    {
+        gGame.gameState.pendingNextLevel = true;
+        StartWallTransition(hwnd);
+    }
+}
+
+
+void HandleMouseMove(int x, int y)
+{
+    // MENU
+    if (gGame.gameState.currentMode == GAME_MODE_MENU)
+    {
+        HandleMenuMouseMove(nullptr, x, y);
+        return;
+    }
+
+    // GAME OVER ILI LEVEL CLEARED
+    if (gGame.gameState.currentMode == GAME_OVER ||
+        gGame.gameState.isLevelCleared)
+    {
+        CheckHover(gGame.homeButtonInfo, x, y);
+        CheckHover(gGame.restartButtonInfo, x, y);
+
+        if (gGame.gameState.isLevelCleared)
+            CheckHover(gGame.nextButtonInfo, x, y);
+
+        return;
+    }
+
+    // PLAYING
+    if (gGame.gameState.currentMode == GAME_MODE_PLAYING)
+    {
+        CheckHover(gGame.pauseButtonInfo, x, y);
+        CheckHover(gGame.soundButtonInfo, x, y);
+        return;
+    }
+
+    // PAUSE
+    if (gGame.gameState.currentMode == GAME_MODE_PAUSE)
+    {
+        CheckHover(gGame.unpauseButtonInfo, x, y);
+        CheckHover(gGame.homeButtonInfo, x, y);
+        return;
+    }
+}
+

@@ -92,3 +92,12 @@ void DrawTransitionWalls(HDC hdc, RECT rect);
 
 //================== UPDATE =================
 void UpdateLayout(int oldW, int oldH, int newW, int newH);
+
+
+// HELPER FUNCTIONS
+bool IsPointInButton(const Button& btn, int x, int y );
+void HandleMouseClick(HWND hwnd, int mx, int my);
+void HandlePlayingClick(HWND hwnd, int mx, int my);
+void HandlePauseClick(HWND hwnd, int mx, int my);
+void HandleEndScreenClick(HWND hwnd, int mx, int my);
+void HandleMouseMove(int x, int y);
