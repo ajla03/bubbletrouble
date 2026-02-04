@@ -208,6 +208,68 @@ void RenderSettings(HDC hdcBuffer, RECT rect)
     SelectObject(gRes.hdcMem, gRes.hSoundHolderMask);
     StretchBlt(hdcBuffer, x, y, soundW, soundH,
                gRes.hdcMem, 0, 0, bm.bmWidth, bm.bmHeight, SRCPAINT);
+
+    // --- SOUND BUTTON UNUTAR SOUND HOLDERA ---
+    GetObject(gRes.soundButton, sizeof(BITMAP), &bm);
+
+    // Pozicioniraj button u centru sound holdera
+    int soundBtnW = bm.bmWidth * 0.4;  // malo manji od holdera
+    int soundBtnH = bm.bmHeight * 0.4;
+    int soundBtnX = x + (soundW - soundBtnW) / 2;
+    int soundBtnY = y + (soundH - soundBtnH) / 2;
+
+    // Postavi poziciju buttona za mouse events
+    gGame.settingsSoundButtonInfo.x = soundBtnX;
+    gGame.settingsSoundButtonInfo.y = soundBtnY;
+    gGame.settingsSoundButtonInfo.width = soundBtnW;
+    gGame.settingsSoundButtonInfo.height = soundBtnH;
+
+    // Ako je muzika isključena, prikaži drugačiju sliku ili overlay
+    if (!gGame.soundState.bgMusicOn) {
+        // Nacrtaj bledi/prozirni overlay preko buttona
+        HBITMAP overlayBmp = CreateCompatibleBitmap(hdcBuffer, 1, 1);
+        HBITMAP hOldOverlay = (HBITMAP) SelectObject(gRes.hdcMem, overlayBmp);
+        SetPixel(gRes.hdcMem, 0, 0, RGB(100, 100, 100));
+
+        BLENDFUNCTION bfOverlay = {};
+        bfOverlay.BlendOp = AC_SRC_OVER;
+        bfOverlay.SourceConstantAlpha = 120;
+        bfOverlay.AlphaFormat = 0;
+
+        AlphaBlend(hdcBuffer, soundBtnX, soundBtnY, soundBtnW, soundBtnH,
+                   gRes.hdcMem, 0, 0, 1, 1, bfOverlay);
+
+        SelectObject(gRes.hdcMem, hOldOverlay);
+        DeleteObject(overlayBmp);
+
+        // Nacrtaj "X" preko buttona
+        HPEN hRedPen = CreatePen(PS_SOLID, 3, RGB(255, 50, 50));
+        HPEN hOldPen = (HPEN)SelectObject(hdcBuffer, hRedPen);
+
+        MoveToEx(hdcBuffer, soundBtnX, soundBtnY, NULL);
+        LineTo(hdcBuffer, soundBtnX + soundBtnW, soundBtnY + soundBtnH);
+        MoveToEx(hdcBuffer, soundBtnX + soundBtnW, soundBtnY, NULL);
+        LineTo(hdcBuffer, soundBtnX, soundBtnY + soundBtnH);
+
+        SelectObject(hdcBuffer, hOldPen);
+        DeleteObject(hRedPen);
+    }
+
+    // Hover efekat
+    if (gGame.settingsSoundButtonInfo.isHover) {
+        HBITMAP hoverBmp = CreateCompatibleBitmap(hdcBuffer, 1, 1);
+        HBITMAP hOldHover = (HBITMAP) SelectObject(gRes.hdcMem, hoverBmp);
+        SetPixel(gRes.hdcMem, 0, 0, RGB(255, 255, 255));
+
+        BLENDFUNCTION bfHover = {};
+        bfHover.BlendOp = AC_SRC_OVER;
+        bfHover.SourceConstantAlpha = 50;
+        bfHover.AlphaFormat = 0;
+
+        AlphaBlend(hdcBuffer, soundBtnX, soundBtnY, soundBtnW, soundBtnH,
+                   gRes.hdcMem, 0, 0, 1, 1, bfHover);
+
+        SelectObject(gRes.hdcMem, hOldHover);
+        DeleteObject(hoverBmp);
+    }
 }
-
-

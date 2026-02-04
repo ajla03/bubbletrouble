@@ -12,8 +12,8 @@ void StartWallTransition(HWND hwnd){
     gGame.animatedWalls.wallBottomY = rect.bottom;
 
     gGame.transitionState = TRANSITION_CLOSING;
-  if(gGame.soundState.soundOn)
-    PlaySound(MAKEINTRESOURCE(IDR_SLIDING_SOUND),
+    if(gGame.soundState.soundEffectsOn)
+        PlaySound(MAKEINTRESOURCE(IDR_SLIDING_SOUND),
                                   GetModuleHandle(NULL),
                                   SND_RESOURCE | SND_ASYNC | SND_NODEFAULT);
 

@@ -37,6 +37,7 @@ GameContext gGame = {
     /* unpauseButtonInfo */ {},
     /* soundButtonInfo */ {},
     /* backButtonInfo */ {},
+    /* settingsSoundButtonInfo */ {},
     // ===== STATE =====
     /* inputState */ {},
     /* gameState */ {

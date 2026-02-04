@@ -8,7 +8,6 @@
 #include <ctime>
 #include <stdio.h>
 
-#pragma comment(lib, "msimg32.lib")
 
 void InitPowerupSystemForLevel() {
     CURRENT_LEVEL.activePowerupCount = 0;
@@ -112,7 +111,7 @@ void UpdatePowerups(HWND hwnd) {
             p->active = false;
             CURRENT_LEVEL.activePowerupCount--;
 
-            if(gGame.soundState.soundOn)
+            if(gGame.soundState.soundEffectsOn)
                 PlaySound(MAKEINTRESOURCE(IDR_BALLOON_POP),
                      GetModuleHandle(NULL),
                      SND_RESOURCE | SND_ASYNC | SND_NODEFAULT);

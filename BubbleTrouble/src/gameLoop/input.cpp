@@ -118,7 +118,7 @@ void CheckInputs(HWND hwnd){
         gGame.harpoon.length = 0;
         gGame.harpoon.x = gGame.hero.x + (gGame.hero.width / 2) - (gGame.harpoon.width / 2);
         gGame.harpoon.y = rect.bottom - gGame.floorWall.height;
-        if(gGame.gameState.currentMode == GAME_MODE_PLAYING && gGame.soundState.soundOn)
+        if(gGame.gameState.currentMode == GAME_MODE_PLAYING && gGame.soundState.soundEffectsOn)
         PlaySound(MAKEINTRESOURCE(IDR_HARPOON_SOUND), GetModuleHandle(NULL),
               SND_RESOURCE | SND_ASYNC);
     }
@@ -164,7 +164,26 @@ void HandleMouseClick(HWND hwnd, int mx, int my)
     }
 
     if(mode == GAME_MODE_SETTINGS){
-        HandleBackClick(hwnd, mx, my);
+        HandleSettingsClick(hwnd, mx, my);
+        return;
+    }
+}
+
+void HandleSettingsClick(HWND hwnd, int mx, int my){
+    // Back button
+    if(IsPointInButton(gGame.backButtonInfo, mx, my)){
+        gGame.gameState.currentMode = GAME_MODE_MENU;
+        return;
+    }
+
+    if(IsPointInButton(gGame.settingsSoundButtonInfo, mx, my)){
+        gGame.soundState.bgMusicOn = !gGame.soundState.bgMusicOn;
+
+        if(gGame.soundState.bgMusicOn){
+            mciSendString("play bgMusic from 0 notify", NULL, 0, hwnd);
+        } else {
+            mciSendString("pause bgMusic", NULL, 0, NULL);
+        }
         return;
     }
 }
@@ -186,7 +205,8 @@ void HandlePlayingClick(HWND hwnd, int mx, int my)
 
     if (IsPointInButton(gGame.soundButtonInfo, mx, my))
     {
-        gGame.soundState.soundOn = !gGame.soundState.soundOn;
+        // Toggle samo sound efekte (ne utice na pozadinsku muziku)
+        gGame.soundState.soundEffectsOn = !gGame.soundState.soundEffectsOn;
         return;
     }
 }
@@ -241,6 +261,14 @@ void HandleMouseMove(HWND hwnd, int x, int y)
         return;
     }
 
+    // SETTINGS
+    if (gGame.gameState.currentMode == GAME_MODE_SETTINGS)
+    {
+        CheckHover(gGame.backButtonInfo, x, y);
+        CheckHover(gGame.settingsSoundButtonInfo, x, y);
+        return;
+    }
+
     // GAME OVER ILI LEVEL CLEARED
     if (gGame.gameState.currentMode == GAME_OVER ||
         gGame.gameState.isLevelCleared)
@@ -270,4 +298,3 @@ void HandleMouseMove(HWND hwnd, int x, int y)
         return;
     }
 }
-

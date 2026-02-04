@@ -91,8 +91,9 @@ struct HeartAnim{
 };
 
 struct SoundState{
- bool soundOn = true;
-};
+ bool soundEffectsOn = true;
+ bool bgMusicOn = true;
+ };
 
 struct Torch{
  int x, y;
