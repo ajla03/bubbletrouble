@@ -93,12 +93,68 @@ void RenderMenu(HDC hdc, RECT rect ) {
         DeleteObject(hBrush); // Obrisano
     }
 
+    if (gRes.torch && gRes.torchMask) {
+
+        float torchScale = 3.5f; // Default za velike ekrane (Full HD)
+
+        if (rect.right < 1400) {
+            torchScale = 2.5f; // Srednji ekrani / Laptop
+        }
+        if (rect.right < 900) {
+            torchScale = 1.8f; // Mali ekrani
+        }
+
+        // Ako je ekran preuzak (manje od 600px), nemoj ni crtati baklje da ne smetaju
+        if (rect.right > 600) {
+
+            int torchW = (int)(gGame.torchInfo.width * torchScale);
+            int torchH = (int)(gGame.torchInfo.height * torchScale);
+
+
+            int padding = (rect.right < 1000) ? 5 : 20;
+
+
+            int liftUpAmount = rect.bottom / 6;
+            int torchY = (rect.bottom / 2) - (torchH / 2) - liftUpAmount;
+
+            int torchX1 = padding;
+            int torchX2 = rect.right - torchW - padding;
+
+            int torchSrcX = gGame.torchInfo.currentFrame * gGame.torchInfo.width;
+            int torchSrcY = gGame.torchInfo.currentRow * gGame.torchInfo.height;
+
+            HBITMAP oldMemBmp = (HBITMAP)SelectObject(hdcMem, gRes.torchMask);
+
+            // --- LIJEVA BAKLJA ---
+            StretchBlt(hdcBuffer, torchX1, torchY, torchW, torchH,
+                       hdcMem, torchSrcX, torchSrcY,
+                       gGame.torchInfo.width, gGame.torchInfo.height, SRCPAINT);
+
+            SelectObject(hdcMem, gRes.torch);
+            StretchBlt(hdcBuffer, torchX1, torchY, torchW, torchH,
+                       hdcMem, torchSrcX, torchSrcY,
+                       gGame.torchInfo.width, gGame.torchInfo.height, SRCAND);
+
+            // --- DESNA BAKLJA ---
+            SelectObject(hdcMem, gRes.torchMask);
+            StretchBlt(hdcBuffer, torchX2, torchY, torchW, torchH,
+                       hdcMem, torchSrcX, torchSrcY,
+                       gGame.torchInfo.width, gGame.torchInfo.height, SRCPAINT);
+
+            SelectObject(hdcMem, gRes.torch);
+            StretchBlt(hdcBuffer, torchX2, torchY, torchW, torchH,
+                       hdcMem, torchSrcX, torchSrcY,
+                       gGame.torchInfo.width, gGame.torchInfo.height, SRCAND);
+
+            SelectObject(hdcMem, oldMemBmp);
+        }
+    }
     // === RENDER LOGO UMESTO TEKSTA ===
     if (gRes.logo && gRes.logoMask) {
         BITMAP bm;
         GetObject(gRes.logo, sizeof(BITMAP), &bm);
 
-        int logoWidth = rect.right / 1.8;
+        int logoWidth = rect.right / 2;
         int logoHeight = (int)(logoWidth * ((float)bm.bmHeight / (float)bm.bmWidth));
 
         int maxLogoHeight = rect.bottom / 3;
@@ -107,8 +163,8 @@ void RenderMenu(HDC hdc, RECT rect ) {
             logoWidth = (int)(logoHeight * ((float)bm.bmWidth / (float)bm.bmHeight));
         }
 
-        int logoX = (rect.right - logoWidth) / 1.1;
-        int logoY = rect.bottom / 50;
+        int logoX = (rect.right - logoWidth) /1.7;
+        int logoY = -20;
 
         // Prvo mask (SRCAND)
         HBITMAP oldMemBmp = (HBITMAP)SelectObject(hdcMem, gRes.logoMask);
