@@ -102,3 +102,4 @@ void HandlePlayingClick(HWND hwnd, int mx, int my);
 void HandlePauseClick(HWND hwnd, int mx, int my);
 void HandleEndScreenClick(HWND hwnd, int mx, int my);
 void HandleMouseMove(HWND hwnd, int x, int y);
+void HandleBackClick(HWND hwnd, int mx, int my);

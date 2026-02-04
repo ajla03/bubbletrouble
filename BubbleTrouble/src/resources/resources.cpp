@@ -162,7 +162,11 @@ void LoadBitmaps(HWND hwnd, HINSTANCE hInstance){
         gGame.animatedWall.width = bm.bmWidth;
     }
 
-
+    if(gRes.hYellowButton){
+        GetObject(gRes.hYellowButton, sizeof(BITMAP), &bm);
+        gGame.backButtonInfo.width = bm.bmWidth;
+        gGame.backButtonInfo.height = bm.bmHeight;
+    }
     // === INPUT STATE SETUP ===
     gGame.inputState.wasSpacePressed = false;
     InitializeMenu(hwnd);

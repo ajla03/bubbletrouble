@@ -162,8 +162,19 @@ void HandleMouseClick(HWND hwnd, int mx, int my)
         HandlePauseClick(hwnd, mx, my);
         return;
     }
+
+    if(mode == GAME_MODE_SETTINGS){
+        HandleBackClick(hwnd, mx, my);
+        return;
+    }
 }
 
+void HandleBackClick(HWND hwnd, int mx, int my){
+    if(IsPointInButton(gGame.backButtonInfo, mx, my)){
+        gGame.gameState.currentMode = GAME_MODE_MENU;
+        return;
+    }
+}
 
 void HandlePlayingClick(HWND hwnd, int mx, int my)
 {

@@ -300,7 +300,7 @@ void HandleMenuClick(HWND hwnd, int x, int y) {
                     MessageBox(hwnd, "2 Player mode - Coming soon!", "Info", MB_OK | MB_ICONINFORMATION);
                     break;
                 case 2: // SETTINGS
-                    gGame.gameState.popupSettings = true;
+                    gGame.gameState.currentMode = GAME_MODE_SETTINGS;
                     //MessageBox(hwnd, "Settings - Coming soon!", "Info", MB_OK | MB_ICONINFORMATION);
                     break;
             }
