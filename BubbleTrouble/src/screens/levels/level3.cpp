@@ -97,6 +97,9 @@ void RenderLevel3(HDC hdcBuffer, RECT rect){
             DrawBalloonGDI(hdcBuffer, &CURRENT_LEVEL.balloons[i]);
         }
     }
+
+    DrawPowerups(hdcBuffer, rect);
+
 }
 
 void InitLevel3(HWND hwnd){
@@ -130,7 +133,7 @@ void InitLevel3(HWND hwnd){
   InitBalloon(0, rect.right/4, 100, 20, 3.5f, RGB(255, 0, 0));    // Crvena
   InitBalloon(1, 3*rect.right/4, 150, 40, -3.0f, RGB(0, 255, 0));   // Zelena
   //InitBalloon(2, 600, 120, 80, 3.0f, RGB(0, 100, 255));  // Plava
-
+  InitPowerupSystemForLevel();
 }
 
 

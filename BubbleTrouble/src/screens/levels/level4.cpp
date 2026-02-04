@@ -66,6 +66,9 @@ void RenderLevel4(HDC hdcBuffer, RECT rect){
             DrawBalloonGDI(hdcBuffer, &CURRENT_LEVEL.balloons[i]);
         }
     }
+
+    DrawPowerups(hdcBuffer, rect);
+
 }
 
 void InitLevel4(HWND hwnd){
@@ -117,6 +120,8 @@ void InitLevel4(HWND hwnd){
     // Section 3 (Right) - Large balloon (radius 80) - DUPLO VEĆI!
     float section3CenterX = gGame.leftWall.width + 2 * sectionWidth + sectionWidth / 2;
     InitBalloon(2, section3CenterX, 120, 80, 3.0f, RGB(255, 0, 0));    // Red
+    InitPowerupSystemForLevel();
+
 }
 
 void RecalculateLevel4Layout(HWND hwnd)

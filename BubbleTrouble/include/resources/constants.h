@@ -3,8 +3,8 @@
 // ========== KONSTANTE ZA ZIVOTE =========== //
 #define HEART_FRAMES        10
 #define HEART_ANIM_SPEED     5
-#define MAX_LIVES            3
-
+#define MAX_LIVES            5
+#define START_LIVES          3
 
 // ========= KONSTANTE ZA KRETANJE BALONA ========= //
 #define MAX_BALLOONS 20
@@ -30,19 +30,19 @@
 
 #define BONUS_PER_SECOND 5
 
-#define MAX_POWERUPS 5
-#define POWERUP_FALL_SPEED 2.0f
-#define POWERUP_SPAWN_MIN_TIME 2000
-#define POWERUP_SPAWN_MAX_TIME 3000
+
+/* POWERUP KONSTANTE */
+#define MAX_POWERUPS 2
 #define POWERUP_SIZE 30
+#define POWERUP_FALL_SPEED 2.0f
 
-// ==== TIME POWERUP KONSTANTE ==== //
-#define TIME_BONUS_AMOUNT 500.0       // Koliko vremena dodaje
-#define TIME_POWERUP_SPAWN_CHANCE 30  // 30% šansa za time, 70% za life
+// spawn svake 8-15 sekundi
+#define POWERUP_SPAWN_MIN_TIME 10000
+#define POWERUP_SPAWN_MAX_TIME 20000
 
-#define FREEZE_DURATION 1000  // 5 sekundi
+#define LIFE_POWERUP_SPAWN_CHANCE 50
+#define TIME_POWERUP_SPAWN_CHANCE 30
+#define FREEZE_POWERUP_SPAWN_CHANCE 20
 
-// Spawn šanse (mora biti 100 ukupno):
-#define LIFE_POWERUP_SPAWN_CHANCE 50   // 50%
-#define TIME_POWERUP_SPAWN_CHANCE 30   // 30%
-#define FREEZE_POWERUP_SPAWN_CHANCE 20 // 20%
+#define TIME_BONUS_AMOUNT 500.0f
+#define FREEZE_DURATION 3000  // 3 sekunde

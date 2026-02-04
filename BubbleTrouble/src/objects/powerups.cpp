@@ -10,18 +10,14 @@
 
 #pragma comment(lib, "msimg32.lib")
 
-void InitPowerupSystem() {
-    srand((unsigned)time(NULL));
+void InitPowerupSystemForLevel() {
+    CURRENT_LEVEL.activePowerupCount = 0;
+    CURRENT_LEVEL.lastPowerupSpawn = GetTickCount();
+    CURRENT_LEVEL.nextPowerupSpawnTime = POWERUP_SPAWN_MIN_TIME +
+        (rand() % (POWERUP_SPAWN_MAX_TIME - POWERUP_SPAWN_MIN_TIME));
 
-    for(int lvl = 0; lvl < MAX_LEVELS; lvl++) {
-        gGame.levels[lvl].activePowerupCount = 0;
-        gGame.levels[lvl].lastPowerupSpawn = GetTickCount();
-        gGame.levels[lvl].nextPowerupSpawnTime = POWERUP_SPAWN_MIN_TIME +
-            (rand() % (POWERUP_SPAWN_MAX_TIME - POWERUP_SPAWN_MIN_TIME));
-
-        for(int i = 0; i < MAX_POWERUPS; i++) {
-            gGame.levels[lvl].powerups[i].active = false;
-        }
+    for(int i = 0; i < MAX_POWERUPS; i++) {
+        CURRENT_LEVEL.powerups[i].active = false;
     }
 }
 

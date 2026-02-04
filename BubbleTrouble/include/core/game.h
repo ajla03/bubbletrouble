@@ -32,7 +32,7 @@ void RenderMenu(HDC hdc, RECT rect);
 void HandleMenuClick(HWND hwnd, int x, int y);
 void HandleMenuMouseMove(HWND hwnd, int x, int y);
 // ================= POWERUPS ===============
-void InitPowerupSystem();
+void InitPowerupSystemForLevel();
 void SpawnPowerup(HWND hwnd);
 void UpdatePowerups(HWND hwnd);
 void ApplyPowerup(PowerUpType type);
@@ -65,6 +65,7 @@ void DrawButton(HDC hdc, HBITMAP bmp, HBITMAP mask, Button& info);
 void CheckHover(Button& button, int x, int y);
 
 void InitLevel(HWND hwnd);
+void InitLevel1();
 void InitLevel2(HWND hwnd);
 void InitLevel3(HWND hwnd);
 void RecalculateLevel3Layout(HWND);
@@ -100,4 +101,4 @@ void HandleMouseClick(HWND hwnd, int mx, int my);
 void HandlePlayingClick(HWND hwnd, int mx, int my);
 void HandlePauseClick(HWND hwnd, int mx, int my);
 void HandleEndScreenClick(HWND hwnd, int mx, int my);
-void HandleMouseMove(int x, int y);
+void HandleMouseMove(HWND hwnd, int x, int y);

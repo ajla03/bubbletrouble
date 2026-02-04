@@ -2,6 +2,11 @@
 #include "resourceManager.h"
 #include "gameContext.h"
 
+void InitLevel1(){
+    InitBalloon(1, 400, 150, 40, -2.0f, RGB(0, 255, 0));
+    InitPowerupSystemForLevel();
+}
+
 void RenderLevel1(HDC hdcBuffer, RECT rect)
 {
     // === BACKGROUND ===
@@ -27,6 +32,7 @@ void RenderLevel1(HDC hdcBuffer, RECT rect)
         }
     }
 
+    DrawPowerups(hdcBuffer, rect);
 }
 
 

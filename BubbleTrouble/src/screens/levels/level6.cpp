@@ -30,6 +30,9 @@ void RenderLevel6(HDC hdcBuffer, RECT rect){
             DrawBalloonGDI(hdcBuffer, &CURRENT_LEVEL.balloons[i]);
         }
     }
+
+    DrawPowerups(hdcBuffer, rect);
+
     DeleteDC(hdcMem);
 }
 
@@ -84,4 +87,7 @@ void InitLevel6(HWND hwnd){
             colors[(i + 1) % 2]
         );
     }
+
+    InitPowerupSystemForLevel();
+
 }

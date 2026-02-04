@@ -42,7 +42,7 @@ GameContext gGame = {
         false,
         false,
         GAME_MODE_MENU,
-        MAX_LIVES,
+        START_LIVES,
         false,
         false,
         false,

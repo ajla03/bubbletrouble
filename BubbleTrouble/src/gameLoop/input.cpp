@@ -221,12 +221,12 @@ void HandleEndScreenClick(HWND hwnd, int mx, int my)
 }
 
 
-void HandleMouseMove(int x, int y)
+void HandleMouseMove(HWND hwnd, int x, int y)
 {
     // MENU
     if (gGame.gameState.currentMode == GAME_MODE_MENU)
     {
-        HandleMenuMouseMove(nullptr, x, y);
+        HandleMenuMouseMove(hwnd, x, y);
         return;
     }
 
