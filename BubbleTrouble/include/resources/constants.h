@@ -46,3 +46,6 @@
 
 #define TIME_BONUS_AMOUNT 500.0f
 #define FREEZE_DURATION 3000  // 3 sekunde
+
+#define SHEET_W 700
+#define SHEET_H 550
