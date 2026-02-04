@@ -68,6 +68,8 @@
 #define IDB_TIMEPU_MASK       163
 #define IDB_FREEZEPU      164
 #define IDB_FREEZEPU_MASK 165
+#define IDB_BACK_BUTTON   166
+#define IDB_BACK_BUTTON_MASK 167
 
 // ============ KONSTANTE ZA HARPUN ============ //
 #define IDR_HARPOON_SOUND   201

@@ -75,6 +75,8 @@ bool ResourceManager::LoadAll(HINSTANCE hInstance) {
 
     hYellowButton     = LoadBitmap(hInstance, MAKEINTRESOURCE(IDB_YELLOW_BUTTON));
     hYellowButtonMask = LoadBitmap(hInstance, MAKEINTRESOURCE(IDB_YELLOW_BUTTON_MASK));
+    backButton = LoadBitmap(hInstance, MAKEINTRESOURCE(IDB_BACK_BUTTON));
+    backButtonMask = LoadBitmap(hInstance, MAKEINTRESOURCE(IDB_BACK_BUTTON_MASK));
     hGreenButton      = LoadBitmap(hInstance, MAKEINTRESOURCE(IDB_GREEN_BUTTON));
     hGreenButtonMask  = LoadBitmap(hInstance, MAKEINTRESOURCE(IDB_GREEN_BUTTON_MASK));
     hGreyButton       = LoadBitmap(hInstance, MAKEINTRESOURCE(IDB_GREY_BUTTON));
@@ -86,6 +88,7 @@ bool ResourceManager::LoadAll(HINSTANCE hInstance) {
     doorMask = LoadBitmap(hInstance, MAKEINTRESOURCE(IDB_DOOR_MASK));
 
     gameCursor = LoadCursor(hInstance, MAKEINTRESOURCE(IDC_GAME_CURSOR));
+
 
     HRSRC hRes = FindResource(hInstance, MAKEINTRESOURCE(IDR_MINI_FONT), RT_RCDATA);
 

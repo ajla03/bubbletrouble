@@ -92,6 +92,9 @@ IDB_GREEN_BUTTON        BITMAP  "../assets/bitmaps/greenbutton.bmp"
 IDB_GREEN_BUTTON_MASK   BITMAP  "../assets/bitmaps/greenbutton_mask.bmp"
 IDB_GREY_BUTTON         BITMAP  "../assets/bitmaps/greybutton.bmp"
 IDB_GREY_BUTTON_MASK    BITMAP  "../assets/bitmaps/greybutton_mask.bmp"
+IDB_BACK_BUTTON         BITMAP  "../assets/bitmaps/yellowButton1.bmp"
+IDB_BACK_BUTTON_MASK    BITMAP  "../assets/bitmaps/yellowButtonMask1.bmp"
+
 IDB_LOGO            BITMAP  "../assets/bitmaps/logoo.bmp"
 IDB_LOGO_MASK       BITMAP  "../assets/bitmaps/logoo_mask.bmp"
 
