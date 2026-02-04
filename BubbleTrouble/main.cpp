@@ -41,6 +41,13 @@ int WINAPI WinMain(HINSTANCE hThisInstance, HINSTANCE hPrevInstance, LPSTR lpszA
     ShowWindow(hwnd, nCmdShow);
 
     LoadBitmaps(hwnd, hThisInstance);
+    mciSendString("close bgMusic", NULL, 0, NULL);
+
+    mciSendString("open \"assets\\sounds\\music_loop.wav\" type waveaudio alias bgMusic", NULL, 0, NULL);
+
+    mciSendString("play bgMusic notify", NULL, 0, hwnd);
+
+    mciSendString("setaudio bgMusic volume to 200", NULL, 0, NULL);
 
     float targetFPS = 60.0f;
     DWORD frameTimeMs = (DWORD) (1000.0f / targetFPS);
@@ -148,10 +155,17 @@ LRESULT CALLBACK WindowProcedure(HWND hwnd, UINT message, WPARAM wParam, LPARAM 
             }
             return 0;
         }
+        case MM_MCINOTIFY:
+        if (wParam == MCI_NOTIFY_SUCCESSFUL) {
+            mciSendString("play bgMusic from 0 notify", NULL, 0, hwnd);
+        }
+        return 0;
+
         case WM_DESTROY:
-            RemoveFontMemResourceEx(gRes.hFontRes);
-            PostQuitMessage(0);
-            break;
+        mciSendString("close bgMusic", NULL, 0, NULL);
+        RemoveFontMemResourceEx(gRes.hFontRes);
+        PostQuitMessage(0);
+        break;
         default:
             return DefWindowProc(hwnd, message, wParam, lParam);
     }
