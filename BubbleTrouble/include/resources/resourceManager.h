@@ -26,6 +26,7 @@ struct ResourceManager{
     HBITMAP settingsMenuChar, settingsMenuCharMask;
     HBITMAP hYellowButton, hYellowButtonMask;
     HBITMAP hGreenButton, hGreenButtonMask;
+    HBITMAP hSoundHolder, hSoundHolderMask;
     HBITMAP backButton, backButtonMask;
     HBITMAP hGreyButton, hGreyButtonMask;
     HBITMAP hBgLevel2, hBgLevel3;
