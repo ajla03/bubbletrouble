@@ -8,7 +8,6 @@
 #include <ctime>
 #include <stdio.h>
 
-// Dodaj ovu biblioteku za TransparentBlt
 #pragma comment(lib, "msimg32.lib")
 
 void InitPowerupSystem() {
@@ -43,10 +42,18 @@ void SpawnPowerup(HWND hwnd) {
 
             // === RANDOM POWERUP TIP === //
             int randomChance = rand() % 100;
-            if(randomChance < TIME_POWERUP_SPAWN_CHANCE) {
-                p->type = POWERUP_EXTRA_TIME;  // 30% šansa za vreme
-            } else {
-                p->type = POWERUP_EXTRA_LIFE;  // 70% šansa za život
+
+            if(randomChance < LIFE_POWERUP_SPAWN_CHANCE) {
+                // 0-49: Life (50%)
+                p->type = POWERUP_EXTRA_LIFE;
+            }
+            else if(randomChance < LIFE_POWERUP_SPAWN_CHANCE + TIME_POWERUP_SPAWN_CHANCE) {
+                // 50-79: Time (30%)
+                p->type = POWERUP_EXTRA_TIME;
+            }
+            else {
+                // 80-99: Freeze (20%)
+                p->type = POWERUP_FREEZE;
             }
 
             p->active = true;
@@ -114,6 +121,16 @@ void UpdatePowerups(HWND hwnd) {
                      SND_RESOURCE | SND_ASYNC | SND_NODEFAULT);
         }
     }
+
+    // === UPDATE FREEZE TIMER === //
+    if(gGame.gameState.balloonsAreFrozen && gGame.gameState.freezeTimeLeft > 0) {
+        gGame.gameState.freezeTimeLeft--;
+
+        if(gGame.gameState.freezeTimeLeft <= 0) {
+            // Freeze istekao - unfreezeuj balone
+            UnfreezeBalloons();
+        }
+    }
 }
 
 void ApplyPowerup(PowerUpType type) {
@@ -125,12 +142,53 @@ void ApplyPowerup(PowerUpType type) {
             break;
 
         case POWERUP_EXTRA_TIME:
-            // Dodaj vreme, ali nemoj preći maxTime
             CURRENT_LEVEL.timeLeft += TIME_BONUS_AMOUNT;
             if(CURRENT_LEVEL.timeLeft > maxTime) {
                 CURRENT_LEVEL.timeLeft = maxTime;
             }
             break;
+
+        case POWERUP_FREEZE:
+            // Zamrzni sve balone
+            FreezeBalloons();
+            gGame.gameState.balloonsAreFrozen = true;
+            gGame.gameState.freezeTimeLeft = FREEZE_DURATION;
+            break;
+    }
+}
+
+void FreezeBalloons() {
+    for(int i = 0; i < MAX_BALLOONS; i++) {
+        if(!CURRENT_LEVEL.balloons[i].active) continue;
+
+        Balloon* b = &CURRENT_LEVEL.balloons[i];
+
+        b->frozenSpeedX = b->speedX;
+        b->frozenSpeedY = b->speedY;
+
+        b->speedX = 0.0f;
+        b->speedY = 0.0f;
+
+        b->isFrozen = true;
+    }
+}
+
+void UnfreezeBalloons() {
+    gGame.gameState.balloonsAreFrozen = false;
+
+    for(int i = 0; i < MAX_BALLOONS; i++) {
+        if(!CURRENT_LEVEL.balloons[i].active) continue;
+
+        Balloon* b = &CURRENT_LEVEL.balloons[i];
+
+        if(b->isFrozen) {
+            // Vrati originalne brzine
+            b->speedX = b->frozenSpeedX;
+            b->speedY = b->frozenSpeedY;
+
+            // Ukloni frozen oznaku
+            b->isFrozen = false;
+        }
     }
 }
 
@@ -140,7 +198,6 @@ void DrawPowerups(HDC hdc, RECT rect) {
 
         PowerUp* p = &CURRENT_LEVEL.powerups[i];
 
-        // Odaberi odgovarajuću bitmapu za tip powerup-a
         HBITMAP bitmapToUse = NULL;
 
         switch(p->type) {
@@ -150,14 +207,29 @@ void DrawPowerups(HDC hdc, RECT rect) {
             case POWERUP_EXTRA_TIME:
                 bitmapToUse = gRes.timePowerupMask;
                 break;
+            case POWERUP_FREEZE:
+                bitmapToUse = gRes.freezePowerupMask;
+                break;
             default:
-                bitmapToUse = gRes.lifePowerupMask; // Fallback
+                bitmapToUse = gRes.lifePowerupMask;
                 break;
         }
 
         if(!bitmapToUse) {
-            // Fallback - obojeni kvadrat zavisno od tipa
-            COLORREF color = (p->type == POWERUP_EXTRA_TIME) ? RGB(0, 200, 255) : RGB(255, 0, 0);
+            // Fallback - obojeni kvadrat
+            COLORREF color;
+            switch(p->type) {
+                case POWERUP_EXTRA_TIME:
+                    color = RGB(0, 200, 255); // Plava
+                    break;
+                case POWERUP_FREEZE:
+                    color = RGB(150, 220, 255); // Svetlo plava/led
+                    break;
+                default:
+                    color = RGB(255, 0, 0); // Crvena
+                    break;
+            }
+
             HBRUSH brush = CreateSolidBrush(color);
             RECT r = { (int)p->x, (int)p->y,
                        (int)(p->x + p->width), (int)(p->y + p->height) };
@@ -166,13 +238,11 @@ void DrawPowerups(HDC hdc, RECT rect) {
             continue;
         }
 
-        // Uzmi dimenzije originalne bitmape
         BITMAP bm;
         GetObject(bitmapToUse, sizeof(BITMAP), &bm);
 
         SelectObject(gRes.hdcMem, bitmapToUse);
 
-        // TransparentBlt - automatski tretira belu kao providnu
         TransparentBlt(
             hdc,
             (int)p->x, (int)p->y,
@@ -180,7 +250,7 @@ void DrawPowerups(HDC hdc, RECT rect) {
             gRes.hdcMem,
             0, 0,
             bm.bmWidth, bm.bmHeight,
-            RGB(255, 255, 255)  // bela = providna
+            RGB(255, 255, 255)
         );
     }
 }

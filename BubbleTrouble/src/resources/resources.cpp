@@ -192,6 +192,9 @@ void InitBalloon(int index, float x, float y, float radius, float speedX, COLORR
     CURRENT_LEVEL.balloons[index].active = true;
     CURRENT_LEVEL.balloons[index].color = color;
     CURRENT_LEVEL.activeBalloonCount++;
+    CURRENT_LEVEL.balloons[index].isFrozen = false;
+    CURRENT_LEVEL.balloons[index].frozenSpeedX = 0.0f;
+    CURRENT_LEVEL.balloons[index].frozenSpeedY = 0.0f;
 }
 
 

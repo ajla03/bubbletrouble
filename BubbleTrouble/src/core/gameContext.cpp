@@ -48,6 +48,8 @@ GameContext gGame = {
         false,
         0,
         false,
+        0,
+        false,
         0
     },
     /* transitionState */ TRANSITION_NONE

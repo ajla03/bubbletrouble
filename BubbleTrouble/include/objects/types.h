@@ -44,6 +44,9 @@ struct Balloon {
     float bounceSpeed;
     bool active;
     COLORREF color;
+    bool isFrozen;
+    float frozenSpeedX;
+    float frozenSpeedY;
 };
 
 struct InputState{
@@ -77,6 +80,8 @@ struct GameState{
     int shieldTimeLeft;
     bool hasDoubleShot;
     int doubleShotTimeLeft;
+    bool balloonsAreFrozen;
+    int freezeTimeLeft;
 };
 
 struct HeartAnim{
@@ -115,6 +120,7 @@ struct AnimatedWalls{
 enum PowerUpType {
        POWERUP_EXTRA_LIFE,
        POWERUP_EXTRA_TIME,
+       POWERUP_FREEZE,
    };
 
 struct PowerUp {

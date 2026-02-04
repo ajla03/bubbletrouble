@@ -39,3 +39,10 @@
 // ==== TIME POWERUP KONSTANTE ==== //
 #define TIME_BONUS_AMOUNT 500.0       // Koliko vremena dodaje
 #define TIME_POWERUP_SPAWN_CHANCE 30  // 30% šansa za time, 70% za life
+
+#define FREEZE_DURATION 1000  // 5 sekundi
+
+// Spawn šanse (mora biti 100 ukupno):
+#define LIFE_POWERUP_SPAWN_CHANCE 50   // 50%
+#define TIME_POWERUP_SPAWN_CHANCE 30   // 30%
+#define FREEZE_POWERUP_SPAWN_CHANCE 20 // 20%

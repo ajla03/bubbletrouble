@@ -48,6 +48,13 @@ bool ResourceManager::LoadAll(HINSTANCE hInstance) {
     timePowerup = LoadBitmap(hInstance, MAKEINTRESOURCE(IDB_TIMEPU));
     timePowerupMask = LoadBitmap(hInstance, MAKEINTRESOURCE(IDB_TIMEPU_MASK));
 
+    freezePowerup = LoadBitmap(hInstance, MAKEINTRESOURCE(IDB_FREEZEPU));
+    freezePowerupMask = LoadBitmap(hInstance, MAKEINTRESOURCE(IDB_FREEZEPU_MASK));
+
+    if (!freezePowerup || !freezePowerupMask) {
+        MessageBox(NULL, "Freeze powerup nije učitan!", "GREŠKA", MB_ICONERROR);
+    }
+
     wall1 = LoadBitmap(hInstance, MAKEINTRESOURCE(IDB_WALL1));
     wall2 = LoadBitmap(hInstance, MAKEINTRESOURCE(IDB_WALL2));
     longWall= LoadBitmap(hInstance, MAKEINTRESOURCE(IDB_LONG_WALL));

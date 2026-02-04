@@ -37,6 +37,8 @@ void SpawnPowerup(HWND hwnd);
 void UpdatePowerups(HWND hwnd);
 void ApplyPowerup(PowerUpType type);
 void DrawPowerups(HDC hdc, RECT rect);
+void FreezeBalloons();
+void UnfreezeBalloons();
 
 // ================= GAME STATE =============
 void StartGame(HWND hwnd);

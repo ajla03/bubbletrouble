@@ -36,6 +36,7 @@ struct ResourceManager{
     HBITMAP hbmBuffer, hOldBufferBmp;
     HBITMAP lifePowerup, lifePowerupMask;
     HBITMAP timePowerup, timePowerupMask;
+    HBITMAP freezePowerup, freezePowerupMask;
 
   //, hdcBuffer;
 //    HBITMAP oldBufferBmp, hbmBuffer;

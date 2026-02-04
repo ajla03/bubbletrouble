@@ -66,11 +66,14 @@ void UpdateBalloons(HWND hwnd) {
     int FLOOR_Y = rect.bottom - gGame.floorWall.height;
     int LEFT_WALL_X = gGame.leftWall.width;
     int RIGHT_WALL_X = rect.right - gGame.rightWall.width;
-
     for (int i = 0; i < MAX_BALLOONS; i++) {
         if (!CURRENT_LEVEL.balloons[i].active) continue;
 
         Balloon* b = &CURRENT_LEVEL.balloons[i];
+        // Preskoči fiziku ako je balon frozen
+        if(b->isFrozen) {
+            continue;  // Ne pomjeraj balon
+        }
 
         //gravitacija
         b->speedY += BALLOON_GRAVITY;
@@ -187,29 +190,56 @@ void SplitBalloon(int index) {
     CURRENT_LEVEL.levelScore += gainedScore;
     gGame.totalScore += gainedScore;
 
-
     float newRadius = b->radius /2.0f;
 
     PlaySound(MAKEINTRESOURCE(IDR_BALLOON_POP),
                                   GetModuleHandle(NULL),
                                   SND_RESOURCE | SND_ASYNC | SND_NODEFAULT);
 
-
+    // Zapamti frozen stanje roditeljskog balona
+    bool parentWasFrozen = b->isFrozen;
 
     if (newRadius >= MIN_RADIUS) {
+        // Prvi novi balon (lijevo)
         for (int i = 0; i < MAX_BALLOONS; i++) {
             if (!CURRENT_LEVEL.balloons[i].active) {
                 InitBalloon(i, b->x - 10, b->y, newRadius, -3.5f, b->color);
-                CURRENT_LEVEL.balloons[i].speedY = -CURRENT_LEVEL.balloons[i].bounceSpeed * SPLIT_BOOST_FACTOR;
+
+                if (parentWasFrozen) {
+                    // Ako je roditelj bio frozen, zamrzni i dijete
+                    CURRENT_LEVEL.balloons[i].isFrozen = true;
+                    // Sačuvaj brzine koje će imati nakon unfreezing-a
+                    CURRENT_LEVEL.balloons[i].frozenSpeedX = -3.5f * 0.85f;
+                    CURRENT_LEVEL.balloons[i].frozenSpeedY = -CURRENT_LEVEL.balloons[i].bounceSpeed * SPLIT_BOOST_FACTOR;
+                    // Postavi trenutne brzine na 0
+                    CURRENT_LEVEL.balloons[i].speedX = 0.0f;
+                    CURRENT_LEVEL.balloons[i].speedY = 0.0f;
+                } else {
+                    // Ako nije bio frozen, daj mu normalnu brzinu
+                    CURRENT_LEVEL.balloons[i].speedY = -CURRENT_LEVEL.balloons[i].bounceSpeed * SPLIT_BOOST_FACTOR;
+                }
                 break;
             }
         }
 
+        // Drugi novi balon (desno)
         for (int i = 0; i < MAX_BALLOONS; i++) {
             if (!CURRENT_LEVEL.balloons[i].active) {
                 InitBalloon(i, b->x + 10, b->y, newRadius, 3.5f, b->color);
-                CURRENT_LEVEL.balloons[i].speedY = -CURRENT_LEVEL.balloons[i].bounceSpeed * SPLIT_BOOST_FACTOR;
 
+                if (parentWasFrozen) {
+                    // Ako je roditelj bio frozen, zamrzni i dijete
+                    CURRENT_LEVEL.balloons[i].isFrozen = true;
+                    // Sačuvaj brzine koje će imati nakon unfreezing-a
+                    CURRENT_LEVEL.balloons[i].frozenSpeedX = 3.5f * 0.85f;
+                    CURRENT_LEVEL.balloons[i].frozenSpeedY = -CURRENT_LEVEL.balloons[i].bounceSpeed * SPLIT_BOOST_FACTOR;
+                    // Postavi trenutne brzine na 0
+                    CURRENT_LEVEL.balloons[i].speedX = 0.0f;
+                    CURRENT_LEVEL.balloons[i].speedY = 0.0f;
+                } else {
+                    // Ako nije bio frozen, daj mu normalnu brzinu
+                    CURRENT_LEVEL.balloons[i].speedY = -CURRENT_LEVEL.balloons[i].bounceSpeed * SPLIT_BOOST_FACTOR;
+                }
                 break;
             }
         }
@@ -217,7 +247,6 @@ void SplitBalloon(int index) {
 
     b->active = false;
     CURRENT_LEVEL.activeBalloonCount--;
-
 }
 
 void DrawBalloonGDI(HDC hdc, Balloon* b) {
