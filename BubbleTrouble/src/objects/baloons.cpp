@@ -46,11 +46,6 @@ bool AreSectionBalloonsDestroyed(float left, float right)
     return true;
 }
 
-int CalculateTimeBonus()
-{
-    return (int)(CURRENT_LEVEL.timeLeft * BONUS_PER_SECOND);
-}
-
 
 int GetScoreForBalloon(float radius)
 {
@@ -58,42 +53,6 @@ int GetScoreForBalloon(float radius)
     if (radius >= 25.0f) return 20;
     return 40;
 }
-
-void ResolveBalloonPillarCollision(Balloon* b, StaticObject* wall){
-  if(wall->width <= 0) return;
-
-  bool collisionX = (b->x + b->radius > wall->x) && (b->x - b->radius < wall->x + wall->width);
-  bool collisionY = (b->y + b->radius > wall->y) && (b->y - b->radius < wall->y + wall->height);
-
-  if(collisionX && collisionY){
-    float penLeft   = (b->x + b->radius) - wall->x;                     // Udarac u LIJEVU stranu zida
-    float penRight  = (wall->x + wall->width) - (b->x - b->radius);     // Udarac u DESNU stranu zida
-    float penTop    = (b->y + b->radius) - wall->y;                     // Udarac u VRH zida
-    float penBottom = (wall->y + wall->height) - (b->y - b->radius);    // Udarac u DNO zida
-
-    float minPen = std::min({penLeft, penRight, penTop, penBottom});
-
-
-    if (minPen == penLeft) {
-            b->x = wall->x - b->radius;
-            b->speedX = -b->speedX; // Forsiraj negativnu brzinu (lijevo)
-        }
-        else if (minPen == penRight) {
-            b->x = wall->x + wall->width + b->radius;
-            b->speedX = -b->speedX;  // Forsiraj pozitivnu brzinu (desno)
-        }
-        else if (minPen == penTop) {
-            b->y = wall->y - b->radius;
-            b->speedY = -b->bounceSpeed;
-        }
-        else if (minPen == penBottom) {
-            b->y = wall->y + wall->height + b->radius;
-            b->speedY = fabs(b->speedY);
-        }
-    }
-}
-
-
 
 void UpdateBalloons(HWND hwnd) {
     if(gGame.gameState.isGameOver)
@@ -172,56 +131,6 @@ void UpdateBalloons(HWND hwnd) {
     }
 }
 
-void CheckCollisions(){
-    float harpoonCenterX = gGame.harpoon.x + gGame.harpoon.width / 2.0f;
-    float harpoonTop = gGame.harpoon.y - gGame.harpoon.length;
-    float harpoonBottom =gGame.harpoon.y;
-
-    for (int i = 0; i < MAX_BALLOONS; i++) {
-        if (!CURRENT_LEVEL.balloons[i].active) continue;
-
-        Balloon* b = &CURRENT_LEVEL.balloons[i];
-        // check collision with hero
-        float closestX = std::max(float(gGame.hero.x + 5), std::min(b->x, (float)(gGame.hero.x + gGame.hero.width - 5)));
-        float closestY = std::max((float)gGame.hero.y, std::min(b->y,(float)(gGame.hero.y + gGame.hero.height)));
-        float dx = b->x - closestX;
-        float dy = b->y - closestY;
-        float distance = sqrt(dx*dx + dy*dy);
-
-        if(distance < b->radius && gGame.hero.heroHitCooldown <= 0){
-              if(gGame.soundState.soundEffectsOn)
-                PlaySound(MAKEINTRESOURCE(IDR_DAMAGE_SOUND), GetModuleHandle(NULL), SND_RESOURCE | SND_ASYNC);
-            --gGame.gameState.lives;
-            gGame.hero.heroHitCooldown = HERO_INVINCIBLE_TIME;
-            if(gGame.gameState.lives==0){
-                gGame.gameState.isGameOver = true;
-                gGame.gameState.currentMode = GAME_OVER;
-            }
-            break;
-        }
-
-
-        // check collision with harpoon
-        if(gGame.harpoon.isActive){
-
-        float distanceHarpoonX = fabs(b->x - harpoonCenterX);
-
-        if (distanceHarpoonX <= b->radius) {
-                if (harpoonTop <= b->y + b->radius && harpoonBottom >= b->y - b->radius) {
-                    SplitBalloon(i);
-                    if(CURRENT_LEVEL.activeBalloonCount == 0 && !gGame.gameState.isLevelCleared){
-                        gGame.gameState.isLevelCleared = true;
-                         int timeBonus = CalculateTimeBonus();
-                         CURRENT_LEVEL.levelScore += timeBonus;
-                         gGame.totalScore += timeBonus;
-                    }
-                    gGame.harpoon.isActive = false;
-                    break;
-                }
-            }
-        }
-    }
-}
 
 void SplitBalloon(int index) {
     Balloon* b = &CURRENT_LEVEL.balloons[index];

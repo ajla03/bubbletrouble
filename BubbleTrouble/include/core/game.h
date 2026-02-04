@@ -51,6 +51,7 @@ void SplitBalloon(int index);
 void DrawBalloonGDI(HDC hdc, Balloon* b);
 bool AreSectionBalloonsDestroyed(float left, float right);
 void CheckCollisions();
+void ResolveBalloonPillarCollision(Balloon* b, StaticObject* wall);
 
 // ================= POWERUPS (in powerups.cpp) ===============
 void InitPowerupSystemForLevel();
