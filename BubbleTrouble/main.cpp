@@ -5,6 +5,7 @@
 #include "gameContext.h"
 #include "resources.h"
 #include "game.h"
+#include <ctime>
 
 TCHAR szClassName[] = _T("CodeBlocksWindowsApp");
 
@@ -12,6 +13,9 @@ LRESULT CALLBACK WindowProcedure(HWND, UINT, WPARAM, LPARAM);
 
 
 int WINAPI WinMain(HINSTANCE hThisInstance, HINSTANCE hPrevInstance, LPSTR lpszArgument, int nCmdShow){
+
+    srand((unsigned int)time(NULL));
+
     HWND hwnd;
     MSG messages;
     WNDCLASSEX wincl;
@@ -139,7 +143,7 @@ LRESULT CALLBACK WindowProcedure(HWND hwnd, UINT message, WPARAM wParam, LPARAM 
         }
 
         case WM_MOUSEMOVE: {
-           HandleMouseMove(LOWORD(lParam), HIWORD(lParam));
+           HandleMouseMove(hwnd, LOWORD(lParam), HIWORD(lParam));
            return 0;
         }
 

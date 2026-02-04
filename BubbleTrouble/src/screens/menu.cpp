@@ -330,7 +330,6 @@ void HandleMenuMouseMove(HWND hwnd, int x, int y) {
 void StartGame(HWND hwnd) {
     gGame.gameState.currentMode = GAME_MODE_PLAYING;
     ResetGame(hwnd);
-    InvalidateRect(hwnd, NULL, FALSE);
 }
 
 void ResetGame(HWND hwnd) {
@@ -339,7 +338,7 @@ void ResetGame(HWND hwnd) {
     gGame.gameState.isGameOver = false;
     gGame.gameState.isLevelCleared = false;
     CURRENT_LEVEL.activeBalloonCount = 0;
-    gGame.gameState.lives = MAX_LIVES;
+    gGame.gameState.lives = START_LIVES;
     gGame.totalScore = 0;
     gGame.displayScore = 0;
     gGame.pauseButtonInfo.isHover = false;
@@ -377,8 +376,16 @@ void ResetGame(HWND hwnd) {
         CURRENT_LEVEL.balloons[i].active = false;
     }
 
-    // Initialize starting balloons
-    InitBalloon(1, 400, 150, 40, -2.0f, RGB(0, 255, 0));
+    //Clear powerups
+    CURRENT_LEVEL.activePowerupCount = 0;
+    CURRENT_LEVEL.lastPowerupSpawn = GetTickCount();
+    CURRENT_LEVEL.nextPowerupSpawnTime = POWERUP_SPAWN_MIN_TIME + (rand() % (POWERUP_SPAWN_MAX_TIME - POWERUP_SPAWN_MIN_TIME));
+
+    for (int i = 0; i < MAX_POWERUPS; i++)
+        CURRENT_LEVEL.powerups[i].active = false;
+
+    if(gGame.gameState.currentMode == GAME_MODE_PLAYING || gGame.gameState.currentMode == GAME_OVER)
+        InitLevel(hwnd);
 }
 
 void ResetBetweenLevels(HWND hwnd) {
@@ -421,4 +428,12 @@ void ResetBetweenLevels(HWND hwnd) {
     for (int i = 0; i < MAX_BALLOONS; i++) {
         CURRENT_LEVEL.balloons[i].active = false;
     }
+
+    //Clear powerups
+    CURRENT_LEVEL.activePowerupCount = 0;
+    CURRENT_LEVEL.lastPowerupSpawn = GetTickCount();
+    CURRENT_LEVEL.nextPowerupSpawnTime = POWERUP_SPAWN_MIN_TIME + (rand() % (POWERUP_SPAWN_MAX_TIME - POWERUP_SPAWN_MIN_TIME));
+
+    for (int i = 0; i < MAX_POWERUPS; i++)
+        CURRENT_LEVEL.powerups[i].active = false;
 }
