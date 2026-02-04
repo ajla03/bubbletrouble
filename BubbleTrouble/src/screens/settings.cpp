@@ -1,6 +1,7 @@
 #include "game.h"
 #include "gameContext.h"
 #include "resourceManager.h"
+#include "constants.h"
 #include <wingdi.h>
 
 void RenderSettings(HDC hdcBuffer, RECT rect)
@@ -15,11 +16,10 @@ void RenderSettings(HDC hdcBuffer, RECT rect)
 
     // --- PROZIRNI SHEET ---
     RECT sheet;
-    sheet.left = rect.right / 8;
-    sheet.right = rect.right - rect.right / 8;
-    sheet.top = rect.bottom / 8;
-    sheet.bottom = rect.bottom - rect.bottom / 8;
-
+    sheet.left   = rect.right / 2 - SHEET_W / 2;
+    sheet.right  = sheet.left + SHEET_W;
+    sheet.top    = rect.bottom / 2 - SHEET_H / 2;
+    sheet.bottom = sheet.top + SHEET_H;
 
     HBITMAP bmp = CreateCompatibleBitmap(hdcBuffer, 1, 1);
     HBITMAP hBmpOld = (HBITMAP) SelectObject(gRes.hdcMem, bmp);
@@ -58,7 +58,7 @@ void RenderSettings(HDC hdcBuffer, RECT rect)
 
     /* CONTROLS */
     BITMAP bm;
-    int padding = 15;
+    int padding = 20;
     GetObject(gRes.controlsHolder, sizeof(BITMAP), &bm);
     int controlW = bm.bmWidth/1.5;
     int controlH = bm.bmHeight/1.5;
@@ -69,6 +69,7 @@ void RenderSettings(HDC hdcBuffer, RECT rect)
     TransparentBlt(hdcBuffer, x, y, controlW, controlH,
                gRes.hdcMem, 0, 0, bm.bmWidth, bm.bmHeight,
                RGB(255, 255, 255));
+
 
     /* HEROJI UNUTAR HOLDERA */
     int heroW = gGame.hero.width * 1.5;
@@ -139,9 +140,50 @@ void RenderSettings(HDC hdcBuffer, RECT rect)
         DrawText(hdcBuffer, btnTexts[i], -1, &btnRect, DT_CENTER | DT_VCENTER | DT_SINGLELINE);
     }
 
-    // --- BACK BUTTON ---
-    int btnWidth  = gGame.backButtonInfo.width;
+    // PLAYER BUTTONS //
+    int btnWidth = gGame.backButtonInfo.width;
     int btnHeight = gGame.backButtonInfo.height;
+    btnW = gGame.backButtonInfo.width * 1.5;
+    btnH = gGame.backButtonInfo.height / 2;
+    int btnX = x/2 - btnW/2 + sheet.left/2;
+    int groupHeight = btnH * 2 + padding;
+    int groupTop = y + (controlH - groupHeight) / 2;
+
+    int firstBtnY  = groupTop;
+    int secondBtnY = groupTop + btnH + padding;
+
+    // ===== PLAYER 1 =====
+    SelectObject(gRes.hdcMem, gRes.backButtonMask);
+    TransparentBlt(
+        hdcBuffer, btnX, firstBtnY, btnW, btnH,
+        gRes.hdcMem, 0, 0,
+        btnWidth,
+        btnHeight,
+        RGB(255,255,255)
+    );
+
+    RECT r1 = { btnX, firstBtnY, btnX + btnW, firstBtnY + btnH };
+    DrawText(hdcBuffer, "PLAYER 1", -1, &r1,
+             DT_CENTER | DT_VCENTER | DT_SINGLELINE);
+
+
+    // ===== PLAYER 2 =====
+    TransparentBlt(
+        hdcBuffer, btnX, secondBtnY, btnW, btnH,
+        gRes.hdcMem, 0, 0,
+        btnWidth,
+        btnHeight,
+        RGB(255,255,255)
+    );
+
+    RECT r2 = { btnX, secondBtnY, btnX + btnW, secondBtnY + btnH };
+    DrawText(hdcBuffer, "PLAYER 2", -1, &r2,
+             DT_CENTER | DT_VCENTER | DT_SINGLELINE);
+
+    // --- BACK BUTTON ---
+
+    btnWidth = gGame.backButtonInfo.width;
+    btnHeight = gGame.backButtonInfo.height;
     x = sheet.left + padding;
     y = sheet.bottom - btnHeight/2 - padding;
 
