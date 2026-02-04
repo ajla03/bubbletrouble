@@ -58,12 +58,12 @@ void RenderSettings(HDC hdcBuffer, RECT rect)
 
     /* CONTROLS */
     BITMAP bm;
-    int padding = 20;
+    int padding = 40;
     GetObject(gRes.controlsHolder, sizeof(BITMAP), &bm);
     int controlW = bm.bmWidth/1.5;
     int controlH = bm.bmHeight/1.5;
     int x = sheet.right - controlW - padding;
-    int y =  padding + textRect.bottom;
+    int y =  15 + textRect.bottom;
 
     SelectObject(gRes.hdcMem, gRes.controlsHolder);
     TransparentBlt(hdcBuffer, x, y, controlW, controlH,
@@ -114,7 +114,7 @@ void RenderSettings(HDC hdcBuffer, RECT rect)
 
     int btnW = 60;
     int btnH = 30;
-    int btnOffsetY = heroH + padding;
+    int btnOffsetY = heroH + 15;
 
     SetTextColor(hdcBuffer, RGB(255, 255, 255));
     SetBkMode(hdcBuffer, TRANSPARENT);
@@ -234,8 +234,8 @@ void RenderSettings(HDC hdcBuffer, RECT rect)
                gRes.hdcMem, torchSrcX, torchSrcY,
                gGame.torchInfo.width, gGame.torchInfo.height, SRCAND);
 
-    // --- SOUND HOLDER (center) ---
-    GetObject(gRes.hSoundHolder, sizeof(BITMAP), &bm);
+    // --- SOUND HOLDER ---
+    GetObject(gRes.hMusicHolder, sizeof(BITMAP), &bm);
 
     float soundScale = 0.5;
     int soundW = bm.bmWidth*soundScale;
@@ -244,31 +244,33 @@ void RenderSettings(HDC hdcBuffer, RECT rect)
     x = sheet.right - soundW - padding;
     y = sheet.bottom - soundH - padding;
 
-    SelectObject(gRes.hdcMem, gRes.hSoundHolder);
+    SelectObject(gRes.hdcMem, gRes.hMusicHolder);
     StretchBlt(hdcBuffer, x, y, soundW, soundH,
                gRes.hdcMem, 0, 0, bm.bmWidth, bm.bmHeight, SRCAND);
-    SelectObject(gRes.hdcMem, gRes.hSoundHolderMask);
+    SelectObject(gRes.hdcMem, gRes.hMusicHolderMask);
     StretchBlt(hdcBuffer, x, y, soundW, soundH,
                gRes.hdcMem, 0, 0, bm.bmWidth, bm.bmHeight, SRCPAINT);
+
+    SelectObject(gRes.hdcMem, gRes.hSoundOn);
+    TransparentBlt(hdcBuffer, x, y - padding - soundH, soundW, soundH,
+                       gRes.hdcMem, 0, 0, bm.bmWidth, bm.bmHeight,
+                       RGB(255, 255, 255));
+
 
     // --- SOUND BUTTON UNUTAR SOUND HOLDERA ---
     GetObject(gRes.soundButton, sizeof(BITMAP), &bm);
 
-    // Pozicioniraj button u centru sound holdera
-    int soundBtnW = bm.bmWidth * 0.4;  // malo manji od holdera
+    int soundBtnW = bm.bmWidth * 0.4;
     int soundBtnH = bm.bmHeight * 0.4;
     int soundBtnX = x + (soundW - soundBtnW) / 2;
     int soundBtnY = y + (soundH - soundBtnH) / 2;
 
-    // Postavi poziciju buttona za mouse events
     gGame.settingsSoundButtonInfo.x = soundBtnX;
     gGame.settingsSoundButtonInfo.y = soundBtnY;
     gGame.settingsSoundButtonInfo.width = soundBtnW;
     gGame.settingsSoundButtonInfo.height = soundBtnH;
 
-    // Ako je muzika isključena, prikaži drugačiju sliku ili overlay
     if (!gGame.soundState.bgMusicOn) {
-        // Nacrtaj bledi/prozirni overlay preko buttona
         HBITMAP overlayBmp = CreateCompatibleBitmap(hdcBuffer, 1, 1);
         HBITMAP hOldOverlay = (HBITMAP) SelectObject(gRes.hdcMem, overlayBmp);
         SetPixel(gRes.hdcMem, 0, 0, RGB(100, 100, 100));
@@ -284,7 +286,6 @@ void RenderSettings(HDC hdcBuffer, RECT rect)
         SelectObject(gRes.hdcMem, hOldOverlay);
         DeleteObject(overlayBmp);
 
-        // Nacrtaj "X" preko buttona
         HPEN hRedPen = CreatePen(PS_SOLID, 3, RGB(255, 50, 50));
         HPEN hOldPen = (HPEN)SelectObject(hdcBuffer, hRedPen);
 
@@ -297,7 +298,6 @@ void RenderSettings(HDC hdcBuffer, RECT rect)
         DeleteObject(hRedPen);
     }
 
-    // Hover efekat
     if (gGame.settingsSoundButtonInfo.isHover) {
         HBITMAP hoverBmp = CreateCompatibleBitmap(hdcBuffer, 1, 1);
         HBITMAP hOldHover = (HBITMAP) SelectObject(gRes.hdcMem, hoverBmp);
