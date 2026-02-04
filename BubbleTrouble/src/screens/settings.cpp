@@ -56,13 +56,94 @@ void RenderSettings(HDC hdcBuffer, RECT rect)
         DT_CENTER | DT_TOP | DT_SINGLELINE
     );
 
+    /* CONTROLS */
+    BITMAP bm;
+    int padding = 15;
+    GetObject(gRes.controlsHolder, sizeof(BITMAP), &bm);
+    int controlW = bm.bmWidth/1.5;
+    int controlH = bm.bmHeight/1.5;
+    int x = sheet.right - controlW - padding;
+    int y =  padding + textRect.bottom;
+
+    SelectObject(gRes.hdcMem, gRes.controlsHolder);
+    TransparentBlt(hdcBuffer, x, y, controlW, controlH,
+               gRes.hdcMem, 0, 0, bm.bmWidth, bm.bmHeight,
+               RGB(255, 255, 255));
+
+    /* HEROJI UNUTAR HOLDERA */
+    int heroW = gGame.hero.width * 1.5;
+    int heroH = gGame.hero.height * 1.5;
+    int spacing = 30;
+
+
+    int heroY = y + (controlH / 2) - (heroH / 2) - 10;
+    int midHeroX = x + (controlW / 2) - (heroW / 2);
+    int leftHeroX = midHeroX - heroW - spacing;
+    int rightHeroX = midHeroX + heroW + spacing;
+
+    // --- LIJEVO---
+    int srcX_left = 0 * gGame.hero.width;
+    int srcY_left = 1 * gGame.hero.height;
+
+    SetStretchBltMode(hdcBuffer, COLORONCOLOR);
+    SelectObject(gRes.hdcMem, gRes.characterMask);
+    StretchBlt(hdcBuffer, leftHeroX, heroY, heroW, heroH, gRes.hdcMem, srcX_left, srcY_left, gGame.hero.width, gGame.hero.height, SRCAND);
+    SelectObject(gRes.hdcMem, gRes.character);
+    StretchBlt(hdcBuffer, leftHeroX, heroY, heroW, heroH, gRes.hdcMem, srcX_left, srcY_left, gGame.hero.width, gGame.hero.height, SRCPAINT);
+
+    // --- SREDINA---
+    int srcX_back = 0 * gGame.hero.width;
+    int srcY_back = 2 * gGame.hero.height;
+
+    SelectObject(gRes.hdcMem, gRes.characterMask);
+    StretchBlt(hdcBuffer, midHeroX, heroY, heroW, heroH, gRes.hdcMem, srcX_back, srcY_back, gGame.hero.width, gGame.hero.height, SRCAND);
+    SelectObject(gRes.hdcMem, gRes.character);
+    StretchBlt(hdcBuffer, midHeroX, heroY, heroW, heroH, gRes.hdcMem, srcX_back, srcY_back, gGame.hero.width, gGame.hero.height, SRCPAINT);
+
+    // --- DESNO---
+    int srcX_right = 3* gGame.hero.width;
+    int srcY_right = 0 * gGame.hero.height;
+
+    SelectObject(gRes.hdcMem, gRes.characterMask);
+    StretchBlt(hdcBuffer, rightHeroX, heroY, heroW, heroH, gRes.hdcMem, srcX_right, srcY_right, gGame.hero.width, gGame.hero.height, SRCAND);
+    SelectObject(gRes.hdcMem, gRes.character);
+    StretchBlt(hdcBuffer, rightHeroX, heroY, heroW, heroH, gRes.hdcMem, srcX_right, srcY_right, gGame.hero.width, gGame.hero.height, SRCPAINT);
+
+    /* DUGMAD (BUTTONS) ISPOD HEROJA */
+
+    int btnW = 60;
+    int btnH = 30;
+    int btnOffsetY = heroH + padding;
+
+    SetTextColor(hdcBuffer, RGB(255, 255, 255));
+    SetBkMode(hdcBuffer, TRANSPARENT);
+
+    const char* btnTexts[] = { "<-", "SPC", "->" };
+    int btnXPositions[] = { leftHeroX + (heroW/2) - (btnW/2),
+                            midHeroX + (heroW/2) - (btnW/2),
+                            rightHeroX + (heroW/2) - (btnW/2) };
+
+    for (int i = 0; i < 3; i++) {
+        int currentBtnX = btnXPositions[i];
+        int currentBtnY = heroY + btnOffsetY;
+
+        BITMAP bmBtn;
+        GetObject(gRes.settingsPlayer, sizeof(BITMAP), &bmBtn);
+
+        SelectObject(gRes.hdcMem, gRes.settingsPlayer);
+        TransparentBlt(hdcBuffer, currentBtnX, currentBtnY, btnW, btnH,
+                       gRes.hdcMem, 0, 0, bmBtn.bmWidth, bmBtn.bmHeight,
+                       RGB(255, 255, 255));
+
+        RECT btnRect = { currentBtnX, currentBtnY, currentBtnX + btnW, currentBtnY + btnH };
+        DrawText(hdcBuffer, btnTexts[i], -1, &btnRect, DT_CENTER | DT_VCENTER | DT_SINGLELINE);
+    }
 
     // --- BACK BUTTON ---
-    int padding = 15;
     int btnWidth  = gGame.backButtonInfo.width;
     int btnHeight = gGame.backButtonInfo.height;
-    int x = sheet.left + padding;
-    int y = sheet.bottom - btnHeight/2 - padding;
+    x = sheet.left + padding;
+    y = sheet.bottom - btnHeight/2 - padding;
 
     gGame.backButtonInfo.x = x;
     gGame.backButtonInfo.y = y;
@@ -112,7 +193,6 @@ void RenderSettings(HDC hdcBuffer, RECT rect)
                gGame.torchInfo.width, gGame.torchInfo.height, SRCAND);
 
     // --- SOUND HOLDER (center) ---
-    BITMAP bm;
     GetObject(gRes.hSoundHolder, sizeof(BITMAP), &bm);
 
     float soundScale = 0.5;

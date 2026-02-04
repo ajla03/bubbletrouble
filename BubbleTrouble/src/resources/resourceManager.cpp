@@ -39,7 +39,11 @@ bool ResourceManager::LoadAll(HINSTANCE hInstance) {
     nextButton        = LoadBitmap(hInstance, MAKEINTRESOURCE(IDB_NEXT));
     nextButtonMask    = LoadBitmap(hInstance, MAKEINTRESOURCE(IDB_NEXT_MASK));
     hSoundHolder        = LoadBitmap(hInstance, MAKEINTRESOURCE(IDB_SOUND_HOLDER));
-    hSoundHolderMask    = LoadBitmap(hInstance, MAKEINTRESOURCE(IDB_SOUND_HOLDER_MASK));
+    hSoundHolderMask  = LoadBitmap(hInstance, MAKEINTRESOURCE(IDB_SOUND_HOLDER_MASK));
+    controlsHolder  = LoadBitmap(hInstance, MAKEINTRESOURCE(IDB_CONTROLS));
+    controlsHolderMask = LoadBitmap(hInstance, MAKEINTRESOURCE(IDB_CONTROLS_MASK));
+    settingsPlayer = LoadBitmap(hInstance, MAKEINTRESOURCE(IDB_SETTINGS_PLAYER));
+    settingsPlayerMask = LoadBitmap(hInstance, MAKEINTRESOURCE(IDB_SETTINGS_PLAYER_MASK));
 
     logo          = LoadBitmap(hInstance, MAKEINTRESOURCE(IDB_LOGO));
     logoMask      = LoadBitmap(hInstance, MAKEINTRESOURCE(IDB_LOGO_MASK));

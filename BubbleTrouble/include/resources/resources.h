@@ -74,6 +74,10 @@
 #define IDB_SOUNDON_MASK     169
 #define IDB_SOUND_HOLDER     170
 #define IDB_SOUND_HOLDER_MASK 171
+#define IDB_CONTROLS          172
+#define IDB_CONTROLS_MASK     173
+#define IDB_SETTINGS_PLAYER   174
+#define IDB_SETTINGS_PLAYER_MASK   175
 
 // ============ KONSTANTE ZA HARPUN ============ //
 #define IDR_HARPOON_SOUND   201
