@@ -89,7 +89,7 @@ void UpdatePowerups(HWND hwnd) {
 
         p->y += p->speedY;
 
-        if(p->y >= FLOOR_Y) {
+        if(p->y + p->height >= FLOOR_Y) {
             p->active = false;
             CURRENT_LEVEL.activePowerupCount--;
             continue;
