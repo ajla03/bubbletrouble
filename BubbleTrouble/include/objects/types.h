@@ -89,6 +89,10 @@ struct HeartAnim{
     int animCounter;
 };
 
+struct SoundState{
+ bool soundOn = true;
+};
+
 struct Torch{
  int x, y;
  int width, height;

@@ -150,7 +150,8 @@ void CheckCollisions(){
         float distance = sqrt(dx*dx + dy*dy);
 
         if(distance < b->radius && gGame.hero.heroHitCooldown <= 0){
-              PlaySound(MAKEINTRESOURCE(IDR_DAMAGE_SOUND), GetModuleHandle(NULL), SND_RESOURCE | SND_ASYNC);
+              if(gGame.soundState.soundOn)
+                PlaySound(MAKEINTRESOURCE(IDR_DAMAGE_SOUND), GetModuleHandle(NULL), SND_RESOURCE | SND_ASYNC);
             --gGame.gameState.lives;
             gGame.hero.heroHitCooldown = HERO_INVINCIBLE_TIME;
             if(gGame.gameState.lives==0){
@@ -192,7 +193,8 @@ void SplitBalloon(int index) {
 
     float newRadius = b->radius /2.0f;
 
-    PlaySound(MAKEINTRESOURCE(IDR_BALLOON_POP),
+    if(gGame.soundState.soundOn)
+        PlaySound(MAKEINTRESOURCE(IDR_BALLOON_POP),
                                   GetModuleHandle(NULL),
                                   SND_RESOURCE | SND_ASYNC | SND_NODEFAULT);
 

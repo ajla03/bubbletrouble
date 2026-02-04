@@ -343,6 +343,8 @@ void ResetGame(HWND hwnd) {
     gGame.totalScore = 0;
     gGame.displayScore = 0;
     gGame.pauseButtonInfo.isHover = false;
+    if(gGame.gameState.currentMode == GAME_MODE_MENU)
+        gGame.soundState.soundOn = true;
 
     if (CURRENT_LEVEL.hdcCache) DeleteDC(CURRENT_LEVEL.hdcCache);
     if (CURRENT_LEVEL.hStaticCache) DeleteObject(CURRENT_LEVEL.hStaticCache);

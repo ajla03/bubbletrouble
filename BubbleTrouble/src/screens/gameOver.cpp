@@ -5,18 +5,59 @@
 #include <wingdi.h>
 
 
-
 void DrawButton(HDC hdc, HBITMAP bmp, HBITMAP mask, Button& button)
 {
+    // maska
     SelectObject(gRes.hdcMem, mask);
     BitBlt(hdc, button.x, button.y, button.width, button.height, gRes.hdcMem, 0, 0, SRCPAINT);
 
+    // bitmap
     SelectObject(gRes.hdcMem, bmp);
     BitBlt(hdc, button.x, button.y, button.width, button.height, gRes.hdcMem, 0, 0, SRCAND);
 
- if (button.isHover)
+    // SOUND OFF
+    if (bmp == gRes.soundButton && !gGame.soundState.soundOn)
     {
-        HRGN rgn = CreateEllipticRgn(      // da napravimo sjenu samo na okruglom buttonu
+        HRGN rgn = CreateEllipticRgn(
+            button.x,
+            button.y,
+            button.x + button.width,
+            button.y + button.height
+        );
+
+        SelectClipRgn(hdc, rgn);
+
+        BLENDFUNCTION bf{};
+        bf.BlendOp = AC_SRC_OVER;
+        bf.SourceConstantAlpha = 80;
+
+        HDC overlayDC = CreateCompatibleDC(hdc);
+        HBITMAP overlayBmp = CreateCompatibleBitmap(hdc, button.width, button.height);
+        HBITMAP oldBmp = (HBITMAP)SelectObject(overlayDC, overlayBmp);
+
+        RECT r{ 0, 0, button.width, button.height };
+        FillRect(overlayDC, &r, (HBRUSH)GetStockObject(BLACK_BRUSH));
+
+        AlphaBlend(
+            hdc,
+            button.x, button.y,
+            button.width, button.height,
+            overlayDC,
+            0, 0,
+            button.width, button.height,
+            bf
+        );
+
+        SelectObject(overlayDC, oldBmp);
+        SelectClipRgn(hdc, NULL);
+        DeleteObject(rgn);
+        DeleteObject(overlayBmp);
+        DeleteDC(overlayDC);
+    }
+    // HOVER (
+    if (button.isHover)
+    {
+        HRGN rgn = CreateEllipticRgn(
             button.x,
             button.y,
             button.x + button.width,
@@ -32,7 +73,7 @@ void DrawButton(HDC hdc, HBITMAP bmp, HBITMAP mask, Button& button)
 
         HDC overlayDC = CreateCompatibleDC(hdc);
         HBITMAP overlayBmp = CreateCompatibleBitmap(hdc, button.width, button.height);
-        SelectObject(overlayDC, overlayBmp);
+        HBITMAP oldBmp = (HBITMAP)SelectObject(overlayDC, overlayBmp);
 
         RECT r = { 0, 0, button.width, button.height };
         FillRect(overlayDC, &r, brush);
@@ -47,14 +88,15 @@ void DrawButton(HDC hdc, HBITMAP bmp, HBITMAP mask, Button& button)
             bf
         );
 
+        SelectObject(overlayDC, oldBmp);
         SelectClipRgn(hdc, NULL);
         DeleteObject(rgn);
         DeleteObject(brush);
         DeleteObject(overlayBmp);
         DeleteDC(overlayDC);
     }
-
 }
+
 
 void DrawGameOverScreen(HDC hdc, RECT rect)
 {

@@ -172,6 +172,14 @@ LRESULT CALLBACK WindowProcedure(HWND hwnd, UINT message, WPARAM wParam, LPARAM 
                         gGame.gameState.currentMode = GAME_MODE_PAUSE;
                        // StartWallTransition(hwnd);
                         return 0;
+                       }else if(mx >= gGame.soundButtonInfo.x &&
+                       mx <=gGame.soundButtonInfo.x + gGame.soundButtonInfo.width &&
+                       my >= gGame.soundButtonInfo.y &&
+                       my <= gGame.soundButtonInfo.y + gGame.soundButtonInfo.height
+                      ){
+                        gGame.soundState.soundOn = !gGame.soundState.soundOn;
+                       // StartWallTransition(hwnd);
+                        return 0;
                        }
             }else if(gGame.gameState.currentMode == GAME_MODE_PAUSE){
                     if(mx >= gGame.unpauseButtonInfo.x &&
@@ -207,6 +215,7 @@ LRESULT CALLBACK WindowProcedure(HWND hwnd, UINT message, WPARAM wParam, LPARAM 
                 CheckHover(gGame.nextButtonInfo, x, y);
             }else if(gGame.gameState.currentMode == GAME_MODE_PLAYING){
                 CheckHover(gGame.pauseButtonInfo, x, y);
+                CheckHover(gGame.soundButtonInfo, x, y);
             }else if(gGame.gameState.currentMode == GAME_MODE_PAUSE){
                 CheckHover(gGame.unpauseButtonInfo, x, y);
                 CheckHover(gGame.homeButtonInfo, x, y);

@@ -116,7 +116,8 @@ void UpdatePowerups(HWND hwnd) {
             p->active = false;
             CURRENT_LEVEL.activePowerupCount--;
 
-            PlaySound(MAKEINTRESOURCE(IDR_BALLOON_POP),
+            if(gGame.soundState.soundOn)
+                PlaySound(MAKEINTRESOURCE(IDR_BALLOON_POP),
                      GetModuleHandle(NULL),
                      SND_RESOURCE | SND_ASYNC | SND_NODEFAULT);
         }
