@@ -163,10 +163,10 @@ const char* VKCodeToString(int vkCode)
 
 
 static void RenderBackground(HDC hdcBuffer, RECT rect){
+    SetStretchBltMode(hdcBuffer, HALFTONE);
     int tileW = gGame.floorWall.width;
     int tileH = gGame.leftWall.height;
 
-    SetStretchBltMode(hdcBuffer, HALFTONE);
     SelectObject(gRes.hdcMem, gRes.wall);
     StretchBlt(hdcBuffer, 0, 0, rect.right, rect.bottom, gRes.hdcMem, 0, 0, tileW, tileH, SRCCOPY);
 }

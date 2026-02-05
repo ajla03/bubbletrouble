@@ -21,12 +21,12 @@ void CheckInputs(HWND hwnd){
     KeyBindings* keys = &gGame.settingsState.player1Keys;
 
     // === MOVEMENT ===
-    if(GetAsyncKeyState(keys->moveLeft)){
+    if(GetAsyncKeyState(keys->moveLeft) & 0x8000){
         gGame.hero.x -= gGame.hero.dx;
         gGame.hero.currentRow = 1;
         isMoving = true;
     }
-    else if(GetAsyncKeyState(keys->moveRight)){
+    else if(GetAsyncKeyState(keys->moveRight) & 0x8000){
         gGame.hero.x += gGame.hero.dx;
         gGame.hero.currentRow = 0;
         isMoving = true;
@@ -142,6 +142,7 @@ void HandleSettingsClick(HWND hwnd, int mx, int my){
         gGame.settingsState.currentHeroSelected = gRes.characterMask;
         gGame.settingsState.currentPlayerBinding = 1;
         gGame.gameState.currentMode = GAME_MODE_MENU;
+        RefreshScreen(hwnd);
         return;
     }
 
@@ -175,12 +176,7 @@ void HandleSettingsClick(HWND hwnd, int mx, int my){
     }
 }
 
-void HandleBackClick(HWND hwnd, int mx, int my){
-    if(IsPointInButton(gGame.backButtonInfo, mx, my)){
-        gGame.gameState.currentMode = GAME_MODE_MENU;
-        return;
-    }
-}
+
 
 void HandlePlayingClick(HWND hwnd, int mx, int my)
 {
