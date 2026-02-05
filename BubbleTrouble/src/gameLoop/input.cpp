@@ -6,7 +6,9 @@
 #include "resourceManager.h"
 
 void CheckInputs(HWND hwnd){
-    if(gGame.gameState.currentMode != GAME_MODE_PLAYING || gGame.transitionState== TRANSITION_WAIT || gGame.transitionState == TRANSITION_CLOSING)
+    if(gGame.gameState.currentMode != GAME_MODE_PLAYING
+        || gGame.transitionState== TRANSITION_WAIT
+        || gGame.transitionState == TRANSITION_CLOSING)
         return;
 
     RECT rect;
@@ -15,13 +17,16 @@ void CheckInputs(HWND hwnd){
 
     bool isMoving = false;
 
+    // ZA MULTIPLAYERA CEMO IMATI DRUGU FUNKCIJU ZA UPDATE ?
+    KeyBindings* keys = &gGame.settingsState.player1Keys;
+
     // === MOVEMENT ===
-    if(GetAsyncKeyState(VK_LEFT)){
+    if(GetAsyncKeyState(keys->moveLeft)){
         gGame.hero.x -= gGame.hero.dx;
         gGame.hero.currentRow = 1;
         isMoving = true;
     }
-    else if(GetAsyncKeyState(VK_RIGHT)){
+    else if(GetAsyncKeyState(keys->moveRight)){
         gGame.hero.x += gGame.hero.dx;
         gGame.hero.currentRow = 0;
         isMoving = true;
@@ -61,7 +66,7 @@ void CheckInputs(HWND hwnd){
     }
 
     // === HARPOON SHOOTING ===
-    bool isSpacePressed = (GetAsyncKeyState(VK_SPACE) & 0x8000) != 0;
+    bool isSpacePressed = (GetAsyncKeyState(keys->shoot) & 0x8000) != 0;
 
     if (isSpacePressed && !gGame.inputState.wasSpacePressed && !gGame.harpoon.isActive) {
         gGame.harpoon.isActive = true;
@@ -75,7 +80,6 @@ void CheckInputs(HWND hwnd){
 
     gGame.inputState.wasSpacePressed = isSpacePressed;
 }
-
 
 
 void HandleMouseClick(HWND hwnd, int mx, int my)
@@ -119,6 +123,7 @@ void HandleSettingsClick(HWND hwnd, int mx, int my){
         return;
     }
 
+    // Sound button
     if(IsPointInButton(gGame.settingsSoundButtonInfo, mx, my)){
         gGame.settingsState.soundState.bgMusicOn = !gGame.settingsState.soundState.bgMusicOn;
 
@@ -130,17 +135,34 @@ void HandleSettingsClick(HWND hwnd, int mx, int my){
         return;
     }
 
+    // Player selection
     if(IsPointInButton(gGame.player1, mx, my)){
         gGame.settingsState.currentHeroSelected = gRes.characterMask;
+        gGame.settingsState.currentPlayerBinding = 1;
         return;
     }
 
     if(IsPointInButton(gGame.player2, mx, my)){
         gGame.settingsState.currentHeroSelected = gRes.hero2;
+        gGame.settingsState.currentPlayerBinding = 2;
         return;
     }
 
+    // Key binding buttons
+    if (IsPointInButton(gGame.settingsState.leftKeyButton, mx, my)) {
+        gGame.settingsState.waitingForKey = KEYBIND_LEFT;
+        return;
+    }
 
+    if (IsPointInButton(gGame.settingsState.spaceKeyButton, mx, my)) {
+        gGame.settingsState.waitingForKey = KEYBIND_SHOOT;
+        return;
+    }
+
+    if (IsPointInButton(gGame.settingsState.rightKeyButton, mx, my)) {
+        gGame.settingsState.waitingForKey = KEYBIND_RIGHT;
+        return;
+    }
 }
 
 void HandleBackClick(HWND hwnd, int mx, int my){
@@ -255,6 +277,44 @@ void HandleMouseMove(HWND hwnd, int x, int y)
         CheckHover(gGame.homeButtonInfo, x, y);
         return;
     }
+}
 
+void HandleKeyDown(HWND hwnd, WPARAM wParam)
+{
+    int vkCode = (int)wParam;
 
+    if (gGame.gameState.currentMode == GAME_MODE_SETTINGS &&
+        gGame.settingsState.waitingForKey != KEYBIND_NONE)
+    {
+        // ESC ili ENTER otkazuju key binding
+        if (vkCode == VK_ESCAPE || vkCode == VK_RETURN) {
+            gGame.settingsState.waitingForKey = KEYBIND_NONE;
+            return;
+        }
+
+        KeyBindings* keys = (gGame.settingsState.currentPlayerBinding == 1) ? &gGame.settingsState.player1Keys
+                                                                            : &gGame.settingsState.player2Keys;
+
+        switch (gGame.settingsState.waitingForKey) {
+            case KEYBIND_LEFT:
+                keys->moveLeft = vkCode;
+                break;
+            case KEYBIND_RIGHT:
+                keys->moveRight = vkCode;
+                break;
+            case KEYBIND_SHOOT:
+                keys->shoot = vkCode;
+                break;
+        }
+
+        gGame.settingsState.waitingForKey = KEYBIND_NONE;
+        return;
+    }
+
+    // === NORMAL ESC HANDLING ===
+    if (vkCode == VK_ESCAPE) {
+        gGame.gameState.currentMode = GAME_MODE_MENU;
+        InitializeMenu(hwnd);
+        return;
+    }
 }

@@ -119,7 +119,6 @@ void RenderSettings(HDC hdcBuffer, RECT rect)
     SetTextColor(hdcBuffer, RGB(255, 255, 255));
     SetBkMode(hdcBuffer, TRANSPARENT);
 
-    const char* btnTexts[] = { "<-", "SPC", "->" };
     int btnXPositions[] = { leftHeroX + (heroW/2) - (btnW/2),
                             midHeroX + (heroW/2) - (btnW/2),
                             rightHeroX + (heroW/2) - (btnW/2) };
@@ -127,6 +126,23 @@ void RenderSettings(HDC hdcBuffer, RECT rect)
     for (int i = 0; i < 3; i++) {
         int currentBtnX = btnXPositions[i];
         int currentBtnY = heroY + btnOffsetY;
+
+        if (i == 0) {
+            gGame.settingsState.leftKeyButton.x = currentBtnX;
+            gGame.settingsState.leftKeyButton.y = currentBtnY;
+            gGame.settingsState.leftKeyButton.width = btnW;
+            gGame.settingsState.leftKeyButton.height = btnH;
+        } else if (i == 1) {
+            gGame.settingsState.spaceKeyButton.x = currentBtnX;
+            gGame.settingsState.spaceKeyButton.y = currentBtnY;
+            gGame.settingsState.spaceKeyButton.width = btnW;
+            gGame.settingsState.spaceKeyButton.height = btnH;
+        } else if (i == 2) {
+            gGame.settingsState.rightKeyButton.x = currentBtnX;
+            gGame.settingsState.rightKeyButton.y = currentBtnY;
+            gGame.settingsState.rightKeyButton.width = btnW;
+            gGame.settingsState.rightKeyButton.height = btnH;
+        }
 
         BITMAP bmBtn;
         GetObject(gRes.settingsPlayer, sizeof(BITMAP), &bmBtn);
@@ -136,8 +152,30 @@ void RenderSettings(HDC hdcBuffer, RECT rect)
                        gRes.hdcMem, 0, 0, bmBtn.bmWidth, bmBtn.bmHeight,
                        RGB(255, 255, 255));
 
+        bool isWaiting = false;
+        if (i == 0 && gGame.settingsState.waitingForKey == KEYBIND_LEFT) isWaiting = true;
+        if (i == 1 && gGame.settingsState.waitingForKey == KEYBIND_SHOOT) isWaiting = true;
+        if (i == 2 && gGame.settingsState.waitingForKey == KEYBIND_RIGHT) isWaiting = true;
+
         RECT btnRect = { currentBtnX, currentBtnY, currentBtnX + btnW, currentBtnY + btnH };
-        DrawText(hdcBuffer, btnTexts[i], -1, &btnRect, DT_CENTER | DT_VCENTER | DT_SINGLELINE);
+
+        if (isWaiting) {
+            SetTextColor(hdcBuffer, RGB(255, 255, 0));
+            DrawText(hdcBuffer, "...", -1, &btnRect, DT_CENTER | DT_VCENTER | DT_SINGLELINE);
+        } else {
+
+            KeyBindings* keys = (gGame.settingsState.currentPlayerBinding == 1)? &gGame.settingsState.player1Keys
+                                                                               : &gGame.settingsState.player2Keys;
+            const char *keyText;
+            if(i == 0 )
+                keyText = VKCodeToString(keys->moveLeft);
+            else if(i == 1 )
+                keyText = VKCodeToString(keys->shoot);
+            else
+                keyText = VKCodeToString(keys->moveRight);
+            SetTextColor(hdcBuffer, RGB(255, 255, 255));
+            DrawText(hdcBuffer, keyText, -1, &btnRect, DT_CENTER | DT_VCENTER | DT_SINGLELINE);
+        }
     }
 
     // PLAYER BUTTONS //
@@ -348,4 +386,103 @@ void RenderSettings(HDC hdcBuffer, RECT rect)
 
 void InitDefaultSettings(){
     gGame.settingsState.currentHeroSelected = gRes.characterMask;
+
+    // player 1 - default controls
+    gGame.settingsState.player1Keys.moveLeft = VK_LEFT;
+    gGame.settingsState.player1Keys.moveRight = VK_RIGHT;
+    gGame.settingsState.player1Keys.shoot = VK_SPACE;
+
+    // player 2 - default controls
+    gGame.settingsState.player2Keys.moveLeft = VK_LEFT;
+    gGame.settingsState.player2Keys.moveRight = VK_RIGHT;
+    gGame.settingsState.player2Keys.shoot = VK_SPACE;
+
+    gGame.settingsState.waitingForKey = KEYBIND_NONE;
+    gGame.settingsState.currentPlayerBinding = 1;
 }
+
+const char* VKCodeToString(int vkCode)
+{
+    static char buffer[32];
+
+     if (vkCode >= 'A' && vkCode <= 'Z') {
+        buffer[0] = (char)vkCode;
+        buffer[1] = '\0';
+        return buffer;
+    }
+
+    if (vkCode >= '0' && vkCode <= '9') {
+        buffer[0] = (char)vkCode;
+        buffer[1] = '\0';
+        return buffer;
+    }
+
+    switch (vkCode) {
+        case VK_LEFT:   return "<-";
+        case VK_RIGHT:  return "->";
+        case VK_UP:     return "UP";
+        case VK_DOWN:   return "DOWN";
+        case VK_SPACE:  return "SPC";
+        case VK_SHIFT:  return "SHIFT";
+        case VK_CONTROL:return "CTRL";
+        case VK_MENU:   return "ALT";
+        case VK_TAB:    return "TAB";
+        case VK_BACK:   return "BKSP";
+        case VK_DELETE: return "DEL";
+        case VK_INSERT: return "INS";
+        case VK_HOME:   return "HOME";
+        case VK_END:    return "END";
+        case VK_PRIOR:  return "PGUP";
+        case VK_NEXT:   return "PGDN";
+
+        // Function keys
+        case VK_F1:  return "F1";
+        case VK_F2:  return "F2";
+        case VK_F3:  return "F3";
+        case VK_F4:  return "F4";
+        case VK_F5:  return "F5";
+        case VK_F6:  return "F6";
+        case VK_F7:  return "F7";
+        case VK_F8:  return "F8";
+        case VK_F9:  return "F9";
+        case VK_F10: return "F10";
+        case VK_F11: return "F11";
+        case VK_F12: return "F12";
+
+        // Numpad
+        case VK_NUMPAD0: return "NUM0";
+        case VK_NUMPAD1: return "NUM1";
+        case VK_NUMPAD2: return "NUM2";
+        case VK_NUMPAD3: return "NUM3";
+        case VK_NUMPAD4: return "NUM4";
+        case VK_NUMPAD5: return "NUM5";
+        case VK_NUMPAD6: return "NUM6";
+        case VK_NUMPAD7: return "NUM7";
+        case VK_NUMPAD8: return "NUM8";
+        case VK_NUMPAD9: return "NUM9";
+        case VK_MULTIPLY: return "*";
+        case VK_ADD:      return "+";
+        case VK_SUBTRACT: return "-";
+        case VK_DECIMAL:  return ".";
+        case VK_DIVIDE:   return "/";
+    }
+
+    switch (vkCode) {
+        case VK_OEM_PLUS:   return "+";
+        case VK_OEM_MINUS:  return "-";
+        case VK_OEM_COMMA:  return ",";
+        case VK_OEM_PERIOD: return ".";
+        case VK_OEM_1:      return ";";
+        case VK_OEM_2:      return "/";
+        case VK_OEM_3:      return "`";
+        case VK_OEM_4:      return "[";
+        case VK_OEM_6:      return "]";
+        case VK_OEM_7:      return "'";
+    }
+
+    return "?";
+}
+
+
+
+

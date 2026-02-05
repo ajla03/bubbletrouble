@@ -151,11 +151,7 @@ LRESULT CALLBACK WindowProcedure(HWND hwnd, UINT message, WPARAM wParam, LPARAM 
         }
 
         case WM_KEYDOWN: {
-            if (wParam == VK_ESCAPE) {
-                gGame.gameState.currentMode = GAME_MODE_MENU;
-                InitializeMenu(hwnd);
-                //InvalidateRect(hwnd, NULL, FALSE);
-            }
+            HandleKeyDown(hwnd, wParam);
             return 0;
         }
         case MM_MCINOTIFY:

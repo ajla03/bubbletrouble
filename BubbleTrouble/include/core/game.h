@@ -106,3 +106,5 @@ void UpdateLayout(int oldW, int oldH, int newW, int newH);
 
 // ================ SETTINGS =======================
 void InitDefaultSettings();
+void HandleKeyDown(HWND hwnd, WPARAM wParam);
+const char* VKCodeToString(int vkCode);

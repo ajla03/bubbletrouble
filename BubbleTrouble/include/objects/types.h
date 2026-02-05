@@ -138,7 +138,35 @@ struct PowerUp {
    DWORD spawnTime;
 };
 
+/*  SETTINGS */
+
+enum KeyBindingMode{
+    KEYBIND_NONE = 0,
+    KEYBIND_LEFT,
+    KEYBIND_RIGHT,
+    KEYBIND_SHOOT
+};
+
+struct KeyBindings{
+    int moveLeft;
+    int moveRight;
+    int shoot;
+};
+
 struct SettingsState{
  SoundState soundState;
  HBITMAP currentHeroSelected;
+
+ // KEY BINDING MEMBERS //
+ KeyBindingMode waitingForKey;
+ KeyBindings player1Keys;
+ KeyBindings player2Keys;
+ Button leftKeyButton;
+ Button rightKeyButton;
+ Button spaceKeyButton;
+ int currentPlayerBinding;
 };
+
+
+
+
