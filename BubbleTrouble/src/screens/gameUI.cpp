@@ -30,12 +30,10 @@ void RenderStaticUI(HDC hdc, RECT rect) {
         SIZE textSize;
         GetTextExtentPoint32(CURRENT_LEVEL.hdcCache, levelText.c_str(), levelText.length(), &textSize);
 
-
         int barHeight = 25;
         int paddingX = 30;
         int boxW = textSize.cx + paddingX;
         int boxH = textSize.cy + paddingX;
-
 
         int placeholderX = (rect.right / 2) - (boxW / 2);
         int floorTop = rect.bottom - gGame.floorWall.height + barHeight;
@@ -60,14 +58,36 @@ void RenderStaticUI(HDC hdc, RECT rect) {
         SelectObject(CURRENT_LEVEL.hdcCache, oldFont);
 
 
-        // PLAYER PLACEHOLDER //
+        // === PLAYER PLACEHOLDERS ===
         int heartsTop = rect.bottom - gGame.floorWall.height + barHeight*2 + 10;
         int playerY = heartsTop + gGame.heartBgInfo.height + 10;
 
+        // 1. Prvo crtamo PLAYER 2 (Desno) ako je multiplayer
+        // Koristimo PLAVU boju (RGB(0, 0, 180)) za razliku
+        if (gGame.gameState.isMultiplayer) {
+            std::string p2Text = "PLAYER 2";
+
+            // Izračunaj širinu teksta da ga možemo poravnati desno
+            SIZE p2Size;
+            HFONT hTempFont = (HFONT)SelectObject(CURRENT_LEVEL.hdcCache, gRes.hFont);
+            GetTextExtentPoint32(CURRENT_LEVEL.hdcCache, p2Text.c_str(), p2Text.length(), &p2Size);
+            SelectObject(CURRENT_LEVEL.hdcCache, hTempFont);
+
+            int p2Padding = 30;
+            int p2BoxW = p2Size.cx + p2Padding;
+
+            // Pozicija: Desni zid - širina boxa
+            int p2X = rect.right - gGame.rightWall.width - p2BoxW;
+
+            DrawPlayerPlaceholder(CURRENT_LEVEL.hdcCache, rect, p2Text, p2X, playerY,
+                                 RGB(0, 0, 180), gGame.heartBgInfo.height + 6);
+        }
+
+        // 2. Na kraju crtamo PLAYER 1 (Lijevo)
+        // Ovo mora biti ZADNJE kako bi 'gGame.playerHolderInfo' ostao postavljen na Player 1.
+        // To osigurava da se SCORE (broj bodova) za Player 1 iscrta na dobroj poziciji.
         gGame.playerHolderInfo.x = gGame.leftWall.width;
         gGame.playerHolderInfo.y = playerY;
-        gGame.playerHolderInfo.width = boxW;
-        gGame.playerHolderInfo.height= boxH;
 
         DrawPlayerPlaceholder(CURRENT_LEVEL.hdcCache, rect, "PLAYER 1", gGame.leftWall.width, playerY,
                              RGB(180, 0, 0), gGame.heartBgInfo.height + 6);
@@ -335,50 +355,48 @@ void DrawHeartsAndScore(HDC hdc, RECT rect, int padding) {
         int x = startX1 + i * (gGame.heartInfo.width + gap);
         int y = startY;
 
-        // === BACKGROUND (Sivi okvir) ===
+        // === P1 BACKGROUND ===
         HBITMAP oldBmp = (HBITMAP)SelectObject(gRes.hdcMem, gRes.heartBkgMask);
         BitBlt(hdc, x, y, gGame.heartBgInfo.width, gGame.heartBgInfo.height, gRes.hdcMem, 0, 0, SRCPAINT);
         SelectObject(gRes.hdcMem, gRes.heartBkg);
         BitBlt(hdc, x, y, gGame.heartBgInfo.width, gGame.heartBgInfo.height, gRes.hdcMem, 0, 0, SRCAND);
 
-        // === BORDER (Bijeli okvir) ===
+        // === P1 BORDER ===
         SelectObject(gRes.hdcMem, gRes.heartBorderMask);
         BitBlt(hdc, x, y, gGame.heartBorderInfo.width, gGame.heartBorderInfo.height, gRes.hdcMem, 0, 0, SRCPAINT);
         SelectObject(gRes.hdcMem, gRes.heartBorder);
         BitBlt(hdc, x, y, gGame.heartBorderInfo.width, gGame.heartBorderInfo.height, gRes.hdcMem, 0, 0, SRCAND);
 
-        // === FILL (Srce) ===
-        // Ovdje koristimo p1Lives umjesto gGame.gameState.lives
+        // === P1 FILL ===
         if (i < p1Lives) {
             int srcX = p1HeartsAnim[i].currentFrame * gGame.heartInfo.width;
-
             SelectObject(gRes.hdcMem, gRes.heartMask);
             BitBlt(hdc, x, y, gGame.heartInfo.width, gGame.heartInfo.height, gRes.hdcMem, srcX, 0, SRCPAINT);
-
             SelectObject(gRes.hdcMem, gRes.heart);
             BitBlt(hdc, x, y, gGame.heartInfo.width, gGame.heartInfo.height, gRes.hdcMem, srcX, 0, SRCAND);
         }
+        SelectObject(gRes.hdcMem, oldBmp); // Vrati stari objekt
     }
 
     // === SCORE ZA PLAYER 1 ===
-    // (Tvoj postojeći kod za score, samo prilagođen da ispisuje p1Score)
+    // Layout: [PLAYER 1] [SCORE]
     int scoreGap = 10;
     int scoreX = gGame.playerHolderInfo.x + gGame.playerHolderInfo.width + scoreGap;
     int scoreY = gGame.playerHolderInfo.y + 5;
-    int boxW = scoreX - (startX1 + gGame.heartBgInfo.width); // Mala korekcija širine ako treba
-    if(boxW < 100) boxW = 100; // Minimalna širina
 
+    // Dimenzije score boxa
+    int boxW = 100; // Fiksna minimalna širina za urednost
     int scoreBoxH = gGame.playerHolderInfo.height - 8;
 
-    // Iscrtaj holder i tekst rezultata kao i prije...
+    // Iscrtaj holder
     SelectObject(gRes.hdcMem, gRes.scoreHolder);
     SetStretchBltMode(hdc, COLORONCOLOR);
     StretchBlt(hdc, scoreX, scoreY, boxW, scoreBoxH, gRes.hdcMem, 0, 0, gGame.scoreHolderInfo.width, gGame.scoreHolderInfo.height, SRCCOPY);
 
-    // Okvir oko rezultata
+    // Okvir
     HPEN hDarkPen = CreatePen(PS_SOLID, 2, RGB(100, 100, 100));
     HPEN hOldPen = (HPEN)SelectObject(hdc, hDarkPen);
-    SelectObject(hdc, GetStockObject(NULL_BRUSH)); // Da ne oboji unutrašnjost
+    SelectObject(hdc, GetStockObject(NULL_BRUSH));
     RoundRect(hdc, scoreX - 2, scoreY - 2, scoreX + boxW + 2, scoreY + scoreBoxH + 2, 4, 4);
     SelectObject(hdc, hOldPen);
     DeleteObject(hDarkPen);
@@ -402,11 +420,10 @@ void DrawHeartsAndScore(HDC hdc, RECT rect, int padding) {
         int p2Score = gGame.player2Stats.displayScore;
         HeartAnim* p2HeartsAnim = gGame.player2Stats.hearts;
 
-        // Početna X pozicija (desni zid minus širina srca)
+        // Srca počinju od desnog zida
         int startX2 = rect.right - gGame.rightWall.width - gGame.heartBgInfo.width;
 
         for (int i = 0; i < 5; i++) {
-            // Iscrtavamo s desna na lijevo: oduzimamo i * (širina + gap)
             int x = startX2 - i * (gGame.heartInfo.width + gap);
             int y = startY;
 
@@ -425,20 +442,28 @@ void DrawHeartsAndScore(HDC hdc, RECT rect, int padding) {
             // === P2 FILL ===
             if (i < p2Lives) {
                 int srcX = p2HeartsAnim[i].currentFrame * gGame.heartInfo.width;
-
                 SelectObject(gRes.hdcMem, gRes.heartMask);
                 BitBlt(hdc, x, y, gGame.heartInfo.width, gGame.heartInfo.height, gRes.hdcMem, srcX, 0, SRCPAINT);
-
                 SelectObject(gRes.hdcMem, gRes.heart);
                 BitBlt(hdc, x, y, gGame.heartInfo.width, gGame.heartInfo.height, gRes.hdcMem, srcX, 0, SRCAND);
             }
             SelectObject(gRes.hdcMem, oldBmp2);
         }
 
-        // === P2 SCORE (Lijevo od srca) ===
-        // Pozicija: zadnje lijevo srce (i=4) minus širina score boxa minus gap
-        int lastHeartX = startX2 - 4 * (gGame.heartInfo.width + gap);
-        int p2ScoreX = lastHeartX - boxW - scoreGap;
+        // === P2 SCORE (Uz Player 2 ime) ===
+        // Layout: [SCORE] [PLAYER 2]
+
+        // 1. Izračunaj gdje počinje "PLAYER 2" okvir (da budemo simetrični s P1)
+        char p2NameText[] = "PLAYER 2";
+        SIZE p2NameSize;
+        GetTextExtentPoint32(hdc, p2NameText, strlen(p2NameText), &p2NameSize);
+        int p2NameWidth = p2NameSize.cx + 30; // 30 je padding iz RenderStaticUI
+
+        // X koordinata gdje počinje "PLAYER 2" okvir (desno poravnato uz zid)
+        int p2NameX = rect.right - gGame.rightWall.width - p2NameWidth;
+
+        // 2. Postavi Score Box LIJEVO od imena
+        int p2ScoreX = p2NameX - boxW - scoreGap;
 
         // Iscrtaj holder za P2
         SelectObject(gRes.hdcMem, gRes.scoreHolder);
@@ -460,7 +485,6 @@ void DrawHeartsAndScore(HDC hdc, RECT rect, int padding) {
 
     SelectObject(hdc, oldFont);
 }
-
 
 void DrawPlayerPlaceholder(
     HDC hdc,
