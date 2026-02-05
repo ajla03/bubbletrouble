@@ -45,6 +45,17 @@ int WINAPI WinMain(HINSTANCE hThisInstance, HINSTANCE hPrevInstance, LPSTR lpszA
                           20, 20, 1280, 720,
                           HWND_DESKTOP, NULL, hThisInstance, NULL);
 
+    gRes.hIcon = (HICON)LoadImage(
+        hThisInstance,
+        MAKEINTRESOURCE(IDR_MAINICON),
+        IMAGE_ICON,
+        32, 32,
+        LR_DEFAULTCOLOR
+    );
+
+    SendMessage(hwnd, WM_SETICON, ICON_BIG,   (LPARAM)gRes.hIcon);
+    SendMessage(hwnd, WM_SETICON, ICON_SMALL, (LPARAM)gRes.hIcon);
+
     ShowWindow(hwnd, nCmdShow);
 
     LoadBitmaps(hwnd, hThisInstance);

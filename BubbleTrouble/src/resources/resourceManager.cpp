@@ -144,6 +144,8 @@ void ResourceManager::ReleaseAll() {
     }
 
     if (hdcMem) DeleteDC(hdcMem);
+    if(hIcon) DestroyIcon(hIcon);
+
 }
 
 void ResourceManager::Init(HDC hdc, HWND hwnd){

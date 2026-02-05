@@ -125,3 +125,6 @@ IDB_TIMEPU_MASK       BITMAP  "../assets/bitmaps/clock_mask.bmp"
 IDB_TIMEPU      BITMAP  "../assets/bitmaps/clock.bmp"
 IDB_FREEZEPU      BITMAP  "assets/bitmaps/snowflake.bmp"
 IDB_FREEZEPU_MASK BITMAP  "assets/bitmaps/snowflake_mask.bmp"
+
+IDR_MAINICON ICON "../assets/icons/favicon.ico"
+

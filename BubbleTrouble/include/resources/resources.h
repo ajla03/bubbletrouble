@@ -95,6 +95,8 @@
 #define IDR_DAMAGE_SOUND    204
 #define IDR_MINI_FONT       301
 #define IDC_GAME_CURSOR     401
+#define IDR_MAINICON        501
+
 
 
 
