@@ -117,6 +117,13 @@ void HandleMouseClick(HWND hwnd, int mx, int my)
 }
 
 void HandleSettingsClick(HWND hwnd, int mx, int my){
+
+   // Sound Button
+   if(IsPointInButton(gGame.settingsSoundButtonInfo, mx, my)){
+    gGame.settingsState.soundState.settingsSoundEffects = !gGame.settingsState.soundState.settingsSoundEffects;
+    return;
+   }
+
     // Back button
     if(IsPointInButton(gGame.backButtonInfo, mx, my)){
         gGame.settingsState.currentHeroSelected = gRes.characterMask;
@@ -125,8 +132,8 @@ void HandleSettingsClick(HWND hwnd, int mx, int my){
         return;
     }
 
-    // Sound button
-    if(IsPointInButton(gGame.settingsSoundButtonInfo, mx, my)){
+    // Music button
+    if(IsPointInButton(gGame.settingsMusicButtonInfo, mx, my)){
         gGame.settingsState.soundState.bgMusicOn = !gGame.settingsState.soundState.bgMusicOn;
 
         if(gGame.settingsState.soundState.bgMusicOn){
@@ -244,9 +251,10 @@ void HandleMouseMove(HWND hwnd, int x, int y)
     if (gGame.gameState.currentMode == GAME_MODE_SETTINGS)
     {
         CheckHover(gGame.backButtonInfo, x, y);
-        CheckHover(gGame.settingsSoundButtonInfo, x, y);
+        CheckHover(gGame.settingsMusicButtonInfo, x, y);
         CheckHover(gGame.player1, x, y);
         CheckHover(gGame.player2, x, y);
+        CheckHover(gGame.settingsSoundButtonInfo, x, y);
 
         return;
     }

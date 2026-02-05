@@ -55,6 +55,7 @@ struct GameContext{
      Button unpauseButtonInfo;
      Button soundButtonInfo;
      Button backButtonInfo;
+     Button settingsMusicButtonInfo;
      Button settingsSoundButtonInfo;
      Button player1, player2;
 

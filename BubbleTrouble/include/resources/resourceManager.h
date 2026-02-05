@@ -20,6 +20,7 @@ struct ResourceManager{
     HBITMAP pauseButton, pauseButtonMask;
     HBITMAP unpauseButton, unpauseButtonMask;
     HBITMAP soundButton, soundButtonMask;
+    HBITMAP settingsSoundOff, settingsSoundOffHover;
     HBITMAP hMenuButton, hMenuButtonMask;
     HBITMAP player1MenuChar, player1MenuCharMask;
     HBITMAP player2MenuChar, player2MenuCharMask;
@@ -30,7 +31,7 @@ struct ResourceManager{
     HBITMAP hSoundOn;
     HBITMAP controlsHolder, controlsHolderMask;
     HBITMAP settingsPlayer, settingsPlayerMask;
-    HBITMAP playerHover;
+    HBITMAP playerHover, soundOnHover;
     HBITMAP backButton, backButtonMask;
     HBITMAP hGreyButton, hGreyButtonMask;
     HBITMAP hBgLevel2, hBgLevel3;

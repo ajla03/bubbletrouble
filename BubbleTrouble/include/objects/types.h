@@ -90,10 +90,6 @@ struct HeartAnim{
     int animCounter;
 };
 
-struct SoundState{
- bool soundEffectsOn = true;
- bool bgMusicOn = true;
- };
 
 struct Torch{
  int x, y;
@@ -152,6 +148,12 @@ struct KeyBindings{
     int moveRight;
     int shoot;
 };
+
+struct SoundState{
+ bool soundEffectsOn = true;
+ bool settingsSoundEffects = true;
+ bool bgMusicOn = true;
+ };
 
 struct SettingsState{
  SoundState soundState;

@@ -81,6 +81,9 @@
 #define IDB_SOUNDON                176
 #define IDB_PLAYER_HOVER           177
 #define IDB_HERO2                  178
+#define IDB_SOUNDON_HOVER          179
+#define IDB_SOUNDOFF               180
+#define IDB_SOUNDOFF_HOVER         181
 // ============ KONSTANTE ZA HARPUN ============ //
 #define IDR_HARPOON_SOUND   201
 #define IDR_BALLOON_POP     202
