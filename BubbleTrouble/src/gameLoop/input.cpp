@@ -119,6 +119,8 @@ void HandleMouseClick(HWND hwnd, int mx, int my)
 void HandleSettingsClick(HWND hwnd, int mx, int my){
     // Back button
     if(IsPointInButton(gGame.backButtonInfo, mx, my)){
+        gGame.settingsState.currentHeroSelected = gRes.characterMask;
+        gGame.settingsState.currentPlayerBinding = 1;
         gGame.gameState.currentMode = GAME_MODE_MENU;
         return;
     }
