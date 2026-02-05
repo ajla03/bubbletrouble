@@ -182,6 +182,36 @@ static void RenderTransparentSheet(HDC hdcBuffer, RECT rect, RECT* outSheet) {
 
     SelectObject(gRes.hdcMem, hBmpOld);
     DeleteObject(bmp);
+
+    // SIVI BORDER //
+
+    HPEN darkPen = CreatePen(PS_SOLID, 2, RGB(80,80,80));
+    HPEN oldPen = (HPEN)SelectObject(hdcBuffer, darkPen);
+    HBRUSH oldBrush = (HBRUSH)SelectObject(hdcBuffer, GetStockObject(NULL_BRUSH));
+
+    Rectangle(
+        hdcBuffer,
+        outSheet->left - 2,
+        outSheet->top - 2,
+        outSheet->right + 2,
+        outSheet->bottom + 2
+    );
+
+    HPEN lightPen = CreatePen(PS_SOLID, 1, RGB(100, 100, 100));
+    SelectObject(hdcBuffer, lightPen);
+
+    Rectangle(
+        hdcBuffer,
+        outSheet->left,
+        outSheet->top,
+        outSheet->right,
+        outSheet->bottom
+    );
+
+    SelectObject(hdcBuffer, oldPen);
+    SelectObject(hdcBuffer, oldBrush);
+    DeleteObject(darkPen);
+    DeleteObject(lightPen);
 }
 
 static void RenderSettingsTitle(HDC hdcBuffer, RECT sheet) {
@@ -293,14 +323,14 @@ static void RenderSingleKeyButton(HDC hdcBuffer, int currentBtnX, int currentBtn
 static void RenderKeyButtons(HDC hdcBuffer, int x, int y, int controlW, int controlH) {
     int heroW = gGame.hero.width * 1.5;
     int heroH = gGame.hero.height * 1.5;
-    int spacing = 30;
-    int heroY = y + (controlH / 2) - (heroH / 2) - 10;
+    int spacing = 40;
+    int heroY = y + (controlH / 2) - (heroH / 2) - 20;
     int midHeroX = x + (controlW / 2) - (heroW / 2);
     int leftHeroX = midHeroX - heroW - spacing;
     int rightHeroX = midHeroX + heroW + spacing;
 
-    int btnW = 60;
-    int btnH = 30;
+    int btnW = 75;
+    int btnH = 40;
     int btnOffsetY = heroH + 15;
 
     SetTextColor(hdcBuffer, RGB(255, 255, 255));
