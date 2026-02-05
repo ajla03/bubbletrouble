@@ -111,6 +111,8 @@ void HandleMouseClick(HWND hwnd, int mx, int my)
     }
 
     if(mode == GAME_MODE_SETTINGS){
+        if(gGame.settingsState.waitingForKey != KEYBIND_NONE)
+            return;
         HandleSettingsClick(hwnd, mx, my);
         return;
     }
