@@ -210,13 +210,22 @@ void RenderSettings(HDC hdcBuffer, RECT rect)
     gGame.backButtonInfo.x = x;
     gGame.backButtonInfo.y = y;
 
-    SetStretchBltMode(hdcBuffer, HALFTONE);
-    SelectObject(gRes.hdcMem, gRes.backButton);
-    StretchBlt(hdcBuffer, x, y, btnWidth, btnHeight/2,
-               gRes.hdcMem, 0, 0, btnWidth, btnHeight, SRCPAINT);
-    SelectObject(gRes.hdcMem, gRes.backButtonMask);
-    StretchBlt(hdcBuffer, x, y, btnWidth, btnHeight/2,
-               gRes.hdcMem, 0, 0, btnWidth, btnHeight, SRCAND);
+
+    if(gGame.backButtonInfo.isHover)
+        currentBitmap = gRes.playerHover;
+    else
+        currentBitmap = gRes.backButtonMask;
+
+    GetObject(currentBitmap, sizeof(BITMAP), &bm);
+    SelectObject(gRes.hdcMem, currentBitmap);
+
+    TransparentBlt(
+        hdcBuffer, x, y, btnWidth, btnHeight/2,
+        gRes.hdcMem, 0, 0,
+        bm.bmWidth,
+        bm.bmHeight,
+        RGB(255,255,255)
+    );
 
     textRect = { x, y, x + btnWidth, y + btnHeight/2 };
     SetBkMode(hdcBuffer, TRANSPARENT);
