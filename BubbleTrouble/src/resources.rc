@@ -103,6 +103,8 @@ IDB_CONTROLS            BITMAP  "../assets/bitmaps/controlsHolderWhite.bmp"
 IDB_CONTROLS_MASK       BITMAP  "../assets/bitmaps/controlsHolderBlack.bmp"
 IDB_SETTINGS_PLAYER           BITMAP  "../assets/bitmaps/settingsPlayerWhite.bmp"
 IDB_SETTINGS_PLAYER_MASK       BITMAP  "../assets/bitmaps/settingsPlayerBlack.bmp"
+IDB_PLAYER_HOVER               BITMAP  "../assets/bitmaps/settingsPlayerHover.bmp"
+
 
 IDB_LOGO            BITMAP  "../assets/bitmaps/logoo.bmp"
 IDB_LOGO_MASK       BITMAP  "../assets/bitmaps/logoo_mask.bmp"

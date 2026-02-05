@@ -79,6 +79,7 @@
 #define IDB_SETTINGS_PLAYER   174
 #define IDB_SETTINGS_PLAYER_MASK   175
 #define IDB_SOUNDON                176
+#define IDB_PLAYER_HOVER           177
 // ============ KONSTANTE ZA HARPUN ============ //
 #define IDR_HARPOON_SOUND   201
 #define IDR_BALLOON_POP     202

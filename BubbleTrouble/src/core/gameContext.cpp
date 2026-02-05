@@ -35,6 +35,8 @@ GameContext gGame = {
     /* nextButtonInfo */ {},
     /* pauseButtonInfo */ {},
     /* unpauseButtonInfo */ {},
+    /* player1          */{},
+    /* player2       */   {},
     /* soundButtonInfo */ {},
     /* backButtonInfo */ {},
     /* settingsSoundButtonInfo */ {},

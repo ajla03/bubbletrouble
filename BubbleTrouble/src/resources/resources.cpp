@@ -166,7 +166,11 @@ void LoadBitmaps(HWND hwnd, HINSTANCE hInstance){
         GetObject(gRes.backButton, sizeof(BITMAP), &bm);
         gGame.backButtonInfo.width = bm.bmWidth;
         gGame.backButtonInfo.height = bm.bmHeight;
+        gGame.player2.width = gGame.player1.width  = bm.bmWidth * 1.5;
+        gGame.player2.height = gGame.player1.height = bm.bmHeight / 2;
     }
+
+
 
     // === INPUT STATE SETUP ===
     gGame.inputState.wasSpacePressed = false;

@@ -141,8 +141,6 @@ void RenderSettings(HDC hdcBuffer, RECT rect)
     }
 
     // PLAYER BUTTONS //
-    int btnWidth = gGame.backButtonInfo.width;
-    int btnHeight = gGame.backButtonInfo.height;
     btnW = gGame.backButtonInfo.width * 1.5;
     btnH = gGame.backButtonInfo.height / 2;
     int btnX = x/2 - btnW/2 + sheet.left/2;
@@ -151,28 +149,50 @@ void RenderSettings(HDC hdcBuffer, RECT rect)
 
     int firstBtnY  = groupTop;
     int secondBtnY = groupTop + btnH + padding;
+    HBITMAP currentBitmap;
+
+
+    if(gGame.player1.isHover)
+        currentBitmap = gRes.playerHover;
+    else
+        currentBitmap = gRes.backButtonMask;
+
+
+    GetObject(currentBitmap, sizeof(BITMAP), &bm);
 
     // ===== PLAYER 1 =====
-    SelectObject(gRes.hdcMem, gRes.backButtonMask);
+    SelectObject(gRes.hdcMem, currentBitmap);
     TransparentBlt(
         hdcBuffer, btnX, firstBtnY, btnW, btnH,
         gRes.hdcMem, 0, 0,
-        btnWidth,
-        btnHeight,
+        bm.bmWidth,
+        bm.bmHeight,
         RGB(255,255,255)
     );
+
+    gGame.player2.x = gGame.player1.x = btnX;
+    gGame.player2.y = secondBtnY;
+    gGame.player1.y = firstBtnY;
 
     RECT r1 = { btnX, firstBtnY, btnX + btnW, firstBtnY + btnH };
     DrawText(hdcBuffer, "PLAYER 1", -1, &r1,
              DT_CENTER | DT_VCENTER | DT_SINGLELINE);
 
 
+    if(gGame.player2.isHover)
+        currentBitmap = gRes.playerHover;
+    else
+        currentBitmap = gRes.backButtonMask;
+    GetObject(currentBitmap, sizeof(BITMAP), &bm);
+
+    SelectObject(gRes.hdcMem, currentBitmap);
+
     // ===== PLAYER 2 =====
     TransparentBlt(
         hdcBuffer, btnX, secondBtnY, btnW, btnH,
         gRes.hdcMem, 0, 0,
-        btnWidth,
-        btnHeight,
+        bm.bmWidth,
+        bm.bmHeight,
         RGB(255,255,255)
     );
 
@@ -182,8 +202,8 @@ void RenderSettings(HDC hdcBuffer, RECT rect)
 
     // --- BACK BUTTON ---
 
-    btnWidth = gGame.backButtonInfo.width;
-    btnHeight = gGame.backButtonInfo.height;
+    int btnWidth = gGame.backButtonInfo.width;
+    int btnHeight = gGame.backButtonInfo.height;
     x = sheet.left + padding;
     y = sheet.bottom - btnHeight/2 - padding;
 

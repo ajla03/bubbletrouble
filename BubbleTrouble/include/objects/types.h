@@ -102,7 +102,7 @@ struct Torch{
  int animCounter = 0;
 };
 
-// used for MENU, RESTART and NEXT button
+// used for MENU, RESTART and NEXT button etc.
 struct Button {
    int x, y;
    int width, height;

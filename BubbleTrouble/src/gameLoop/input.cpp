@@ -208,6 +208,9 @@ void HandleMouseMove(HWND hwnd, int x, int y)
     {
         CheckHover(gGame.backButtonInfo, x, y);
         CheckHover(gGame.settingsSoundButtonInfo, x, y);
+        CheckHover(gGame.player1, x, y);
+        CheckHover(gGame.player2, x, y);
+
         return;
     }
 
@@ -239,4 +242,6 @@ void HandleMouseMove(HWND hwnd, int x, int y)
         CheckHover(gGame.homeButtonInfo, x, y);
         return;
     }
+
+
 }

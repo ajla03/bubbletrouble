@@ -30,6 +30,7 @@ struct ResourceManager{
     HBITMAP hSoundOn;
     HBITMAP controlsHolder, controlsHolderMask;
     HBITMAP settingsPlayer, settingsPlayerMask;
+    HBITMAP playerHover;
     HBITMAP backButton, backButtonMask;
     HBITMAP hGreyButton, hGreyButtonMask;
     HBITMAP hBgLevel2, hBgLevel3;

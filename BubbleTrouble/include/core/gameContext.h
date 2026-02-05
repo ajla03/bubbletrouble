@@ -56,6 +56,7 @@ struct GameContext{
      Button soundButtonInfo;
      Button backButtonInfo;
      Button settingsSoundButtonInfo;
+     Button player1, player2;
 
     // STATE
     InputState inputState;
