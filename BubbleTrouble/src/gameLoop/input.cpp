@@ -124,23 +124,22 @@ void HandleSettingsClick(HWND hwnd, int mx, int my){
     return;
    }
 
-    // Back button
-    if(IsPointInButton(gGame.backButtonInfo, mx, my)){
-        gGame.settingsState.currentHeroSelected = gRes.characterMask;
-        gGame.settingsState.currentPlayerBinding = 1;
-        gGame.gameState.currentMode = GAME_MODE_MENU;
-        return;
-    }
-
-    // Music button
-    if(IsPointInButton(gGame.settingsMusicButtonInfo, mx, my)){
+   // Music Button
+   if(IsPointInButton(gGame.settingsMusicButtonInfo, mx, my)){
         gGame.settingsState.soundState.bgMusicOn = !gGame.settingsState.soundState.bgMusicOn;
-
         if(gGame.settingsState.soundState.bgMusicOn){
             mciSendString("play bgMusic from 0 notify", NULL, 0, hwnd);
         } else {
             mciSendString("pause bgMusic", NULL, 0, NULL);
         }
+    return;
+   }
+
+    // Back button
+    if(IsPointInButton(gGame.backButtonInfo, mx, my)){
+        gGame.settingsState.currentHeroSelected = gRes.characterMask;
+        gGame.settingsState.currentPlayerBinding = 1;
+        gGame.gameState.currentMode = GAME_MODE_MENU;
         return;
     }
 

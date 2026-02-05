@@ -47,6 +47,7 @@ bool ResourceManager::LoadAll(HINSTANCE hInstance) {
     settingsPlayerMask = LoadBitmap(hInstance, MAKEINTRESOURCE(IDB_SETTINGS_PLAYER_MASK));
     playerHover = LoadBitmap(hInstance, MAKEINTRESOURCE(IDB_PLAYER_HOVER));
     soundOnHover = LoadBitmap(hInstance, MAKEINTRESOURCE(IDB_SOUNDON_HOVER));
+    settingsMusicOnHover = LoadBitmap(hInstance, MAKEINTRESOURCE(IDB_MUSICON_HOVER));
     settingsSoundOff = LoadBitmap(hInstance, MAKEINTRESOURCE(IDB_SOUNDOFF));
     settingsSoundOffHover = LoadBitmap(hInstance, MAKEINTRESOURCE(IDB_SOUNDOFF_HOVER));
     hero2 = LoadBitmap(hInstance, MAKEINTRESOURCE(IDB_HERO2));

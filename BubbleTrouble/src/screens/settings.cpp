@@ -42,7 +42,6 @@ void RenderSettings(HDC hdcBuffer, RECT rect)
 
     // --- SOUND HOLDER ---
     RenderSoundHolder(hdcBuffer, sheet);
-    RenderSoundButton(hdcBuffer, sheet);
 
     SelectObject(hdcBuffer, oldFont);
 
@@ -53,6 +52,9 @@ void RenderSettings(HDC hdcBuffer, RECT rect)
 
 
 void InitDefaultSettings(){
+    gGame.settingsState.soundState.bgMusicOn = true;
+    gGame.settingsState.soundState.settingsSoundEffects = true;
+    gGame.settingsState.soundState.soundEffectsOn = true;
     gGame.settingsState.currentHeroSelected = gRes.characterMask;
 
     // player 1 - default controls
@@ -434,12 +436,28 @@ static void RenderSoundHolder(HDC hdcBuffer, RECT sheet) {
     int x = sheet.right - soundW - padding;
     int y = sheet.bottom - soundH - padding;
 
-    SelectObject(gRes.hdcMem, gRes.hMusicHolder);
-    StretchBlt(hdcBuffer, x, y, soundW, soundH,
-               gRes.hdcMem, 0, 0, bm.bmWidth, bm.bmHeight, SRCAND);
-    SelectObject(gRes.hdcMem, gRes.hMusicHolderMask);
-    StretchBlt(hdcBuffer, x, y, soundW, soundH,
-               gRes.hdcMem, 0, 0, bm.bmWidth, bm.bmHeight, SRCPAINT);
+    HBITMAP hbm;
+    gGame.settingsMusicButtonInfo.x = x;
+    gGame.settingsMusicButtonInfo.y = y;
+    gGame.settingsMusicButtonInfo.width = soundW;
+    gGame.settingsMusicButtonInfo.height = soundH;
+
+    if(gGame.settingsState.soundState.bgMusicOn){
+     if(gGame.settingsMusicButtonInfo.isHover)
+        hbm = gRes.settingsMusicOnHover;
+    else
+        hbm = gRes.hMusicHolder;
+    }
+    /*else{
+      if(gGame.settingsSoundButtonInfo.isHover)
+        hbm = gRes.settingsSoundOffHover;
+      else
+        hbm = gRes.settingsSoundOff;
+    }*/
+
+    SelectObject(gRes.hdcMem, hbm);
+    TransparentBlt(hdcBuffer, x, y, soundW, soundH,
+                   gRes.hdcMem, 0, 0, bm.bmWidth, bm.bmHeight, RGB(255, 255, 255));
 
     RECT labelRect;
     labelRect.left = x - 350;
@@ -452,13 +470,13 @@ static void RenderSoundHolder(HDC hdcBuffer, RECT sheet) {
     DrawText(hdcBuffer, "Background Music:", -1, &labelRect,
              DT_RIGHT | DT_VCENTER | DT_SINGLELINE);
 
-    HBITMAP hbm;
     if(gGame.settingsState.soundState.settingsSoundEffects){
     if(gGame.settingsSoundButtonInfo.isHover)
         hbm = gRes.soundOnHover;
     else
         hbm = gRes.hSoundOn;
-    }else{
+    }
+    else{
       if(gGame.settingsSoundButtonInfo.isHover)
         hbm = gRes.settingsSoundOffHover;
       else
@@ -469,8 +487,8 @@ static void RenderSoundHolder(HDC hdcBuffer, RECT sheet) {
     GetObject(hbm, sizeof(BITMAP), &bm);
     gGame.settingsSoundButtonInfo.x = x;
     gGame.settingsSoundButtonInfo.y = y - padding/2 - soundH;
-    gGame.settingsSoundButtonInfo.width = bm.bmWidth;
-    gGame.settingsSoundButtonInfo.height = bm.bmHeight;
+    gGame.settingsSoundButtonInfo.width = soundW;
+    gGame.settingsSoundButtonInfo.height = soundH;
 
     TransparentBlt(hdcBuffer, x, y - padding/2 - soundH, soundW, soundH,
                    gRes.hdcMem, 0, 0, bm.bmWidth, bm.bmHeight, RGB(255, 255, 255));
@@ -483,66 +501,5 @@ static void RenderSoundHolder(HDC hdcBuffer, RECT sheet) {
              DT_RIGHT | DT_VCENTER | DT_SINGLELINE);
 }
 
-static void RenderSoundButton(HDC hdcBuffer, RECT sheet) {
-    BITMAP bm;
-    GetObject(gRes.hMusicHolder, sizeof(BITMAP), &bm);
 
-    float soundScale = 0.5;
-    int soundW = bm.bmWidth * soundScale;
-    int soundH = bm.bmHeight * soundScale;
-    int padding = 40;
-    int x = sheet.right - soundW - padding;
-    int y = sheet.bottom - soundH - padding;
 
-    GetObject(gRes.soundButton, sizeof(BITMAP), &bm);
-    int soundBtnW = bm.bmWidth * 0.4;
-    int soundBtnH = bm.bmHeight * 0.4;
-    int soundBtnX = x + (soundW - soundBtnW) / 2;
-    int soundBtnY = y + (soundH - soundBtnH) / 2;
-
-    gGame.settingsMusicButtonInfo.x = soundBtnX;
-    gGame.settingsMusicButtonInfo.y = soundBtnY;
-    gGame.settingsMusicButtonInfo.width = soundBtnW;
-    gGame.settingsMusicButtonInfo.height = soundBtnH;
-
-    if (!gGame.settingsState.soundState.bgMusicOn) {
-        HBITMAP overlayBmp = CreateCompatibleBitmap(hdcBuffer, 1, 1);
-        HBITMAP hOldOverlay = (HBITMAP) SelectObject(gRes.hdcMem, overlayBmp);
-        SetPixel(gRes.hdcMem, 0, 0, RGB(100, 100, 100));
-
-        BLENDFUNCTION bfOverlay = {};
-        bfOverlay.BlendOp = AC_SRC_OVER;
-        bfOverlay.SourceConstantAlpha = 120;
-        bfOverlay.AlphaFormat = 0;
-        AlphaBlend(hdcBuffer, soundBtnX, soundBtnY, soundBtnW, soundBtnH,
-                   gRes.hdcMem, 0, 0, 1, 1, bfOverlay);
-
-        SelectObject(gRes.hdcMem, hOldOverlay);
-        DeleteObject(overlayBmp);
-
-        HPEN hRedPen = CreatePen(PS_SOLID, 3, RGB(255, 50, 50));
-        HPEN hOldPen = (HPEN)SelectObject(hdcBuffer, hRedPen);
-        MoveToEx(hdcBuffer, soundBtnX, soundBtnY, NULL);
-        LineTo(hdcBuffer, soundBtnX + soundBtnW, soundBtnY + soundBtnH);
-        MoveToEx(hdcBuffer, soundBtnX + soundBtnW, soundBtnY, NULL);
-        LineTo(hdcBuffer, soundBtnX, soundBtnY + soundBtnH);
-        SelectObject(hdcBuffer, hOldPen);
-        DeleteObject(hRedPen);
-    }
-
-    if (gGame.settingsMusicButtonInfo.isHover) {
-        HBITMAP hoverBmp = CreateCompatibleBitmap(hdcBuffer, 1, 1);
-        HBITMAP hOldHover = (HBITMAP) SelectObject(gRes.hdcMem, hoverBmp);
-        SetPixel(gRes.hdcMem, 0, 0, RGB(255, 255, 255));
-
-        BLENDFUNCTION bfHover = {};
-        bfHover.BlendOp = AC_SRC_OVER;
-        bfHover.SourceConstantAlpha = 50;
-        bfHover.AlphaFormat = 0;
-        AlphaBlend(hdcBuffer, soundBtnX, soundBtnY, soundBtnW, soundBtnH,
-                   gRes.hdcMem, 0, 0, 1, 1, bfHover);
-
-        SelectObject(gRes.hdcMem, hOldHover);
-        DeleteObject(hoverBmp);
-    }
-}
