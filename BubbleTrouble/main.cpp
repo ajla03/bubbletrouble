@@ -34,8 +34,15 @@ int WINAPI WinMain(HINSTANCE hThisInstance, HINSTANCE hPrevInstance, LPSTR lpszA
 
     if (!RegisterClassEx(&wincl)) return 0;
 
-    hwnd = CreateWindowEx(0, szClassName, _T("Igra"), WS_OVERLAPPEDWINDOW,
-                          CW_USEDEFAULT, CW_USEDEFAULT, 1000, 700,
+    DWORD style =
+        WS_OVERLAPPED |        // osnovni prozor
+        WS_CAPTION |           // title bar
+        WS_SYSMENU |           // system menu
+        WS_MINIMIZEBOX |       // minimize dozvoljen
+        WS_MAXIMIZEBOX;        // fullscreen dozvoljen
+
+    hwnd = CreateWindowEx(0, szClassName, _T("Bubble Trouble"), style,
+                          20, 20, 1280, 720,
                           HWND_DESKTOP, NULL, hThisInstance, NULL);
 
     ShowWindow(hwnd, nCmdShow);
