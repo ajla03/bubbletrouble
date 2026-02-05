@@ -15,7 +15,8 @@ static void RenderPlayerButtons(HDC hdcBuffer, RECT sheet, int x, int y, int con
 static void RenderBackButton(HDC hdcBuffer, RECT sheet);
 static void RenderTorches(HDC hdcBuffer, RECT sheet);
 static void RenderSoundHolder(HDC hdcBuffer, RECT sheet);
-static void RenderSoundButton(HDC hdcBuffer, RECT sheet);
+static void RenderKeyBindingOverlay(HDC hdcBuffer, RECT rect);
+
 
 void RenderSettings(HDC hdcBuffer, RECT rect)
 {
@@ -43,11 +44,15 @@ void RenderSettings(HDC hdcBuffer, RECT rect)
     // --- SOUND HOLDER ---
     RenderSoundHolder(hdcBuffer, sheet);
 
-    SelectObject(hdcBuffer, oldFont);
-
     // --- TORCHES ---
     RenderTorches(hdcBuffer, sheet);
 
+    // ANIMATION - KEY BINDING //
+    if (gGame.settingsState.waitingForKey != KEYBIND_NONE) {
+        RenderKeyBindingOverlay(hdcBuffer, rect);
+    }
+
+    SelectObject(hdcBuffer, oldFont);
 }
 
 
@@ -68,6 +73,10 @@ void InitDefaultSettings(){
 
     gGame.settingsState.waitingForKey = KEYBIND_NONE;
     gGame.settingsState.currentPlayerBinding = 1;
+    gGame.settingsState.dotAnimation.dotCount = 0;
+    gGame.settingsState.dotAnimation.lastDotTime = GetTickCount();
+    gGame.settingsState.dotAnimation.dotInterval = 400;
+
 }
 
 const char* VKCodeToString(int vkCode)
@@ -545,6 +554,53 @@ static void RenderSoundHolder(HDC hdcBuffer, RECT sheet)
              DT_RIGHT | DT_VCENTER | DT_SINGLELINE);
 }
 
+static void RenderKeyBindingOverlay(HDC hdcBuffer, RECT rect){
+    HBITMAP bmp = CreateCompatibleBitmap(hdcBuffer, 1, 1);
+    HBITMAP hBmpOld = (HBITMAP) SelectObject(gRes.hdcMem, bmp);
+    SetPixel(gRes.hdcMem, 0, 0, RGB(0, 0, 0));
+
+    BLENDFUNCTION bf = {};
+    bf.BlendOp = AC_SRC_OVER;
+    bf.SourceConstantAlpha = 180;
+    bf.AlphaFormat = 0;
+
+    AlphaBlend(hdcBuffer, 0, 0, rect.right, rect.bottom, gRes.hdcMem, 0, 0, 1, 1, bf);
+
+    SelectObject(gRes.hdcMem, hBmpOld);
+    DeleteObject(bmp);
+
+    DWORD currentTime = GetTickCount();
+    if (currentTime - gGame.settingsState.dotAnimation.lastDotTime >=
+        gGame.settingsState.dotAnimation.dotInterval) {
+        gGame.settingsState.dotAnimation.dotCount++;
+        if (gGame.settingsState.dotAnimation.dotCount > 3) {
+            gGame.settingsState.dotAnimation.dotCount = 1;
+        }
+        gGame.settingsState.dotAnimation.lastDotTime = currentTime;
+    }
+
+    SetBkMode(hdcBuffer, TRANSPARENT);
+    SetTextColor(hdcBuffer, RGB(255, 255, 0));
+
+    RECT textRect = rect;
+    DrawText(hdcBuffer, "Enter  a   key", -1, &textRect,
+             DT_CENTER | DT_VCENTER | DT_SINGLELINE);
+
+    SIZE textSize;
+    GetTextExtentPoint32(hdcBuffer, "Enter\ta\tkey", 11, &textSize);
+    char dots[4] = "";
+    for (int i = 0; i < gGame.settingsState.dotAnimation.dotCount; i++) {
+        strcat(dots, ".");
+    }
+
+    RECT dotsRect;
+    dotsRect.left = rect.left + (rect.right - rect.left) / 2 + textSize.cx / 2;
+    dotsRect.right = rect.right;
+    dotsRect.top = rect.top;
+    dotsRect.bottom = rect.bottom;
+
+    DrawText(hdcBuffer, dots, -1, &dotsRect, DT_LEFT | DT_VCENTER | DT_SINGLELINE);
+}
 
 
 

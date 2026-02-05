@@ -154,6 +154,13 @@ struct SoundState{
  bool bgMusicOn = true;
  };
 
+
+typedef struct{
+    int dotCount;
+    DWORD lastDotTime;
+    int dotInterval;
+}DotAnimation;
+
 struct SettingsState{
  SoundState soundState;
  HBITMAP currentHeroSelected;
@@ -166,6 +173,9 @@ struct SettingsState{
  Button rightKeyButton;
  Button spaceKeyButton;
  int currentPlayerBinding;
+
+ // ANIMATION
+ DotAnimation dotAnimation;
 };
 
 
