@@ -120,7 +120,7 @@ void HandleSettingsClick(HWND hwnd, int mx, int my){
 
    // Sound Button
    if(IsPointInButton(gGame.settingsSoundButtonInfo, mx, my)){
-    gGame.settingsState.soundState.settingsSoundEffects = !gGame.settingsState.soundState.settingsSoundEffects;
+    gGame.settingsState.soundState.soundEffectsOn = !gGame.settingsState.soundState.soundEffectsOn;
     return;
    }
 
@@ -190,7 +190,6 @@ void HandlePlayingClick(HWND hwnd, int mx, int my)
 
     if (IsPointInButton(gGame.soundButtonInfo, mx, my))
     {
-        // Toggle samo sound efekte (ne utice na pozadinsku muziku)
         gGame.settingsState.soundState.soundEffectsOn = !gGame.settingsState.soundState.soundEffectsOn;
         return;
     }

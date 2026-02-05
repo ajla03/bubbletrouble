@@ -151,7 +151,6 @@ struct KeyBindings{
 
 struct SoundState{
  bool soundEffectsOn = true;
- bool settingsSoundEffects = true;
  bool bgMusicOn = true;
  };
 

@@ -53,7 +53,6 @@ void RenderSettings(HDC hdcBuffer, RECT rect)
 
 void InitDefaultSettings(){
     gGame.settingsState.soundState.bgMusicOn = true;
-    gGame.settingsState.soundState.settingsSoundEffects = true;
     gGame.settingsState.soundState.soundEffectsOn = true;
     gGame.settingsState.currentHeroSelected = gRes.characterMask;
 
@@ -470,7 +469,7 @@ static void RenderSoundHolder(HDC hdcBuffer, RECT sheet) {
     DrawText(hdcBuffer, "Background Music:", -1, &labelRect,
              DT_RIGHT | DT_VCENTER | DT_SINGLELINE);
 
-    if(gGame.settingsState.soundState.settingsSoundEffects){
+    if(gGame.settingsState.soundState.soundEffectsOn){
     if(gGame.settingsSoundButtonInfo.isHover)
         hbm = gRes.soundOnHover;
     else
