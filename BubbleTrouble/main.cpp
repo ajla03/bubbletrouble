@@ -49,7 +49,7 @@ int WINAPI WinMain(HINSTANCE hThisInstance, HINSTANCE hPrevInstance, LPSTR lpszA
         hThisInstance,
         MAKEINTRESOURCE(IDR_MAINICON),
         IMAGE_ICON,
-        32, 32,
+        0, 0,
         LR_DEFAULTCOLOR
     );
 
