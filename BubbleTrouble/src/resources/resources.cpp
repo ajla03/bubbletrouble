@@ -175,6 +175,7 @@ void LoadBitmaps(HWND hwnd, HINSTANCE hInstance){
     // === INPUT STATE SETUP ===
     gGame.inputState.wasSpacePressed = false;
     InitializeMenu(hwnd);
+   // InitSettingDefault();
 }
 
 

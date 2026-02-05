@@ -41,6 +41,9 @@ int WINAPI WinMain(HINSTANCE hThisInstance, HINSTANCE hPrevInstance, LPSTR lpszA
     ShowWindow(hwnd, nCmdShow);
 
     LoadBitmaps(hwnd, hThisInstance);
+    /* should init default settings */
+    InitDefaultSettings();
+
     mciSendString("close bgMusic", NULL, 0, NULL);
 
     mciSendString("open \"assets\\sounds\\music_loop.wav\" type waveaudio alias bgMusic", NULL, 0, NULL);

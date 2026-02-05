@@ -1,60 +1,59 @@
-//#include "gameContext.h"
-
 #include "gameContext.h"
-
 // GLOBAL GAME CONTEXT
 GameContext gGame = {
     // ===== LEVELS =====
-    /* levels */ {},
-    /* currentLevel */ 0,
-    /* totalScore */ 0,
-    /* displayScore */ 0,
+    /* levels */        {},
+    /* currentLevel */  0,
+    /* totalScore */    0,
+    /* displayScore */  0,
 
     // ===== GAME OBJEKTI =====
-    /* harpoon */ {},
-    /* hero */ {},
-    /* leftWall */ {},
-    /* rightWall */ {},
-    /* floorWall */ {},
-    /* animatedWall */ {},
+    /* harpoon */       {},
+    /* hero */          {},
+    /* leftWall */      {},
+    /* rightWall */     {},
+    /* floorWall */     {},
+    /* animatedWall */  {},
     /* levelPlaceholderInfo */ {},
-    /* scoreHolderInfo */  {},
-    /* heartInfo */ {},
-    /* heartBgInfo */ {},
+    /* playerHolderInfo */     {},
+    /* scoreHolderInfo */      {},
+    /* heartInfo */     {},
+    /* heartBgInfo */   {},
     /* heartBorderInfo */ {},
-    /* hearts */ {},
-    /* torchInfo */ {},
-    /* playerHolderInfo */ {},
+    /* hearts */        {},
+    /* torchInfo */     {},
     /* animatedWalls */ { 0, 0, 12.0f },
-    /* logoInfo */ {},
+    /* logoInfo */      {},
 
     // ===== UI =====
-    /* menuButtons */ {},
-    /* restartButtonInfo */ {},
-    /* homeButtonInfo */ {},
-    /* nextButtonInfo */ {},
-    /* pauseButtonInfo */ {},
-    /* unpauseButtonInfo */ {},
-    /* player1          */{},
-    /* player2       */   {},
-    /* soundButtonInfo */ {},
-    /* backButtonInfo */ {},
+    /* menuButtons */   {},
+    /* restartButtonInfo */  {},
+    /* homeButtonInfo */     {},
+    /* nextButtonInfo */     {},
+    /* pauseButtonInfo */    {},
+    /* unpauseButtonInfo */  {},
+    /* soundButtonInfo */    {},
+    /* backButtonInfo */     {},
     /* settingsSoundButtonInfo */ {},
+    /* player1 */       {},
+    /* player2 */       {},
+
     // ===== STATE =====
-    /* inputState */ {},
-    /* gameState */ {
-        false,
-        false,
-        GAME_MODE_MENU,
-        START_LIVES,
-        false,
-        false,
-        false,
-        0,
-        false,
-        0,
-        false,
-        0
+    /* inputState */    {},
+    /* gameState */     {
+        false,              // gameActive
+        false,              // isPaused
+        GAME_MODE_MENU,     // currentGameMode
+        START_LIVES,        // lives
+        false,              // showPauseMenu
+        false,              // showGameOverMenu
+        false,              // showVictoryMenu
+        0,                  // menuSelection
+        false,              // showNextButton
+        0,                  // (reserved)
+        false,              // (reserved)
+        0                   // (reserved)
     },
-    /* transitionState */ TRANSITION_NONE
+    /* transitionState */ TRANSITION_NONE,
+    /* settingsState */ {}
 };

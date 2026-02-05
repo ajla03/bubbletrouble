@@ -46,6 +46,7 @@ bool ResourceManager::LoadAll(HINSTANCE hInstance) {
     settingsPlayer = LoadBitmap(hInstance, MAKEINTRESOURCE(IDB_SETTINGS_PLAYER));
     settingsPlayerMask = LoadBitmap(hInstance, MAKEINTRESOURCE(IDB_SETTINGS_PLAYER_MASK));
     playerHover = LoadBitmap(hInstance, MAKEINTRESOURCE(IDB_PLAYER_HOVER));
+    hero2 = LoadBitmap(hInstance, MAKEINTRESOURCE(IDB_HERO2));
 
     logo          = LoadBitmap(hInstance, MAKEINTRESOURCE(IDB_LOGO));
     logoMask      = LoadBitmap(hInstance, MAKEINTRESOURCE(IDB_LOGO_MASK));

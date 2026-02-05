@@ -103,3 +103,6 @@ void DrawTransitionWalls(HDC hdc, RECT rect);
 
 // ================= LAYOUT (in update.cpp) =================
 void UpdateLayout(int oldW, int oldH, int newW, int newH);
+
+// ================ SETTINGS =======================
+void InitDefaultSettings();

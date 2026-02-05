@@ -3,6 +3,7 @@
 #include "constants.h"
 #include "game.h"
 #include <windows.h>
+#include "resourceManager.h"
 
 void CheckInputs(HWND hwnd){
     if(gGame.gameState.currentMode != GAME_MODE_PLAYING || gGame.transitionState== TRANSITION_WAIT || gGame.transitionState == TRANSITION_CLOSING)
@@ -67,7 +68,7 @@ void CheckInputs(HWND hwnd){
         gGame.harpoon.length = 0;
         gGame.harpoon.x = gGame.hero.x + (gGame.hero.width / 2) - (gGame.harpoon.width / 2);
         gGame.harpoon.y = rect.bottom - gGame.floorWall.height;
-        if(gGame.gameState.currentMode == GAME_MODE_PLAYING && gGame.soundState.soundEffectsOn)
+        if(gGame.gameState.currentMode == GAME_MODE_PLAYING && gGame.settingsState.soundState.soundEffectsOn)
         PlaySound(MAKEINTRESOURCE(IDR_HARPOON_SOUND), GetModuleHandle(NULL),
               SND_RESOURCE | SND_ASYNC);
     }
@@ -119,15 +120,27 @@ void HandleSettingsClick(HWND hwnd, int mx, int my){
     }
 
     if(IsPointInButton(gGame.settingsSoundButtonInfo, mx, my)){
-        gGame.soundState.bgMusicOn = !gGame.soundState.bgMusicOn;
+        gGame.settingsState.soundState.bgMusicOn = !gGame.settingsState.soundState.bgMusicOn;
 
-        if(gGame.soundState.bgMusicOn){
+        if(gGame.settingsState.soundState.bgMusicOn){
             mciSendString("play bgMusic from 0 notify", NULL, 0, hwnd);
         } else {
             mciSendString("pause bgMusic", NULL, 0, NULL);
         }
         return;
     }
+
+    if(IsPointInButton(gGame.player1, mx, my)){
+        gGame.settingsState.currentHeroSelected = gRes.characterMask;
+        return;
+    }
+
+    if(IsPointInButton(gGame.player2, mx, my)){
+        gGame.settingsState.currentHeroSelected = gRes.hero2;
+        return;
+    }
+
+
 }
 
 void HandleBackClick(HWND hwnd, int mx, int my){
@@ -148,7 +161,7 @@ void HandlePlayingClick(HWND hwnd, int mx, int my)
     if (IsPointInButton(gGame.soundButtonInfo, mx, my))
     {
         // Toggle samo sound efekte (ne utice na pozadinsku muziku)
-        gGame.soundState.soundEffectsOn = !gGame.soundState.soundEffectsOn;
+        gGame.settingsState.soundState.soundEffectsOn = !gGame.settingsState.soundState.soundEffectsOn;
         return;
     }
 }

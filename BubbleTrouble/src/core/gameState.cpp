@@ -4,7 +4,7 @@
 #include "constants.h"
 #include <windows.h>
 
-void StartGame(HWND hwnd) {
+void StartGame(HWND hwnd){
     gGame.gameState.currentMode = GAME_MODE_PLAYING;
     ResetGame(hwnd);
 }
@@ -20,7 +20,7 @@ void ResetGame(HWND hwnd) {
     gGame.displayScore = 0;
     gGame.pauseButtonInfo.isHover = false;
     if(gGame.gameState.currentMode == GAME_MODE_MENU)
-        gGame.soundState.soundEffectsOn = true;
+        gGame.settingsState.soundState.soundEffectsOn = true;
 
     if (CURRENT_LEVEL.hdcCache) DeleteDC(CURRENT_LEVEL.hdcCache);
     if (CURRENT_LEVEL.hStaticCache) DeleteObject(CURRENT_LEVEL.hStaticCache);
@@ -106,3 +106,4 @@ void ResetBetweenLevels(HWND hwnd) {
     for (int i = 0; i < MAX_POWERUPS; i++)
         CURRENT_LEVEL.powerups[i].active = false;
 }
+

@@ -111,7 +111,7 @@ void CheckCollisions(){
         float distance = sqrt(dx*dx + dy*dy);
 
         if(distance < b->radius && gGame.hero.heroHitCooldown <= 0){
-              if(gGame.soundState.soundEffectsOn)
+              if(gGame.settingsState.soundState.soundEffectsOn)
                 PlaySound(MAKEINTRESOURCE(IDR_DAMAGE_SOUND), GetModuleHandle(NULL), SND_RESOURCE | SND_ASYNC);
             --gGame.gameState.lives;
             gGame.hero.heroHitCooldown = HERO_INVINCIBLE_TIME;

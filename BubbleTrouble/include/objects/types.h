@@ -137,3 +137,8 @@ struct PowerUp {
    int width, height;
    DWORD spawnTime;
 };
+
+struct SettingsState{
+ SoundState soundState;
+ HBITMAP currentHeroSelected;
+};

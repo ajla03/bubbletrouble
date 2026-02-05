@@ -511,7 +511,7 @@ void DrawButton(HDC hdc, HBITMAP bmp, HBITMAP mask, Button& button)
     BitBlt(hdc, button.x, button.y, button.width, button.height, gRes.hdcMem, 0, 0, SRCAND);
 
     // SOUND OFF
-    if (bmp == gRes.soundButton && !gGame.soundState.soundEffectsOn)
+    if (bmp == gRes.soundButton && !gGame.settingsState.soundState.soundEffectsOn)
     {
         HRGN rgn = CreateEllipticRgn(
             button.x,

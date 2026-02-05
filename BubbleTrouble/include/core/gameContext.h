@@ -62,8 +62,7 @@ struct GameContext{
     InputState inputState;
     GameState gameState;
     TransitionState transitionState;
-    SoundState soundState;
-
+    SettingsState settingsState;
 };
 
 extern GameContext gGame;

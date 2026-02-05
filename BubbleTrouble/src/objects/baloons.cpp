@@ -141,7 +141,7 @@ void SplitBalloon(int index) {
 
     float newRadius = b->radius /2.0f;
 
-    if(gGame.soundState.soundEffectsOn)
+    if(gGame.settingsState.soundState.soundEffectsOn)
         PlaySound(MAKEINTRESOURCE(IDR_BALLOON_POP),
                                   GetModuleHandle(NULL),
                                   SND_RESOURCE | SND_ASYNC | SND_NODEFAULT);

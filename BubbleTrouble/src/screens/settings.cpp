@@ -86,29 +86,29 @@ void RenderSettings(HDC hdcBuffer, RECT rect)
     int srcX_left = 0 * gGame.hero.width;
     int srcY_left = 1 * gGame.hero.height;
 
+
     SetStretchBltMode(hdcBuffer, COLORONCOLOR);
-    SelectObject(gRes.hdcMem, gRes.characterMask);
-    StretchBlt(hdcBuffer, leftHeroX, heroY, heroW, heroH, gRes.hdcMem, srcX_left, srcY_left, gGame.hero.width, gGame.hero.height, SRCAND);
-    SelectObject(gRes.hdcMem, gRes.character);
-    StretchBlt(hdcBuffer, leftHeroX, heroY, heroW, heroH, gRes.hdcMem, srcX_left, srcY_left, gGame.hero.width, gGame.hero.height, SRCPAINT);
+    SelectObject(gRes.hdcMem, gGame.settingsState.currentHeroSelected);
+
+    TransparentBlt(hdcBuffer, leftHeroX, heroY, heroW, heroH,
+               gRes.hdcMem, srcX_left, srcY_left, gGame.hero.width, gGame.hero.height,
+               RGB(255, 255, 255));
 
     // --- SREDINA---
     int srcX_back = 0 * gGame.hero.width;
     int srcY_back = 2 * gGame.hero.height;
 
-    SelectObject(gRes.hdcMem, gRes.characterMask);
-    StretchBlt(hdcBuffer, midHeroX, heroY, heroW, heroH, gRes.hdcMem, srcX_back, srcY_back, gGame.hero.width, gGame.hero.height, SRCAND);
-    SelectObject(gRes.hdcMem, gRes.character);
-    StretchBlt(hdcBuffer, midHeroX, heroY, heroW, heroH, gRes.hdcMem, srcX_back, srcY_back, gGame.hero.width, gGame.hero.height, SRCPAINT);
+    TransparentBlt(hdcBuffer, midHeroX, heroY, heroW, heroH,
+               gRes.hdcMem, srcX_back, srcY_back, gGame.hero.width, gGame.hero.height,
+               RGB(255, 255, 255));
 
     // --- DESNO---
     int srcX_right = 3* gGame.hero.width;
     int srcY_right = 0 * gGame.hero.height;
 
-    SelectObject(gRes.hdcMem, gRes.characterMask);
-    StretchBlt(hdcBuffer, rightHeroX, heroY, heroW, heroH, gRes.hdcMem, srcX_right, srcY_right, gGame.hero.width, gGame.hero.height, SRCAND);
-    SelectObject(gRes.hdcMem, gRes.character);
-    StretchBlt(hdcBuffer, rightHeroX, heroY, heroW, heroH, gRes.hdcMem, srcX_right, srcY_right, gGame.hero.width, gGame.hero.height, SRCPAINT);
+    TransparentBlt(hdcBuffer, rightHeroX, heroY, heroW, heroH,
+               gRes.hdcMem, srcX_right, srcY_right, gGame.hero.width, gGame.hero.height,
+               RGB(255, 255, 255));
 
     /* DUGMAD (BUTTONS) ISPOD HEROJA */
 
@@ -299,7 +299,7 @@ void RenderSettings(HDC hdcBuffer, RECT rect)
     gGame.settingsSoundButtonInfo.width = soundBtnW;
     gGame.settingsSoundButtonInfo.height = soundBtnH;
 
-    if (!gGame.soundState.bgMusicOn) {
+    if (!gGame.settingsState.soundState.bgMusicOn) {
         HBITMAP overlayBmp = CreateCompatibleBitmap(hdcBuffer, 1, 1);
         HBITMAP hOldOverlay = (HBITMAP) SelectObject(gRes.hdcMem, overlayBmp);
         SetPixel(gRes.hdcMem, 0, 0, RGB(100, 100, 100));
@@ -343,4 +343,9 @@ void RenderSettings(HDC hdcBuffer, RECT rect)
         SelectObject(gRes.hdcMem, hOldHover);
         DeleteObject(hoverBmp);
     }
+}
+
+
+void InitDefaultSettings(){
+    gGame.settingsState.currentHeroSelected = gRes.characterMask;
 }
