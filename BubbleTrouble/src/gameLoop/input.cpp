@@ -295,6 +295,16 @@ void HandleKeyDown(HWND hwnd, WPARAM wParam)
         KeyBindings* keys = (gGame.settingsState.currentPlayerBinding == 1) ? &gGame.settingsState.player1Keys
                                                                             : &gGame.settingsState.player2Keys;
 
+
+       // sanity check - ako smo odabrali neki key za neku akciju vec abortaj promjenu
+        if(vkCode == keys->moveLeft ||
+           vkCode == keys->moveRight ||
+           vkCode == keys->shoot)
+        {
+            gGame.settingsState.waitingForKey = KEYBIND_NONE;
+            return;
+        }
+
         switch (gGame.settingsState.waitingForKey) {
             case KEYBIND_LEFT:
                 keys->moveLeft = vkCode;
