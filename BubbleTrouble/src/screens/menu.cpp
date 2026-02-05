@@ -67,52 +67,40 @@ void InitializeMenu(HWND hwnd) {
 }
 
 void RenderMenu(HDC hdc, RECT rect ) {
-    // 1. Inicijalizacija Double bufferinga
-    HDC hdcBuffer = CreateCompatibleDC(hdc);
-    HDC hdcMem = CreateCompatibleDC(hdc);
-    HBITMAP hbmBuffer = CreateCompatibleBitmap(hdc, rect.right, rect.bottom);
 
-    // OBAVEZNO: Spasi originalne objekte da bi ih mogao vratiti na kraju
-    HBITMAP oldMemBmpAtStart = (HBITMAP)GetCurrentObject(hdcMem, OBJ_BITMAP);
-    HBITMAP oldBufferBmp = (HBITMAP)SelectObject(hdcBuffer, hbmBuffer);
+    // === KORISTIMO DIREKTNO TVOJ GLOBALNI BACKBUFFER (hdc)
+    // === I GLOBALNI gRes.hdcMem
 
-    SetStretchBltMode(hdcBuffer, HALFTONE);
-    SetBrushOrgEx(hdcBuffer, 0, 0, NULL);
+    SetStretchBltMode(hdc, HALFTONE);
+    SetBrushOrgEx(hdc, 0, 0, NULL);
 
     // Render menu background
     if (gRes.menuScreen) {
-        HBITMAP oldMemBmp = (HBITMAP)SelectObject(hdcMem, gRes.menuScreen);
+        HBITMAP oldMemBmp = (HBITMAP)SelectObject(gRes.hdcMem, gRes.menuScreen);
         BITMAP bm;
         GetObject(gRes.menuScreen, sizeof(BITMAP), &bm);
-        StretchBlt(hdcBuffer, 0, 0, rect.right, rect.bottom,
-                   hdcMem, 0, 0, bm.bmWidth, bm.bmHeight, SRCCOPY);
-        SelectObject(hdcMem, oldMemBmp); // Vraćamo odmah nakon upotrebe
+        StretchBlt(hdc, 0, 0, rect.right, rect.bottom,
+                   gRes.hdcMem, 0, 0, bm.bmWidth, bm.bmHeight, SRCCOPY);
+        SelectObject(gRes.hdcMem, oldMemBmp);
     } else {
         HBRUSH hBrush = CreateSolidBrush(RGB(50, 50, 100));
-        FillRect(hdcBuffer, &rect, hBrush);
-        DeleteObject(hBrush); // Obrisano
+        FillRect(hdc, &rect, hBrush);
+        DeleteObject(hBrush);
     }
 
     if (gRes.torch && gRes.torchMask) {
 
-        float torchScale = 3.5f; // Default za velike ekrane (Full HD)
+        float torchScale = 3.5f;
 
-        if (rect.right < 1400) {
-            torchScale = 2.5f; // Srednji ekrani / Laptop
-        }
-        if (rect.right < 900) {
-            torchScale = 1.8f; // Mali ekrani
-        }
+        if (rect.right < 1400) torchScale = 2.5f;
+        if (rect.right < 900)  torchScale = 1.8f;
 
-        // Ako je ekran preuzak (manje od 600px), nemoj ni crtati baklje da ne smetaju
         if (rect.right > 600) {
 
             int torchW = (int)(gGame.torchInfo.width * torchScale);
             int torchH = (int)(gGame.torchInfo.height * torchScale);
 
-
             int padding = (rect.right < 1000) ? 5 : 20;
-
 
             int liftUpAmount = rect.bottom / 6;
             int torchY = (rect.bottom / 2) - (torchH / 2) - liftUpAmount;
@@ -123,33 +111,32 @@ void RenderMenu(HDC hdc, RECT rect ) {
             int torchSrcX = gGame.torchInfo.currentFrame * gGame.torchInfo.width;
             int torchSrcY = gGame.torchInfo.currentRow * gGame.torchInfo.height;
 
-            HBITMAP oldMemBmp = (HBITMAP)SelectObject(hdcMem, gRes.torchMask);
+            HBITMAP oldMemBmp = (HBITMAP)SelectObject(gRes.hdcMem, gRes.torchMask);
 
-            // --- LIJEVA BAKLJA ---
-            StretchBlt(hdcBuffer, torchX1, torchY, torchW, torchH,
-                       hdcMem, torchSrcX, torchSrcY,
+            StretchBlt(hdc, torchX1, torchY, torchW, torchH,
+                       gRes.hdcMem, torchSrcX, torchSrcY,
                        gGame.torchInfo.width, gGame.torchInfo.height, SRCPAINT);
 
-            SelectObject(hdcMem, gRes.torch);
-            StretchBlt(hdcBuffer, torchX1, torchY, torchW, torchH,
-                       hdcMem, torchSrcX, torchSrcY,
+            SelectObject(gRes.hdcMem, gRes.torch);
+            StretchBlt(hdc, torchX1, torchY, torchW, torchH,
+                       gRes.hdcMem, torchSrcX, torchSrcY,
                        gGame.torchInfo.width, gGame.torchInfo.height, SRCAND);
 
-            // --- DESNA BAKLJA ---
-            SelectObject(hdcMem, gRes.torchMask);
-            StretchBlt(hdcBuffer, torchX2, torchY, torchW, torchH,
-                       hdcMem, torchSrcX, torchSrcY,
+            SelectObject(gRes.hdcMem, gRes.torchMask);
+            StretchBlt(hdc, torchX2, torchY, torchW, torchH,
+                       gRes.hdcMem, torchSrcX, torchSrcY,
                        gGame.torchInfo.width, gGame.torchInfo.height, SRCPAINT);
 
-            SelectObject(hdcMem, gRes.torch);
-            StretchBlt(hdcBuffer, torchX2, torchY, torchW, torchH,
-                       hdcMem, torchSrcX, torchSrcY,
+            SelectObject(gRes.hdcMem, gRes.torch);
+            StretchBlt(hdc, torchX2, torchY, torchW, torchH,
+                       gRes.hdcMem, torchSrcX, torchSrcY,
                        gGame.torchInfo.width, gGame.torchInfo.height, SRCAND);
 
-            SelectObject(hdcMem, oldMemBmp);
+            SelectObject(gRes.hdcMem, oldMemBmp);
         }
     }
-    // === RENDER LOGO UMESTO TEKSTA ===
+
+    // === LOGO ===
     if (gRes.logo && gRes.logoMask) {
         BITMAP bm;
         GetObject(gRes.logo, sizeof(BITMAP), &bm);
@@ -166,42 +153,18 @@ void RenderMenu(HDC hdc, RECT rect ) {
         int logoX = (rect.right - logoWidth) /1.7;
         int logoY = -20;
 
-        // Prvo mask (SRCAND)
-        HBITMAP oldMemBmp = (HBITMAP)SelectObject(hdcMem, gRes.logoMask);
-        StretchBlt(hdcBuffer, logoX, logoY, logoWidth, logoHeight,
-                   hdcMem, 0, 0, bm.bmWidth, bm.bmHeight, SRCAND);
+        HBITMAP oldMemBmp = (HBITMAP)SelectObject(gRes.hdcMem, gRes.logoMask);
+        StretchBlt(hdc, logoX, logoY, logoWidth, logoHeight,
+                   gRes.hdcMem, 0, 0, bm.bmWidth, bm.bmHeight, SRCAND);
 
-        // Zatim logo (SRCPAINT)
-        SelectObject(hdcMem, gRes.logo);
-        StretchBlt(hdcBuffer, logoX, logoY, logoWidth, logoHeight,
-                   hdcMem, 0, 0, bm.bmWidth, bm.bmHeight, SRCPAINT);
+        SelectObject(gRes.hdcMem, gRes.logo);
+        StretchBlt(hdc, logoX, logoY, logoWidth, logoHeight,
+                   gRes.hdcMem, 0, 0, bm.bmWidth, bm.bmHeight, SRCPAINT);
 
-        SelectObject(hdcMem, oldMemBmp); // Vraćamo
-    } else {
-        SetBkMode(hdcBuffer, TRANSPARENT);
-        int titleFontSize = max(40, rect.bottom / 10);
-        HFONT hTitleFont = CreateFont(titleFontSize, 0, 0, 0, FW_BOLD, FALSE, FALSE, FALSE,
-                                       DEFAULT_CHARSET, OUT_OUTLINE_PRECIS,
-                                       CLIP_DEFAULT_PRECIS, ANTIALIASED_QUALITY,
-                                       VARIABLE_PITCH, TEXT("Arial Black"));
-        HFONT hOldTitleFont = (HFONT)SelectObject(hdcBuffer, hTitleFont);
-
-        const char* title = "BUBBLE TROUBLE";
-        SIZE titleSize;
-        GetTextExtentPoint32(hdcBuffer, title, (int)strlen(title), &titleSize);
-        int titleX = (rect.right - titleSize.cx) / 2;
-        int titleY = max(50, rect.bottom / 12);
-
-        SetTextColor(hdcBuffer, RGB(0, 0, 0));
-        TextOut(hdcBuffer, titleX + 3, titleY + 3, title, (int)strlen(title));
-        SetTextColor(hdcBuffer, RGB(255, 255, 0));
-        TextOut(hdcBuffer, titleX, titleY, title, (int)strlen(title));
-
-        SelectObject(hdcBuffer, hOldTitleFont);
-        DeleteObject(hTitleFont); // Obrisano
+        SelectObject(gRes.hdcMem, oldMemBmp);
     }
 
-    // === RENDER BUTTONS HOLDER FIRST ===
+    // === BUTTON HOLDER ===
     if (gRes.hButtonsHolder && gRes.hButtonsHolderMask) {
         BITMAP bm;
         GetObject(gRes.hButtonsHolder, sizeof(BITMAP), &bm);
@@ -225,82 +188,78 @@ void RenderMenu(HDC hdc, RECT rect ) {
         int buttonsCenterY = buttonsTop + buttonsTotalHeight / 2;
         int holderY = buttonsCenterY - (holderHeight / 2);
 
-        HBITMAP oldMemBmp = (HBITMAP)SelectObject(hdcMem, gRes.hButtonsHolderMask);
-        StretchBlt(hdcBuffer, holderX, holderY, holderWidth, holderHeight,
-                   hdcMem, 0, 0, bm.bmWidth, bm.bmHeight, SRCAND);
+        HBITMAP oldMemBmp = (HBITMAP)SelectObject(gRes.hdcMem, gRes.hButtonsHolderMask);
+        StretchBlt(hdc, holderX, holderY, holderWidth, holderHeight,
+                   gRes.hdcMem, 0, 0, bm.bmWidth, bm.bmHeight, SRCAND);
 
-        SelectObject(hdcMem, gRes.hButtonsHolder);
-        StretchBlt(hdcBuffer, holderX, holderY, holderWidth, holderHeight,
-                   hdcMem, 0, 0, bm.bmWidth, bm.bmHeight, SRCPAINT);
+        SelectObject(gRes.hdcMem, gRes.hButtonsHolder);
+        StretchBlt(hdc, holderX, holderY, holderWidth, holderHeight,
+                   gRes.hdcMem, 0, 0, bm.bmWidth, bm.bmHeight, SRCPAINT);
 
-        SelectObject(hdcMem, oldMemBmp); // Vraćamo
+        SelectObject(gRes.hdcMem, oldMemBmp);
     }
 
-    // === RENDER BUTTONS ===
+    // === BUTTONS ===
     int buttonFontSize = max(14, rect.bottom / 35);
     HFONT hButtonFont = CreateFont(buttonFontSize, 0, 0, 0, FW_BOLD, FALSE, FALSE, FALSE,
                                     DEFAULT_CHARSET, OUT_OUTLINE_PRECIS,
                                     CLIP_DEFAULT_PRECIS, ANTIALIASED_QUALITY,
                                     VARIABLE_PITCH, TEXT("Arial"));
-    HFONT hOldButtonFont = (HFONT)SelectObject(hdcBuffer, hButtonFont);
+    HFONT hOldButtonFont = (HFONT)SelectObject(hdc, hButtonFont);
 
     for (int i = 0; i < NUM_MENU_BUTTONS; i++) {
         MenuButton* btn = &gGame.menuButtons[i];
         HBITMAP currentButton = (i == 0) ? gRes.hYellowButton : (i == 1 ? gRes.hGreenButton : gRes.hGreyButton);
         HBITMAP currentButtonMask = (i == 0) ? gRes.hYellowButtonMask : (i == 1 ? gRes.hGreenButtonMask : gRes.hGreyButtonMask);
 
-        if (currentButton && currentButtonMask) {
-            BITMAP bm;
-            GetObject(currentButton, sizeof(BITMAP), &bm);
-            int btnWidth = btn->rect.right - btn->rect.left;
-            int btnHeight = btn->rect.bottom - btn->rect.top;
+        BITMAP bm;
+        GetObject(currentButton, sizeof(BITMAP), &bm);
+        int btnWidth = btn->rect.right - btn->rect.left;
+        int btnHeight = btn->rect.bottom - btn->rect.top;
 
-            HBITMAP oldMemBmp = (HBITMAP)SelectObject(hdcMem, currentButtonMask);
-            StretchBlt(hdcBuffer, btn->rect.left, btn->rect.top, btnWidth, btnHeight,
-                       hdcMem, 0, 0, bm.bmWidth, bm.bmHeight, SRCAND);
+        HBITMAP oldMemBmp = (HBITMAP)SelectObject(gRes.hdcMem, currentButtonMask);
+        StretchBlt(hdc, btn->rect.left, btn->rect.top, btnWidth, btnHeight,
+                   gRes.hdcMem, 0, 0, bm.bmWidth, bm.bmHeight, SRCAND);
 
-            SelectObject(hdcMem, currentButton);
-            StretchBlt(hdcBuffer, btn->rect.left, btn->rect.top, btnWidth, btnHeight,
-                       hdcMem, 0, 0, bm.bmWidth, bm.bmHeight, SRCPAINT);
+        SelectObject(gRes.hdcMem, currentButton);
+        StretchBlt(hdc, btn->rect.left, btn->rect.top, btnWidth, btnHeight,
+                   gRes.hdcMem, 0, 0, bm.bmWidth, bm.bmHeight, SRCPAINT);
 
-            SelectObject(hdcMem, oldMemBmp); // Vraćamo
-        } else {
-            COLORREF btnColor = (i == 0) ? RGB(255, 200, 0) : (i == 1 ? RGB(0, 200, 0) : RGB(150, 150, 150));
-            HBRUSH hBtnBrush = CreateSolidBrush(btnColor);
-            HPEN hBtnPen = CreatePen(PS_SOLID, max(2, rect.bottom / 350), RGB(255, 255, 255));
-            HPEN hOldPen = (HPEN)SelectObject(hdcBuffer, hBtnPen);
-            HBRUSH hOldBrush = (HBRUSH)SelectObject(hdcBuffer, hBtnBrush);
+        SelectObject(gRes.hdcMem, oldMemBmp);
 
-            int cornerRadius = max(15, rect.bottom / 50);
-            RoundRect(hdcBuffer, btn->rect.left, btn->rect.top,
-                      btn->rect.right, btn->rect.bottom, cornerRadius, cornerRadius);
-
-            SelectObject(hdcBuffer, hOldPen);
-            SelectObject(hdcBuffer, hOldBrush);
-            DeleteObject(hBtnPen); // Obrisano
-            DeleteObject(hBtnBrush); // Obrisano
-        }
-
-        SetBkMode(hdcBuffer, TRANSPARENT);
+        SetBkMode(hdc, TRANSPARENT);
         SIZE textSize;
-        GetTextExtentPoint32(hdcBuffer, btn->text, (int)strlen(btn->text), &textSize);
+        GetTextExtentPoint32(hdc, btn->text, (int)strlen(btn->text), &textSize);
         int textX = btn->rect.left + ((btn->rect.right - btn->rect.left) - textSize.cx) / 2;
         int textY = btn->rect.top + ((btn->rect.bottom - btn->rect.top) - textSize.cy) / 2;
 
-        SetTextColor(hdcBuffer, RGB(0, 0, 0));
-        TextOut(hdcBuffer, textX + 2, textY + 2, btn->text, (int)strlen(btn->text));
-        SetTextColor(hdcBuffer, RGB(255, 255, 255));
-        TextOut(hdcBuffer, textX, textY, btn->text, (int)strlen(btn->text));
+        SetTextColor(hdc, RGB(0, 0, 0));
+        TextOut(hdc, textX + 2, textY + 2, btn->text, (int)strlen(btn->text));
+        SetTextColor(hdc, RGB(255, 255, 255));
+        TextOut(hdc, textX, textY, btn->text, (int)strlen(btn->text));
     }
 
-    // === RENDER CHARACTER ===
+    SelectObject(hdc, hOldButtonFont);
+    DeleteObject(hButtonFont);
+
+    // === CHARACTER ===
     HBITMAP currentChar = gRes.menuCharacter;
     HBITMAP currentCharMask = gRes.menuCharacterMask;
     bool isPlayer2 = false;
 
-    if (gGame.menuButtons[0].isHovered) { currentChar = gRes.player1MenuChar; currentCharMask = gRes.player1MenuCharMask; }
-    else if (gGame.menuButtons[1].isHovered) { currentChar = gRes.player2MenuChar; currentCharMask = gRes.player2MenuCharMask; isPlayer2 = true; }
-    else if (gGame.menuButtons[2].isHovered) { currentChar = gRes.settingsMenuChar; currentCharMask = gRes.settingsMenuCharMask; }
+    if (gGame.menuButtons[0].isHovered) {
+        currentChar = gRes.player1MenuChar;
+        currentCharMask = gRes.player1MenuCharMask;
+    }
+    else if (gGame.menuButtons[1].isHovered) {
+        currentChar = gRes.player2MenuChar;
+        currentCharMask = gRes.player2MenuCharMask;
+        isPlayer2 = true;
+    }
+    else if (gGame.menuButtons[2].isHovered) {
+        currentChar = gRes.settingsMenuChar;
+        currentCharMask = gRes.settingsMenuCharMask;
+    }
 
     if (currentChar && currentCharMask) {
         BITMAP bm;
@@ -320,28 +279,20 @@ void RenderMenu(HDC hdc, RECT rect ) {
             charY = rect.bottom - charH - max(20, rect.bottom / 30);
         }
 
-        HBITMAP oldMemBmp = (HBITMAP)SelectObject(hdcMem, currentCharMask);
-        StretchBlt(hdcBuffer, charX, charY, charW, charH, hdcMem, 0, 0, bm.bmWidth, bm.bmHeight, SRCAND);
-        SelectObject(hdcMem, currentChar);
-        StretchBlt(hdcBuffer, charX, charY, charW, charH, hdcMem, 0, 0, bm.bmWidth, bm.bmHeight, SRCPAINT);
-        SelectObject(hdcMem, oldMemBmp); // Vraćamo
+        HBITMAP oldMemBmp = (HBITMAP)SelectObject(gRes.hdcMem, currentCharMask);
+        StretchBlt(hdc, charX, charY, charW, charH,
+                   gRes.hdcMem, 0, 0, bm.bmWidth, bm.bmHeight, SRCAND);
+
+        SelectObject(gRes.hdcMem, currentChar);
+        StretchBlt(hdc, charX, charY, charW, charH,
+                   gRes.hdcMem, 0, 0, bm.bmWidth, bm.bmHeight, SRCPAINT);
+
+        SelectObject(gRes.hdcMem, oldMemBmp);
     }
-
-    // Copy to screen
-    BitBlt(hdc, 0, 0, rect.right, rect.bottom, hdcBuffer, 0, 0, SRCCOPY);
-
-    // === ČIŠĆENJE (CLEANUP) - REDOSLIJED JE KLJUČAN ===
-    SelectObject(hdcBuffer, hOldButtonFont);
-    DeleteObject(hButtonFont); // Brišemo font
-
-    SelectObject(hdcBuffer, oldBufferBmp); // Vraćamo originalnu bitmapu u hdcBuffer
-    DeleteObject(hbmBuffer);               // Tek sad brišemo buffer bitmapu
-
-    SelectObject(hdcMem, oldMemBmpAtStart); // Vraćamo originalnu bitmapu u hdcMem
-
-    DeleteDC(hdcMem);                      // Brišemo DC-ove
-    DeleteDC(hdcBuffer);
 }
+
+
+
 
 void HandleMenuClick(HWND hwnd, int x, int y) {
     POINT pt = {x, y};
