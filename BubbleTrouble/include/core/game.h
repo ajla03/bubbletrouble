@@ -47,12 +47,11 @@ float GetBounceSpeedForRadius(float radius);
 void InitBalloon(int index, float x, float y, float radius,
                  float speedX, COLORREF color);
 void UpdateBalloons(HWND hwnd);
-void SplitBalloon(int index);
-void DrawBalloonGDI(HDC hdc, Balloon* b);
+void SplitBalloon(int index, int scoringPlayer = 0);
 bool AreSectionBalloonsDestroyed(float left, float right);
 void CheckCollisions();
 void ResolveBalloonPillarCollision(Balloon* b, StaticObject* wall);
-
+void DrawBalloonGDI(HDC hdc, Balloon* b) ;
 // ================= POWERUPS (in powerups.cpp) ===============
 void InitPowerupSystemForLevel();
 void SpawnPowerup(HWND hwnd);
@@ -108,3 +107,11 @@ void UpdateLayout(int oldW, int oldH, int newW, int newH);
 void InitDefaultSettings();
 void HandleKeyDown(HWND hwnd, WPARAM wParam);
 const char* VKCodeToString(int vkCode);
+// ================= MULTIPLAYER (dodaj negdje logički) =================
+void InitMultiplayer(HWND hwnd);
+void UpdatePlayer2Input(HWND hwnd);
+void RenderPlayer2(HDC hdc, RECT rect);
+void UpdateHarpoon2(HWND hwnd);
+void CheckHeroDoorCollisionP2();
+void CheckHeroPillarCollision2(StaticObject* pillar);
+void UpdateHeroCoolDownP2(float dt);

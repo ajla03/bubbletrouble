@@ -68,21 +68,20 @@ void ResolveBalloonPillarCollision(Balloon* b, StaticObject* wall){
   bool collisionY = (b->y + b->radius > wall->y) && (b->y - b->radius < wall->y + wall->height);
 
   if(collisionX && collisionY){
-    float penLeft   = (b->x + b->radius) - wall->x;                     // Udarac u LIJEVU stranu zida
-    float penRight  = (wall->x + wall->width) - (b->x - b->radius);     // Udarac u DESNU stranu zida
-    float penTop    = (b->y + b->radius) - wall->y;                     // Udarac u VRH zida
-    float penBottom = (wall->y + wall->height) - (b->y - b->radius);    // Udarac u DNO zida
+    float penLeft   = (b->x + b->radius) - wall->x;
+    float penRight  = (wall->x + wall->width) - (b->x - b->radius);
+    float penTop    = (b->y + b->radius) - wall->y;
+    float penBottom = (wall->y + wall->height) - (b->y - b->radius);
 
     float minPen = std::min({penLeft, penRight, penTop, penBottom});
 
-
     if (minPen == penLeft) {
             b->x = wall->x - b->radius;
-            b->speedX = -b->speedX; // Forsiraj negativnu brzinu (lijevo)
+            b->speedX = -b->speedX;
         }
         else if (minPen == penRight) {
             b->x = wall->x + wall->width + b->radius;
-            b->speedX = -b->speedX;  // Forsiraj pozitivnu brzinu (desno)
+            b->speedX = -b->speedX;
         }
         else if (minPen == penTop) {
             b->y = wall->y - b->radius;
@@ -94,16 +93,18 @@ void ResolveBalloonPillarCollision(Balloon* b, StaticObject* wall){
         }
     }
 }
+
 void CheckCollisions(){
     float harpoonCenterX = gGame.harpoon.x + gGame.harpoon.width / 2.0f;
     float harpoonTop = gGame.harpoon.y - gGame.harpoon.length;
-    float harpoonBottom =gGame.harpoon.y;
+    float harpoonBottom = gGame.harpoon.y;
 
     for (int i = 0; i < MAX_BALLOONS; i++) {
         if (!CURRENT_LEVEL.balloons[i].active) continue;
 
         Balloon* b = &CURRENT_LEVEL.balloons[i];
-        // check collision with hero
+
+        // ========== CHECK COLLISION WITH PLAYER 1 ==========
         float closestX = std::max(float(gGame.hero.x + 5), std::min(b->x, (float)(gGame.hero.x + gGame.hero.width - 5)));
         float closestY = std::max((float)gGame.hero.y, std::min(b->y,(float)(gGame.hero.y + gGame.hero.height)));
         float dx = b->x - closestX;
@@ -111,33 +112,125 @@ void CheckCollisions(){
         float distance = sqrt(dx*dx + dy*dy);
 
         if(distance < b->radius && gGame.hero.heroHitCooldown <= 0){
-              if(gGame.settingsState.soundState.soundEffectsOn)
+            if(gGame.settingsState.soundState.soundEffectsOn)
                 PlaySound(MAKEINTRESOURCE(IDR_DAMAGE_SOUND), GetModuleHandle(NULL), SND_RESOURCE | SND_ASYNC);
-            --gGame.gameState.lives;
-            gGame.hero.heroHitCooldown = HERO_INVINCIBLE_TIME;
-            if(gGame.gameState.lives==0){
-                gGame.gameState.isGameOver = true;
-                gGame.gameState.currentMode = GAME_OVER;
+
+            // ← NOVI KOD - ODVOJENI LIVES
+            if(gGame.gameState.isMultiplayer) {
+                --gGame.player1Stats.lives;
+                if(gGame.player1Stats.lives <= 0) {
+                    gGame.player1Stats.isAlive = false;
+                }
+                // Game over samo ako su OBA igrača mrtva
+                if(!gGame.player1Stats.isAlive && !gGame.player2Stats.isAlive) {
+                    gGame.gameState.isGameOver = true;
+                    gGame.gameState.currentMode = GAME_OVER;
+                }
+            } else {
+                // Single player mode
+                --gGame.gameState.lives;
+                if(gGame.gameState.lives == 0) {
+                    gGame.gameState.isGameOver = true;
+                    gGame.gameState.currentMode = GAME_OVER;
+                }
             }
+
+            gGame.hero.heroHitCooldown = HERO_INVINCIBLE_TIME;
             break;
         }
 
-
-        // check collision with harpoon
+        // ========== CHECK COLLISION WITH HARPOON 1 ==========
         if(gGame.harpoon.isActive){
+            float distanceHarpoonX = fabs(b->x - harpoonCenterX);
 
-        float distanceHarpoonX = fabs(b->x - harpoonCenterX);
-
-        if (distanceHarpoonX <= b->radius) {
+            if (distanceHarpoonX <= b->radius) {
                 if (harpoonTop <= b->y + b->radius && harpoonBottom >= b->y - b->radius) {
-                    SplitBalloon(i);
+                    SplitBalloon(i, gGame.harpoon.ownerPlayer);  // ← DODAJ ownerPlayer
+
                     if(CURRENT_LEVEL.activeBalloonCount == 0 && !gGame.gameState.isLevelCleared){
                         gGame.gameState.isLevelCleared = true;
-                         int timeBonus = CalculateTimeBonus();
-                         CURRENT_LEVEL.levelScore += timeBonus;
-                         gGame.totalScore += timeBonus;
+                        int timeBonus = CalculateTimeBonus();
+                        CURRENT_LEVEL.levelScore += timeBonus;
+
+                        // ← DODAJ TIME BONUS NA SCORES
+                        if(gGame.gameState.isMultiplayer) {
+                            // Podeli bonus između igrača
+                            int bonusPerPlayer = timeBonus / 2;
+                            gGame.player1Stats.score += bonusPerPlayer;
+                            gGame.player2Stats.score += bonusPerPlayer;
+                            gGame.totalScore = gGame.player1Stats.score + gGame.player2Stats.score;
+                        } else {
+                            gGame.totalScore += timeBonus;
+                        }
                     }
                     gGame.harpoon.isActive = false;
+                    break;
+                }
+            }
+        }
+    }
+
+    // ========== MULTIPLAYER - PLAYER 2 COLLISIONS ==========
+    if(!gGame.gameState.isMultiplayer) return;
+
+    float harpoon2CenterX = gGame.harpoon2.x + gGame.harpoon2.width / 2.0f;
+    float harpoon2Top = gGame.harpoon2.y - gGame.harpoon2.length;
+    float harpoon2Bottom = gGame.harpoon2.y;
+
+    for (int i = 0; i < MAX_BALLOONS; i++) {
+        if (!CURRENT_LEVEL.balloons[i].active) continue;
+
+        Balloon* b = &CURRENT_LEVEL.balloons[i];
+
+        // ========== CHECK COLLISION WITH PLAYER 2 ==========
+        float closestX = std::max(float(gGame.hero2.x + 5),
+                                 std::min(b->x, (float)(gGame.hero2.x + gGame.hero2.width - 5)));
+        float closestY = std::max((float)gGame.hero2.y,
+                                 std::min(b->y,(float)(gGame.hero2.y + gGame.hero2.height)));
+        float dx = b->x - closestX;
+        float dy = b->y - closestY;
+        float distance = sqrt(dx*dx + dy*dy);
+
+        if(distance < b->radius && gGame.hero2.heroHitCooldown <= 0) {
+            if(gGame.settingsState.soundState.soundEffectsOn)
+                PlaySound(MAKEINTRESOURCE(IDR_DAMAGE_SOUND), GetModuleHandle(NULL),
+                         SND_RESOURCE | SND_ASYNC);
+
+            --gGame.player2Stats.lives;  // ← Player 2 lives
+            if(gGame.player2Stats.lives <= 0) {
+                gGame.player2Stats.isAlive = false;
+            }
+
+            // Game over samo ako su OBA igrača mrtva
+            if(!gGame.player1Stats.isAlive && !gGame.player2Stats.isAlive) {
+                gGame.gameState.isGameOver = true;
+                gGame.gameState.currentMode = GAME_OVER;
+            }
+
+            gGame.hero2.heroHitCooldown = HERO_INVINCIBLE_TIME;
+            break;
+        }
+
+        // ========== CHECK COLLISION WITH HARPOON 2 ==========
+        if(gGame.harpoon2.isActive) {
+            float distanceHarpoonX = fabs(b->x - harpoon2CenterX);
+
+            if (distanceHarpoonX <= b->radius) {
+                if (harpoon2Top <= b->y + b->radius && harpoon2Bottom >= b->y - b->radius) {
+                    SplitBalloon(i, gGame.harpoon2.ownerPlayer);  // ← DODAJ ownerPlayer
+
+                    if(CURRENT_LEVEL.activeBalloonCount == 0 && !gGame.gameState.isLevelCleared) {
+                        gGame.gameState.isLevelCleared = true;
+                        int timeBonus = CalculateTimeBonus();
+                        CURRENT_LEVEL.levelScore += timeBonus;
+
+                        // Podeli bonus između igrača
+                        int bonusPerPlayer = timeBonus / 2;
+                        gGame.player1Stats.score += bonusPerPlayer;
+                        gGame.player2Stats.score += bonusPerPlayer;
+                        gGame.totalScore = gGame.player1Stats.score + gGame.player2Stats.score;
+                    }
+                    gGame.harpoon2.isActive = false;
                     break;
                 }
             }

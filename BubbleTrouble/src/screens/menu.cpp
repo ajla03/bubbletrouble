@@ -301,14 +301,16 @@ void HandleMenuClick(HWND hwnd, int x, int y) {
         if (PtInRect(&gGame.menuButtons[i].rect, pt)) {
             switch(i) {
                 case 0: // 1 PLAYER
+                    gGame.gameState.isMultiplayer = false;  // ← DODAJ
                     StartGame(hwnd);
                     break;
                 case 1: // 2 PLAYERS
-                    MessageBox(hwnd, "2 Player mode - Coming soon!", "Info", MB_OK | MB_ICONINFORMATION);
+                    gGame.gameState.isMultiplayer = true;   // ← PROMIJENI
+                    StartGame(hwnd);
+                    InitMultiplayer(hwnd);                  // ← DODAJ
                     break;
                 case 2: // SETTINGS
                     gGame.gameState.currentMode = GAME_MODE_SETTINGS;
-                    //MessageBox(hwnd, "Settings - Coming soon!", "Info", MB_OK | MB_ICONINFORMATION);
                     break;
             }
             break;

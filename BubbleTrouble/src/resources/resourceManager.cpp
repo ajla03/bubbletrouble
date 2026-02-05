@@ -17,7 +17,7 @@ bool ResourceManager::LoadAll(HINSTANCE hInstance) {
     torchMask     = LoadBitmap(hInstance, MAKEINTRESOURCE(IDB_TORCH_MASK));
     levelPlaceholderWhite = LoadBitmap(hInstance, MAKEINTRESOURCE(IDB_LEVEL_WHITE));
     levelPlaceholderBlack = LoadBitmap(hInstance, MAKEINTRESOURCE(IDB_LEVEL_BLACK));
-     scoreHolder = LoadBitmap(hInstance, MAKEINTRESOURCE(IDB_SCORE_HOLDER));
+    scoreHolder = LoadBitmap(hInstance, MAKEINTRESOURCE(IDB_SCORE_HOLDER));
 
     menuScreen        = LoadBitmap(hInstance, MAKEINTRESOURCE(IDB_MENU_SCREEN));
     menuCharacter     = LoadBitmap(hInstance, MAKEINTRESOURCE(IDB_MENU_CHARACTER));
@@ -103,7 +103,6 @@ bool ResourceManager::LoadAll(HINSTANCE hInstance) {
     doorMask = LoadBitmap(hInstance, MAKEINTRESOURCE(IDB_DOOR_MASK));
 
     gameCursor = LoadCursor(hInstance, MAKEINTRESOURCE(IDC_GAME_CURSOR));
-
 
     HRSRC hRes = FindResource(hInstance, MAKEINTRESOURCE(IDR_MINI_FONT), RT_RCDATA);
 

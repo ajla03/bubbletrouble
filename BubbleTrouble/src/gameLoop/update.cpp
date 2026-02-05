@@ -63,7 +63,9 @@ void Update(HWND hwnd){
             gGame.harpoon.isActive = false;
         }
     }
-
+if(gGame.gameState.isMultiplayer && gGame.harpoon2.isActive) {
+        UpdateHarpoon2(hwnd);
+    }
     // update baklji
     gGame.torchInfo.animCounter++;
     if(gGame.torchInfo.animCounter > 5){
@@ -136,6 +138,10 @@ void Update(HWND hwnd){
         }
     }
     UpdateHeroCoolDown(0.016f);
+
+    if(gGame.gameState.isMultiplayer) {
+        UpdateHeroCoolDownP2(0.016f);
+    }
 
     UpdateBalloons(hwnd);
 

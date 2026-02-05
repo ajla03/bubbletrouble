@@ -10,6 +10,8 @@ GameContext gGame = {
     // ===== GAME OBJEKTI =====
     /* harpoon */       {},
     /* hero */          {},
+    /* harpoon2 */       {},
+    /* hero2 */          {},
     /* leftWall */      {},
     /* rightWall */     {},
     /* floorWall */     {},
@@ -17,6 +19,8 @@ GameContext gGame = {
     /* levelPlaceholderInfo */ {},
     /* playerHolderInfo */     {},
     /* scoreHolderInfo */      {},
+    /* player2HolderInfo */    {},
+    /* score2HolderInfo */     {},
     /* heartInfo */     {},
     /* heartBgInfo */   {},
     /* heartBorderInfo */ {},
@@ -24,6 +28,22 @@ GameContext gGame = {
     /* torchInfo */     {},
     /* animatedWalls */ { 0, 0, 12.0f },
     /* logoInfo */      {},
+
+    // === PLAYER STATS ===
+    /* player1Stats */ {
+        START_LIVES,  // lives
+        0,            // score
+        0,            // displayScore
+        true,         // isAlive
+        {}            // hearts animation
+    },
+    /* player2Stats */ {
+        START_LIVES,  // lives
+        0,            // score
+        0,            // displayScore
+        true,         // isAlive
+        {}            // hearts animation
+    },
 
     // ===== UI =====
     /* menuButtons */   {},
@@ -40,12 +60,12 @@ GameContext gGame = {
     /* player2 */       {},
 
     // ===== STATE =====
-    /* inputState */    {},
+    /* inputState */    {false,false},
     /* gameState */     {
         false,              // gameActive
         false,              // isPaused
         GAME_MODE_MENU,     // currentGameMode
-        START_LIVES,        // lives
+        START_LIVES,        // lives (keep for compatibility)
         false,              // showPauseMenu
         false,              // showGameOverMenu
         false,              // showVictoryMenu
@@ -53,7 +73,8 @@ GameContext gGame = {
         false,              // showNextButton
         0,                  // (reserved)
         false,              // (reserved)
-        0                   // (reserved)
+        0,                   // (reserved)
+        false               // isMultiplayer
     },
     /* transitionState */ TRANSITION_NONE,
     /* settingsState */ {}

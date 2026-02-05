@@ -73,12 +73,16 @@ void CheckInputs(HWND hwnd){
         gGame.harpoon.length = 0;
         gGame.harpoon.x = gGame.hero.x + (gGame.hero.width / 2) - (gGame.harpoon.width / 2);
         gGame.harpoon.y = rect.bottom - gGame.floorWall.height;
+        gGame.harpoon.ownerPlayer = 1;
         if(gGame.gameState.currentMode == GAME_MODE_PLAYING && gGame.settingsState.soundState.soundEffectsOn)
         PlaySound(MAKEINTRESOURCE(IDR_HARPOON_SOUND), GetModuleHandle(NULL),
               SND_RESOURCE | SND_ASYNC);
     }
 
     gGame.inputState.wasSpacePressed = isSpacePressed;
+    if(gGame.gameState.isMultiplayer) {
+        UpdatePlayer2Input(hwnd);
+    }
 }
 
 

@@ -20,6 +20,29 @@ void ResetGame(HWND hwnd) {
     gGame.displayScore = 0;
     gGame.pauseButtonInfo.isHover = false;
 
+    // ← DODAJ OVO - RESET PLAYER STATS
+    if(gGame.gameState.isMultiplayer) {
+        // Reset Player 1
+        gGame.player1Stats.lives = START_LIVES;
+        gGame.player1Stats.score = 0;
+        gGame.player1Stats.displayScore = 0;
+        gGame.player1Stats.isAlive = true;
+        for(int i = 0; i < 5; i++) {
+            gGame.player1Stats.hearts[i].currentFrame = 0;
+            gGame.player1Stats.hearts[i].animCounter = 0;
+        }
+
+        // Reset Player 2
+        gGame.player2Stats.lives = START_LIVES;
+        gGame.player2Stats.score = 0;
+        gGame.player2Stats.displayScore = 0;
+        gGame.player2Stats.isAlive = true;
+        for(int i = 0; i < 5; i++) {
+            gGame.player2Stats.hearts[i].currentFrame = 0;
+            gGame.player2Stats.hearts[i].animCounter = 0;
+        }
+    }
+
     if (CURRENT_LEVEL.hdcCache) DeleteDC(CURRENT_LEVEL.hdcCache);
     if (CURRENT_LEVEL.hStaticCache) DeleteObject(CURRENT_LEVEL.hStaticCache);
     CURRENT_LEVEL.hdcCache = NULL;
@@ -63,6 +86,10 @@ void ResetGame(HWND hwnd) {
     if(gGame.gameState.currentMode == GAME_MODE_PLAYING ||
        gGame.gameState.currentMode == GAME_OVER)
         InitLevel(hwnd);
+    if(gGame.gameState.isMultiplayer) {
+        InitMultiplayer(hwnd);
+    }
+
 }
 
 void ResetBetweenLevels(HWND hwnd) {
@@ -103,5 +130,18 @@ void ResetBetweenLevels(HWND hwnd) {
 
     for (int i = 0; i < MAX_POWERUPS; i++)
         CURRENT_LEVEL.powerups[i].active = false;
+
+   if(gGame.gameState.isMultiplayer) {
+        RECT clientRect;
+        GetClientRect(hwnd, &clientRect);
+
+        gGame.hero2.x = clientRect.right - gGame.rightWall.width - gGame.hero2.width - 50;
+        gGame.hero2.y = 100;
+        gGame.hero2.currentRow = 2;
+        gGame.hero2.currentFrame = 0;
+
+        gGame.harpoon2.isActive = false;
+        gGame.harpoon2.length = 0;
+    }
 }
 

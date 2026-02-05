@@ -115,31 +115,34 @@ void UpdateBalloons(HWND hwnd) {
         // Level 4 pillars
         ResolveBalloonPillarCollision(b, &CURRENT_LEVEL.pillar1);
         ResolveBalloonPillarCollision(b, &CURRENT_LEVEL.pillar2);
-        /*
-        AKO DODAMO VISE ZIDOVA ONDA CEMO IMATI NESTO OVAKO :
-        for(int j = 0; j < CURRENT_LEVEL.numExtraWalls; j++) {
-             ResolveBalloonPillarCollision(b, &CURRENT_LEVEL.extraWalls[j]);
-        }
-        */
 
         float minBounce = gGame.hero.height + 40.0f;
         float estimatedPeak  = b->bounceSpeed * 12.0f;
         if(estimatedPeak < minBounce)
             b->bounceSpeed +=0.2f;
-
-
     }
 }
 
 
-void SplitBalloon(int index) {
+void SplitBalloon(int index, int scoringPlayer) {  // ← DODAJ PARAMETAR
     Balloon* b = &CURRENT_LEVEL.balloons[index];
 
     int gainedScore = GetScoreForBalloon(b->radius);
     CURRENT_LEVEL.levelScore += gainedScore;
-    gGame.totalScore += gainedScore;
 
-    float newRadius = b->radius /2.0f;
+    // ← NOVI KOD - ODVOJENI SCORE
+    if(gGame.gameState.isMultiplayer) {
+        if(scoringPlayer == 1) {
+            gGame.player1Stats.score += gainedScore;
+        } else if(scoringPlayer == 2) {
+            gGame.player2Stats.score += gainedScore;
+        }
+        gGame.totalScore = gGame.player1Stats.score + gGame.player2Stats.score;
+    } else {
+        gGame.totalScore += gainedScore;
+    }
+
+    float newRadius = b->radius / 2.0f;
 
     if(gGame.settingsState.soundState.soundEffectsOn)
         PlaySound(MAKEINTRESOURCE(IDR_BALLOON_POP),
@@ -156,16 +159,12 @@ void SplitBalloon(int index) {
                 InitBalloon(i, b->x - 10, b->y, newRadius, -3.5f, b->color);
 
                 if (parentWasFrozen) {
-                    // Ako je roditelj bio frozen, zamrzni i dijete
                     CURRENT_LEVEL.balloons[i].isFrozen = true;
-                    // Sačuvaj brzine koje će imati nakon unfreezing-a
                     CURRENT_LEVEL.balloons[i].frozenSpeedX = -3.5f * 0.85f;
                     CURRENT_LEVEL.balloons[i].frozenSpeedY = -CURRENT_LEVEL.balloons[i].bounceSpeed * SPLIT_BOOST_FACTOR;
-                    // Postavi trenutne brzine na 0
                     CURRENT_LEVEL.balloons[i].speedX = 0.0f;
                     CURRENT_LEVEL.balloons[i].speedY = 0.0f;
                 } else {
-                    // Ako nije bio frozen, daj mu normalnu brzinu
                     CURRENT_LEVEL.balloons[i].speedY = -CURRENT_LEVEL.balloons[i].bounceSpeed * SPLIT_BOOST_FACTOR;
                 }
                 break;
@@ -178,16 +177,12 @@ void SplitBalloon(int index) {
                 InitBalloon(i, b->x + 10, b->y, newRadius, 3.5f, b->color);
 
                 if (parentWasFrozen) {
-                    // Ako je roditelj bio frozen, zamrzni i dijete
                     CURRENT_LEVEL.balloons[i].isFrozen = true;
-                    // Sačuvaj brzine koje će imati nakon unfreezing-a
                     CURRENT_LEVEL.balloons[i].frozenSpeedX = 3.5f * 0.85f;
                     CURRENT_LEVEL.balloons[i].frozenSpeedY = -CURRENT_LEVEL.balloons[i].bounceSpeed * SPLIT_BOOST_FACTOR;
-                    // Postavi trenutne brzine na 0
                     CURRENT_LEVEL.balloons[i].speedX = 0.0f;
                     CURRENT_LEVEL.balloons[i].speedY = 0.0f;
                 } else {
-                    // Ako nije bio frozen, daj mu normalnu brzinu
                     CURRENT_LEVEL.balloons[i].speedY = -CURRENT_LEVEL.balloons[i].bounceSpeed * SPLIT_BOOST_FACTOR;
                 }
                 break;
@@ -206,13 +201,13 @@ void DrawBalloonGDI(HDC hdc, Balloon* b) {
 
     int r = GetRValue(b->color);
     int g = GetGValue(b->color);
-    int b_val = GetBValue(b->color);
+    int blue_val = GetBValue(b->color);  // ← PROMIJENJEN NAZIV (bio b_val)
 
     for (int i = radius; i > 0; i--) {
         float factor = (float)i / radius;
         int newR = r + (int)((255 - r) * (1.0f - factor) * 0.4f);
         int newG = g + (int)((255 - g) * (1.0f - factor) * 0.4f);
-        int newB = b_val + (int)((255 - b_val) * (1.0f - factor) * 0.4f);
+        int newB = blue_val + (int)((255 - blue_val) * (1.0f - factor) * 0.4f);
 
         HBRUSH brush = CreateSolidBrush(RGB(newR, newG, newB));
         HPEN pen = CreatePen(PS_SOLID, 1, RGB(newR, newG, newB));

@@ -23,28 +23,35 @@ struct Level{
      DWORD nextPowerupSpawnTime;
 };
 
+
 struct GameContext{
 
     // ======== LEVELS ====== //
      Level levels[MAX_LEVELS];
      int currentLevel;
-     int totalScore;
-     int displayScore;
+     int totalScore;      // Combined score for level transitions
+     int displayScore;    // Old - keep for compatibility
 
     // ===== SHARED GAME OBJEKTI =====
      Projectile harpoon;
+     Projectile harpoon2;
      Hero hero;
+     Hero hero2;
 
      StaticObject leftWall, rightWall, floorWall, animatedWall;
      StaticObject levelPlaceholderInfo;
      StaticObject playerHolderInfo, scoreHolderInfo;
+     StaticObject player2HolderInfo, score2HolderInfo;  // NEW: Player 2 UI elements
      StaticObject heartInfo, heartBgInfo, heartBorderInfo;
 
-     HeartAnim hearts[5];
+     HeartAnim hearts[5];  // Old - keep for compatibility
      Torch torchInfo;
      AnimatedWalls animatedWalls;
      StaticObject logoInfo;
 
+     // === NEW: SEPARATE PLAYER STATS ===
+     PlayerStats player1Stats;
+     PlayerStats player2Stats;
 
     // UI
      MenuButton menuButtons[NUM_MENU_BUTTONS];

@@ -281,6 +281,29 @@ void RenderDynamicGameUI(HDC hdc, RECT rect)
                    gGame.harpoon.width, visible, SRCAND);
     }
 
+
+    // === PLAYER 2 (MULTIPLAYER) ===
+    if(gGame.gameState.isMultiplayer) {
+        RenderPlayer2(hdc, rect);
+
+        // Render harpoon2
+        if(gGame.harpoon2.isActive) {
+            int visible = std::min(gGame.harpoon2.length, gGame.harpoon2.height);
+            int y = rect.bottom - gGame.floorWall.height - visible;
+
+            SelectObject(gRes.hdcMem, gRes.arrowMask);
+            StretchBlt(hdc, gGame.harpoon2.x, y,
+                       gGame.harpoon2.width, visible,
+                       gRes.hdcMem, 0, 0,
+                       gGame.harpoon2.width, visible, SRCPAINT);
+
+            SelectObject(gRes.hdcMem, gRes.arrow);
+            StretchBlt(hdc, gGame.harpoon2.x, y,
+                       gGame.harpoon2.width, visible,
+                       gRes.hdcMem, 0, 0,
+                       gGame.harpoon2.width, visible, SRCAND);
+        }
+    }
     // === OVERLAY TEXT ===
     if (gGame.gameState.isLevelCleared && gGame.currentLevel < 4)
         DrawLevelPassedScreen(hdc, rect);

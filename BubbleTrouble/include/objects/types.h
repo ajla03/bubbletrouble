@@ -17,6 +17,7 @@ struct Projectile{
  int dy;
  int length;
  bool isActive;
+ int ownerPlayer;
 };
 
 struct StaticObject{
@@ -51,6 +52,7 @@ struct Balloon {
 
 struct InputState{
  bool wasSpacePressed;
+ bool wasSpacePressedP2;
 };
 
 enum GameMode {
@@ -83,6 +85,7 @@ struct GameState{
     int doubleShotTimeLeft;
     bool balloonsAreFrozen;
     int freezeTimeLeft;
+    bool isMultiplayer;
 };
 
 struct HeartAnim{
@@ -90,7 +93,14 @@ struct HeartAnim{
     int animCounter;
 };
 
-
+// === NEW: PLAYER STATS STRUCTURE ===
+struct PlayerStats {
+    int lives;
+    int score;
+    int displayScore;  // For smooth animation
+    bool isAlive;
+    HeartAnim hearts[5];
+};
 struct Torch{
  int x, y;
  int width, height;
