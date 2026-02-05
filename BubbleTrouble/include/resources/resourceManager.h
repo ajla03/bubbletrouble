@@ -22,6 +22,7 @@ struct ResourceManager{
     HBITMAP soundButton, soundButtonMask;
     HBITMAP settingsSoundOff, settingsSoundOffHover;
     HBITMAP settingsMusicOnHover;
+    HBITMAP musicOff, musicOffHover;
     HBITMAP hMenuButton, hMenuButtonMask;
     HBITMAP player1MenuChar, player1MenuCharMask;
     HBITMAP player2MenuChar, player2MenuCharMask;

@@ -49,6 +49,8 @@ bool ResourceManager::LoadAll(HINSTANCE hInstance) {
     soundOnHover = LoadBitmap(hInstance, MAKEINTRESOURCE(IDB_SOUNDON_HOVER));
     settingsMusicOnHover = LoadBitmap(hInstance, MAKEINTRESOURCE(IDB_MUSICON_HOVER));
     settingsSoundOff = LoadBitmap(hInstance, MAKEINTRESOURCE(IDB_SOUNDOFF));
+    musicOff = LoadBitmap(hInstance, MAKEINTRESOURCE(IDB_MUSIC_OFF));
+    musicOffHover =  LoadBitmap(hInstance, MAKEINTRESOURCE(IDB_MUSIC_OFF_HOVER));
     settingsSoundOffHover = LoadBitmap(hInstance, MAKEINTRESOURCE(IDB_SOUNDOFF_HOVER));
     hero2 = LoadBitmap(hInstance, MAKEINTRESOURCE(IDB_HERO2));
 
