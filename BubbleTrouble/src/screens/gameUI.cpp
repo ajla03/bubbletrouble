@@ -317,135 +317,148 @@ void RenderDynamicGameUI(HDC hdc, RECT rect)
 
 
 void DrawHeartsAndScore(HDC hdc, RECT rect, int padding) {
-    int startX = gGame.leftWall.width;
+    int gap = 30; // Razmak između srca
+
+    // ==========================================
+    // LIJEVA STRANA - PLAYER 1 (ili Single Player)
+    // ==========================================
+
+    // Odaberi ispravne podatke zavisno od moda igre
+    int p1Lives = gGame.gameState.isMultiplayer ? gGame.player1Stats.lives : gGame.gameState.lives;
+    int p1Score = gGame.gameState.isMultiplayer ? gGame.player1Stats.displayScore : gGame.displayScore;
+    HeartAnim* p1HeartsAnim = gGame.gameState.isMultiplayer ? gGame.player1Stats.hearts : gGame.hearts;
+
+    int startX1 = gGame.leftWall.width;
     int startY = rect.bottom - gGame.floorWall.height + padding + gGame.heartInfo.height;
-    int gap = 30;
 
-    int endX = 0 ;
-    for (int i = 0; i < 5 ; i++) {
-        int x = startX + i * (gGame.heartInfo.width + gap);
+    for (int i = 0; i < 5; i++) {
+        int x = startX1 + i * (gGame.heartInfo.width + gap);
         int y = startY;
-        endX = startX + gGame.heartBgInfo.width;
 
-        // === BACKGROUND  ===
+        // === BACKGROUND (Sivi okvir) ===
         HBITMAP oldBmp = (HBITMAP)SelectObject(gRes.hdcMem, gRes.heartBkgMask);
         BitBlt(hdc, x, y, gGame.heartBgInfo.width, gGame.heartBgInfo.height, gRes.hdcMem, 0, 0, SRCPAINT);
         SelectObject(gRes.hdcMem, gRes.heartBkg);
         BitBlt(hdc, x, y, gGame.heartBgInfo.width, gGame.heartBgInfo.height, gRes.hdcMem, 0, 0, SRCAND);
 
-        // === BORDER ===
+        // === BORDER (Bijeli okvir) ===
         SelectObject(gRes.hdcMem, gRes.heartBorderMask);
         BitBlt(hdc, x, y, gGame.heartBorderInfo.width, gGame.heartBorderInfo.height, gRes.hdcMem, 0, 0, SRCPAINT);
         SelectObject(gRes.hdcMem, gRes.heartBorder);
         BitBlt(hdc, x, y, gGame.heartBorderInfo.width, gGame.heartBorderInfo.height, gRes.hdcMem, 0, 0, SRCAND);
 
-        // === FILL  ===
-        if (i < gGame.gameState.lives) {
-            int srcX = gGame.hearts[i].currentFrame * gGame.heartInfo.width;
+        // === FILL (Srce) ===
+        // Ovdje koristimo p1Lives umjesto gGame.gameState.lives
+        if (i < p1Lives) {
+            int srcX = p1HeartsAnim[i].currentFrame * gGame.heartInfo.width;
 
             SelectObject(gRes.hdcMem, gRes.heartMask);
-            BitBlt(
-                hdc,
-                x,
-                y,
-                gGame.heartInfo.width,
-                gGame.heartInfo.height,
-                gRes.hdcMem,
-                srcX,
-                0,
-                SRCPAINT
-            );
+            BitBlt(hdc, x, y, gGame.heartInfo.width, gGame.heartInfo.height, gRes.hdcMem, srcX, 0, SRCPAINT);
 
             SelectObject(gRes.hdcMem, gRes.heart);
-            BitBlt(
-                hdc,
-                x,
-                y,
-                gGame.heartInfo.width,
-                gGame.heartInfo.height,
-                gRes.hdcMem,
-                srcX,
-                0,
-                SRCAND
-            );
+            BitBlt(hdc, x, y, gGame.heartInfo.width, gGame.heartInfo.height, gRes.hdcMem, srcX, 0, SRCAND);
+        }
+    }
+
+    // === SCORE ZA PLAYER 1 ===
+    // (Tvoj postojeći kod za score, samo prilagođen da ispisuje p1Score)
+    int scoreGap = 10;
+    int scoreX = gGame.playerHolderInfo.x + gGame.playerHolderInfo.width + scoreGap;
+    int scoreY = gGame.playerHolderInfo.y + 5;
+    int boxW = scoreX - (startX1 + gGame.heartBgInfo.width); // Mala korekcija širine ako treba
+    if(boxW < 100) boxW = 100; // Minimalna širina
+
+    int scoreBoxH = gGame.playerHolderInfo.height - 8;
+
+    // Iscrtaj holder i tekst rezultata kao i prije...
+    SelectObject(gRes.hdcMem, gRes.scoreHolder);
+    SetStretchBltMode(hdc, COLORONCOLOR);
+    StretchBlt(hdc, scoreX, scoreY, boxW, scoreBoxH, gRes.hdcMem, 0, 0, gGame.scoreHolderInfo.width, gGame.scoreHolderInfo.height, SRCCOPY);
+
+    // Okvir oko rezultata
+    HPEN hDarkPen = CreatePen(PS_SOLID, 2, RGB(100, 100, 100));
+    HPEN hOldPen = (HPEN)SelectObject(hdc, hDarkPen);
+    SelectObject(hdc, GetStockObject(NULL_BRUSH)); // Da ne oboji unutrašnjost
+    RoundRect(hdc, scoreX - 2, scoreY - 2, scoreX + boxW + 2, scoreY + scoreBoxH + 2, 4, 4);
+    SelectObject(hdc, hOldPen);
+    DeleteObject(hDarkPen);
+
+    // Ispis broja
+    HFONT oldFont = (HFONT)SelectObject(hdc, gRes.hFont);
+    SetBkMode(hdc, TRANSPARENT);
+    SetTextColor(hdc, RGB(70, 70, 70));
+    char valueText[32];
+    sprintf(valueText, "%d", p1Score);
+    SIZE textSize;
+    GetTextExtentPoint32(hdc, valueText, lstrlen(valueText), &textSize);
+    TextOut(hdc, scoreX + 10, scoreY + scoreBoxH/2 - textSize.cy/2, valueText, strlen(valueText));
+
+
+    // ==========================================
+    // DESNA STRANA - PLAYER 2 (Samo Multiplayer)
+    // ==========================================
+    if (gGame.gameState.isMultiplayer) {
+        int p2Lives = gGame.player2Stats.lives;
+        int p2Score = gGame.player2Stats.displayScore;
+        HeartAnim* p2HeartsAnim = gGame.player2Stats.hearts;
+
+        // Početna X pozicija (desni zid minus širina srca)
+        int startX2 = rect.right - gGame.rightWall.width - gGame.heartBgInfo.width;
+
+        for (int i = 0; i < 5; i++) {
+            // Iscrtavamo s desna na lijevo: oduzimamo i * (širina + gap)
+            int x = startX2 - i * (gGame.heartInfo.width + gap);
+            int y = startY;
+
+            // === P2 BACKGROUND ===
+            HBITMAP oldBmp2 = (HBITMAP)SelectObject(gRes.hdcMem, gRes.heartBkgMask);
+            BitBlt(hdc, x, y, gGame.heartBgInfo.width, gGame.heartBgInfo.height, gRes.hdcMem, 0, 0, SRCPAINT);
+            SelectObject(gRes.hdcMem, gRes.heartBkg);
+            BitBlt(hdc, x, y, gGame.heartBgInfo.width, gGame.heartBgInfo.height, gRes.hdcMem, 0, 0, SRCAND);
+
+            // === P2 BORDER ===
+            SelectObject(gRes.hdcMem, gRes.heartBorderMask);
+            BitBlt(hdc, x, y, gGame.heartBorderInfo.width, gGame.heartBorderInfo.height, gRes.hdcMem, 0, 0, SRCPAINT);
+            SelectObject(gRes.hdcMem, gRes.heartBorder);
+            BitBlt(hdc, x, y, gGame.heartBorderInfo.width, gGame.heartBorderInfo.height, gRes.hdcMem, 0, 0, SRCAND);
+
+            // === P2 FILL ===
+            if (i < p2Lives) {
+                int srcX = p2HeartsAnim[i].currentFrame * gGame.heartInfo.width;
+
+                SelectObject(gRes.hdcMem, gRes.heartMask);
+                BitBlt(hdc, x, y, gGame.heartInfo.width, gGame.heartInfo.height, gRes.hdcMem, srcX, 0, SRCPAINT);
+
+                SelectObject(gRes.hdcMem, gRes.heart);
+                BitBlt(hdc, x, y, gGame.heartInfo.width, gGame.heartInfo.height, gRes.hdcMem, srcX, 0, SRCAND);
+            }
+            SelectObject(gRes.hdcMem, oldBmp2);
         }
 
-        // ========= SCORE ========= //
-        int  gap = 10;
-        x = gGame.playerHolderInfo.x + gGame.playerHolderInfo.width + gap;
-        y = gGame.playerHolderInfo.y + 5  ;
-        int boxW = x - endX;
-        int boxH = gGame.playerHolderInfo.height - 8;
+        // === P2 SCORE (Lijevo od srca) ===
+        // Pozicija: zadnje lijevo srce (i=4) minus širina score boxa minus gap
+        int lastHeartX = startX2 - 4 * (gGame.heartInfo.width + gap);
+        int p2ScoreX = lastHeartX - boxW - scoreGap;
+
+        // Iscrtaj holder za P2
         SelectObject(gRes.hdcMem, gRes.scoreHolder);
+        StretchBlt(hdc, p2ScoreX, scoreY, boxW, scoreBoxH, gRes.hdcMem, 0, 0, gGame.scoreHolderInfo.width, gGame.scoreHolderInfo.height, SRCCOPY);
 
-        SetStretchBltMode(hdc, COLORONCOLOR);
-        StretchBlt(
-            hdc,
-            x, y ,
-            boxW, boxH,
-            gRes.hdcMem,
-            0, 0,
-            gGame.scoreHolderInfo.width,
-            gGame.scoreHolderInfo.height,
-            SRCCOPY
-        );
-        HPEN hDarkPen = CreatePen(PS_SOLID, 2, RGB(100, 100, 100));
-        HPEN hOldPen = (HPEN)SelectObject(hdc, hDarkPen);
+        // Okvir za P2
+        HPEN hDarkPen2 = CreatePen(PS_SOLID, 2, RGB(100, 100, 100));
+        HPEN hOldPen2 = (HPEN)SelectObject(hdc, hDarkPen2);
+        SelectObject(hdc, GetStockObject(NULL_BRUSH));
+        RoundRect(hdc, p2ScoreX - 2, scoreY - 2, p2ScoreX + boxW + 2, scoreY + scoreBoxH + 2, 4, 4);
+        SelectObject(hdc, hOldPen2);
+        DeleteObject(hDarkPen2);
 
-       RoundRect(
-            hdc,
-            x -2,
-            y -2,
-            x + boxW + 2,
-            y + boxH + 2,
-            4, 4
-        );
-
-        SelectObject(hdc, hOldPen);
-        DeleteObject(hDarkPen);
-
-        HFONT oldFont = (HFONT)SelectObject(hdc, gRes.hFont);
-
-        SetBkMode(hdc, TRANSPARENT);
-        SetTextColor(hdc, RGB(70, 70, 70));
-
-        char valueText[32];
-        sprintf(valueText, "%d", gGame.displayScore);
-        SIZE textSize;
-        GetTextExtentPoint32(
-            hdc,
-            valueText,
-            lstrlen(valueText),
-            &textSize
-        );
-
-        TextOut(
-            hdc,
-            x + padding/3,
-            y + boxH/2 - textSize.cy/2,
-            valueText,
-            strlen(valueText)
-        );
-
-        SelectObject(hdc, oldFont);
-
-        /*
-        SelectObject(gRes.hdcMem, gRes.levelPlaceholderBlack);
-        StretchBlt(
-            hdc,
-            x, y,
-            boxW, boxH,
-            gRes.hdcMem,
-            0, 0,
-            gGame.levelPlaceholderInfo.width,
-            gGame.levelPlaceholderInfo.height,
-            SRCPAINT
-        );
-        */
-
-        SelectObject(gRes.hdcMem, oldBmp);
-
+        // Tekst za P2
+        sprintf(valueText, "%d", p2Score);
+        GetTextExtentPoint32(hdc, valueText, lstrlen(valueText), &textSize);
+        TextOut(hdc, p2ScoreX + 10, scoreY + scoreBoxH/2 - textSize.cy/2, valueText, strlen(valueText));
     }
+
+    SelectObject(hdc, oldFont);
 }
 
 

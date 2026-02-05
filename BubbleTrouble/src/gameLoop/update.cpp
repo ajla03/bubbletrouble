@@ -9,31 +9,66 @@ void UpdateHeroCoolDown(float dt){
         gGame.hero.heroHitCooldown -=dt;
 }
 
-void UpdateScoreAnimation()
-{
-    int diff = gGame.totalScore - gGame.displayScore;
-
-    if (diff > 0)
-    {
-        int step = std::max(1, diff / 10);
-        gGame.displayScore += step;
+void UpdateHearts() {
+    if (gGame.gameState.isMultiplayer) {
+        // === PLAYER 1 ANIMATION ===
+        for (int i = 0; i < gGame.player1Stats.lives; i++) {
+            gGame.player1Stats.hearts[i].animCounter++;
+            if (gGame.player1Stats.hearts[i].animCounter >= HEART_ANIM_SPEED) {
+                gGame.player1Stats.hearts[i].animCounter = 0;
+                gGame.player1Stats.hearts[i].currentFrame++;
+                if (gGame.player1Stats.hearts[i].currentFrame >= HEART_FRAMES) {
+                    gGame.player1Stats.hearts[i].currentFrame = 0;
+                }
+            }
+        }
+        // === PLAYER 2 ANIMATION ===
+        for (int i = 0; i < gGame.player2Stats.lives; i++) {
+            gGame.player2Stats.hearts[i].animCounter++;
+            if (gGame.player2Stats.hearts[i].animCounter >= HEART_ANIM_SPEED) {
+                gGame.player2Stats.hearts[i].animCounter = 0;
+                gGame.player2Stats.hearts[i].currentFrame++;
+                if (gGame.player2Stats.hearts[i].currentFrame >= HEART_FRAMES) {
+                    gGame.player2Stats.hearts[i].currentFrame = 0;
+                }
+            }
+        }
+    } else {
+        // === SINGLE PLAYER (Stari kod) ===
+        for (int i = 0; i < gGame.gameState.lives; i++) {
+            gGame.hearts[i].animCounter++;
+            if (gGame.hearts[i].animCounter >= HEART_ANIM_SPEED) {
+                gGame.hearts[i].animCounter = 0;
+                gGame.hearts[i].currentFrame++;
+                if (gGame.hearts[i].currentFrame >= HEART_FRAMES) {
+                    gGame.hearts[i].currentFrame = 0;
+                }
+            }
+        }
     }
 }
 
+void UpdateScoreAnimation() {
+    if (gGame.gameState.isMultiplayer) {
+        int diff1 = gGame.player1Stats.score - gGame.player1Stats.displayScore;
+        if (diff1 > 0) {
+            int step = std::max(1, diff1 / 10);
+            gGame.player1Stats.displayScore += step;
+        }
 
-void UpdateHearts(){
- for (int i = 0; i < gGame.gameState.lives; i++) {
-    gGame.hearts[i].animCounter++;
-
-    if (gGame.hearts[i].animCounter >= HEART_ANIM_SPEED) {
-        gGame.hearts[i].animCounter = 0;
-        gGame.hearts[i].currentFrame++;
-
-        if (gGame.hearts[i].currentFrame >= HEART_FRAMES) {
-            gGame.hearts[i].currentFrame = 0;
+        int diff2 = gGame.player2Stats.score - gGame.player2Stats.displayScore;
+        if (diff2 > 0) {
+            int step = std::max(1, diff2 / 10);
+            gGame.player2Stats.displayScore += step;
+        }
+    } else {
+        // Single player
+        int diff = gGame.totalScore - gGame.displayScore;
+        if (diff > 0) {
+            int step = std::max(1, diff / 10);
+            gGame.displayScore += step;
         }
     }
- }
 }
 
 void Update(HWND hwnd){
