@@ -134,6 +134,13 @@ void InitLevel3(HWND hwnd){
   InitBalloon(1, 3*rect.right/4, 150, 40, -3.0f, RGB(0, 255, 0));   // Zelena
   //InitBalloon(2, 600, 120, 80, 3.0f, RGB(0, 100, 255));  // Plava
   InitPowerupSystemForLevel();
+  if (gGame.gameState.isMultiplayer) {
+      gGame.hero.x = gGame.leftWall.width + 50;
+      gGame.hero2.x = gGame.leftWall.width + 130;
+
+      gGame.hero2.y = rect.bottom - gGame.floorWall.height - gGame.hero2.height;
+      gGame.hero2.dx = gGame.hero.dx;
+  }
 }
 
 

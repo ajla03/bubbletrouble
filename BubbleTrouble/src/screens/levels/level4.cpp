@@ -121,6 +121,17 @@ void InitLevel4(HWND hwnd){
     float section3CenterX = gGame.leftWall.width + 2 * sectionWidth + sectionWidth / 2;
     InitBalloon(2, section3CenterX, 120, 80, 3.0f, RGB(255, 0, 0));    // Red
     InitPowerupSystemForLevel();
+    // === DODANO: POZICIONIRANJE ZA MULTIPLAYER (Level 4) ===
+    if (gGame.gameState.isMultiplayer) {
+
+        gGame.hero.x = gGame.leftWall.width + 50;
+        gGame.hero2.x = gGame.leftWall.width + 130;
+
+
+        RECT rect;
+        GetClientRect(hwnd, &rect);
+        gGame.hero2.y = rect.bottom - gGame.floorWall.height - gGame.hero2.height;
+    }
 
 }
 
