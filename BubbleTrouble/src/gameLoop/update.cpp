@@ -88,6 +88,7 @@ void Update(HWND hwnd){
         CURRENT_LEVEL.timeLeft = 0;
         printf("timeLeft at start: %f\n", CURRENT_LEVEL.timeLeft);
         gGame.gameState.isGameOver = true;
+        gGame.gameState.currentMode = GAME_OVER;
 
         if(!gGame.gameState.isScoreSaved) {
             SaveFinalScore();
