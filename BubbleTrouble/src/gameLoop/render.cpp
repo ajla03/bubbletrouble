@@ -6,6 +6,7 @@
 #include <algorithm>
 #include <cstdio>
 
+
 void RefreshScreen(HWND hwnd) {
     HDC hdc = GetDC(hwnd);
     RECT rect;
@@ -13,13 +14,12 @@ void RefreshScreen(HWND hwnd) {
 
     if(gGame.gameState.currentMode == GAME_MODE_MENU) {
         InitializeMenu(hwnd);
-
         RenderMenu(gRes.hdcBuffer, rect);
         DrawTransitionWalls(gRes.hdcBuffer, rect);
     } else if(gGame.gameState.currentMode == GAME_MODE_SETTINGS){
        RenderSettings(gRes.hdcBuffer, rect);
        DrawTransitionWalls(gRes.hdcBuffer, rect);
-    } else {
+    }else {
         RenderStaticUI(gRes.hdcBuffer, rect);
         RenderLevel(gRes.hdcBuffer, rect);
         RenderDynamicGameUI(gRes.hdcBuffer, rect);
@@ -31,5 +31,8 @@ void RefreshScreen(HWND hwnd) {
     ReleaseDC(hwnd, hdc);
 }
 
+
+
 void RefreshSound(){
 }
+
