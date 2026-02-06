@@ -4,6 +4,7 @@
 #include "resourceManager.h"
 #include "gameContext.h"
 #include "resources.h"
+#include "database.h"
 #include "game.h"
 #include <ctime>
 
@@ -15,6 +16,11 @@ LRESULT CALLBACK WindowProcedure(HWND, UINT, WPARAM, LPARAM);
 int WINAPI WinMain(HINSTANCE hThisInstance, HINSTANCE hPrevInstance, LPSTR lpszArgument, int nCmdShow){
 
     srand((unsigned int)time(NULL));
+
+    if (!InitDatabase()) {
+        MessageBoxA(NULL, "Failed to initialize database!", "Error", MB_OK | MB_ICONERROR);
+        return 1;
+    }
 
     HWND hwnd;
     MSG messages;
