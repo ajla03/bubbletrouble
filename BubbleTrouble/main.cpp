@@ -100,7 +100,7 @@ int WINAPI WinMain(HINSTANCE hThisInstance, HINSTANCE hPrevInstance, LPSTR lpszA
 LRESULT CALLBACK WindowProcedure(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam){
    static int prevClientW = 0;
    static int prevClientH = 0;
-
+   static bool autoPaused = false;
     switch (message){
         case WM_SETCURSOR: {
          SetCursor(gRes.gameCursor);
@@ -125,9 +125,27 @@ LRESULT CALLBACK WindowProcedure(HWND hwnd, UINT message, WPARAM wParam, LPARAM 
             ReleaseDC(hwnd, hdc);
         }
           case WM_SIZE: {
+
+            if (wParam == SIZE_MINIMIZED) {
+                 if(gGame.gameState.currentMode ==  GAME_MODE_PLAYING){
+                    gGame.gameState.currentMode = GAME_MODE_PAUSE;
+                    autoPaused = true;
+                 }
+                return 0;
+            }
+
+            if(wParam == SIZE_RESTORED){
+                if(gGame.gameState.currentMode == GAME_MODE_PAUSE && autoPaused){
+                   gGame.gameState.currentMode = GAME_MODE_PLAYING;
+                   autoPaused = false;
+                }
+            }
+
             int newW = LOWORD(lParam);
             int newH = HIWORD(lParam);
 
+            if(newW <= 0 || newH<= 0)
+                return 0;
 
             UpdateLayout(
                 prevClientW,
