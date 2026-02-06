@@ -302,7 +302,7 @@ void RenderDynamicGameUI(HDC hdc, RECT rect)
 
 
     // === PLAYER 2 (MULTIPLAYER) ===
-    if(gGame.gameState.isMultiplayer) {
+   if(gGame.gameState.isMultiplayer && gGame.player2Stats.lives > 0) {
         RenderHero(
             hdc,
             &gGame.hero2,
@@ -312,7 +312,6 @@ void RenderDynamicGameUI(HDC hdc, RECT rect)
             true,
             1.2f
         );
-
 
         // Render harpoon2
         if(gGame.harpoon2.isActive) {
