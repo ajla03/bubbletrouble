@@ -529,7 +529,7 @@ static void RenderSoundHolder(HDC hdcBuffer, RECT sheet)
     if (gGame.settingsState.soundState.soundEffectsOn) {
         hbmSfx = gGame.settingsSoundButtonInfo.isHover
                ? gRes.soundOnHover
-               : gRes.hSoundOn;
+               : gRes.soundOn;
     } else {
         hbmSfx = gGame.settingsSoundButtonInfo.isHover
                ? gRes.settingsSoundOffHover
