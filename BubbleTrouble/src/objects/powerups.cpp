@@ -86,28 +86,32 @@ void UpdatePowerups(HWND hwnd) {
 
         PowerUp* p = &CURRENT_LEVEL.powerups[i];
 
+        // Padanje
         p->y += p->speedY;
 
+        // Ukloni ako padne na pod
         if(p->y + p->height >= FLOOR_Y) {
             p->active = false;
             CURRENT_LEVEL.activePowerupCount--;
             continue;
         }
 
-        float heroLeft = gGame.hero.x;
-        float heroRight = gGame.hero.x + gGame.hero.width;
-        float heroTop = gGame.hero.y;
-        float heroBottom = gGame.hero.y + gGame.hero.height;
-
+        // Koordinate powerupa
         float powerupLeft = p->x;
         float powerupRight = p->x + p->width;
         float powerupTop = p->y;
         float powerupBottom = p->y + p->height;
 
+        // === PROVJERA SUDARA SA PLAYER 1 ===
+        float heroLeft = gGame.hero.x;
+        float heroRight = gGame.hero.x + gGame.hero.width;
+        float heroTop = gGame.hero.y;
+        float heroBottom = gGame.hero.y + gGame.hero.height;
+
         if(heroRight > powerupLeft && heroLeft < powerupRight &&
            heroBottom > powerupTop && heroTop < powerupBottom) {
 
-            ApplyPowerup(p->type);
+            ApplyPowerup(p->type, 1); // <--- ID 1 za Player 1
             p->active = false;
             CURRENT_LEVEL.activePowerupCount--;
 
@@ -115,6 +119,29 @@ void UpdatePowerups(HWND hwnd) {
                 PlaySound(MAKEINTRESOURCE(IDR_BALLOON_POP),
                      GetModuleHandle(NULL),
                      SND_RESOURCE | SND_ASYNC | SND_NODEFAULT);
+            continue; // Pređi na sljedeći powerup
+        }
+
+        // === PROVJERA SUDARA SA PLAYER 2 (Samo Multiplayer) ===
+        if (gGame.gameState.isMultiplayer) {
+            float hero2Left = gGame.hero2.x;
+            float hero2Right = gGame.hero2.x + gGame.hero2.width;
+            float hero2Top = gGame.hero2.y;
+            float hero2Bottom = gGame.hero2.y + gGame.hero2.height;
+
+            if (hero2Right > powerupLeft && hero2Left < powerupRight &&
+                hero2Bottom > powerupTop && hero2Top < powerupBottom) {
+
+                ApplyPowerup(p->type, 2); // <--- ID 2 za Player 2
+                p->active = false;
+                CURRENT_LEVEL.activePowerupCount--;
+
+                if (gGame.settingsState.soundState.soundEffectsOn)
+                     PlaySound(MAKEINTRESOURCE(IDR_BALLOON_POP),
+                         GetModuleHandle(NULL),
+                         SND_RESOURCE | SND_ASYNC | SND_NODEFAULT);
+                continue;
+            }
         }
     }
 
@@ -129,11 +156,23 @@ void UpdatePowerups(HWND hwnd) {
     }
 }
 
-void ApplyPowerup(PowerUpType type) {
+void ApplyPowerup(PowerUpType type, int playerIndex) {
     switch(type) {
         case POWERUP_EXTRA_LIFE:
-            if(gGame.gameState.lives < MAX_LIVES) {
-                gGame.gameState.lives++;
+            // Logika za živote ovisi o modu igre i igraču
+            if (gGame.gameState.isMultiplayer) {
+                if (playerIndex == 1) {
+                    if (gGame.player1Stats.lives < 5)
+                        gGame.player1Stats.lives++;
+                }
+                else if (playerIndex == 2) {
+                    if (gGame.player2Stats.lives < 5)
+                        gGame.player2Stats.lives++;
+                }
+            } else {
+                // Single player standardno
+                if (gGame.gameState.lives < 5)
+                    gGame.gameState.lives++;
             }
             break;
 
@@ -145,7 +184,7 @@ void ApplyPowerup(PowerUpType type) {
             break;
 
         case POWERUP_FREEZE:
-            // Zamrzni sve balone
+            // Zamrzni sve balone (vrijedi za oba igrača)
             FreezeBalloons();
             gGame.gameState.balloonsAreFrozen = true;
             gGame.gameState.freezeTimeLeft = FREEZE_DURATION;

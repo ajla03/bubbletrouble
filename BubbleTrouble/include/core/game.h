@@ -56,7 +56,7 @@ void DrawBalloonGDI(HDC hdc, Balloon* b) ;
 void InitPowerupSystemForLevel();
 void SpawnPowerup(HWND hwnd);
 void UpdatePowerups(HWND hwnd);
-void ApplyPowerup(PowerUpType type);
+void ApplyPowerup(PowerUpType type, int playerIndex);
 void DrawPowerups(HDC hdc, RECT rect);
 void FreezeBalloons();
 void UnfreezeBalloons();
@@ -107,7 +107,7 @@ void UpdateLayout(int oldW, int oldH, int newW, int newH);
 void InitDefaultSettings();
 void HandleKeyDown(HWND hwnd, WPARAM wParam);
 const char* VKCodeToString(int vkCode);
-// ================= MULTIPLAYER (dodaj negdje logički) =================
+// ================= MULTIPLAYER  =================
 void InitMultiplayer(HWND hwnd);
 void UpdatePlayer2Input(HWND hwnd);
 void RenderPlayer2(HDC hdc, RECT rect);

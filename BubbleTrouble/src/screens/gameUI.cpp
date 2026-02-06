@@ -325,7 +325,7 @@ void RenderDynamicGameUI(HDC hdc, RECT rect)
         }
     }
     // === OVERLAY TEXT ===
-    if (gGame.gameState.isLevelCleared && gGame.currentLevel < 4)
+    if (gGame.gameState.isLevelCleared && gGame.currentLevel < 5)
         DrawLevelPassedScreen(hdc, rect);
     else if (gGame.gameState.isGameOver || gGame.currentLevel >= 5 && gGame.gameState.isLevelCleared)
         DrawGameOverScreen(hdc, rect);
