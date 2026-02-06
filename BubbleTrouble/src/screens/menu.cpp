@@ -47,7 +47,6 @@ void InitializeMenu(HWND hwnd) {
     gGame.menuButtons[0].rect.right = leftSideCenter + buttonWidth / 2;
     gGame.menuButtons[0].rect.bottom = startY + buttonHeight;
     gGame.menuButtons[0].text = "1 PLAYER";
-    gGame.menuButtons[0].isHovered = false;
 
     // 2 PLAYERS button - centered on leftSideCenter
     gGame.menuButtons[1].rect.left = leftSideCenter - buttonWidth / 2;
@@ -55,7 +54,6 @@ void InitializeMenu(HWND hwnd) {
     gGame.menuButtons[1].rect.right = leftSideCenter + buttonWidth / 2;
     gGame.menuButtons[1].rect.bottom = startY + (buttonHeight + buttonSpacing) + buttonHeight;
     gGame.menuButtons[1].text = "2 PLAYERS";
-    gGame.menuButtons[1].isHovered = false;
 
     // SETTINGS button - centered on leftSideCenter
     gGame.menuButtons[2].rect.left = leftSideCenter - buttonWidth / 2;
@@ -63,7 +61,6 @@ void InitializeMenu(HWND hwnd) {
     gGame.menuButtons[2].rect.right = leftSideCenter + buttonWidth / 2;
     gGame.menuButtons[2].rect.bottom = startY + 2 * (buttonHeight + buttonSpacing) + buttonHeight;
     gGame.menuButtons[2].text = "SETTINGS";
-    gGame.menuButtons[2].isHovered = false;
 }
 
 void RenderMenu(HDC hdc, RECT rect ) {
@@ -270,8 +267,8 @@ void RenderMenu(HDC hdc, RECT rect ) {
         if (isPlayer2) {
             charH = (int)(rect.bottom * 1.3);
             charW = (int)(charH * aspectRatio);
-            charX = gGame.menuButtons[0].rect.right + (-100);
-            charY = rect.bottom - (int)(charH * 0.8);
+            charX = gGame.menuButtons[0].rect.right + 100;
+            charY = rect.bottom - (int)(charH * 0.78);
         } else {
             charH = (int)(rect.bottom * 0.75);
             charW = (int)(charH * aspectRatio);
