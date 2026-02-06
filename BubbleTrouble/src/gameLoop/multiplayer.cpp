@@ -63,6 +63,9 @@ void InitMultiplayer(HWND hwnd) {
 }
 
 void UpdatePlayer2Input(HWND hwnd) {
+    // PROMJENA: Ako Player 2 nema života, nema kontrole
+    if (gGame.player2Stats.lives <= 0) return;
+
     if(gGame.gameState.currentMode != GAME_MODE_PLAYING ||
        gGame.transitionState == TRANSITION_WAIT ||
        gGame.transitionState == TRANSITION_CLOSING)
@@ -139,6 +142,9 @@ void UpdatePlayer2Input(HWND hwnd) {
 }
 
 void RenderPlayer2(HDC hdc, RECT rect) {
+    // PROMJENA: Ako Player 2 nema života, ne crta se
+    if (gGame.player2Stats.lives <= 0) return;
+
     // Set hero2 Y position
     gGame.hero2.y = rect.bottom - gGame.floorWall.height - gGame.hero2.height;
 

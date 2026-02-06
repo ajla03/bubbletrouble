@@ -135,7 +135,6 @@ void RenderWalls(HDC hdc, RECT rect){
 
 void RenderDynamicGameUI(HDC hdc, RECT rect)
 {
-
     int bgX = gGame.leftWall.width;
     int bgY = 0;
     int bgW = rect.right - gGame.leftWall.width - gGame.rightWall.width;
@@ -162,7 +161,7 @@ void RenderDynamicGameUI(HDC hdc, RECT rect)
     FillRect(hdc, &barBgRect, hDarkBrush);
     DeleteObject(hDarkBrush);
 
-    // Ograni�enje vremena na 0
+    // Ograničenje vremena na 0
     if (CURRENT_LEVEL.timeLeft < 0)
         CURRENT_LEVEL.timeLeft = 0;
 
@@ -267,21 +266,25 @@ void RenderDynamicGameUI(HDC hdc, RECT rect)
         gGame.torchInfo.height,
         SRCAND
     );
-    // === HERO ===
-    gGame.hero.y = rect.bottom - gGame.floorWall.height - gGame.hero.height;
 
-    int srcX = gGame.hero.currentFrame * gGame.hero.width;
-    int srcY = gGame.hero.currentRow * gGame.hero.height;
+    // === HERO (PLAYER 1) ===
+    // PROMJENA: Crtamo ga samo ako nije multiplayer ILI ako je multiplayer i ima života
+    if (!gGame.gameState.isMultiplayer || gGame.player1Stats.lives > 0) {
+        gGame.hero.y = rect.bottom - gGame.floorWall.height - gGame.hero.height;
 
-    SelectObject(gRes.hdcMem, gRes.characterMask);
-    BitBlt(hdc, gGame.hero.x, gGame.hero.y,
-           gGame.hero.width, gGame.hero.height,
-           gRes.hdcMem, srcX, srcY, SRCAND);
+        int srcX = gGame.hero.currentFrame * gGame.hero.width;
+        int srcY = gGame.hero.currentRow * gGame.hero.height;
 
-    SelectObject(gRes.hdcMem, gRes.character);
-    BitBlt(hdc, gGame.hero.x, gGame.hero.y,
-           gGame.hero.width, gGame.hero.height,
-           gRes.hdcMem, srcX, srcY, SRCPAINT);
+        SelectObject(gRes.hdcMem, gRes.characterMask);
+        BitBlt(hdc, gGame.hero.x, gGame.hero.y,
+            gGame.hero.width, gGame.hero.height,
+            gRes.hdcMem, srcX, srcY, SRCAND);
+
+        SelectObject(gRes.hdcMem, gRes.character);
+        BitBlt(hdc, gGame.hero.x, gGame.hero.y,
+            gGame.hero.width, gGame.hero.height,
+            gRes.hdcMem, srcX, srcY, SRCPAINT);
+    }
 
     // === HARPOON ===
     if (gGame.harpoon.isActive) {
@@ -324,9 +327,12 @@ void RenderDynamicGameUI(HDC hdc, RECT rect)
                        gGame.harpoon2.width, visible, SRCAND);
         }
     }
+
     // === OVERLAY TEXT ===
+    // PROMJENA: Level limit je sada 5 (uključuje Level 5)
     if (gGame.gameState.isLevelCleared && gGame.currentLevel < 5)
         DrawLevelPassedScreen(hdc, rect);
+    // PROMJENA: Kraj igre nakon levela 6
     else if (gGame.gameState.isGameOver || gGame.currentLevel >= 5 && gGame.gameState.isLevelCleared)
         DrawGameOverScreen(hdc, rect);
     else if(gGame.gameState.currentMode == GAME_MODE_PAUSE ){
@@ -334,7 +340,6 @@ void RenderDynamicGameUI(HDC hdc, RECT rect)
     }
 
 }
-
 
 void DrawHeartsAndScore(HDC hdc, RECT rect, int padding) {
     int gap = 30; // Razmak između srca
