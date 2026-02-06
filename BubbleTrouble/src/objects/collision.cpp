@@ -3,6 +3,7 @@
 #include "game.h"
 #include "constants.h"
 #include <windows.h>
+#include "database.h"
 #include <cmath>
 #include <algorithm>
 
@@ -119,17 +120,26 @@ void CheckCollisions(){
             if(gGame.settingsState.soundState.soundEffectsOn)
                 PlaySound(MAKEINTRESOURCE(IDR_DAMAGE_SOUND), GetModuleHandle(NULL), SND_RESOURCE | SND_ASYNC);
 
-            if(gGame.gameState.isMultiplayer) {
+            if(gGame.gameState.isMultiplayer){
                 --gGame.player1Stats.lives;
                 // Game over samo ako su OBA igrača mrtva (ovo se provjerava i u Update, ali može i ovdje)
                 if(gGame.player1Stats.lives <= 0 && gGame.player2Stats.lives <= 0) {
                     gGame.gameState.isGameOver = true;
+                    printf("entered here! ...");
+                        if(!gGame.gameState.isScoreSaved) {
+                            SaveFinalScore();
+                            gGame.gameState.isScoreSaved = true;
+                          }
                     gGame.gameState.currentMode = GAME_OVER;
                 }
             } else {
                 --gGame.player1Stats.lives;
                 if(gGame.player1Stats.lives == 0) {
                     gGame.gameState.isGameOver = true;
+                     if(!gGame.gameState.isScoreSaved) {
+                        SaveFinalScore();
+                        gGame.gameState.isScoreSaved = true;
+                    }
                     gGame.gameState.currentMode = GAME_OVER;
                 }
             }
@@ -200,6 +210,10 @@ void CheckCollisions(){
                 // Game over samo ako su OBA igrača mrtva
                 if(gGame.player1Stats.lives <= 0 && gGame.player2Stats.lives <= 0) {
                     gGame.gameState.isGameOver = true;
+                    if(!gGame.gameState.isScoreSaved) {
+                        SaveFinalScore();
+                        gGame.gameState.isScoreSaved = true;
+                    }
                     gGame.gameState.currentMode = GAME_OVER;
                 }
 

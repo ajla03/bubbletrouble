@@ -3,6 +3,7 @@
 #include "gameContext.h"
 #include "game.h"
 #include "resourceManager.h"
+#include "database.h"
 #include <wingdi.h>
 
 
@@ -65,6 +66,29 @@ void DrawGameOverScreen(HDC hdc, RECT rect)
     SelectObject(overlayDC, oldBmp);
     DeleteObject(overlayBmp);
     DeleteDC(overlayDC);
+}
+
+void SaveFinalScore() {
+    char playerName[50];
+    const char* gameMode;
+    int finalScore;
+
+    printf("entered here ...");
+
+    if (gGame.gameState.isMultiplayer) {
+        strcpy(playerName, "Team");
+        gameMode = "Multiplayer";
+        finalScore = gGame.totalScore;
+    } else {
+        // Single player
+        strcpy(playerName, "Player");
+        gameMode = "Single Player";
+        finalScore = gGame.totalScore;
+    }
+
+    if (!SaveScore(playerName, finalScore, gGame.currentLevel, gameMode)) {
+        OutputDebugStringA("Failed to save score to database!\n");
+    }
 }
 
 

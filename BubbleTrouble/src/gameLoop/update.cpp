@@ -86,7 +86,14 @@ void Update(HWND hwnd){
         CURRENT_LEVEL.timeLeft -= 1.0;
     } else if (CURRENT_LEVEL.timeLeft <= 0) {
         CURRENT_LEVEL.timeLeft = 0;
+        printf("timeLeft at start: %f\n", CURRENT_LEVEL.timeLeft);
         gGame.gameState.isGameOver = true;
+
+        if(!gGame.gameState.isScoreSaved) {
+            SaveFinalScore();
+        gGame.gameState.isScoreSaved = true;
+      }
+
     }
     if (gGame.harpoon.isActive){
         RECT rect;

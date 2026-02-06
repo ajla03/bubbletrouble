@@ -84,9 +84,12 @@ void ResetGame(HWND hwnd) {
         CURRENT_LEVEL.powerups[i].active = false;
 
     if(gGame.gameState.currentMode == GAME_MODE_PLAYING ||
-       gGame.gameState.currentMode == GAME_OVER)
+       gGame.gameState.currentMode == GAME_OVER){
+        ResetScoreFlag();
         InitLevel(hwnd);
+        }
     if(gGame.gameState.isMultiplayer) {
+        ResetScoreFlag();
         InitMultiplayer(hwnd);
     }
 
@@ -145,3 +148,7 @@ void ResetBetweenLevels(HWND hwnd) {
     }
 }
 
+
+void ResetScoreFlag(){
+    gGame.gameState.isScoreSaved = false;
+}

@@ -85,6 +85,7 @@ struct GameState{
     bool balloonsAreFrozen;
     int freezeTimeLeft;
     bool isMultiplayer;
+    bool isScoreSaved = false;
 };
 
 struct HeartAnim{
@@ -189,5 +190,7 @@ struct SettingsState{
  DotAnimation dotAnimation;
 };
 
-
+// DATA BASE
+void SaveFinalScore();
+void ResetScoreFlag();
 

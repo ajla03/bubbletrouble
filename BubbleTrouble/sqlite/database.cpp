@@ -135,4 +135,3 @@ bool GetTopScores(HighScore* scores, int count, const char* mode) {
 }
 
 
-

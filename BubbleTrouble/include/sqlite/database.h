@@ -15,4 +15,3 @@ bool SaveScore(const char* playerName, int score, int level, const char* mode);
 bool GetTopScores(HighScore* scores, int count, const char* mode);
 bool CreateTables();
 
-

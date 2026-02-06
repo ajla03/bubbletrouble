@@ -9,7 +9,7 @@ struct Level{
      Door door;
      Balloon balloons[MAX_BALLOONS];
      int activeBalloonCount;
-     double timeLeft;
+     double timeLeft = maxTime;
      int levelScore;
      Pillar pillar1;
      Pillar pillar2;
@@ -71,6 +71,7 @@ struct GameContext{
     GameState gameState;
     TransitionState transitionState;
     SettingsState settingsState;
+
 };
 
 extern GameContext gGame;
