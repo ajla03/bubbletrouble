@@ -74,7 +74,6 @@ struct GameState{
     bool isGameOver;
     bool isLevelCleared;
     GameMode currentMode;
-    int lives;
     bool pendingHome;
     bool pendingRestart;
     bool pendingNextLevel;
@@ -101,6 +100,8 @@ struct PlayerStats {
     bool isAlive;
     HeartAnim hearts[5];
 };
+
+
 struct Torch{
  int x, y;
  int width, height;

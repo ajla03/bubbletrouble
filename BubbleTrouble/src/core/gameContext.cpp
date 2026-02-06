@@ -65,7 +65,6 @@ GameContext gGame = {
         false,              // gameActive
         false,              // isPaused
         GAME_MODE_MENU,     // currentGameMode
-        START_LIVES,        // lives (keep for compatibility)
         false,              // showPauseMenu
         false,              // showGameOverMenu
         false,              // showVictoryMenu

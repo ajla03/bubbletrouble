@@ -15,7 +15,7 @@ void ResetGame(HWND hwnd) {
     gGame.gameState.isGameOver = false;
     gGame.gameState.isLevelCleared = false;
     CURRENT_LEVEL.activeBalloonCount = 0;
-    gGame.gameState.lives = START_LIVES;
+    gGame.player1Stats.lives = START_LIVES;
     gGame.totalScore = 0;
     gGame.displayScore = 0;
     gGame.pauseButtonInfo.isHover = false;

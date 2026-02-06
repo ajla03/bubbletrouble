@@ -67,9 +67,9 @@ void InitDefaultSettings(){
     gGame.settingsState.player1Keys.shoot = VK_SPACE;
 
     // player 2 - default controls
-    gGame.settingsState.player2Keys.moveLeft = VK_LEFT;
-    gGame.settingsState.player2Keys.moveRight = VK_RIGHT;
-    gGame.settingsState.player2Keys.shoot = VK_SPACE;
+    gGame.settingsState.player2Keys.moveLeft = 'A';
+    gGame.settingsState.player2Keys.moveRight = 'D';
+    gGame.settingsState.player2Keys.shoot = 'W';
 
     gGame.settingsState.waitingForKey = KEYBIND_NONE;
     gGame.settingsState.currentPlayerBinding = 1;

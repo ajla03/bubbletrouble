@@ -127,8 +127,8 @@ void CheckCollisions(){
                     gGame.gameState.currentMode = GAME_OVER;
                 }
             } else {
-                --gGame.gameState.lives;
-                if(gGame.gameState.lives == 0) {
+                --gGame.player1Stats.lives;
+                if(gGame.player1Stats.lives == 0) {
                     gGame.gameState.isGameOver = true;
                     gGame.gameState.currentMode = GAME_OVER;
                 }

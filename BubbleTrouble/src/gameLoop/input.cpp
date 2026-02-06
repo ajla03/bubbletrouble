@@ -161,7 +161,7 @@ void HandleSettingsClick(HWND hwnd, int mx, int my){
     }
 
     if(IsPointInButton(gGame.player2, mx, my)){
-        gGame.settingsState.currentHeroSelected = gRes.hero2;
+        gGame.settingsState.currentHeroSelected = gRes.hero2Mask;
         gGame.settingsState.currentPlayerBinding = 2;
         return;
     }

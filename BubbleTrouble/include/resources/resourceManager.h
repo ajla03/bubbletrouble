@@ -46,7 +46,7 @@ struct ResourceManager{
     HBITMAP lifePowerup, lifePowerupMask;
     HBITMAP timePowerup, timePowerupMask;
     HBITMAP freezePowerup, freezePowerupMask;
-    HBITMAP hero2;
+    HBITMAP hero2, hero2Mask;
     HICON hIcon;
 
   //, hdcBuffer;

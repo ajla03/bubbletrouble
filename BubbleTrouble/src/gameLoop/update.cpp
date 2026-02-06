@@ -35,7 +35,7 @@ void UpdateHearts() {
         }
     } else {
         // === SINGLE PLAYER (Stari kod) ===
-        for (int i = 0; i < gGame.gameState.lives; i++) {
+        for (int i = 0; i < gGame.player1Stats.lives; i++) {
             gGame.hearts[i].animCounter++;
             if (gGame.hearts[i].animCounter >= HEART_ANIM_SPEED) {
                 gGame.hearts[i].animCounter = 0;

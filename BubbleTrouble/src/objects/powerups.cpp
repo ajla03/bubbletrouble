@@ -171,8 +171,8 @@ void ApplyPowerup(PowerUpType type, int playerIndex) {
                 }
             } else {
                 // Single player standardno
-                if (gGame.gameState.lives < 5)
-                    gGame.gameState.lives++;
+                if (gGame.player1Stats.lives < 5)
+                    gGame.player1Stats.lives++;
             }
             break;
 

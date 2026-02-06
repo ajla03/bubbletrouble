@@ -4,6 +4,7 @@
 #include <algorithm>
 #include <stdio.h>
 #include <string>
+#include "multiplayer.h"
 
 
 
@@ -269,21 +270,16 @@ void RenderDynamicGameUI(HDC hdc, RECT rect)
 
     // === HERO (PLAYER 1) ===
     // PROMJENA: Crtamo ga samo ako nije multiplayer ILI ako je multiplayer i ima života
-    if (!gGame.gameState.isMultiplayer || gGame.player1Stats.lives > 0) {
-        gGame.hero.y = rect.bottom - gGame.floorWall.height - gGame.hero.height;
-
-        int srcX = gGame.hero.currentFrame * gGame.hero.width;
-        int srcY = gGame.hero.currentRow * gGame.hero.height;
-
-        SelectObject(gRes.hdcMem, gRes.characterMask);
-        BitBlt(hdc, gGame.hero.x, gGame.hero.y,
-            gGame.hero.width, gGame.hero.height,
-            gRes.hdcMem, srcX, srcY, SRCAND);
-
-        SelectObject(gRes.hdcMem, gRes.character);
-        BitBlt(hdc, gGame.hero.x, gGame.hero.y,
-            gGame.hero.width, gGame.hero.height,
-            gRes.hdcMem, srcX, srcY, SRCPAINT);
+    if (gGame.player1Stats.lives > 0) {
+        RenderHero(
+            hdc,
+            &gGame.hero,
+            gRes.character,
+            gRes.characterMask,
+            rect,
+            true,
+            1.2f
+        );
     }
 
     // === HARPOON ===
@@ -307,7 +303,16 @@ void RenderDynamicGameUI(HDC hdc, RECT rect)
 
     // === PLAYER 2 (MULTIPLAYER) ===
     if(gGame.gameState.isMultiplayer) {
-        RenderPlayer2(hdc, rect);
+        RenderHero(
+            hdc,
+            &gGame.hero2,
+            gRes.hero2,
+            gRes.hero2Mask,
+            rect,
+            true,
+            1.2f
+        );
+
 
         // Render harpoon2
         if(gGame.harpoon2.isActive) {
@@ -348,8 +353,7 @@ void DrawHeartsAndScore(HDC hdc, RECT rect, int padding) {
     // LIJEVA STRANA - PLAYER 1 (ili Single Player)
     // ==========================================
 
-    // Odaberi ispravne podatke zavisno od moda igre
-    int p1Lives = gGame.gameState.isMultiplayer ? gGame.player1Stats.lives : gGame.gameState.lives;
+    int p1Lives = gGame.player1Stats.lives;
     int p1Score = gGame.gameState.isMultiplayer ? gGame.player1Stats.displayScore : gGame.displayScore;
     HeartAnim* p1HeartsAnim = gGame.gameState.isMultiplayer ? gGame.player1Stats.hearts : gGame.hearts;
 

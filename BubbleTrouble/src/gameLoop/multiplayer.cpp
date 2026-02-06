@@ -141,43 +141,82 @@ void UpdatePlayer2Input(HWND hwnd) {
     gGame.inputState.wasSpacePressedP2 = isSpacePressed;
 }
 
-void RenderPlayer2(HDC hdc, RECT rect) {
-    // PROMJENA: Ako Player 2 nema života, ne crta se
-    if (gGame.player2Stats.lives <= 0) return;
+void RenderHero(
+    HDC hdc,
+    Hero* hero,
+    HBITMAP heroBitmap,
+    HBITMAP heroMask,
+    RECT rect,
+    bool useStretch,
+    float scale
+) {
+    int srcX = hero->currentFrame * hero->width;
+    int srcY = hero->currentRow   * hero->height;
 
-    // Set hero2 Y position
-    gGame.hero2.y = rect.bottom - gGame.floorWall.height - gGame.hero2.height;
-
-    // Calculate sprite sheet position
-    int srcX = gGame.hero2.currentFrame * gGame.hero2.width;
-    int srcY = gGame.hero2.currentRow * gGame.hero2.height;
-
-    // INVINCIBILITY EFFECT - blinking
-    if (gGame.hero2.heroHitCooldown > 0) {
+    // === BLINK LOGIC ===
+    if (hero->heroHitCooldown > 0) {
         DWORD time = GetTickCount();
-        if ((time / 100) % 2 == 0) {
-            // Skip rendering every other 100ms when invincible
-            SelectObject(gRes.hdcMem, gRes.hero2);
-            TransparentBlt(hdc,
-                          gGame.hero2.x, gGame.hero2.y,
-                          gGame.hero2.width, gGame.hero2.height,
-                          gRes.hdcMem,
-                          srcX, srcY,
-                          gGame.hero2.width, gGame.hero2.height,
-                          RGB(255, 255, 255));
-        }
+        if ((time / 100) % 2 == 0) return;
+    }
+
+    int drawW = hero->width;
+    int drawH = hero->height;
+
+    if (useStretch) {
+        drawW = (int)(hero->width  * scale);
+        drawH = (int)(hero->height * scale);
+    }
+
+    hero->y = rect.bottom - gGame.floorWall.height - drawH;
+
+    // === MASK ===
+    SelectObject(gRes.hdcMem, heroMask);
+    if (useStretch) {
+        StretchBlt(
+            hdc,
+            hero->x, hero->y,
+            drawW, drawH,
+            gRes.hdcMem,
+            srcX, srcY,
+            hero->width, hero->height,
+            SRCAND
+        );
     } else {
-        // Normal rendering
-        SelectObject(gRes.hdcMem, gRes.hero2);
-        TransparentBlt(hdc,
-                      gGame.hero2.x, gGame.hero2.y,
-                      gGame.hero2.width, gGame.hero2.height,
-                      gRes.hdcMem,
-                      srcX, srcY,
-                      gGame.hero2.width, gGame.hero2.height,
-                      RGB(255, 255, 255));
+        BitBlt(
+            hdc,
+            hero->x, hero->y,
+            drawW, drawH,
+            gRes.hdcMem,
+            srcX, srcY,
+            SRCAND
+        );
+    }
+
+    // === SPRITE ===
+    SelectObject(gRes.hdcMem, heroBitmap);
+    if (useStretch) {
+        StretchBlt(
+            hdc,
+            hero->x, hero->y,
+            drawW, drawH,
+            gRes.hdcMem,
+            srcX, srcY,
+            hero->width, hero->height,
+            SRCPAINT
+        );
+    } else {
+        BitBlt(
+            hdc,
+            hero->x, hero->y,
+            drawW, drawH,
+            gRes.hdcMem,
+            srcX, srcY,
+            SRCPAINT
+        );
     }
 }
+
+
 
 void UpdateHarpoon2(HWND hwnd) {
     if(!gGame.harpoon2.isActive) return;

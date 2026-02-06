@@ -110,8 +110,18 @@ const char* VKCodeToString(int vkCode);
 // ================= MULTIPLAYER  =================
 void InitMultiplayer(HWND hwnd);
 void UpdatePlayer2Input(HWND hwnd);
-void RenderPlayer2(HDC hdc, RECT rect);
 void UpdateHarpoon2(HWND hwnd);
 void CheckHeroDoorCollisionP2();
 void CheckHeroPillarCollision2(StaticObject* pillar);
 void UpdateHeroCoolDownP2(float dt);
+
+// ====== HEROS
+void RenderHero(
+    HDC hdc,
+    Hero* hero,
+    HBITMAP heroBitmap,
+    HBITMAP heroMask,
+    RECT rect,
+    bool useStretch,
+    float scale
+);
