@@ -207,6 +207,10 @@ void CheckCollisions(){
 
                 --gGame.player2Stats.lives;
 
+                if(gGame.player2Stats.lives <= 0) {
+                    gGame.harpoon2.isActive = false;
+                }
+
                 // Game over samo ako su OBA igrača mrtva
                 if(gGame.player1Stats.lives <= 0 && gGame.player2Stats.lives <= 0) {
                     gGame.gameState.isGameOver = true;
