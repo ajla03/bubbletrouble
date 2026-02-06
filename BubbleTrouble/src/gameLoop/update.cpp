@@ -243,7 +243,6 @@ void UpdateWallTransition(HWND hwnd){
         if (gGame.animatedWalls.wallTopY <= -gGame.animatedWall.height)
         {
 
-
             gGame.transitionState = TRANSITION_NONE;
             gGame.gameState.pendingHome = false;
             gGame.gameState.pendingRestart = false;

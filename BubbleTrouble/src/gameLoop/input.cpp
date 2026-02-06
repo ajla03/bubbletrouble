@@ -91,6 +91,9 @@ void CheckInputs(HWND hwnd){
 
 void HandleMouseClick(HWND hwnd, int mx, int my)
 {
+    if(gGame.transitionState != TRANSITION_NONE)
+        return;
+
     const auto& mode = gGame.gameState.currentMode;
 
     if (mode == GAME_OVER || gGame.gameState.isLevelCleared)
@@ -148,8 +151,8 @@ void HandleSettingsClick(HWND hwnd, int mx, int my){
     if(IsPointInButton(gGame.backButtonInfo, mx, my)){
         gGame.settingsState.currentHeroSelected = gRes.characterMask;
         gGame.settingsState.currentPlayerBinding = 1;
-        gGame.gameState.currentMode = GAME_MODE_MENU;
-        RefreshScreen(hwnd);
+        gGame.gameState.pendingHome = true;
+        StartWallTransition(hwnd);
         return;
     }
 

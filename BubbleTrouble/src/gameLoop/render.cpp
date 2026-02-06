@@ -17,6 +17,7 @@ void RefreshScreen(HWND hwnd) {
         DrawTransitionWalls(gRes.hdcBuffer, rect);
     } else if(gGame.gameState.currentMode == GAME_MODE_SETTINGS){
        RenderSettings(gRes.hdcBuffer, rect);
+       DrawTransitionWalls(gRes.hdcBuffer, rect);
     }else {
         RenderStaticUI(gRes.hdcBuffer, rect);
         RenderLevel(gRes.hdcBuffer, rect);
