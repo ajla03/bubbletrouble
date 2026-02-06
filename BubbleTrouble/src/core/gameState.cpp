@@ -83,6 +83,9 @@ void ResetGame(HWND hwnd) {
     for (int i = 0; i < MAX_POWERUPS; i++)
         CURRENT_LEVEL.powerups[i].active = false;
 
+    gGame.hero.heroHitCooldown=0;
+    gGame.hero2.heroHitCooldown=0;
+
     if(gGame.gameState.currentMode == GAME_MODE_PLAYING ||
        gGame.gameState.currentMode == GAME_OVER){
         ResetScoreFlag();
