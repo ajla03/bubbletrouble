@@ -109,7 +109,7 @@ void UpdatePowerups(HWND hwnd) {
         float heroBottom = gGame.hero.y + gGame.hero.height;
 
         if(heroRight > powerupLeft && heroLeft < powerupRight &&
-           heroBottom > powerupTop && heroTop < powerupBottom) {
+           heroBottom > powerupTop && heroTop < powerupBottom && gGame.player1Stats.lives > 0) {
 
             ApplyPowerup(p->type, 1); // <--- ID 1 za Player 1
             p->active = false;
@@ -130,7 +130,7 @@ void UpdatePowerups(HWND hwnd) {
             float hero2Bottom = gGame.hero2.y + gGame.hero2.height;
 
             if (hero2Right > powerupLeft && hero2Left < powerupRight &&
-                hero2Bottom > powerupTop && hero2Top < powerupBottom) {
+                hero2Bottom > powerupTop && hero2Top < powerupBottom && gGame.player2Stats.lives > 0) {
 
                 ApplyPowerup(p->type, 2); // <--- ID 2 za Player 2
                 p->active = false;
