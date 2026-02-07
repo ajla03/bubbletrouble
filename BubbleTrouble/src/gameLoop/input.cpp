@@ -5,81 +5,20 @@
 #include <windows.h>
 #include "resourceManager.h"
 
-void CheckInputs(HWND hwnd){
-    if(gGame.gameState.currentMode != GAME_MODE_PLAYING
-        || gGame.transitionState== TRANSITION_WAIT
-        || gGame.transitionState == TRANSITION_CLOSING)
-        return;
+static bool CanProgressInput();
+static void UpdatePlayer1Input(HWND);
 
-    RECT rect;
-    GetClientRect(hwnd, &rect);
-    int windowWidth = rect.right;
+
+void CheckInputs(HWND hwnd){
+
+    if(!CanProgressInput())
+        return;
 
     bool p1Active = !gGame.gameState.isMultiplayer || gGame.player1Stats.lives > 0;
 
-    if (p1Active) {
-        bool isMoving = false;
-        KeyBindings* keys = &gGame.settingsState.player1Keys;
-
-        // === MOVEMENT ===
-        if(GetAsyncKeyState(keys->moveLeft) & 0x8000){
-            gGame.hero.x -= gGame.hero.dx;
-            gGame.hero.currentRow = 1;
-            isMoving = true;
-        }
-        else if(GetAsyncKeyState(keys->moveRight) & 0x8000){
-            gGame.hero.x += gGame.hero.dx;
-            gGame.hero.currentRow = 0;
-            isMoving = true;
-        }
-
-        // === BOUNDARY CHECK ===
-        if (gGame.hero.x < gGame.leftWall.width) {
-            gGame.hero.x = gGame.leftWall.width;
-        }
-
-        int desnaGranica = windowWidth - gGame.rightWall.width - gGame.hero.width;
-        if (gGame.hero.x > desnaGranica) {
-            gGame.hero.x = desnaGranica;
-        }
-
-        // ===== CHECK ZA VRATA ===== //
-        CheckHeroDoorCollision();
-
-        // ===== CHECK ZA STUBOVE (Level 4) ===== //
-        CheckHeroPillarCollision(&CURRENT_LEVEL.pillar1);
-        CheckHeroPillarCollision(&CURRENT_LEVEL.pillar2);
-
-        // === ANIMATION ===
-        if(isMoving) {
-            gGame.hero.animCounter++;
-            if(gGame.hero.animCounter > 5) {
-                gGame.hero.currentFrame++;
-                if(gGame.hero.currentFrame > 3) {
-                    gGame.hero.currentFrame = 0;
-                }
-                gGame.hero.animCounter = 0;
-            }
-        } else {
-            gGame.hero.currentRow = 2;
-            gGame.hero.currentFrame = 0;
-        }
-
-        // === HARPOON SHOOTING ===
-        bool isSpacePressed = (GetAsyncKeyState(keys->shoot) & 0x8000) != 0;
-
-        if (isSpacePressed && !gGame.inputState.wasSpacePressed && !gGame.harpoon.isActive) {
-            gGame.harpoon.isActive = true;
-            gGame.harpoon.length = 0;
-            gGame.harpoon.x = gGame.hero.x + (gGame.hero.width / 2) - (gGame.harpoon.width / 2);
-            gGame.harpoon.y = rect.bottom - gGame.floorWall.height;
-            gGame.harpoon.ownerPlayer = 1;
-
-            if(gGame.gameState.currentMode == GAME_MODE_PLAYING && gGame.settingsState.soundState.soundEffectsOn)
-                PlaySound(MAKEINTRESOURCE(IDR_HARPOON_SOUND), GetModuleHandle(NULL), SND_RESOURCE | SND_ASYNC);
-        }
-
-        gGame.inputState.wasSpacePressed = isSpacePressed;
+    // ===== PLAYER 1 INPUT ====
+    if (p1Active){
+        UpdatePlayer1Input(hwnd);
     }
 
     // === PLAYER 2 INPUT ===
@@ -88,6 +27,83 @@ void CheckInputs(HWND hwnd){
     }
 }
 
+static bool CanProgressInput() {
+    return gGame.gameState.currentMode == GAME_MODE_PLAYING &&
+           gGame.transitionState != TRANSITION_WAIT &&
+           gGame.transitionState != TRANSITION_CLOSING;
+}
+
+static void UpdatePlayer1Input(HWND hwnd){
+    RECT rect;
+    GetClientRect(hwnd, &rect);
+    int windowWidth = rect.right;
+
+    bool isMoving = false;
+    KeyBindings* keys = &gGame.settingsState.player1Keys;
+
+    // === MOVEMENT ===
+    if(GetAsyncKeyState(keys->moveLeft) & 0x8000){
+        gGame.hero.x -= gGame.hero.dx;
+        gGame.hero.currentRow = 1;
+        isMoving = true;
+    }
+    else if(GetAsyncKeyState(keys->moveRight) & 0x8000){
+        gGame.hero.x += gGame.hero.dx;
+        gGame.hero.currentRow = 0;
+        isMoving = true;
+    }
+
+    // === BOUNDARY CHECK ===
+    if (gGame.hero.x < gGame.leftWall.width) {
+        gGame.hero.x = gGame.leftWall.width;
+    }
+
+    int desnaGranica = windowWidth - gGame.rightWall.width - gGame.hero.width;
+    if (gGame.hero.x > desnaGranica) {
+        gGame.hero.x = desnaGranica;
+    }
+
+    // ===== CHECK ZA VRATA ===== //
+    CheckHeroDoorCollision();
+
+    // ===== CHECK ZA STUBOVE (Level 4) ===== //
+    if(gGame.currentLevel == 3){
+    CheckHeroPillarCollision(&CURRENT_LEVEL.pillar1);
+    CheckHeroPillarCollision(&CURRENT_LEVEL.pillar2);
+    }
+
+    // === ANIMATION ===
+    if(isMoving) {
+        gGame.hero.animCounter++;
+        if(gGame.hero.animCounter > 5) {
+            gGame.hero.currentFrame++;
+            if(gGame.hero.currentFrame > 3) {
+                gGame.hero.currentFrame = 0;
+            }
+            gGame.hero.animCounter = 0;
+        }
+    } else {
+        gGame.hero.currentRow = 2;
+        gGame.hero.currentFrame = 0;
+    }
+
+    // === HARPOON SHOOTING ===
+    bool isSpacePressed = (GetAsyncKeyState(keys->shoot) & 0x8000) != 0;
+
+    if (isSpacePressed && !gGame.inputState.wasSpacePressed && !gGame.harpoon.isActive) {
+        gGame.harpoon.isActive = true;
+        gGame.harpoon.length = 0;
+        gGame.harpoon.x = gGame.hero.x + (gGame.hero.width / 2) - (gGame.harpoon.width / 2);
+        gGame.harpoon.y = rect.bottom - gGame.floorWall.height;
+        gGame.harpoon.ownerPlayer = 1;
+
+        if(gGame.gameState.currentMode == GAME_MODE_PLAYING && gGame.settingsState.soundState.soundEffectsOn)
+            PlaySound(MAKEINTRESOURCE(IDR_HARPOON_SOUND), GetModuleHandle(NULL), SND_RESOURCE | SND_ASYNC);
+    }
+
+    gGame.inputState.wasSpacePressed = isSpacePressed;
+
+}
 
 void HandleMouseClick(HWND hwnd, int mx, int my)
 {
@@ -149,8 +165,6 @@ void HandleSettingsClick(HWND hwnd, int mx, int my){
 
     // Back button
     if(IsPointInButton(gGame.backButtonInfo, mx, my)){
-        gGame.settingsState.currentHeroSelected = gRes.characterMask;
-        gGame.settingsState.currentPlayerBinding = 1;
         gGame.gameState.pendingHome = true;
         StartWallTransition(hwnd);
         return;
@@ -342,5 +356,26 @@ void HandleKeyDown(HWND hwnd, WPARAM wParam)
         gGame.gameState.currentMode = GAME_MODE_MENU;
         InitializeMenu(hwnd);
         return;
+    }
+}
+
+bool IsPointInButton(const Button& btn, int x, int y)
+{
+    return x >= btn.x &&
+           x <= btn.x + btn.width &&
+           y >= btn.y &&
+           y <= btn.y + btn.height;
+}
+
+void CheckHover(Button& button, int mx, int my)
+{
+    if (mx >= button.x && mx <= button.x + button.width &&
+        my >= button.y && my <= button.y + button.height)
+    {
+        button.isHover = true;
+    }
+    else
+    {
+        button.isHover = false;
     }
 }

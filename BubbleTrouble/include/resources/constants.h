@@ -23,7 +23,7 @@
 // ==== KONSTANTA ZA MENU DUGMD ==== //
 #define NUM_MENU_BUTTONS 3
 
-#define HERO_INVINCIBLE_TIME 0.5f
+#define HERO_INVINCIBLE_TIME 1.2f
 
 #define MAX_LEVELS 6
 #define CURRENT_LEVEL gGame.levels[gGame.currentLevel]

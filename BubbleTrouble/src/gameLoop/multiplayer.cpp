@@ -154,9 +154,9 @@ void RenderHero(
     int srcY = hero->currentRow   * hero->height;
 
     // === BLINK LOGIC ===
-    if (hero->heroHitCooldown > 0) {
-        DWORD time = GetTickCount();
-        if ((time / 100) % 2 == 0) return;
+    if(hero->heroHitCooldown > 0){
+        if((int)(hero->blinkTimer * 30) % 2 == 0)
+            return;
     }
 
     int drawW = hero->width;
@@ -264,7 +264,14 @@ void CheckHeroPillarCollision2(StaticObject* pillar) {
     }
 }
 
-void UpdateHeroCoolDownP2(float dt) {
-    if(gGame.hero2.heroHitCooldown > 0)
-        gGame.hero2.heroHitCooldown -= dt;
+void UpdateHeroCoolDownP2(float dt){
+    if(gGame.hero2.heroHitCooldown > 0){
+        gGame.hero2.heroHitCooldown -=dt;
+        gGame.hero2.blinkTimer+=dt;
+    }
+
+    if(gGame.hero2.heroHitCooldown <=0){
+        gGame.hero2.heroHitCooldown = 0;
+        gGame.hero2.blinkTimer = 0;
+    }
 }

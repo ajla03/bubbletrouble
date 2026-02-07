@@ -21,35 +21,32 @@ void InitializeMenu(HWND hwnd) {
     int screenHeight = clientRect.bottom;
     int screenWidth = clientRect.right;
 
-    int buttonWidth = screenWidth / 5;  // Made wider
-    int buttonHeight = screenHeight / 10;  // Made taller
-    int buttonSpacing = 45;  // More spacing
+    float holderCenterX = screenWidth * 0.225f;
+    float holderCenterY = screenHeight * 0.428f;
+    int holderWidth = (int)(screenWidth * 0.233f);
+    int holderHeight = (int)(screenHeight * 0.460f);
 
-    if (buttonWidth < 200) buttonWidth = 200;  // Larger minimum
-    if (buttonHeight < 70) buttonHeight = 70;  // Larger minimum
+    int buttonWidth = (int)(holderWidth * 0.85f);
+    int buttonHeight = screenHeight / 14;
 
-    int leftSideCenter = clientRect.right / 4.2;  // Slightly adjusted
-    int startY = clientRect.bottom / 3.5;  // Moved down
+    if (buttonWidth < 150) buttonWidth = 150;
+    if (buttonHeight < 60) buttonHeight = 60;
 
-    // 1 PLAYER button
-    gGame.menuButtons[0].rect.left = leftSideCenter - buttonWidth / 2;
-    gGame.menuButtons[0].rect.top = startY;
-    gGame.menuButtons[0].rect.right = leftSideCenter + buttonWidth / 2;
-    gGame.menuButtons[0].rect.bottom = startY + buttonHeight;
+    int buttonSpacing = (holderHeight - (3 * buttonHeight)) / 4;
+    if (buttonSpacing < 10) buttonSpacing = 10;
+
+    int totalGroupHeight = (3 * buttonHeight) + (2 * buttonSpacing);
+    int startY = (int)holderCenterY - (totalGroupHeight / 2);
+
+    for (int i = 0; i < 3; i++) {
+        gGame.menuButtons[i].rect.left = holderCenterX - (buttonWidth / 2);
+        gGame.menuButtons[i].rect.right = holderCenterX + (buttonWidth / 2);
+        gGame.menuButtons[i].rect.top = startY + i * (buttonHeight + buttonSpacing);
+        gGame.menuButtons[i].rect.bottom = gGame.menuButtons[i].rect.top + buttonHeight;
+    }
+
     gGame.menuButtons[0].text = "1 PLAYER";
-
-    // 2 PLAYERS button
-    gGame.menuButtons[1].rect.left = leftSideCenter - buttonWidth / 2;
-    gGame.menuButtons[1].rect.top = startY + (buttonHeight + buttonSpacing);
-    gGame.menuButtons[1].rect.right = leftSideCenter + buttonWidth / 2;
-    gGame.menuButtons[1].rect.bottom = startY + (buttonHeight + buttonSpacing) + buttonHeight;
     gGame.menuButtons[1].text = "2 PLAYERS";
-
-    // SETTINGS button
-    gGame.menuButtons[2].rect.left = leftSideCenter - buttonWidth / 2;
-    gGame.menuButtons[2].rect.top = startY + 2 * (buttonHeight + buttonSpacing);
-    gGame.menuButtons[2].rect.right = leftSideCenter + buttonWidth / 2;
-    gGame.menuButtons[2].rect.bottom = startY + 2 * (buttonHeight + buttonSpacing) + buttonHeight;
     gGame.menuButtons[2].text = "SETTINGS";
 }
 
@@ -89,6 +86,7 @@ void RenderMenu(HDC hdc, RECT rect) {
             int torchSrcX = gGame.torchInfo.currentFrame * gGame.torchInfo.width;
             int torchSrcY = gGame.torchInfo.currentRow * gGame.torchInfo.height;
 
+
             HBITMAP oldMemBmp = (HBITMAP)SelectObject(gRes.hdcMem, gRes.torchMask);
             StretchBlt(hdc, torchX1, torchY, torchW, torchH, gRes.hdcMem, torchSrcX, torchSrcY, gGame.torchInfo.width, gGame.torchInfo.height, SRCPAINT);
             SelectObject(gRes.hdcMem, gRes.torch);
@@ -100,9 +98,10 @@ void RenderMenu(HDC hdc, RECT rect) {
             StretchBlt(hdc, torchX2, torchY, torchW, torchH, gRes.hdcMem, torchSrcX, torchSrcY, gGame.torchInfo.width, gGame.torchInfo.height, SRCAND);
 
             SelectObject(gRes.hdcMem, oldMemBmp);
+
         }
     }
-
+/*
   // === LOGO (ICON) ===
 if (gRes.hIcon) {  // pretpostavljam da imate HICON u gRes strukturi
     int logoWidth = rect.right / 2;
@@ -123,7 +122,7 @@ if (gRes.hIcon) {  // pretpostavljam da imate HICON u gRes strukturi
                0,           // frame index (za animirane ikone)
                NULL,        // bez background brush-a
                DI_NORMAL);  // normalan crtež sa transparencijom
-}
+}*/
 
     // === BUTTONS ===
     // Use the same font as settings screen

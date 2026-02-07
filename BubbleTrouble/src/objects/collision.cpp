@@ -106,7 +106,6 @@ void CheckCollisions(){
         Balloon* b = &CURRENT_LEVEL.balloons[i];
 
         // ========== CHECK COLLISION WITH PLAYER 1 ==========
-        // PROMJENA: Provjeri je li igrač živ prije sudara
         bool p1Alive = !gGame.gameState.isMultiplayer || gGame.player1Stats.lives > 0;
 
         float closestX = std::max(float(gGame.hero.x + 5), std::min(b->x, (float)(gGame.hero.x + gGame.hero.width - 5)));
@@ -145,6 +144,7 @@ void CheckCollisions(){
             }
 
             gGame.hero.heroHitCooldown = HERO_INVINCIBLE_TIME;
+            gGame.hero2.blinkTimer = 0.0f;
             break;
         }
 
@@ -222,6 +222,7 @@ void CheckCollisions(){
                 }
 
                 gGame.hero2.heroHitCooldown = HERO_INVINCIBLE_TIME;
+                gGame.hero2.blinkTimer = 0.0f;
                 break;
             }
         }

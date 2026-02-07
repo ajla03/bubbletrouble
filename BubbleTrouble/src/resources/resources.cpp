@@ -75,7 +75,7 @@ void LoadBitmaps(HWND hwnd, HINSTANCE hInstance){
         gGame.rightWall.height = bm.bmHeight;
 
         gGame.floorWall.width = bm.bmWidth;
-        gGame.floorWall.height = bm.bmHeight/6;
+        gGame.floorWall.height = bm.bmHeight/5;
     }
 
 

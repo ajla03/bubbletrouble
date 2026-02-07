@@ -3,7 +3,7 @@
 #include "gameContext.h"
 
 void InitLevel1(){
-    InitBalloon(1, 400, 150, 40, -2.0f, RGB(0, 255, 0));
+    InitBalloon(1, 400, 150, 40, -2.0f, RGB	(255,141,0));
     InitPowerupSystemForLevel();
 }
 

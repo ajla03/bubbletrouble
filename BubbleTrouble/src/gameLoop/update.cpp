@@ -1,12 +1,20 @@
 #include "resources.h"
 #include "gameContext.h"
 #include "game.h"
+#include "resourceManager.h"
 #include <windows.h>
 #include <iostream>
 
 void UpdateHeroCoolDown(float dt){
-    if(gGame.hero.heroHitCooldown > 0)
+    if(gGame.hero.heroHitCooldown > 0){
         gGame.hero.heroHitCooldown -=dt;
+        gGame.hero.blinkTimer+=dt;
+    }
+
+    if(gGame.hero.heroHitCooldown <=0){
+        gGame.hero.heroHitCooldown = 0;
+        gGame.hero.blinkTimer = 0;
+    }
 }
 
 void UpdateHearts() {
@@ -234,6 +242,10 @@ void UpdateWallTransition(HWND hwnd){
         if (GetTickCount() - gGame.animatedWalls.transitionWaitStart >= 400)
         {
             if(gGame.gameState.pendingHome){
+                if(gGame.gameState.currentMode == GAME_MODE_SETTINGS){
+                    gGame.settingsState.currentHeroSelected = gRes.characterMask;
+                    gGame.settingsState.currentPlayerBinding = 1;
+                }
                 gGame.gameState.currentMode = GAME_MODE_MENU;
                 gGame.gameState.isGameOver = false;
                 gGame.gameState.isLevelCleared = false;

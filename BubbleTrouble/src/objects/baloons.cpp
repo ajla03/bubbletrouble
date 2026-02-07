@@ -108,6 +108,7 @@ void UpdateBalloons(HWND hwnd) {
 
 
         // ===== PREPREKE UNUTAR NIVOA ===== //
+        // dodati ifove da ne provjerava ako nije taj level dzabaa ...
         ResolveBalloonPillarCollision(b, &CURRENT_LEVEL.longWall);
         if(CURRENT_LEVEL.door.active)
             ResolveBalloonPillarCollision(b, &CURRENT_LEVEL.door);

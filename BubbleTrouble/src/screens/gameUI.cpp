@@ -63,12 +63,9 @@ void RenderStaticUI(HDC hdc, RECT rect) {
         int heartsTop = rect.bottom - gGame.floorWall.height + barHeight*2 + 10;
         int playerY = heartsTop + gGame.heartBgInfo.height + 10;
 
-        // 1. Prvo crtamo PLAYER 2 (Desno) ako je multiplayer
-        // Koristimo PLAVU boju (RGB(0, 0, 180)) za razliku
         if (gGame.gameState.isMultiplayer) {
             std::string p2Text = "PLAYER 2";
 
-            // Izračunaj širinu teksta da ga možemo poravnati desno
             SIZE p2Size;
             HFONT hTempFont = (HFONT)SelectObject(CURRENT_LEVEL.hdcCache, gRes.hFont);
             GetTextExtentPoint32(CURRENT_LEVEL.hdcCache, p2Text.c_str(), p2Text.length(), &p2Size);
@@ -77,16 +74,12 @@ void RenderStaticUI(HDC hdc, RECT rect) {
             int p2Padding = 30;
             int p2BoxW = p2Size.cx + p2Padding;
 
-            // Pozicija: Desni zid - širina boxa
             int p2X = rect.right - gGame.rightWall.width - p2BoxW;
 
             DrawPlayerPlaceholder(CURRENT_LEVEL.hdcCache, rect, p2Text, p2X, playerY,
                                  RGB(0, 0, 180), gGame.heartBgInfo.height + 6);
         }
 
-        // 2. Na kraju crtamo PLAYER 1 (Lijevo)
-        // Ovo mora biti ZADNJE kako bi 'gGame.playerHolderInfo' ostao postavljen na Player 1.
-        // To osigurava da se SCORE (broj bodova) za Player 1 iscrta na dobroj poziciji.
         gGame.playerHolderInfo.x = gGame.leftWall.width;
         gGame.playerHolderInfo.y = playerY;
 
@@ -269,7 +262,6 @@ void RenderDynamicGameUI(HDC hdc, RECT rect)
     );
 
     // === HERO (PLAYER 1) ===
-    // PROMJENA: Crtamo ga samo ako nije multiplayer ILI ako je multiplayer i ima života
     if (gGame.player1Stats.lives > 0) {
         RenderHero(
             hdc,
@@ -661,25 +653,4 @@ void DrawButton(HDC hdc, HBITMAP bmp, HBITMAP mask, Button& button)
     }
 }
 
-// Moved from input.cpp
-bool IsPointInButton(const Button& btn, int x, int y)
-{
-    return x >= btn.x &&
-           x <= btn.x + btn.width &&
-           y >= btn.y &&
-           y <= btn.y + btn.height;
-}
 
-// Moved from update.cpp
-void CheckHover(Button& button, int mx, int my)
-{
-    if (mx >= button.x && mx <= button.x + button.width &&
-        my >= button.y && my <= button.y + button.height)
-    {
-        button.isHover = true;
-    }
-    else
-    {
-        button.isHover = false;
-    }
-}

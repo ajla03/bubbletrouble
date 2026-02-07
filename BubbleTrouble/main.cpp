@@ -134,7 +134,7 @@ LRESULT CALLBACK WindowProcedure(HWND hwnd, UINT message, WPARAM wParam, LPARAM 
                 return 0;
             }
 
-            if(wParam == SIZE_RESTORED){
+            if(wParam == SIZE_RESTORED || wParam == SIZE_MAXIMIZED){
                 if(gGame.gameState.currentMode == GAME_MODE_PAUSE && autoPaused){
                    gGame.gameState.currentMode = GAME_MODE_PLAYING;
                    autoPaused = false;

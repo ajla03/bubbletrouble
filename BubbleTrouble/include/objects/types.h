@@ -9,6 +9,7 @@ struct Hero{
  int currentFrame, currentRow;
  int animCounter;
  float heroHitCooldown; // in secs
+ float blinkTimer;
 };
 
 struct Projectile{
