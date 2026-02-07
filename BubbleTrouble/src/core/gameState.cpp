@@ -12,6 +12,9 @@ void StartGame(HWND hwnd){
 }
 
 void ResetGame(HWND hwnd) {
+    RECT rect;
+    GetClientRect(hwnd, &rect);
+
     // Reset game state
     CURRENT_LEVEL.timeLeft = maxTime;
     gGame.gameState.isGameOver = false;
@@ -38,6 +41,9 @@ void ResetGame(HWND hwnd) {
         gGame.player2Stats.score = 0;
         gGame.player2Stats.displayScore = 0;
         gGame.player2Stats.isAlive = true;
+        gGame.hero2.x = rect.right - gGame.rightWall.width - gGame.hero2.width - 50;
+        gGame.hero2.y = rect.bottom - gGame.floorWall.height - gGame.hero2.height;
+
         for(int i = 0; i < 5; i++) {
             gGame.player2Stats.hearts[i].currentFrame = 0;
             gGame.player2Stats.hearts[i].animCounter = 0;

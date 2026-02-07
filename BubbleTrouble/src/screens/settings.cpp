@@ -377,7 +377,7 @@ static void RenderPlayerButtons(HDC hdcBuffer, RECT sheet, int x, int y, int con
     if (gGame.player1.isHover)
         currentBitmap = gRes.playerHover;
     else
-        currentBitmap = gRes.backButtonMask;
+        currentBitmap = gRes.settingsPlayer;
 
     GetObject(currentBitmap, sizeof(BITMAP), &bm);
     SelectObject(gRes.hdcMem, currentBitmap);
@@ -395,7 +395,7 @@ static void RenderPlayerButtons(HDC hdcBuffer, RECT sheet, int x, int y, int con
     if (gGame.player2.isHover)
         currentBitmap = gRes.playerHover;
     else
-        currentBitmap = gRes.backButtonMask;
+        currentBitmap = gRes.settingsPlayer;
 
     GetObject(currentBitmap, sizeof(BITMAP), &bm);
     SelectObject(gRes.hdcMem, currentBitmap);
@@ -422,7 +422,7 @@ static void RenderBackButton(HDC hdcBuffer, RECT sheet) {
     if (gGame.backButtonInfo.isHover)
         currentBitmap = gRes.playerHover;
     else
-        currentBitmap = gRes.backButtonMask;
+        currentBitmap = gRes.settingsPlayer;
 
     GetObject(currentBitmap, sizeof(BITMAP), &bm);
     SelectObject(gRes.hdcMem, currentBitmap);

@@ -26,7 +26,7 @@ void InitializeMenu(HWND hwnd) {
     int holderWidth = (int)(screenWidth * 0.233f);
     int holderHeight = (int)(screenHeight * 0.460f);
 
-    int buttonWidth = (int)(holderWidth * 0.85f);
+    int buttonWidth = (int)(holderWidth * 0.65f);
     int buttonHeight = screenHeight / 14;
 
     if (buttonWidth < 150) buttonWidth = 150;
@@ -69,7 +69,7 @@ void RenderMenu(HDC hdc, RECT rect) {
     }
 
     // === TORCHES ===
-    if (gRes.torch && gRes.torchMask) {
+    /*if (gRes.torch && gRes.torchMask) {
         float torchScale = 3.5f;
         if (rect.right < 1400) torchScale = 2.5f;
         if (rect.right < 900)  torchScale = 1.8f;
@@ -100,7 +100,7 @@ void RenderMenu(HDC hdc, RECT rect) {
             SelectObject(gRes.hdcMem, oldMemBmp);
 
         }
-    }
+    }*/
 /*
   // === LOGO (ICON) ===
 if (gRes.hIcon) {  // pretpostavljam da imate HICON u gRes strukturi
@@ -132,7 +132,7 @@ if (gRes.hIcon) {  // pretpostavljam da imate HICON u gRes strukturi
         MenuButton* btn = &gGame.menuButtons[i];
 
         // Koristi iste buttone kao u settings-u
-        HBITMAP currentButton = btn->isHovered ? gRes.playerHover : gRes.backButtonMask;
+        HBITMAP currentButton = btn->isHovered ? gRes.settingsPlayer : gRes.playerHover;
 
         BITMAP bm;
         GetObject(currentButton, sizeof(BITMAP), &bm);
