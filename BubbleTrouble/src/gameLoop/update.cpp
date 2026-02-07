@@ -89,9 +89,9 @@ void Update(HWND hwnd){
                 gGame.torchInfo.currentRow = (gGame.torchInfo.currentRow + 1) % 2;
              }
              gGame.torchInfo.animCounter = 0;
-
-            return;
             }
+            return;
+
         }
 
     printf("%d", gGame.gameState.currentMode);
