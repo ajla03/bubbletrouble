@@ -22,8 +22,8 @@ void InitializeMenu(HWND hwnd) {
     int screenWidth = clientRect.right;
 
     int buttonWidth = screenWidth / 5;  // Made wider
-    int buttonHeight = screenHeight / 7;  // Made taller
-    int buttonSpacing = 15;  // More spacing
+    int buttonHeight = screenHeight / 10;  // Made taller
+    int buttonSpacing = 45;  // More spacing
 
     if (buttonWidth < 200) buttonWidth = 200;  // Larger minimum
     if (buttonHeight < 70) buttonHeight = 70;  // Larger minimum
@@ -103,27 +103,27 @@ void RenderMenu(HDC hdc, RECT rect) {
         }
     }
 
-   // === LOGO ===
-    if (gRes.logo && gRes.logoMask) {
-        BITMAP bm;
-        GetObject(gRes.logo, sizeof(BITMAP), &bm);
-        int logoWidth = rect.right / 2;
-        int logoHeight = (int)(logoWidth * ((float)bm.bmHeight / (float)bm.bmWidth));
-        int maxLogoHeight = rect.bottom / 3;
-        if (logoHeight > maxLogoHeight) {
-            logoHeight = maxLogoHeight;
-            logoWidth = (int)(logoHeight * ((float)bm.bmWidth / (float)bm.bmHeight));
-        }
-        int logoX = (rect.right - logoWidth) /7;
-        int logoY = -20;
-        HBITMAP oldMemBmp = (HBITMAP)SelectObject(gRes.hdcMem, gRes.logoMask);
-        StretchBlt(hdc, logoX, logoY, logoWidth, logoHeight,
-                   gRes.hdcMem, 0, 0, bm.bmWidth, bm.bmHeight, SRCAND);
-        SelectObject(gRes.hdcMem, gRes.logo);
-        StretchBlt(hdc, logoX, logoY, logoWidth, logoHeight,
-                   gRes.hdcMem, 0, 0, bm.bmWidth, bm.bmHeight, SRCPAINT);
-        SelectObject(gRes.hdcMem, oldMemBmp);
+  // === LOGO (ICON) ===
+if (gRes.hIcon) {  // pretpostavljam da imate HICON u gRes strukturi
+    int logoWidth = rect.right / 2;
+    int logoHeight = logoWidth;  // ikone su obično kvadratne
+    int maxLogoHeight = rect.bottom / 3;
+
+    if (logoHeight > maxLogoHeight) {
+        logoHeight = maxLogoHeight;
+        logoWidth = maxLogoHeight;  // održava kvadratni oblik
     }
+
+    int logoX = (rect.right - logoWidth) / 5.8;
+    int logoY = -20;
+
+    // Crta ikonu sa automatskom transparencijom
+    DrawIconEx(hdc, logoX, logoY, gRes.hIcon,
+               logoWidth, logoHeight,
+               0,           // frame index (za animirane ikone)
+               NULL,        // bez background brush-a
+               DI_NORMAL);  // normalan crtež sa transparencijom
+}
 
     // === BUTTONS ===
     // Use the same font as settings screen
@@ -131,30 +131,27 @@ void RenderMenu(HDC hdc, RECT rect) {
 
     for (int i = 0; i < NUM_MENU_BUTTONS; i++) {
         MenuButton* btn = &gGame.menuButtons[i];
-        HBITMAP currentButton = (i == 0) ? gRes.hYellowButton : (i == 1 ? gRes.hGreenButton : gRes.hGreyButton);
-        HBITMAP currentButtonMask = (i == 0) ? gRes.hYellowButtonMask : (i == 1 ? gRes.hGreenButtonMask : gRes.hGreyButtonMask);
+
+        // Koristi iste buttone kao u settings-u
+        HBITMAP currentButton = btn->isHovered ? gRes.playerHover : gRes.backButtonMask;
 
         BITMAP bm;
         GetObject(currentButton, sizeof(BITMAP), &bm);
         int btnWidth = btn->rect.right - btn->rect.left;
         int btnHeight = btn->rect.bottom - btn->rect.top;
 
-        HBITMAP oldMemBmp = (HBITMAP)SelectObject(gRes.hdcMem, currentButtonMask);
-        StretchBlt(hdc, btn->rect.left, btn->rect.top, btnWidth, btnHeight, gRes.hdcMem, 0, 0, bm.bmWidth, bm.bmHeight, SRCAND);
-        SelectObject(gRes.hdcMem, currentButton);
-        StretchBlt(hdc, btn->rect.left, btn->rect.top, btnWidth, btnHeight, gRes.hdcMem, 0, 0, bm.bmWidth, bm.bmHeight, SRCPAINT);
+        // Koristi TransparentBlt umjesto SRCAND/SRCPAINT kao u settings-u
+        HBITMAP oldMemBmp = (HBITMAP)SelectObject(gRes.hdcMem, currentButton);
+        TransparentBlt(hdc, btn->rect.left, btn->rect.top, btnWidth, btnHeight,
+                       gRes.hdcMem, 0, 0, bm.bmWidth, bm.bmHeight, RGB(255, 255, 255));
         SelectObject(gRes.hdcMem, oldMemBmp);
 
+        // Tekst na buttonu
         SetBkMode(hdc, TRANSPARENT);
-        SIZE textSize;
-        GetTextExtentPoint32(hdc, btn->text, (int)strlen(btn->text), &textSize);
-        int textX = btn->rect.left + ((btn->rect.right - btn->rect.left) - textSize.cx) / 2;
-        int textY = btn->rect.top + ((btn->rect.bottom - btn->rect.top) - textSize.cy) / 2;
-
-        SetTextColor(hdc, RGB(0, 0, 0));
-        TextOut(hdc, textX + 2, textY + 2, btn->text, (int)strlen(btn->text));
         SetTextColor(hdc, RGB(255, 255, 255));
-        TextOut(hdc, textX, textY, btn->text, (int)strlen(btn->text));
+
+        RECT textRect = { btn->rect.left, btn->rect.top, btn->rect.right, btn->rect.bottom };
+        DrawText(hdc, btn->text, -1, &textRect, DT_CENTER | DT_VCENTER | DT_SINGLELINE);
     }
     SelectObject(hdc, hOldButtonFont);
 
