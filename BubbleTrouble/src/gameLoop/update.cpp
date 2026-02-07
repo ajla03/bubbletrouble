@@ -77,7 +77,22 @@ void Update(HWND hwnd){
         UpdateWallTransition(hwnd);
         return;
        }
-    else if(gGame.gameState.currentMode == GAME_MODE_PAUSE || gGame.gameState.currentMode == GAME_OVER ) return;
+    else if(   gGame.gameState.currentMode == GAME_MODE_PAUSE
+            || gGame.gameState.currentMode == GAME_OVER
+            || gGame.gameState.currentMode == GAME_MODE_MENU
+            || gGame.gameState.currentMode == GAME_MODE_SETTINGS ) {
+            gGame.torchInfo.animCounter++;
+            if(gGame.torchInfo.animCounter > 5){
+            gGame.torchInfo.currentFrame++;
+            if (gGame.torchInfo.currentFrame >= 4) {
+                gGame.torchInfo.currentFrame = 0;
+                gGame.torchInfo.currentRow = (gGame.torchInfo.currentRow + 1) % 2;
+             }
+             gGame.torchInfo.animCounter = 0;
+
+            return;
+            }
+        }
 
     printf("%d", gGame.gameState.currentMode);
 

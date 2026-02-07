@@ -55,7 +55,7 @@ int GetScoreForBalloon(float radius)
 }
 
 void UpdateBalloons(HWND hwnd) {
-    if(gGame.gameState.isGameOver)
+    if(gGame.gameState.isGameOver || gGame.gameState.currentMode == GAME_MODE_PAUSE)
         return;
 
     RECT rect;
