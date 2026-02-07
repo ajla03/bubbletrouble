@@ -14,7 +14,6 @@
 #define min(a,b) (((a) < (b)) ? (a) : (b))
 #endif
 
-
 void InitializeMenu(HWND hwnd) {
     RECT clientRect;
     GetClientRect(hwnd, &clientRect);
@@ -22,40 +21,31 @@ void InitializeMenu(HWND hwnd) {
     int screenHeight = clientRect.bottom;
     int screenWidth = clientRect.right;
 
-    // Button dimensions - POVEĆANE DIMENZIJE
-    int buttonWidth = screenWidth /8 ;      // Promenjeno sa /8 na /5 (veće)
-    int buttonHeight = screenHeight / 8;   // Promenjeno sa /15 na /10 (veće)
-    int buttonSpacing = 2;  // Promenjeno sa /25 na /20 (više razmaka)
+    int buttonWidth = screenWidth / 5;  // Made wider
+    int buttonHeight = screenHeight / 7;  // Made taller
+    int buttonSpacing = 15;  // More spacing
 
-    // Minimum sizes - POVEĆANI MINIMUMI
-    if (buttonWidth < 150) buttonWidth = 150;   // Promenjeno sa 120 na 180
-    if (buttonHeight < 50) buttonHeight = 50;   // Promenjeno sa 45 na 60
-  //  if (buttonSpacing < 0) buttonSpacing = 0; // Promenjeno sa 20 na 25
+    if (buttonWidth < 200) buttonWidth = 200;  // Larger minimum
+    if (buttonHeight < 70) buttonHeight = 70;  // Larger minimum
 
-    // Position menu on the LEFT side - responsive
-    int leftSideCenter = clientRect.right / 4.5;  // Pomjeren kao prozor gore
+    int leftSideCenter = clientRect.right / 4.2;  // Slightly adjusted
+    int startY = clientRect.bottom / 3.5;  // Moved down
 
-    // Total height of all buttons
-    int totalButtonsHeight = (3 * buttonHeight) ;
-
-    // Center vertically with small offset down
-    int startY = clientRect.bottom / 4.5;  // Gore kao prozor
-
-    // 1 PLAYER button - centered on leftSideCenter
+    // 1 PLAYER button
     gGame.menuButtons[0].rect.left = leftSideCenter - buttonWidth / 2;
     gGame.menuButtons[0].rect.top = startY;
     gGame.menuButtons[0].rect.right = leftSideCenter + buttonWidth / 2;
     gGame.menuButtons[0].rect.bottom = startY + buttonHeight;
     gGame.menuButtons[0].text = "1 PLAYER";
 
-    // 2 PLAYERS button - centered on leftSideCenter
+    // 2 PLAYERS button
     gGame.menuButtons[1].rect.left = leftSideCenter - buttonWidth / 2;
     gGame.menuButtons[1].rect.top = startY + (buttonHeight + buttonSpacing);
     gGame.menuButtons[1].rect.right = leftSideCenter + buttonWidth / 2;
     gGame.menuButtons[1].rect.bottom = startY + (buttonHeight + buttonSpacing) + buttonHeight;
     gGame.menuButtons[1].text = "2 PLAYERS";
 
-    // SETTINGS button - centered on leftSideCenter
+    // SETTINGS button
     gGame.menuButtons[2].rect.left = leftSideCenter - buttonWidth / 2;
     gGame.menuButtons[2].rect.top = startY + 2 * (buttonHeight + buttonSpacing);
     gGame.menuButtons[2].rect.right = leftSideCenter + buttonWidth / 2;
@@ -63,11 +53,7 @@ void InitializeMenu(HWND hwnd) {
     gGame.menuButtons[2].text = "SETTINGS";
 }
 
-void RenderMenu(HDC hdc, RECT rect ) {
-
-    // === KORISTIMO DIREKTNO TVOJ GLOBALNI BACKBUFFER (hdc)
-    // === I GLOBALNI gRes.hdcMem
-
+void RenderMenu(HDC hdc, RECT rect) {
     SetStretchBltMode(hdc, HALFTONE);
     SetBrushOrgEx(hdc, 0, 0, NULL);
 
@@ -85,23 +71,18 @@ void RenderMenu(HDC hdc, RECT rect ) {
         DeleteObject(hBrush);
     }
 
+    // === TORCHES ===
     if (gRes.torch && gRes.torchMask) {
-
         float torchScale = 3.5f;
-
         if (rect.right < 1400) torchScale = 2.5f;
         if (rect.right < 900)  torchScale = 1.8f;
 
         if (rect.right > 600) {
-
             int torchW = (int)(gGame.torchInfo.width * torchScale);
             int torchH = (int)(gGame.torchInfo.height * torchScale);
-
             int padding = (rect.right < 1000) ? 5 : 20;
-
             int liftUpAmount = rect.bottom / 6;
             int torchY = (rect.bottom / 2) - (torchH / 2) - liftUpAmount;
-
             int torchX1 = padding;
             int torchX2 = rect.right - torchW - padding;
 
@@ -109,100 +90,44 @@ void RenderMenu(HDC hdc, RECT rect ) {
             int torchSrcY = gGame.torchInfo.currentRow * gGame.torchInfo.height;
 
             HBITMAP oldMemBmp = (HBITMAP)SelectObject(gRes.hdcMem, gRes.torchMask);
-
-            StretchBlt(hdc, torchX1, torchY, torchW, torchH,
-                       gRes.hdcMem, torchSrcX, torchSrcY,
-                       gGame.torchInfo.width, gGame.torchInfo.height, SRCPAINT);
-
+            StretchBlt(hdc, torchX1, torchY, torchW, torchH, gRes.hdcMem, torchSrcX, torchSrcY, gGame.torchInfo.width, gGame.torchInfo.height, SRCPAINT);
             SelectObject(gRes.hdcMem, gRes.torch);
-            StretchBlt(hdc, torchX1, torchY, torchW, torchH,
-                       gRes.hdcMem, torchSrcX, torchSrcY,
-                       gGame.torchInfo.width, gGame.torchInfo.height, SRCAND);
+            StretchBlt(hdc, torchX1, torchY, torchW, torchH, gRes.hdcMem, torchSrcX, torchSrcY, gGame.torchInfo.width, gGame.torchInfo.height, SRCAND);
 
             SelectObject(gRes.hdcMem, gRes.torchMask);
-            StretchBlt(hdc, torchX2, torchY, torchW, torchH,
-                       gRes.hdcMem, torchSrcX, torchSrcY,
-                       gGame.torchInfo.width, gGame.torchInfo.height, SRCPAINT);
-
+            StretchBlt(hdc, torchX2, torchY, torchW, torchH, gRes.hdcMem, torchSrcX, torchSrcY, gGame.torchInfo.width, gGame.torchInfo.height, SRCPAINT);
             SelectObject(gRes.hdcMem, gRes.torch);
-            StretchBlt(hdc, torchX2, torchY, torchW, torchH,
-                       gRes.hdcMem, torchSrcX, torchSrcY,
-                       gGame.torchInfo.width, gGame.torchInfo.height, SRCAND);
+            StretchBlt(hdc, torchX2, torchY, torchW, torchH, gRes.hdcMem, torchSrcX, torchSrcY, gGame.torchInfo.width, gGame.torchInfo.height, SRCAND);
 
             SelectObject(gRes.hdcMem, oldMemBmp);
         }
     }
 
-    // === LOGO ===
+   // === LOGO ===
     if (gRes.logo && gRes.logoMask) {
         BITMAP bm;
         GetObject(gRes.logo, sizeof(BITMAP), &bm);
-
         int logoWidth = rect.right / 2;
         int logoHeight = (int)(logoWidth * ((float)bm.bmHeight / (float)bm.bmWidth));
-
         int maxLogoHeight = rect.bottom / 3;
         if (logoHeight > maxLogoHeight) {
             logoHeight = maxLogoHeight;
             logoWidth = (int)(logoHeight * ((float)bm.bmWidth / (float)bm.bmHeight));
         }
-
-        int logoX = (rect.right - logoWidth) /1.7;
+        int logoX = (rect.right - logoWidth) /7;
         int logoY = -20;
-
         HBITMAP oldMemBmp = (HBITMAP)SelectObject(gRes.hdcMem, gRes.logoMask);
         StretchBlt(hdc, logoX, logoY, logoWidth, logoHeight,
                    gRes.hdcMem, 0, 0, bm.bmWidth, bm.bmHeight, SRCAND);
-
         SelectObject(gRes.hdcMem, gRes.logo);
         StretchBlt(hdc, logoX, logoY, logoWidth, logoHeight,
                    gRes.hdcMem, 0, 0, bm.bmWidth, bm.bmHeight, SRCPAINT);
-
-        SelectObject(gRes.hdcMem, oldMemBmp);
-    }
-
-    // === BUTTON HOLDER ===
-    if (gRes.hButtonsHolder && gRes.hButtonsHolderMask) {
-        BITMAP bm;
-        GetObject(gRes.hButtonsHolder, sizeof(BITMAP), &bm);
-        float aspectRatio = (float)bm.bmWidth / (float)bm.bmHeight;
-
-        int buttonsTop = gGame.menuButtons[0].rect.top;
-        int buttonsBottom = gGame.menuButtons[NUM_MENU_BUTTONS - 1].rect.bottom;
-        int buttonsTotalHeight = buttonsBottom - buttonsTop;
-        int oneButtonWidth = gGame.menuButtons[0].rect.right - gGame.menuButtons[0].rect.left;
-
-        int holderWidth = (int)(oneButtonWidth * 2.8);
-        int holderHeight = (int)(holderWidth / aspectRatio);
-
-        if (holderHeight < buttonsTotalHeight * 1.7) {
-            holderHeight = (int)(buttonsTotalHeight * 1.7);
-            holderWidth = (int)(holderHeight * aspectRatio);
-        }
-
-        int buttonsCenterX = gGame.menuButtons[0].rect.left + (oneButtonWidth / 2);
-        int holderX = buttonsCenterX - (holderWidth / 2);
-        int buttonsCenterY = buttonsTop + buttonsTotalHeight / 2;
-        int holderY = buttonsCenterY - (holderHeight / 2);
-
-        HBITMAP oldMemBmp = (HBITMAP)SelectObject(gRes.hdcMem, gRes.hButtonsHolderMask);
-        StretchBlt(hdc, holderX, holderY, holderWidth, holderHeight,
-                   gRes.hdcMem, 0, 0, bm.bmWidth, bm.bmHeight, SRCAND);
-
-        SelectObject(gRes.hdcMem, gRes.hButtonsHolder);
-        StretchBlt(hdc, holderX, holderY, holderWidth, holderHeight,
-                   gRes.hdcMem, 0, 0, bm.bmWidth, bm.bmHeight, SRCPAINT);
-
         SelectObject(gRes.hdcMem, oldMemBmp);
     }
 
     // === BUTTONS ===
-    int buttonFontSize = max(14, rect.bottom / 35);
-    HFONT hButtonFont = CreateFont(buttonFontSize, 0, 0, 0, FW_BOLD, FALSE, FALSE, FALSE,
-                                    DEFAULT_CHARSET, OUT_OUTLINE_PRECIS,
-                                    CLIP_DEFAULT_PRECIS, ANTIALIASED_QUALITY,
-                                    VARIABLE_PITCH, TEXT("Arial"));
-    HFONT hOldButtonFont = (HFONT)SelectObject(hdc, hButtonFont);
+    // Use the same font as settings screen
+    HFONT hOldButtonFont = (HFONT)SelectObject(hdc, gRes.hFont);
 
     for (int i = 0; i < NUM_MENU_BUTTONS; i++) {
         MenuButton* btn = &gGame.menuButtons[i];
@@ -215,13 +140,9 @@ void RenderMenu(HDC hdc, RECT rect ) {
         int btnHeight = btn->rect.bottom - btn->rect.top;
 
         HBITMAP oldMemBmp = (HBITMAP)SelectObject(gRes.hdcMem, currentButtonMask);
-        StretchBlt(hdc, btn->rect.left, btn->rect.top, btnWidth, btnHeight,
-                   gRes.hdcMem, 0, 0, bm.bmWidth, bm.bmHeight, SRCAND);
-
+        StretchBlt(hdc, btn->rect.left, btn->rect.top, btnWidth, btnHeight, gRes.hdcMem, 0, 0, bm.bmWidth, bm.bmHeight, SRCAND);
         SelectObject(gRes.hdcMem, currentButton);
-        StretchBlt(hdc, btn->rect.left, btn->rect.top, btnWidth, btnHeight,
-                   gRes.hdcMem, 0, 0, bm.bmWidth, bm.bmHeight, SRCPAINT);
-
+        StretchBlt(hdc, btn->rect.left, btn->rect.top, btnWidth, btnHeight, gRes.hdcMem, 0, 0, bm.bmWidth, bm.bmHeight, SRCPAINT);
         SelectObject(gRes.hdcMem, oldMemBmp);
 
         SetBkMode(hdc, TRANSPARENT);
@@ -235,9 +156,7 @@ void RenderMenu(HDC hdc, RECT rect ) {
         SetTextColor(hdc, RGB(255, 255, 255));
         TextOut(hdc, textX, textY, btn->text, (int)strlen(btn->text));
     }
-
     SelectObject(hdc, hOldButtonFont);
-    DeleteObject(hButtonFont);
 
     // === CHARACTER ===
     HBITMAP currentChar = gRes.menuCharacter;
@@ -247,13 +166,11 @@ void RenderMenu(HDC hdc, RECT rect ) {
     if (gGame.menuButtons[0].isHovered) {
         currentChar = gRes.player1MenuChar;
         currentCharMask = gRes.player1MenuCharMask;
-    }
-    else if (gGame.menuButtons[1].isHovered) {
+    } else if (gGame.menuButtons[1].isHovered) {
         currentChar = gRes.player2MenuChar;
         currentCharMask = gRes.player2MenuCharMask;
         isPlayer2 = true;
-    }
-    else if (gGame.menuButtons[2].isHovered) {
+    } else if (gGame.menuButtons[2].isHovered) {
         currentChar = gRes.settingsMenuChar;
         currentCharMask = gRes.settingsMenuCharMask;
     }
@@ -277,38 +194,21 @@ void RenderMenu(HDC hdc, RECT rect ) {
         }
 
         HBITMAP oldMemBmp = (HBITMAP)SelectObject(gRes.hdcMem, currentCharMask);
-        StretchBlt(hdc, charX, charY, charW, charH,
-                   gRes.hdcMem, 0, 0, bm.bmWidth, bm.bmHeight, SRCAND);
-
+        StretchBlt(hdc, charX, charY, charW, charH, gRes.hdcMem, 0, 0, bm.bmWidth, bm.bmHeight, SRCAND);
         SelectObject(gRes.hdcMem, currentChar);
-        StretchBlt(hdc, charX, charY, charW, charH,
-                   gRes.hdcMem, 0, 0, bm.bmWidth, bm.bmHeight, SRCPAINT);
-
+        StretchBlt(hdc, charX, charY, charW, charH, gRes.hdcMem, 0, 0, bm.bmWidth, bm.bmHeight, SRCPAINT);
         SelectObject(gRes.hdcMem, oldMemBmp);
     }
 }
 
-
-
-
 void HandleMenuClick(HWND hwnd, int x, int y) {
     POINT pt = {x, y};
-
     for (int i = 0; i < NUM_MENU_BUTTONS; i++) {
         if (PtInRect(&gGame.menuButtons[i].rect, pt)) {
             switch(i) {
-                case 0: // 1 PLAYER
-                    gGame.gameState.isMultiplayer = false;  // ← DODAJ
-                    StartGame(hwnd);
-                    break;
-                case 1: // 2 PLAYERS
-                    gGame.gameState.isMultiplayer = true;   // ← PROMIJENI
-                    StartGame(hwnd);
-                    InitMultiplayer(hwnd);                  // ← DODAJ
-                    break;
-                case 2: // SETTINGS
-                    gGame.gameState.currentMode = GAME_MODE_SETTINGS;
-                    break;
+                case 0: gGame.gameState.isMultiplayer = false; StartGame(hwnd); break;
+                case 1: gGame.gameState.isMultiplayer = true; StartGame(hwnd); InitMultiplayer(hwnd); break;
+                case 2: gGame.gameState.currentMode = GAME_MODE_SETTINGS; break;
             }
             break;
         }
@@ -318,18 +218,10 @@ void HandleMenuClick(HWND hwnd, int x, int y) {
 void HandleMenuMouseMove(HWND hwnd, int x, int y) {
     POINT pt = {x, y};
     bool needsRedraw = false;
-
     for (int i = 0; i < NUM_MENU_BUTTONS; i++) {
         bool wasHovered = gGame.menuButtons[i].isHovered;
         gGame.menuButtons[i].isHovered = PtInRect(&gGame.menuButtons[i].rect, pt);
-
-        if (wasHovered != gGame.menuButtons[i].isHovered) {
-            needsRedraw = true;
-        }
+        if (wasHovered != gGame.menuButtons[i].isHovered) needsRedraw = true;
     }
-
-    if (needsRedraw) {
-        InvalidateRect(hwnd, NULL, FALSE);
-    }
+    if (needsRedraw) InvalidateRect(hwnd, NULL, FALSE);
 }
-
