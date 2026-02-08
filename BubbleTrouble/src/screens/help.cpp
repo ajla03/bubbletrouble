@@ -14,6 +14,9 @@ static void RenderBackButton(HDC hdcBuffer, RECT sheet);
 static void RenderHelpContent(HDC hdcBuffer, RECT sheet);
 static void DrawInfoBox(HDC hdc, RECT rect, const char* title, HFONT titleFont);
 
+// Pomoćna funkcija za crtanje dugmića
+static void DrawKeyButton(HDC hdc, int x, int y, int w, int h, const char* label);
+
 // --- GLAVNA FUNKCIJA ---
 void RenderHelp(HDC hdcBuffer, RECT rect)
 {
@@ -31,6 +34,36 @@ void RenderHelp(HDC hdcBuffer, RECT rect)
 }
 
 // --- IMPLEMENTACIJA SADRŽAJA ---
+
+static void DrawKeyButton(HDC hdc, int x, int y, int w, int h, const char* label) {
+    BITMAP bm;
+    GetObject(gRes.settingsPlayer, sizeof(BITMAP), &bm);
+
+    HBITMAP old = (HBITMAP)SelectObject(gRes.hdcMem, gRes.settingsPlayer);
+
+    // Crtamo pozadinu dugmeta (bijela boja je prozirna)
+    TransparentBlt(hdc, x, y, w, h,
+                   gRes.hdcMem, 0, 0, bm.bmWidth, bm.bmHeight,
+                   RGB(255, 255, 255));
+
+    SelectObject(gRes.hdcMem, old);
+
+    // Ispisujemo tekst PREKO dugmeta
+    RECT r = {x, y, x + w, y + h};
+    SetBkMode(hdc, TRANSPARENT);
+
+    // --- TEKST NA DUGMETU JE BIJEL ---
+    SetTextColor(hdc, RGB(255, 255, 255));
+
+    // Font za slova na tipkama (Bold)
+    HFONT hKeyFont = CreateFont(18, 0, 0, 0, FW_BOLD, FALSE, FALSE, FALSE, DEFAULT_CHARSET, OUT_DEFAULT_PRECIS, CLIP_DEFAULT_PRECIS, PROOF_QUALITY, DEFAULT_PITCH, "Arial");
+    HFONT oldF = (HFONT)SelectObject(hdc, hKeyFont);
+
+    DrawText(hdc, label, -1, &r, DT_CENTER | DT_VCENTER | DT_SINGLELINE);
+
+    SelectObject(hdc, oldF);
+    DeleteObject(hKeyFont);
+}
 
 static void DrawInfoBox(HDC hdc, RECT rect, const char* title, HFONT titleFont) {
     // 1. Vanjski okvir
@@ -73,14 +106,24 @@ static void RenderHelpContent(HDC hdcBuffer, RECT sheet) {
                                     DEFAULT_CHARSET, OUT_DEFAULT_PRECIS, CLIP_DEFAULT_PRECIS,
                                     PROOF_QUALITY, DEFAULT_PITCH, "Arial");
 
+    // Font za label (Opisi kontrola)
+    HFONT hLabelFont = CreateFont(19, 0, 0, 0, FW_BOLD, FALSE, FALSE, FALSE,
+                                DEFAULT_CHARSET, OUT_DEFAULT_PRECIS, CLIP_DEFAULT_PRECIS,
+                                PROOF_QUALITY, DEFAULT_PITCH, "Arial");
+
+    // Font za footer (Note)
+    HFONT hNoteFont = CreateFont(16, 0, 0, 0, FW_NORMAL, TRUE, FALSE, FALSE,
+                                DEFAULT_CHARSET, OUT_DEFAULT_PRECIS, CLIP_DEFAULT_PRECIS,
+                                PROOF_QUALITY, DEFAULT_PITCH, "Arial");
+
     HFONT oldFont = (HFONT)SelectObject(hdcBuffer, hTextFont);
 
-    // --- UVODNI TEKST ---
+    // --- UVODNI TEKST (Podignut malo gore: sheet.top + 110) ---
     RECT textRect;
     textRect.left = sheet.left + 50;
     textRect.right = sheet.right - 50;
-    textRect.top = sheet.top + 130;
-    textRect.bottom = sheet.top + 200;
+    textRect.top = sheet.top + 110;  // Bilo 130
+    textRect.bottom = sheet.top + 180;
 
     SetTextColor(hdcBuffer, RGB(40, 40, 40));
     const char* helpMessage = "Bubble Trouble is an arcade game where you must \n destroy all bubbles before time runs out !";
@@ -88,16 +131,20 @@ static void RenderHelpContent(HDC hdcBuffer, RECT sheet) {
     DrawText(hdcBuffer, helpMessage, -1, &textRect, DT_LEFT | DT_TOP | DT_WORDBREAK);
 
 
-    // --- 3 OKVIRA ---
-    int startY = sheet.top + 200;
-    int boxHeight = 220;
+    // --- 3 OKVIRA (Podignuti gore: startY = sheet.top + 180) ---
+    // Ovo radimo da bi dolje ostalo mjesta za Back dugme
+    int startY = sheet.top + 180; // Bilo 200
+    int boxHeight = 260;
+
     int totalWidth = (sheet.right - 50) - (sheet.left + 50);
     int gap = 20;
-    int boxWidth = (totalWidth - (2 * gap)) / 3;
 
-    RECT rControls = { sheet.left + 50, startY, sheet.left + 50 + boxWidth, startY + boxHeight };
-    RECT rPowerups = { rControls.right + gap, startY, rControls.right + gap + boxWidth, startY + boxHeight };
-    RECT rTips     = { rPowerups.right + gap, startY, rPowerups.right + gap + boxWidth, startY + boxHeight };
+    int controlsWidth = (int)(totalWidth * 0.40);
+    int otherWidth = (totalWidth - controlsWidth - (2 * gap)) / 2;
+
+    RECT rControls = { sheet.left + 50, startY, sheet.left + 50 + controlsWidth, startY + boxHeight };
+    RECT rPowerups = { rControls.right + gap, startY, rControls.right + gap + otherWidth, startY + boxHeight };
+    RECT rTips     = { rPowerups.right + gap, startY, rPowerups.right + gap + otherWidth, startY + boxHeight };
 
     DrawInfoBox(hdcBuffer, rControls, "CONTROLS", hBoxTitleFont);
     DrawInfoBox(hdcBuffer, rPowerups, "POWER-UPS", hBoxTitleFont);
@@ -105,20 +152,59 @@ static void RenderHelpContent(HDC hdcBuffer, RECT sheet) {
 
     // --- SADRŽAJ UNUTAR OKVIRA ---
 
-    // CONTROLS
-    RECT rContent = rControls;
-    rContent.top += 45; rContent.left += 10; rContent.right -= 10;
-    SetTextColor(hdcBuffer, RGB(20, 20, 20));
-    DrawText(hdcBuffer, "Use ARROW keys to move\nLEFT and RIGHT.\n\nPress SPACE to shoot\nyour harpoon.",
-             -1, &rContent, DT_CENTER | DT_WORDBREAK);
+    // >>> CONTROLS <<<
+    {
+        int btnSize = 40;
+        int btnSpaceW = 90;
+        int rowHeight = 50;
 
-    // POWER-UPS (Ažurirano za transparentno crtanje s maskama)
+        // --- POPRAVAK: startX = 10 (Skroz lijevo u okviru) ---
+        int startX = rControls.left + 10;
+        int startY = rControls.top + 50;
+
+        SelectObject(hdcBuffer, hLabelFont);
+
+        // 1. [<-] Move Left
+        DrawKeyButton(hdcBuffer, startX, startY, btnSize, btnSize, "<-");
+
+        // --- TEKST PORED DUGMETA JE CRN ---
+        SetTextColor(hdcBuffer, RGB(20, 20, 20));
+        RECT rText1 = { startX + btnSize + 15, startY, rControls.right, startY + btnSize };
+        DrawText(hdcBuffer, "Move Left", -1, &rText1, DT_LEFT | DT_VCENTER | DT_SINGLELINE);
+
+        // 2. [->] Move Right
+        int y2 = startY + rowHeight;
+        DrawKeyButton(hdcBuffer, startX, y2, btnSize, btnSize, "->");
+
+        SetTextColor(hdcBuffer, RGB(20, 20, 20));
+        RECT rText2 = { startX + btnSize + 15, y2, rControls.right, y2 + btnSize };
+        DrawText(hdcBuffer, "Move Right", -1, &rText2, DT_LEFT | DT_VCENTER | DT_SINGLELINE);
+
+        // 3. [SPACE] Fire Harpoon
+        int y3 = y2 + rowHeight;
+        DrawKeyButton(hdcBuffer, startX, y3, btnSpaceW, btnSize, "SPACE");
+
+        SetTextColor(hdcBuffer, RGB(20, 20, 20));
+        RECT rText3 = { startX + btnSpaceW + 15, y3, rControls.right, y3 + btnSize };
+        DrawText(hdcBuffer, "Fire Harpoon", -1, &rText3, DT_LEFT | DT_VCENTER | DT_SINGLELINE);
+
+        // --- TEXT NA DNU ---
+        SelectObject(hdcBuffer, hNoteFont);
+        SetTextColor(hdcBuffer, RGB(80, 80, 80));
+
+        RECT rNote = { rControls.left + 5, rControls.bottom - 40, rControls.right - 5, rControls.bottom };
+        DrawText(hdcBuffer, "Controls can be customized in the settings menu.", -1, &rNote, DT_CENTER | DT_WORDBREAK);
+
+        // Vraćamo font
+        SelectObject(hdcBuffer, hTextFont);
+    }
+
+    // >>> POWER-UPS <<<
     int iconSize = 30;
     int rowH = 45;
     int startIconY = rPowerups.top + 50;
     int textOffX = 40;
 
-    // Lambda funkcija sada prima i Masku
     auto DrawPowerRow = [&](HBITMAP hBmp, HBITMAP hMask, const char* name, int rowIdx) {
         int y = startIconY + (rowIdx * rowH);
         int x = rPowerups.left + 20;
@@ -126,18 +212,11 @@ static void RenderHelpContent(HDC hdcBuffer, RECT sheet) {
         if(hBmp && hMask) {
             BITMAP bm;
             GetObject(hBmp, sizeof(BITMAP), &bm);
-
             HDC hdcMem = CreateCompatibleDC(hdcBuffer);
 
-            // 1. KORAK: MASKA (SRCAND)
-            // Bijela pozadina maske ostavlja destinaciju netaknutom (AND 1 = 1),
-            // Crni oblik maske "buši rupu" (AND 0 = 0).
             HBITMAP old = (HBITMAP)SelectObject(hdcMem, hMask);
             StretchBlt(hdcBuffer, x, y, iconSize, iconSize, hdcMem, 0, 0, bm.bmWidth, bm.bmHeight, SRCAND);
 
-            // 2. KORAK: SLIKA (SRCPAINT)
-            // Crna pozadina slike ne mijenja destinaciju (OR 0 = x),
-            // Boja slike popunjava rupu (OR color = color).
             SelectObject(hdcMem, hBmp);
             StretchBlt(hdcBuffer, x, y, iconSize, iconSize, hdcMem, 0, 0, bm.bmWidth, bm.bmHeight, SRCPAINT);
 
@@ -146,17 +225,18 @@ static void RenderHelpContent(HDC hdcBuffer, RECT sheet) {
         }
 
         RECT rText = { x + textOffX, y, rPowerups.right - 10, y + iconSize };
+        SetTextColor(hdcBuffer, RGB(40, 40, 40));
         DrawText(hdcBuffer, name, -1, &rText, DT_LEFT | DT_VCENTER | DT_SINGLELINE);
     };
 
-    // Pozivamo funkciju s odgovarajućim maskama
     DrawPowerRow(gRes.lifePowerup,   gRes.lifePowerupMask,   "Extra Life",  0);
     DrawPowerRow(gRes.timePowerup,   gRes.timePowerupMask,   "Extra Time",  1);
     DrawPowerRow(gRes.freezePowerup, gRes.freezePowerupMask, "Freeze Time", 2);
 
-    // TIPS
-    rContent = rTips;
+    // >>> TIPS <<<
+    RECT rContent = rTips;
     rContent.top += 45; rContent.left += 10; rContent.right -= 10;
+    SetTextColor(hdcBuffer, RGB(40, 40, 40));
     DrawText(hdcBuffer, "- Don't rush!\n- Split big bubbles first.\n- Use walls for cover.\n- Watch the timer!",
              -1, &rContent, DT_LEFT | DT_WORDBREAK);
 
@@ -164,6 +244,8 @@ static void RenderHelpContent(HDC hdcBuffer, RECT sheet) {
     SelectObject(hdcBuffer, oldFont);
     DeleteObject(hTextFont);
     DeleteObject(hBoxTitleFont);
+    DeleteObject(hLabelFont);
+    DeleteObject(hNoteFont);
 }
 
 // --- OSTALE FUNKCIJE ---
@@ -238,9 +320,14 @@ static void RenderHelpTitle(HDC hdcBuffer, RECT sheet) {
 static void RenderBackButton(HDC hdcBuffer, RECT sheet) {
     int btnWidth = gGame.backButtonInfo.width;
     int btnHeight = gGame.backButtonInfo.height;
+
+    // --- POPRAVAK: SPUŠTANJE DUGMETA ---
+    // Stavljamo ga 20px od samog dna sheet-a
+    int y = sheet.bottom - (btnHeight / 2) - 20;
+
+    // X pozicija (Lijevo poravnato s paddingom)
     int padding = 40;
     int x = sheet.left + padding;
-    int y = sheet.bottom - btnHeight / 2 - padding;
 
     gGame.backButtonInfo.x = x;
     gGame.backButtonInfo.y = y;
@@ -253,6 +340,8 @@ static void RenderBackButton(HDC hdcBuffer, RECT sheet) {
 
     RECT textRect = { x, y, x + btnWidth, y + btnHeight / 2 };
     SetBkMode(hdcBuffer, TRANSPARENT);
+
+    // Tekst na BACK dugmetu je BIJELI
     SetTextColor(hdcBuffer, RGB(255, 255, 255));
     DrawText(hdcBuffer, "BACK", -1, &textRect, DT_CENTER | DT_VCENTER | DT_SINGLELINE);
 }
