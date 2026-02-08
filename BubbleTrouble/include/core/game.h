@@ -32,6 +32,8 @@ void HandlePauseClick(HWND hwnd, int mx, int my);
 void HandleEndScreenClick(HWND hwnd, int mx, int my);
 void HandleBackClick(HWND hwnd, int mx, int my);
 void HandleSettingsClick(HWND hwnd, int mx, int my);
+void HandleSettingsClick(HWND hwnd, int mx, int my);
+void HandleHelpClick(HWND hwnd, int mx, int my);
 
 // ================= GAME STATE (in gameState.cpp) =================
 void StartGame(HWND hwnd);
@@ -70,6 +72,7 @@ void DrawGameOverScreen(HDC hdc, RECT rect);
 void DrawPausedScreen(HDC hdc, RECT rect);
 void DrawLevelPassedScreen(HDC hdc, RECT rect);
 void RenderSettings(HDC, RECT);
+void RenderHelp(HDC hdc, RECT rect);
 
 // ================= UI / RENDERING (in gameUI.cpp) =========
 void DrawHeartsAndScore(HDC hdc, RECT rect, int barHeight);

@@ -142,6 +142,11 @@ void HandleMouseClick(HWND hwnd, int mx, int my)
         HandleSettingsClick(hwnd, mx, my);
         return;
     }
+    if (mode == GAME_MODE_HELP) {
+        HandleHelpClick(hwnd, mx, my);
+        return;
+    }
+
 }
 
 void HandleSettingsClick(HWND hwnd, int mx, int my){
@@ -201,7 +206,14 @@ void HandleSettingsClick(HWND hwnd, int mx, int my){
 }
 
 
-
+void HandleHelpClick(HWND hwnd, int mx, int my) {
+    // Back button logika (koristimo istu logiku tranzicije kao u settings)
+    if(IsPointInButton(gGame.backButtonInfo, mx, my)){
+        gGame.gameState.pendingHome = true; // Ovo signalizira povratak u Menu
+        StartWallTransition(hwnd);
+        return;
+    }
+}
 void HandlePlayingClick(HWND hwnd, int mx, int my)
 {
     if (IsPointInButton(gGame.pauseButtonInfo, mx, my))
@@ -278,7 +290,11 @@ void HandleMouseMove(HWND hwnd, int x, int y)
 
         return;
     }
-
+    if (gGame.gameState.currentMode == GAME_MODE_HELP)
+    {
+        CheckHover(gGame.backButtonInfo, x, y);
+        return;
+    }
     // GAME OVER ILI LEVEL CLEARED
     if (gGame.gameState.currentMode == GAME_OVER ||
         gGame.gameState.isLevelCleared)

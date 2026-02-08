@@ -22,7 +22,8 @@ void Update(HWND hwnd){
     else if(   gGame.gameState.currentMode == GAME_MODE_PAUSE
             || gGame.gameState.currentMode == GAME_OVER
             || gGame.gameState.currentMode == GAME_MODE_MENU
-            || gGame.gameState.currentMode == GAME_MODE_SETTINGS ) {
+            || gGame.gameState.currentMode == GAME_MODE_SETTINGS
+            || gGame.gameState.currentMode == GAME_MODE_HELP ) {
             UpdateTorches();
             return;
         }

@@ -59,6 +59,7 @@ struct InputState{
 enum GameMode {
     GAME_MODE_MENU,
     GAME_MODE_SETTINGS,
+    GAME_MODE_HELP,
     GAME_MODE_PLAYING,
     GAME_MODE_PAUSE,
     GAME_OVER,

@@ -255,7 +255,7 @@ if (gRes.hIcon) {  // pretpostavljam da imate HICON u gRes strukturi
 void HandleMenuClick(HWND hwnd, int x, int y) {
     POINT pt = {x, y};
      if (PtInRect(&gGame.helpIconRect, pt)) {
-        MessageBox(hwnd, "Help clicked!", "Info", MB_OK); // Privremeno
+        gGame.gameState.currentMode = GAME_MODE_HELP;
         return;
     }
     for (int i = 0; i < NUM_MENU_BUTTONS; i++) {
