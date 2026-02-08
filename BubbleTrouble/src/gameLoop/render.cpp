@@ -24,7 +24,10 @@ void RefreshScreen(HWND hwnd) {
        RenderHelp(gRes.hdcBuffer, rect);
        DrawTransitionWalls(gRes.hdcBuffer, rect);
     }
-    else {
+   else if(gGame.gameState.currentMode == GAME_MODE_DASHBOARD){
+        RenderDashboard(gRes.hdcBuffer, rect);
+        DrawTransitionWalls(gRes.hdcBuffer, rect);
+    }else {
         RenderStaticUI(gRes.hdcBuffer, rect);
         RenderLevel(gRes.hdcBuffer, rect);
         RenderDynamicGameUI(gRes.hdcBuffer, rect);

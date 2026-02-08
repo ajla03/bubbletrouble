@@ -185,7 +185,8 @@ if (gRes.hIcon) {  // pretpostavljam da imate HICON u gRes strukturi
      // === PODIUM ICON ===
     if (gRes.podium && gRes.podiumHover) {
         BITMAP bm;
-        GetObject(gRes.podium, sizeof(BITMAP), &bm);
+        HBITMAP current = gGame.dashboardButtonInfo.isHover ? gRes.podiumHover : gRes.podium;
+        GetObject(current, sizeof(BITMAP), &bm);
 
         int podiumSize = rect.right / 20;
         if (podiumSize < 40) podiumSize = 40;
@@ -200,7 +201,7 @@ if (gRes.hIcon) {  // pretpostavljam da imate HICON u gRes strukturi
         gGame.dashboardButtonInfo.width = podiumSize;
         gGame.dashboardButtonInfo.height = podiumSize;
 
-        HBITMAP oldMemBmp = (HBITMAP)SelectObject(gRes.hdcMem, gRes.podium);
+        HBITMAP oldMemBmp = (HBITMAP)SelectObject(gRes.hdcMem,current);
 
         TransparentBlt(hdc, helpX, helpY, podiumSize, podiumSize,
                        gRes.hdcMem, 0, 0, bm.bmWidth, bm.bmHeight,
@@ -258,6 +259,7 @@ void HandleMenuClick(HWND hwnd, int x, int y) {
         gGame.gameState.currentMode = GAME_MODE_HELP;
         return;
     }
+
     for (int i = 0; i < NUM_MENU_BUTTONS; i++) {
         if (PtInRect(&gGame.menuButtons[i].rect, pt)) {
             switch(i) {
@@ -267,6 +269,10 @@ void HandleMenuClick(HWND hwnd, int x, int y) {
             }
             break;
         }
+    }
+
+    if(IsPointInButton(gGame.dashboardButtonInfo, x, y)){
+        gGame.gameState.currentMode = GAME_MODE_DASHBOARD;
     }
 }
 
@@ -283,4 +289,5 @@ void HandleMenuMouseMove(HWND hwnd, int x, int y) {
     if (wasHelpHovered != gGame.helpIconHovered) needsRedraw = true;
 
     if (needsRedraw) InvalidateRect(hwnd, NULL, FALSE);
+
 }

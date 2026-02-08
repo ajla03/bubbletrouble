@@ -128,3 +128,6 @@ void RenderHero(
     bool useStretch,
     float scale
 );
+
+// ============= DASHBOARD ===================
+void RenderDashboard(HDC, RECT);
