@@ -59,7 +59,7 @@ IDB_DOOR_CLOSED_MASK     BITMAP "../assets/bitmaps/doorClosedBlack.bmp"
 
 IDR_MINI_FONT   RCDATA  "../assets/font/KenneyMiniSquare.ttf"
 
-IDB_MENU_SCREEN    BITMAP "../assets/bitmaps/menuBg23.bmp"
+IDB_MENU_SCREEN    BITMAP "../assets/bitmaps/menuBg.bmp"
 
 IDB_MENU_CHARACTER      BITMAP "../assets/bitmaps/start-screen.bmp"
 IDB_MENU_CHARACTER_MASK  BITMAP "../assets/bitmaps/start-screen_mask.bmp"

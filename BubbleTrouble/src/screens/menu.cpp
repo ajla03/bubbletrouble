@@ -22,7 +22,7 @@ void InitializeMenu(HWND hwnd) {
     int screenWidth = clientRect.right;
 
     float holderCenterX = screenWidth * 0.225f;
-    float holderCenterY = screenHeight * 0.428f;
+    float holderCenterY = screenHeight * 0.416f;
     int holderWidth = (int)(screenWidth * 0.233f);
     int holderHeight = (int)(screenHeight * 0.460f);
 
