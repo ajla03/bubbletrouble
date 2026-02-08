@@ -129,3 +129,5 @@ IDB_FREEZEPU_MASK BITMAP  "assets/bitmaps/snowflake_mask.bmp"
 
 IDR_MAINICON ICON "../assets/icons/favicon.ico"
 
+IDB_HELP         BITMAP "../assets/bitmaps/help.bmp"
+IDB_HELP_HOVER   BITMAP "../assets/bitmaps/help_hover.bmp"

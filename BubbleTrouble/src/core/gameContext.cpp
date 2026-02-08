@@ -58,6 +58,8 @@ GameContext gGame = {
     /* settingsMusicButtonInfo */ {},
     /* player1 */       {},
     /* player2 */       {},
+    /* helpIconRect */  {},
+    /* helpIconHovered */ false,
 
     // ===== STATE =====
     /* inputState */    {false,false},

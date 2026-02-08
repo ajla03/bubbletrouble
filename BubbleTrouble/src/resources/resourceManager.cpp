@@ -105,6 +105,10 @@ bool ResourceManager::LoadAll(HINSTANCE hInstance) {
 
     gameCursor = LoadCursor(hInstance, MAKEINTRESOURCE(IDC_GAME_CURSOR));
 
+    help = LoadBitmap(hInstance, MAKEINTRESOURCE(IDB_HELP));
+
+    helpHover = LoadBitmap(hInstance, MAKEINTRESOURCE(IDB_HELP_HOVER));
+
     HRSRC hRes = FindResource(hInstance, MAKEINTRESOURCE(IDR_MINI_FONT), RT_RCDATA);
 
     DWORD size = SizeofResource(hInstance, hRes);
