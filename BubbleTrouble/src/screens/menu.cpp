@@ -185,7 +185,7 @@ if (gRes.hIcon) {  // pretpostavljam da imate HICON u gRes strukturi
         } else {
             charH = (int)(rect.bottom * 0.75);
             charW = (int)(charH * aspectRatio);
-            charX = (int)(rect.right * 0.2);
+            charX = gGame.menuButtons[0].rect.right + 100;
             charY = rect.bottom - charH - max(20, rect.bottom / 30);
         }
 
