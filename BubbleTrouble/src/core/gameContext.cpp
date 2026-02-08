@@ -58,6 +58,7 @@ GameContext gGame = {
     /* settingsMusicButtonInfo */ {},
     /* player1 */       {},
     /* player2 */       {},
+    /* dashboardButtoInfo*/  {},
     /* helpIconRect */  {},
     /* helpIconHovered */ false,
 

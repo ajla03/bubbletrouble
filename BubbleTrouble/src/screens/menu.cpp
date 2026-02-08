@@ -181,6 +181,34 @@ if (gRes.hIcon) {  // pretpostavljam da imate HICON u gRes strukturi
                        RGB(255, 255, 255));
         SelectObject(gRes.hdcMem, oldMemBmp);
     }
+
+     // === PODIUM ICON ===
+    if (gRes.podium && gRes.podiumHover) {
+        BITMAP bm;
+        GetObject(gRes.podium, sizeof(BITMAP), &bm);
+
+        int podiumSize = rect.right / 20;
+        if (podiumSize < 40) podiumSize = 40;
+        if (podiumSize > 80) podiumSize = 80;
+
+        int padding = 20;
+        int helpX = rect.right - podiumSize - padding;
+        int helpY = 2*padding + podiumSize;
+
+        gGame.dashboardButtonInfo.x = helpX;
+        gGame.dashboardButtonInfo.y = helpY;
+        gGame.dashboardButtonInfo.width = podiumSize;
+        gGame.dashboardButtonInfo.height = podiumSize;
+
+        HBITMAP oldMemBmp = (HBITMAP)SelectObject(gRes.hdcMem, gRes.podium);
+
+        TransparentBlt(hdc, helpX, helpY, podiumSize, podiumSize,
+                       gRes.hdcMem, 0, 0, bm.bmWidth, bm.bmHeight,
+                       RGB(255, 255, 255));
+        SelectObject(gRes.hdcMem, oldMemBmp);
+    }
+
+
     // === CHARACTER ===
     HBITMAP currentChar = gRes.menuCharacter;
     HBITMAP currentCharMask = gRes.menuCharacterMask;

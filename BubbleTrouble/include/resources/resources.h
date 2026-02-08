@@ -90,6 +90,8 @@
 #define IDB_HERO2_MASK             185
 #define IDB_HELP                   186
 #define IDB_HELP_HOVER             187
+#define IDB_PODIUM                 188
+#define IDB_PODIUM_HOVER           189
 
 // ============ KONSTANTE ZA HARPUN ============ //
 #define IDR_HARPOON_SOUND   201

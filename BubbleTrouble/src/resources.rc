@@ -131,3 +131,5 @@ IDR_MAINICON ICON "../assets/icons/favicon.ico"
 
 IDB_HELP         BITMAP "../assets/bitmaps/help.bmp"
 IDB_HELP_HOVER   BITMAP "../assets/bitmaps/help_hover.bmp"
+IDB_PODIUM        BITMAP "../assets/bitmaps/podium.bmp"
+IDB_PODIUM_HOVER   BITMAP "../assets/bitmaps/podiumHover.bmp"

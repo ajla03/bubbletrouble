@@ -50,6 +50,7 @@ struct ResourceManager{
     HICON hIcon;
     HBITMAP help;
     HBITMAP helpHover;
+    HBITMAP podium, podiumHover;
 
   //, hdcBuffer;
 //    HBITMAP oldBufferBmp, hbmBuffer;

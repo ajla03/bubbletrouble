@@ -106,8 +106,10 @@ bool ResourceManager::LoadAll(HINSTANCE hInstance) {
     gameCursor = LoadCursor(hInstance, MAKEINTRESOURCE(IDC_GAME_CURSOR));
 
     help = LoadBitmap(hInstance, MAKEINTRESOURCE(IDB_HELP));
-
     helpHover = LoadBitmap(hInstance, MAKEINTRESOURCE(IDB_HELP_HOVER));
+
+    podium = LoadBitmap(hInstance, MAKEINTRESOURCE(IDB_PODIUM));
+    podiumHover = LoadBitmap(hInstance, MAKEINTRESOURCE(IDB_PODIUM_HOVER));
 
     HRSRC hRes = FindResource(hInstance, MAKEINTRESOURCE(IDR_MINI_FONT), RT_RCDATA);
 

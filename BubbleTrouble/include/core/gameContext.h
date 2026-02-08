@@ -65,6 +65,7 @@ struct GameContext{
      Button settingsMusicButtonInfo;
      Button settingsSoundButtonInfo;
      Button player1, player2;
+     Button dashboardButtonInfo;
      RECT helpIconRect;
      bool helpIconHovered;
 
