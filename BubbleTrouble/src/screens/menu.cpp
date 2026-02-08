@@ -259,6 +259,7 @@ void HandleMenuClick(HWND hwnd, int x, int y) {
         MessageBox(hwnd, "Help clicked!", "Info", MB_OK); // Privremeno
         return;
     }
+
     for (int i = 0; i < NUM_MENU_BUTTONS; i++) {
         if (PtInRect(&gGame.menuButtons[i].rect, pt)) {
             switch(i) {
@@ -268,6 +269,10 @@ void HandleMenuClick(HWND hwnd, int x, int y) {
             }
             break;
         }
+    }
+
+    if(IsPointInButton(gGame.dashboardButtonInfo, x, y)){
+        gGame.gameState.currentMode = GAME_MODE_DASHBOARD;
     }
 }
 
