@@ -7,7 +7,7 @@ IDB_HERO_MASK   BITMAP "../assets/bitmaps/hero1_mask.bmp"
 IDB_ARROW       BITMAP "../assets/bitmaps/arrowWhite1.bmp"
 IDB_ARROW_MASK  BITMAP "../assets/bitmaps/arrowBlack1.bmp"
 
-IDB_WALL        BITMAP "../assets/bitmaps/wall5.bmp"
+IDB_WALL        BITMAP "../assets/bitmaps/wall6.bmp"
 IDB_BACKGROUND  BITMAP "../assets/bitmaps/bg.bmp"
 IDB_BACKGROUND_LEVEL2  BITMAP "../assets/bitmaps/bgImage3.bmp"
 IDB_BACKGROUND_LEVEL3  BITMAP "../assets/bitmaps/bgImage4.bmp"
@@ -59,7 +59,7 @@ IDB_DOOR_CLOSED_MASK     BITMAP "../assets/bitmaps/doorClosedBlack.bmp"
 
 IDR_MINI_FONT   RCDATA  "../assets/font/KenneyMiniSquare.ttf"
 
-IDB_MENU_SCREEN    BITMAP "../assets/bitmaps/menuBg22.bmp"
+IDB_MENU_SCREEN    BITMAP "../assets/bitmaps/menuBg23.bmp"
 
 IDB_MENU_CHARACTER      BITMAP "../assets/bitmaps/start-screen.bmp"
 IDB_MENU_CHARACTER_MASK  BITMAP "../assets/bitmaps/start-screen_mask.bmp"
