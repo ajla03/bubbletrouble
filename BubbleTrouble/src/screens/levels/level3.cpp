@@ -151,7 +151,7 @@ void RecalculateLevel3Layout(HWND hwnd)
 
     int bgH = rect.bottom - gGame.floorWall.height;
     int targetDoorW = CURRENT_LEVEL.longWall.width;
-    int targetDoorH = gGame.hero.height + 5;
+    int targetDoorH = gGame.hero.height*1.2 + 5;
 
     // Door
     CURRENT_LEVEL.door.x = rect.right/2 - targetDoorW/2;
