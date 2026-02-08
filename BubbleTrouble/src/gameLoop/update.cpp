@@ -5,6 +5,89 @@
 #include <windows.h>
 #include <iostream>
 
+static void UpdateTimers();
+static void UpdateHarpoonHero1(HWND);
+static void UpdateTorches();
+static void UpdateLevelLogic(HWND hwnd);
+static void UpdateHearts();
+static void UpdateHeroCoolDown(float dt);
+static void UpdateScoreAnimation();
+
+void Update(HWND hwnd){
+    if(gGame.gameState.pendingHome || gGame.transitionState == TRANSITION_CLOSING || gGame.transitionState == TRANSITION_WAIT )
+       {
+        UpdateWallTransition(hwnd);
+        return;
+       }
+    else if(   gGame.gameState.currentMode == GAME_MODE_PAUSE
+            || gGame.gameState.currentMode == GAME_OVER
+            || gGame.gameState.currentMode == GAME_MODE_MENU
+            || gGame.gameState.currentMode == GAME_MODE_SETTINGS ) {
+            UpdateTorches();
+            return;
+        }
+
+    printf("%d", gGame.gameState.currentMode);
+    printf("GDI Objects: %ld\n", GetGuiResources(GetCurrentProcess(), GR_GDIOBJECTS));
+
+    // UPDATE TIMERS //
+    UpdateTimers();
+
+    // UPDATE HARPOON FOR HERO 1
+    UpdateHarpoonHero1(hwnd);
+
+    // UPDATE HARPOON - MULTIPLAYER //
+    if(gGame.gameState.isMultiplayer && gGame.harpoon2.isActive) {
+        UpdateHarpoon2(hwnd);
+    }
+
+    // UPDATE TORCHES //
+    UpdateTorches();
+
+    // ==== update aktivnih vrata ====== //
+    UpdateLevelLogic(hwnd);
+
+     if(gGame.gameState.hasShield && gGame.gameState.shieldTimeLeft > 0) {
+        gGame.gameState.shieldTimeLeft--;
+        if(gGame.gameState.shieldTimeLeft <= 0) {
+            gGame.gameState.hasShield = false;
+        }
+    }
+
+    if(gGame.gameState.hasDoubleShot && gGame.gameState.doubleShotTimeLeft > 0) {
+        gGame.gameState.doubleShotTimeLeft--;
+        if(gGame.gameState.doubleShotTimeLeft <= 0) {
+            gGame.gameState.hasDoubleShot = false;
+        }
+    }
+
+    // UDPATE HERO COOLDOWNS
+    UpdateHeroCoolDown(0.016f);
+
+    if(gGame.gameState.isMultiplayer) {
+        UpdateHeroCoolDownP2(0.016f);
+    }
+
+    // UPDATE BALOONS
+    UpdateBalloons(hwnd);
+
+    // UPDATE HEARTS
+    UpdateHearts();
+
+    // UPDATE POWERUPS
+    UpdatePowerups(hwnd);
+
+    // UPDATE SCORE ANIMATION
+     UpdateScoreAnimation();
+
+    // CHECK COLLISIONS
+    CheckCollisions();
+
+    // UPDATE WALL TRANSITION
+    UpdateWallTransition(hwnd);
+
+}
+
 void UpdateHeroCoolDown(float dt){
     if(gGame.hero.heroHitCooldown > 0){
         gGame.hero.heroHitCooldown -=dt;
@@ -79,149 +162,7 @@ void UpdateScoreAnimation() {
     }
 }
 
-void Update(HWND hwnd){
-    if(gGame.gameState.pendingHome || gGame.transitionState == TRANSITION_CLOSING || gGame.transitionState == TRANSITION_WAIT )
-       {
-        UpdateWallTransition(hwnd);
-        return;
-       }
-    else if(   gGame.gameState.currentMode == GAME_MODE_PAUSE
-            || gGame.gameState.currentMode == GAME_OVER
-            || gGame.gameState.currentMode == GAME_MODE_MENU
-            || gGame.gameState.currentMode == GAME_MODE_SETTINGS ) {
-            gGame.torchInfo.animCounter++;
-            if(gGame.torchInfo.animCounter > 5){
-            gGame.torchInfo.currentFrame++;
-            if (gGame.torchInfo.currentFrame >= 4) {
-                gGame.torchInfo.currentFrame = 0;
-                gGame.torchInfo.currentRow = (gGame.torchInfo.currentRow + 1) % 2;
-             }
-             gGame.torchInfo.animCounter = 0;
-            }
-            return;
 
-        }
-
-    printf("%d", gGame.gameState.currentMode);
-
-    printf("GDI Objects: %ld\n", GetGuiResources(GetCurrentProcess(), GR_GDIOBJECTS));
-     if (!gGame.gameState.isGameOver && CURRENT_LEVEL.timeLeft > 0 && !gGame.gameState.isLevelCleared) {
-        CURRENT_LEVEL.timeLeft -= 1.0;
-    } else if (CURRENT_LEVEL.timeLeft <= 0) {
-        CURRENT_LEVEL.timeLeft = 0;
-        printf("timeLeft at start: %f\n", CURRENT_LEVEL.timeLeft);
-        gGame.gameState.isGameOver = true;
-        gGame.gameState.currentMode = GAME_OVER;
-
-        if(!gGame.gameState.isScoreSaved) {
-            SaveFinalScore();
-        gGame.gameState.isScoreSaved = true;
-      }
-
-    }
-    if (gGame.harpoon.isActive){
-        RECT rect;
-        GetClientRect(hwnd, &rect);
-        gGame.harpoon.length += gGame.harpoon.dy;
-        gGame.harpoon.y = rect.bottom - gGame.floorWall.height;
-
-        if (gGame.harpoon.length >= rect.bottom){
-            gGame.harpoon.isActive = false;
-        }
-    }
-if(gGame.gameState.isMultiplayer && gGame.harpoon2.isActive) {
-        UpdateHarpoon2(hwnd);
-    }
-    // update baklji
-    gGame.torchInfo.animCounter++;
-    if(gGame.torchInfo.animCounter > 5){
-    gGame.torchInfo.currentFrame++;
-    if (gGame.torchInfo.currentFrame >= 4) {
-        gGame.torchInfo.currentFrame = 0;
-        gGame.torchInfo.currentRow = (gGame.torchInfo.currentRow + 1) % 2;
-     }
-     gGame.torchInfo.animCounter = 0;
-    }
-
-
-    // ==== update aktivnih vrata ====== //
-    if(CURRENT_LEVEL.door.width > 0 && CURRENT_LEVEL.door.height > 0){
-        float sectionLeft  = gGame.leftWall.width;
-        float sectionRight = CURRENT_LEVEL.longWall.x;
-
-        if (AreSectionBalloonsDestroyed(sectionLeft, sectionRight))
-        {
-            CURRENT_LEVEL.door.active = false;
-        }
-    }
-// ==== Level 4: update stubova ====== //
-    if(gGame.currentLevel == 3) {
-        RECT rect;
-        GetClientRect(hwnd, &rect);
-
-        if(CURRENT_LEVEL.pillar1.width > 0) {
-            bool balloon0Destroyed = true;
-            for(int i = 0; i < MAX_BALLOONS; i++) {
-                if(CURRENT_LEVEL.balloons[i].active &&
-                   CURRENT_LEVEL.balloons[i].color == RGB(255, 200, 0)) {
-                    balloon0Destroyed = false;
-                    break;
-                }
-            }
-
-            if(balloon0Destroyed) {
-                CURRENT_LEVEL.pillar1.width = 0;  // Ukloni prvi stub
-            }
-        }
-
-        if(CURRENT_LEVEL.pillar2.width > 0) {
-            bool balloon1Destroyed = true;
-
-            for(int i = 0; i < MAX_BALLOONS; i++) {
-                if(CURRENT_LEVEL.balloons[i].active &&
-                   CURRENT_LEVEL.balloons[i].color == RGB(255, 100, 0)) {
-                    balloon1Destroyed = false;
-                    break;
-                }
-            }
-
-            if(balloon1Destroyed) {
-                CURRENT_LEVEL.pillar2.width = 0;  // Ukloni drugi stub
-            }
-        }
-    }
-     if(gGame.gameState.hasShield && gGame.gameState.shieldTimeLeft > 0) {
-        gGame.gameState.shieldTimeLeft--;
-        if(gGame.gameState.shieldTimeLeft <= 0) {
-            gGame.gameState.hasShield = false;
-        }
-    }
-
-    if(gGame.gameState.hasDoubleShot && gGame.gameState.doubleShotTimeLeft > 0) {
-        gGame.gameState.doubleShotTimeLeft--;
-        if(gGame.gameState.doubleShotTimeLeft <= 0) {
-            gGame.gameState.hasDoubleShot = false;
-        }
-    }
-    UpdateHeroCoolDown(0.016f);
-
-    if(gGame.gameState.isMultiplayer) {
-        UpdateHeroCoolDownP2(0.016f);
-    }
-
-    UpdateBalloons(hwnd);
-
-    UpdateHearts();
-
-    UpdatePowerups(hwnd);
-
-    CheckCollisions();
-
-    UpdateScoreAnimation();
-
-    UpdateWallTransition(hwnd);
-
-}
 
 void UpdateWallTransition(HWND hwnd){
     if(gGame.transitionState == TRANSITION_CLOSING){
@@ -344,4 +285,98 @@ void UpdateLayout(int oldW, int oldH, int newW, int newH)
 
 }
 
+static void UpdateTimers(){
+    if(!gGame.gameState.isGameOver && CURRENT_LEVEL.timeLeft > 0 && !gGame.gameState.isLevelCleared) {
+        CURRENT_LEVEL.timeLeft -= 1.0;
+    }else if (CURRENT_LEVEL.timeLeft <= 0) {
 
+        CURRENT_LEVEL.timeLeft = 0;
+        printf("timeLeft at start: %f\n", CURRENT_LEVEL.timeLeft);
+        gGame.gameState.isGameOver = true;
+        gGame.gameState.currentMode = GAME_OVER;
+
+        if(!gGame.gameState.isScoreSaved) {
+            SaveFinalScore();
+            gGame.gameState.isScoreSaved = true;
+      }
+    }
+}
+
+static void UpdateHarpoonHero1(HWND hwnd){
+   if (gGame.harpoon.isActive){
+        RECT rect;
+        GetClientRect(hwnd, &rect);
+        gGame.harpoon.length += gGame.harpoon.dy;
+        gGame.harpoon.y = rect.bottom - gGame.floorWall.height;
+
+        if (gGame.harpoon.length >= rect.bottom){
+            gGame.harpoon.isActive = false;
+        }
+    }
+}
+
+static void UpdateTorches(){
+    gGame.torchInfo.animCounter++;
+    if(gGame.torchInfo.animCounter > 5){
+    gGame.torchInfo.currentFrame++;
+    if (gGame.torchInfo.currentFrame >= 4) {
+        gGame.torchInfo.currentFrame = 0;
+        gGame.torchInfo.currentRow = (gGame.torchInfo.currentRow + 1) % 2;
+     }
+     gGame.torchInfo.animCounter = 0;
+    }
+}
+
+static void UpdateLevelLogic(HWND hwnd){
+  // UPDATE DOOR IF LEVEL 3
+  if(CURRENT_LEVEL.door.width > 0 &&
+     CURRENT_LEVEL.door.height > 0 &&
+     gGame.currentLevel == 2){
+        float sectionLeft  = gGame.leftWall.width;
+        float sectionRight = CURRENT_LEVEL.longWall.x;
+
+        if (AreSectionBalloonsDestroyed(sectionLeft, sectionRight))
+        {
+            CURRENT_LEVEL.door.active = false;
+        }
+    }
+
+    // UPDATE PILLARS - LEVEL 4
+     if(gGame.currentLevel == 3) {
+        RECT rect;
+        GetClientRect(hwnd, &rect);
+
+        if(CURRENT_LEVEL.pillar1.width > 0) {
+            bool balloon0Destroyed = true;
+            for(int i = 0; i < MAX_BALLOONS; i++) {
+                if(CURRENT_LEVEL.balloons[i].active &&
+                   CURRENT_LEVEL.balloons[i].color == RGB(255, 200, 0)) {
+                    balloon0Destroyed = false;
+                    break;
+                }
+            }
+
+            if(balloon0Destroyed) {
+                CURRENT_LEVEL.pillar1.width = 0;  // Ukloni prvi stub
+            }
+        }
+
+        if(CURRENT_LEVEL.pillar2.width > 0) {
+            bool balloon1Destroyed = true;
+
+            for(int i = 0; i < MAX_BALLOONS; i++) {
+                if(CURRENT_LEVEL.balloons[i].active &&
+                   CURRENT_LEVEL.balloons[i].color == RGB(255, 100, 0)) {
+                    balloon1Destroyed = false;
+                    break;
+                }
+            }
+
+            if(balloon1Destroyed) {
+                CURRENT_LEVEL.pillar2.width = 0;  // Ukloni drugi stub
+            }
+        }
+    }
+
+
+}
