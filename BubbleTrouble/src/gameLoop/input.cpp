@@ -263,6 +263,7 @@ void HandleMouseMove(HWND hwnd, int x, int y)
     // MENU
     if (gGame.gameState.currentMode == GAME_MODE_MENU)
     {
+        CheckHover(gGame.dashboardButtonInfo, x, y);
         HandleMenuMouseMove(hwnd, x, y);
         return;
     }
