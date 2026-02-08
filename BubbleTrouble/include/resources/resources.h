@@ -88,7 +88,8 @@
 #define IDB_MUSIC_OFF              183
 #define IDB_MUSIC_OFF_HOVER        184
 #define IDB_HERO2_MASK             185
-
+#define IDB_HELP                   186
+#define IDB_HELP_HOVER             187
 
 // ============ KONSTANTE ZA HARPUN ============ //
 #define IDR_HARPOON_SOUND   201
