@@ -77,12 +77,12 @@ void SaveFinalScore() {
 
     if (gGame.gameState.isMultiplayer) {
         strcpy(playerName, "Team");
-        gameMode = "Multiplayer";
+        gameMode = "MultiPlayer";
         finalScore = gGame.totalScore;
     } else {
         // Single player
         strcpy(playerName, "Player");
-        gameMode = "Single Player";
+        gameMode = "SinglePlayer";
         finalScore = gGame.totalScore;
     }
 

@@ -23,7 +23,8 @@ void Update(HWND hwnd){
             || gGame.gameState.currentMode == GAME_OVER
             || gGame.gameState.currentMode == GAME_MODE_MENU
             || gGame.gameState.currentMode == GAME_MODE_SETTINGS
-            || gGame.gameState.currentMode == GAME_MODE_HELP ) {
+            || gGame.gameState.currentMode == GAME_MODE_HELP
+            || gGame.gameState.currentMode == GAME_MODE_DASHBOARD ) {
             UpdateTorches();
             return;
         }

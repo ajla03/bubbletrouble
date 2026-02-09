@@ -120,6 +120,19 @@ LRESULT CALLBACK WindowProcedure(HWND hwnd, UINT message, WPARAM wParam, LPARAM 
             VARIABLE_PITCH,
             TEXT("Kenney Mini Square")
             );
+
+            gRes.hFontTitle = CreateFont(
+            48, 0, 0, 0,
+            FW_BOLD,
+            FALSE, FALSE, FALSE,
+            DEFAULT_CHARSET,
+            OUT_TT_PRECIS,
+            CLIP_DEFAULT_PRECIS,
+            ANTIALIASED_QUALITY,
+            VARIABLE_PITCH,
+            TEXT("Kenney Mini Square")
+            );
+
             HDC hdc = GetDC(hwnd);
             gRes.Init(hdc, hwnd);
             ReleaseDC(hwnd, hdc);

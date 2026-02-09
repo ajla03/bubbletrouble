@@ -51,11 +51,12 @@ struct ResourceManager{
     HBITMAP help;
     HBITMAP helpHover;
     HBITMAP podium, podiumHover;
+    HBITMAP singleScoreHolder, multiScoreHolder;
 
   //, hdcBuffer;
 //    HBITMAP oldBufferBmp, hbmBuffer;
 
-    HFONT hFont;
+    HFONT hFont, hFontTitle;
     HANDLE hFontRes;
 
     void Init(HDC hdc, HWND hwnd);

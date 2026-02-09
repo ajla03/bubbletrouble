@@ -112,6 +112,14 @@ void HandleMouseClick(HWND hwnd, int mx, int my)
 
     const auto& mode = gGame.gameState.currentMode;
 
+    if(mode == GAME_MODE_DASHBOARD){
+        if(IsPointInButton(gGame.backButtonInfo, mx, my)){
+        gGame.gameState.pendingHome = true;
+        StartWallTransition(hwnd);
+        return;
+        }
+    }
+
     if (mode == GAME_OVER || gGame.gameState.isLevelCleared)
     {
         HandleEndScreenClick(hwnd, mx, my);
@@ -272,6 +280,12 @@ void HandleEndScreenClick(HWND hwnd, int mx, int my)
 
 void HandleMouseMove(HWND hwnd, int x, int y)
 {
+    // DASHBOARD
+    if(gGame.gameState.currentMode == GAME_MODE_DASHBOARD){
+        CheckHover(gGame.backButtonInfo,x, y);
+        return;
+    }
+
     // MENU
     if (gGame.gameState.currentMode == GAME_MODE_MENU)
     {

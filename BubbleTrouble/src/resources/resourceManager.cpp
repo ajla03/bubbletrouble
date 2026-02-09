@@ -111,6 +111,9 @@ bool ResourceManager::LoadAll(HINSTANCE hInstance) {
     podium = LoadBitmap(hInstance, MAKEINTRESOURCE(IDB_PODIUM));
     podiumHover = LoadBitmap(hInstance, MAKEINTRESOURCE(IDB_PODIUM_HOVER));
 
+    singleScoreHolder = LoadBitmap(hInstance, MAKEINTRESOURCE(IDB_SINGLE_SCORE_HOLDER));
+    multiScoreHolder = LoadBitmap(hInstance, MAKEINTRESOURCE(IDB_MULTI_SCORE_HOLDER));
+
     HRSRC hRes = FindResource(hInstance, MAKEINTRESOURCE(IDR_MINI_FONT), RT_RCDATA);
 
     DWORD size = SizeofResource(hInstance, hRes);
@@ -138,8 +141,8 @@ void ResourceManager::ReleaseAll() {
     for (int i = 0; i < sizeof(ResourceManager) / sizeof(HBITMAP); i++) {
         if (bmps[i]) DeleteObject(bmps[i]);
 
-     //   SelectObject(hdcBuffer, oldBufferBmp);
-       // DeleteObject(hbmBuffer);
+        // SelectObject(hdcBuffer, oldBufferBmp);
+        // DeleteObject(hbmBuffer);
         //DeleteDC(hdcBuffer);
     }
 
