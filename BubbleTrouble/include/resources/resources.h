@@ -94,6 +94,8 @@
 #define IDB_PODIUM_HOVER           189
 #define IDB_SINGLE_SCORE_HOLDER    190
 #define IDB_MULTI_SCORE_HOLDER     191
+#define IDB_SINGLE_BANNER          192
+#define IDB_MULTI_BANNER           193
 
 // ============ KONSTANTE ZA HARPUN ============ //
 #define IDR_HARPOON_SOUND   201

@@ -8,7 +8,9 @@ static void RenderTransparentSheet(HDC hdcBuffer, RECT rect, RECT* outSheet);
 static void RenderDashboardTitle(HDC hdcBuffer, RECT sheet);
 static void RenderBackButton(HDC hdcBuffer, RECT sheet);
 static void RenderBestScore(HDC hdcBuffer, RECT sheet);
-static void RenderCenteredText(HDC hdc, RECT rect, const char* scoreText, const char* labelText);
+static void RenderScoreTable(HDC hdcBuffer, int x, int y, const char* tableName, HBITMAP holderBmp);
+static void RenderTorches(HDC hdcBuffer, RECT sheet);
+
 
 void RenderDashboard(HDC hdcBuffer, RECT rect){
 
@@ -18,6 +20,9 @@ void RenderDashboard(HDC hdcBuffer, RECT rect){
     // SHEET
     RECT sheet;
     RenderTransparentSheet(hdcBuffer, rect,&sheet);
+
+    // TORCHES
+    RenderTorches(hdcBuffer, sheet);
 
     // SCORE HOLDERS
     RenderBestScore(hdcBuffer, sheet);
@@ -44,10 +49,16 @@ static void RenderBackground(HDC hdcBuffer, RECT rect){
 
 
 static void RenderTransparentSheet(HDC hdcBuffer, RECT rect, RECT* outSheet) {
-    outSheet->left = rect.right / 2 - SHEET_W /2 - 30;
-    outSheet->right = outSheet->left + SHEET_W + 60;
-    outSheet->top = rect.bottom / 2 - SHEET_H / 2;
-    outSheet->bottom = outSheet->top + SHEET_H;
+
+    int padding = 120;
+    int sheetWidth  = SHEET_W + padding * 2;
+    int sheetHeight = SHEET_H;
+
+    outSheet->left   = rect.right / 2 - sheetWidth / 2;
+    outSheet->right  = outSheet->left + sheetWidth;
+    outSheet->top    = rect.bottom / 2 - sheetHeight / 2;
+    outSheet->bottom = outSheet->top + sheetHeight;
+
 
     HBITMAP bmp = CreateCompatibleBitmap(hdcBuffer, 1, 1);
     HBITMAP hBmpOld = (HBITMAP) SelectObject(gRes.hdcMem, bmp);
@@ -98,127 +109,38 @@ static void RenderTransparentSheet(HDC hdcBuffer, RECT rect, RECT* outSheet) {
 
 static void RenderBestScore(HDC hdcBuffer, RECT sheet)
 {
-    BITMAP bmSingle, bmMulti;
-    GetObject(gRes.singleScoreHolder, sizeof(BITMAP), &bmSingle);
-    GetObject(gRes.multiScoreHolder,  sizeof(BITMAP), &bmMulti);
+    BITMAP bm;
+    GetObject(gRes.singleScoreHolder, sizeof(BITMAP), &bm);
+    int tableW = bm.bmWidth;
 
-    int targetW = std::max(bmSingle.bmWidth,  bmMulti.bmWidth)*1.3;
-    int targetH = std::max(bmSingle.bmHeight, bmMulti.bmHeight)*1.3;
+    int startY = sheet.top + bm.bmHeight;
 
-    int spacing = 20;
-    int totalWidth = targetW * 2 + spacing;
+    int sheetInnerWidth = sheet.right - sheet.left;
 
-    int startX = sheet.left + (sheet.right - sheet.left - totalWidth) / 2;
-    int startY = sheet.top  + (sheet.bottom - sheet.top - targetH) / 2 ;
+    int spacing = (sheetInnerWidth - tableW * 2) / 3;
 
-    int xSingle = startX;
-    int xMulti  = startX + targetW + spacing;
+    int leftTableX  = sheet.left + spacing;
+    int rightTableX = leftTableX + tableW + spacing;
 
-    // === GET SCORES ===
-    HighScore singleScore = {};
-    HighScore multiScore  = {};
-
-    GetTopScores(&singleScore, 1, "SinglePlayer");
-    GetTopScores(&multiScore,  1, "MultiPlayer");
-
-    char singleText[32];
-    char multiText[32];
-
-
-    wsprintfA(singleText, "%d", singleScore.score);
-    wsprintfA(multiText,  "%d", multiScore.score);
-
-    // === DRAW SINGLE HOLDER ===
-    SelectObject(gRes.hdcMem, gRes.singleScoreHolder);
-    TransparentBlt(
+    // SINGLE
+    RenderScoreTable(
         hdcBuffer,
-        xSingle, startY,
-        targetW, targetH,
-        gRes.hdcMem,
-        0, 0,
-        bmSingle.bmWidth, bmSingle.bmHeight,
-        RGB(255, 255, 255)
-    );
-
-    RECT singleRect = {
-        xSingle,
-        startY + spacing,
-        xSingle + targetW,
-        startY + targetH + spacing
-    };
-
-    RenderCenteredText(hdcBuffer, singleRect, singleText, "Single");
-
-    // === DRAW MULTI HOLDER ===
-    SelectObject(gRes.hdcMem, gRes.multiScoreHolder);
-    TransparentBlt(
-        hdcBuffer,
-        xMulti, startY,
-        targetW, targetH,
-        gRes.hdcMem,
-        0, 0,
-        bmMulti.bmWidth, bmMulti.bmHeight,
-        RGB(255, 255, 255)
-    );
-
-    RECT multiRect = {
-        xMulti,
-        startY + spacing,
-        xMulti + targetW,
-        startY + targetH + spacing
-    };
-
-    RenderCenteredText(hdcBuffer, multiRect, multiText, "Team");
-}
-
-void RenderCenteredText(HDC hdcBuffer, RECT rect, const char* scoreText, const char* labelText) {
-    SetBkMode(hdcBuffer, TRANSPARENT);
-    SetTextColor(hdcBuffer, RGB(184, 134, 11));
-
-    TEXTMETRIC tmScore, tmLabel;
-
-    HFONT oldFont = (HFONT)SelectObject(hdcBuffer, gRes.hFont);
-    GetTextMetrics(hdcBuffer, &tmLabel);
-    SelectObject(hdcBuffer, gRes.hFontTitle);
-    GetTextMetrics(hdcBuffer, &tmScore);
-
-    int totalTextHeight = tmScore.tmHeight + tmLabel.tmHeight + 4;
-
-    int startY = rect.top + (rect.bottom - rect.top - totalTextHeight) / 2;
-
-    // SCORE
-    RECT scoreRect = {
-        rect.left,
+        leftTableX,
         startY,
-        rect.right,
-        startY + tmScore.tmHeight
-    };
-
-    DrawTextA(
-        hdcBuffer,
-        scoreText,
-        -1,
-        &scoreRect,
-        DT_CENTER | DT_SINGLELINE
+        "SinglePlayer",
+        gRes.singleScoreHolder
     );
-    SelectObject(hdcBuffer, gRes.hFont);
-     RECT labelRect = {
-        rect.left,
-        startY + tmScore.tmHeight + 4,
-        rect.right,
-        startY + tmScore.tmHeight + 4 + tmLabel.tmHeight
-    };
 
-    DrawTextA(
+    // MULTI
+    RenderScoreTable(
         hdcBuffer,
-        labelText,
-        -1,
-        &labelRect,
-        DT_CENTER | DT_SINGLELINE
+        rightTableX,
+        startY,
+        "MultiPlayer",
+        gRes.multiScoreHolder
     );
-    SelectObject(hdcBuffer, oldFont);
-
 }
+
 
 static void RenderDashboardTitle(HDC hdcBuffer, RECT sheet) {
     SetBkMode(hdcBuffer, TRANSPARENT);
@@ -264,4 +186,162 @@ static void RenderBackButton(HDC hdcBuffer, RECT sheet) {
     SetBkMode(hdcBuffer, TRANSPARENT);
     SetTextColor(hdcBuffer, RGB(255, 255, 255));
     DrawText(hdcBuffer, "BACK", -1, &textRect, DT_CENTER | DT_VCENTER | DT_SINGLELINE);
+}
+
+
+static void RenderScoreTable(
+    HDC hdcBuffer,
+    int x, int y,
+    const char* tableName,
+    HBITMAP holderBmp
+){
+
+    // === DRAW HOLDER ===
+    BITMAP bm;
+    GetObject(holderBmp, sizeof(BITMAP), &bm);
+    SelectObject(gRes.hdcMem, holderBmp);
+
+    TransparentBlt(
+        hdcBuffer,
+        x, y,
+        bm.bmWidth, bm.bmHeight,
+        gRes.hdcMem,
+        0, 0,
+        bm.bmWidth, bm.bmHeight,
+        RGB(255,255,255)
+    );
+
+    // === DRAW BANNER ===
+    HBITMAP bannerBmp =
+        (strcmp(tableName, "SinglePlayer") == 0)
+        ? gRes.singleplayerBanner
+        : gRes.multiplayerBanner;
+
+    BITMAP bannerBM;
+    GetObject(bannerBmp, sizeof(BITMAP), &bannerBM);
+
+    int bannerPadding = 12;
+
+    int bannerX = x + (bm.bmWidth - bannerBM.bmWidth) / 2;
+    int bannerY = y - bannerBM.bmHeight - bannerPadding;
+
+    SelectObject(gRes.hdcMem, bannerBmp);
+
+    TransparentBlt(
+        hdcBuffer,
+        bannerX,
+        bannerY,
+        bannerBM.bmWidth,
+        bannerBM.bmHeight,
+        gRes.hdcMem,
+        0, 0,
+        bannerBM.bmWidth,
+        bannerBM.bmHeight,
+        RGB(255,255,255)
+    );
+
+    // === GET TOP 5 ===
+    HighScore scores[5] = {};
+    GetTopScores(scores, 5, tableName);
+
+
+   // === SCORE AREA ===
+    int nameX1  = x + 107;
+    int nameX2  = x + 252;
+
+    int scoreX1 = x + 252;
+    int scoreX2 = x + 369;
+
+    int firstRowY = y + 32;
+    int rowHeight = 37;
+
+    HFONT oldFont = (HFONT)SelectObject(hdcBuffer, gRes.hFont);
+    SetBkMode(hdcBuffer, TRANSPARENT);
+
+    for (int i = 0; i < 5; i++) {
+        int rowY1 = firstRowY + i * rowHeight;
+        int rowY2 = rowY1 + rowHeight;
+
+        // NAME
+        RECT nameRect = {
+            nameX1,
+            rowY1,
+            nameX2,
+            rowY2
+        };
+
+        SetTextColor(hdcBuffer, RGB(0,0,0));
+
+        char displayName[50];
+
+       if (scores[i].playerName[0] != '\0') {
+            strncpy(displayName, scores[i].playerName, sizeof(displayName) - 1);
+            displayName[sizeof(displayName) - 1] = '\0';
+        } else {
+            strcpy(displayName, "-");
+        }
+
+        DrawTextA(
+            hdcBuffer,
+            displayName,
+            -1,
+            &nameRect,
+            DT_CENTER | DT_VCENTER | DT_SINGLELINE | DT_END_ELLIPSIS
+        );
+
+        // SCORE
+        char displayScore[32];
+        if(scores[i].playerName[0] != '\0')
+            wsprintfA(displayScore, "%d", scores[i].score);
+        else
+            strcpy(displayScore, "-");
+
+        SetTextColor(hdcBuffer, RGB(140, 40, 45));
+
+        RECT scoreRect = {
+            scoreX1,
+            rowY1,
+            scoreX2,
+            rowY2
+        };
+
+        DrawTextA(
+            hdcBuffer,
+            displayScore,
+            -1,
+            &scoreRect,
+            DT_CENTER | DT_VCENTER | DT_SINGLELINE
+        );
+
+    }
+    SelectObject(hdcBuffer, oldFont);
+}
+
+
+static void RenderTorches(HDC hdcBuffer, RECT sheet) {
+    float torchScale = 2.0f;
+    int torchW = (int)(gGame.torchInfo.width * torchScale);
+    int torchH = (int)(gGame.torchInfo.height * torchScale);
+    int torchX1 = sheet.left / 2 - torchW / 2;
+    int torchX2 = sheet.right + sheet.left / 2 - torchW / 2;
+    int torchY = sheet.bottom / 2;
+
+    int torchSrcX = gGame.torchInfo.currentFrame * gGame.torchInfo.width;
+    int torchSrcY = gGame.torchInfo.currentRow * gGame.torchInfo.height;
+
+    // Prva baklja
+    SelectObject(gRes.hdcMem, gRes.torchMask);
+    StretchBlt(hdcBuffer, torchX1, torchY, torchW, torchH,
+               gRes.hdcMem, torchSrcX, torchSrcY, gGame.torchInfo.width, gGame.torchInfo.height, SRCPAINT);
+    SelectObject(gRes.hdcMem, gRes.torch);
+    StretchBlt(hdcBuffer, torchX1, torchY, torchW, torchH,
+               gRes.hdcMem, torchSrcX, torchSrcY, gGame.torchInfo.width, gGame.torchInfo.height, SRCAND);
+
+    // Druga baklja
+    SelectObject(gRes.hdcMem, gRes.torchMask);
+    StretchBlt(hdcBuffer, torchX2, torchY, torchW, torchH,
+               gRes.hdcMem, torchSrcX, torchSrcY, gGame.torchInfo.width, gGame.torchInfo.height, SRCPAINT);
+    SelectObject(gRes.hdcMem, gRes.torch);
+    StretchBlt(hdcBuffer, torchX2, torchY, torchW, torchH,
+               gRes.hdcMem, torchSrcX, torchSrcY, gGame.torchInfo.width, gGame.torchInfo.height, SRCAND);
 }

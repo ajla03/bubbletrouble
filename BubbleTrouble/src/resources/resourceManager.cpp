@@ -114,6 +114,9 @@ bool ResourceManager::LoadAll(HINSTANCE hInstance) {
     singleScoreHolder = LoadBitmap(hInstance, MAKEINTRESOURCE(IDB_SINGLE_SCORE_HOLDER));
     multiScoreHolder = LoadBitmap(hInstance, MAKEINTRESOURCE(IDB_MULTI_SCORE_HOLDER));
 
+    singleplayerBanner = LoadBitmap(hInstance, MAKEINTRESOURCE(IDB_SINGLE_BANNER));
+    multiplayerBanner = LoadBitmap(hInstance, MAKEINTRESOURCE(IDB_MULTI_BANNER));
+
     HRSRC hRes = FindResource(hInstance, MAKEINTRESOURCE(IDR_MINI_FONT), RT_RCDATA);
 
     DWORD size = SizeofResource(hInstance, hRes);

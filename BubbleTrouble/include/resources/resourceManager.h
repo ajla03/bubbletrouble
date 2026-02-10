@@ -52,6 +52,7 @@ struct ResourceManager{
     HBITMAP helpHover;
     HBITMAP podium, podiumHover;
     HBITMAP singleScoreHolder, multiScoreHolder;
+    HBITMAP singleplayerBanner, multiplayerBanner;
 
   //, hdcBuffer;
 //    HBITMAP oldBufferBmp, hbmBuffer;

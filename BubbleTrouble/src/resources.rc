@@ -136,3 +136,5 @@ IDB_PODIUM_HOVER   BITMAP "../assets/bitmaps/podiumHover.bmp"
 
 IDB_SINGLE_SCORE_HOLDER   BITMAP "../assets/bitmaps/singleplayerScoreHolder.bmp"
 IDB_MULTI_SCORE_HOLDER    BITMAP "../assets/bitmaps/multiplayerScoreHolder.bmp"
+IDB_SINGLE_BANNER   BITMAP "../assets/bitmaps/singleplayerBanner.bmp"
+IDB_MULTI_BANNER    BITMAP "../assets/bitmaps/multiplayerBanner.bmp"
