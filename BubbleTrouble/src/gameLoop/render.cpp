@@ -11,7 +11,24 @@ void RefreshScreen(HWND hwnd) {
     HDC hdc = GetDC(hwnd);
     RECT rect;
     GetClientRect(hwnd, &rect);
+ if(gGame.gameState.currentMode == GAME_MODE_LOADING) {
+        UpdateLoading();
 
+        // DEBUG: Provjeri da li je buffer validan
+        if (gRes.hdcBuffer == NULL) {
+            // Privremeno crtaj direktno na ekran
+            RenderLoading(hdc, rect);
+        } else {
+            RenderLoading(gRes.hdcBuffer, rect);
+            BitBlt(hdc, 0, 0, rect.right, rect.bottom, gRes.hdcBuffer, 0, 0, SRCCOPY);
+        }
+
+        if(IsLoadingComplete()) {
+            gGame.gameState.currentMode = GAME_MODE_MENU;
+        }
+        ReleaseDC(hwnd, hdc);
+        return;
+    }
     if(gGame.gameState.currentMode == GAME_MODE_MENU) {
         InitializeMenu(hwnd);
         RenderMenu(gRes.hdcBuffer, rect);

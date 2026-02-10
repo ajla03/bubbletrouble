@@ -6,12 +6,12 @@
 #include "resources.h"
 #include "database.h"
 #include "game.h"
+#include "loading.h"
 #include <ctime>
 
 TCHAR szClassName[] = _T("CodeBlocksWindowsApp");
 
 LRESULT CALLBACK WindowProcedure(HWND, UINT, WPARAM, LPARAM);
-
 
 int WINAPI WinMain(HINSTANCE hThisInstance, HINSTANCE hPrevInstance, LPSTR lpszArgument, int nCmdShow){
 
@@ -62,22 +62,65 @@ int WINAPI WinMain(HINSTANCE hThisInstance, HINSTANCE hPrevInstance, LPSTR lpszA
     SendMessage(hwnd, WM_SETICON, ICON_BIG,   (LPARAM)gRes.hIcon);
     SendMessage(hwnd, WM_SETICON, ICON_SMALL, (LPARAM)gRes.hIcon);
 
-    ShowWindow(hwnd, nCmdShow);
+    // ============================================================
+    // 1. POSTAVI MOD NA LOADING (PRIJE PRIKAZA PROZORA)
+    // ============================================================
+    gGame.gameState.currentMode = GAME_MODE_LOADING;
 
+    // ============================================================
+    // 2. PRIKAŽI PROZOR (WM_CREATE će inicijalizovati gRes.hdcBuffer)
+    // ============================================================
+    ShowWindow(hwnd, nCmdShow);
+    UpdateWindow(hwnd);
+
+    // ============================================================
+    // 3. SADA INICIJALIZUJ LOADING (prozor je vidljiv i validan)
+    // ============================================================
+    InitializeLoading(hwnd);
+
+    // ============================================================
+    // 4. LOADING ANIMACIJA (PETLJA)
+    // ============================================================
+    // Vrtimo petlju dok traje loading animacija
+    while (gGame.gameState.currentMode == GAME_MODE_LOADING) {
+        DWORD start = GetTickCount();
+
+        // Obrađuj Windows poruke
+        if (PeekMessage(&messages, NULL, 0, 0, PM_REMOVE)){
+            if (messages.message == WM_QUIT) return messages.wParam;
+            TranslateMessage(&messages);
+            DispatchMessage(&messages);
+        }
+
+        // Iscrtaj loading ekran i ažuriraj progress bar
+        RefreshScreen(hwnd);
+
+        // Ograniči FPS za loading ekran
+        DWORD elapsed = GetTickCount() - start;
+        if (elapsed < 16) Sleep(16 - elapsed);
+    }
+
+    // ============================================================
+    // 5. STVARNO UČITAVANJE RESURSA
+    // ============================================================
+    // Animacija je gotova, sada učitaj teške bitmape
     LoadBitmaps(hwnd, hThisInstance);
-    /* should init default settings */
+
+    /* Init default settings */
     InitDefaultSettings();
 
+    // Inicijalizacija zvuka
     mciSendString("close bgMusic", NULL, 0, NULL);
-
     mciSendString("open \"assets\\sounds\\music_loop.wav\" type waveaudio alias bgMusic", NULL, 0, NULL);
-
     mciSendString("play bgMusic notify", NULL, 0, hwnd);
-
     mciSendString("setaudio bgMusic volume to 200", NULL, 0, NULL);
 
+    // ============================================================
+    // 6. GLAVNA PETLJA IGRE
+    // ============================================================
     float targetFPS = 60.0f;
     DWORD frameTimeMs = (DWORD) (1000.0f / targetFPS);
+
     while (1){
         DWORD start = GetTickCount();
         if (PeekMessage(&messages, NULL, 0, 0, PM_REMOVE)){
@@ -85,10 +128,12 @@ int WINAPI WinMain(HINSTANCE hThisInstance, HINSTANCE hPrevInstance, LPSTR lpszA
             TranslateMessage(&messages);
             DispatchMessage(&messages);
         }
+
         CheckInputs(hwnd);
         Update(hwnd);
         RefreshScreen(hwnd);
         RefreshSound();
+
         DWORD elapsed = GetTickCount() - start;
         if (elapsed < frameTimeMs)
             Sleep(frameTimeMs - elapsed);
@@ -101,46 +146,51 @@ LRESULT CALLBACK WindowProcedure(HWND hwnd, UINT message, WPARAM wParam, LPARAM 
    static int prevClientW = 0;
    static int prevClientH = 0;
    static bool autoPaused = false;
+
     switch (message){
         case WM_SETCURSOR: {
          SetCursor(gRes.gameCursor);
-
-         return 0 ;
+         return 0;
         }
+
         case WM_CREATE:
         {
-        gRes.hFont = CreateFont(
-            32, 0, 0, 0,
-            FW_BOLD,
-            FALSE, FALSE, FALSE,
-            DEFAULT_CHARSET,
-            OUT_TT_PRECIS,
-            CLIP_DEFAULT_PRECIS,
-            ANTIALIASED_QUALITY,
-            VARIABLE_PITCH,
-            TEXT("Kenney Mini Square")
+            // Kreiraj fontove
+            gRes.hFont = CreateFont(
+                32, 0, 0, 0,
+                FW_BOLD,
+                FALSE, FALSE, FALSE,
+                DEFAULT_CHARSET,
+                OUT_TT_PRECIS,
+                CLIP_DEFAULT_PRECIS,
+                ANTIALIASED_QUALITY,
+                VARIABLE_PITCH,
+                TEXT("Kenney Mini Square")
             );
 
             gRes.hFontTitle = CreateFont(
-            48, 0, 0, 0,
-            FW_BOLD,
-            FALSE, FALSE, FALSE,
-            DEFAULT_CHARSET,
-            OUT_TT_PRECIS,
-            CLIP_DEFAULT_PRECIS,
-            ANTIALIASED_QUALITY,
-            VARIABLE_PITCH,
-            TEXT("Kenney Mini Square")
+                48, 0, 0, 0,
+                FW_BOLD,
+                FALSE, FALSE, FALSE,
+                DEFAULT_CHARSET,
+                OUT_TT_PRECIS,
+                CLIP_DEFAULT_PRECIS,
+                ANTIALIASED_QUALITY,
+                VARIABLE_PITCH,
+                TEXT("Kenney Mini Square")
             );
 
+            // Inicijalizuj gRes.hdcBuffer i ostalo
             HDC hdc = GetDC(hwnd);
             gRes.Init(hdc, hwnd);
             ReleaseDC(hwnd, hdc);
-        }
-          case WM_SIZE: {
 
+            return 0;
+        }
+
+        case WM_SIZE: {
             if (wParam == SIZE_MINIMIZED) {
-                 if(gGame.gameState.currentMode ==  GAME_MODE_PLAYING){
+                 if(gGame.gameState.currentMode == GAME_MODE_PLAYING){
                     gGame.gameState.currentMode = GAME_MODE_PAUSE;
                     autoPaused = true;
                  }
@@ -157,7 +207,7 @@ LRESULT CALLBACK WindowProcedure(HWND hwnd, UINT message, WPARAM wParam, LPARAM 
             int newW = LOWORD(lParam);
             int newH = HIWORD(lParam);
 
-            if(newW <= 0 || newH<= 0)
+            if(newW <= 0 || newH <= 0)
                 return 0;
 
             UpdateLayout(
@@ -184,9 +234,7 @@ LRESULT CALLBACK WindowProcedure(HWND hwnd, UINT message, WPARAM wParam, LPARAM 
             ReleaseDC(hwnd, hdc);
 
             return 0;
-
         }
-        break;
 
         case WM_PAINT: {
             PAINTSTRUCT ps;
@@ -210,20 +258,21 @@ LRESULT CALLBACK WindowProcedure(HWND hwnd, UINT message, WPARAM wParam, LPARAM 
             HandleKeyDown(hwnd, wParam);
             return 0;
         }
+
         case MM_MCINOTIFY:
-        if (wParam == MCI_NOTIFY_SUCCESSFUL) {
-            mciSendString("play bgMusic from 0 notify", NULL, 0, hwnd);
-        }
-        return 0;
+            if (wParam == MCI_NOTIFY_SUCCESSFUL) {
+                mciSendString("play bgMusic from 0 notify", NULL, 0, hwnd);
+            }
+            return 0;
 
         case WM_DESTROY:
-        mciSendString("close bgMusic", NULL, 0, NULL);
-        RemoveFontMemResourceEx(gRes.hFontRes);
-        PostQuitMessage(0);
-        break;
+            mciSendString("close bgMusic", NULL, 0, NULL);
+            RemoveFontMemResourceEx(gRes.hFontRes);
+            PostQuitMessage(0);
+            break;
+
         default:
             return DefWindowProc(hwnd, message, wParam, lParam);
     }
     return 0;
 }
-

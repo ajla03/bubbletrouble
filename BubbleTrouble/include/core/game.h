@@ -131,3 +131,11 @@ void RenderHero(
 
 // ============= DASHBOARD ===================
 void RenderDashboard(HDC, RECT);
+
+
+
+// ================= LOADING (in loading.cpp) ===================
+void InitializeLoading(HWND hwnd);
+void UpdateLoading();
+void RenderLoading(HDC hdc, RECT rect);
+bool IsLoadingComplete();

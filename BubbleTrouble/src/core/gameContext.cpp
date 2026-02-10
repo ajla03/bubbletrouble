@@ -79,5 +79,11 @@ GameContext gGame = {
         false               // isMultiplayer
     },
     /* transitionState */ TRANSITION_NONE,
-    /* settingsState */ {}
+    /* settingsState */ {},
+     /* loadingState */ {
+        {},      // bubbles
+        0,       // progress
+        0,       // startTime
+        false    // isComplete
+    }
 };

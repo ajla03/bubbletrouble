@@ -1,6 +1,7 @@
 #pragma once
 #include "types.h"
 #include "constants.h"
+#include "loading.h"
 #include <windows.h>
 
 struct Level{
@@ -74,7 +75,7 @@ struct GameContext{
     GameState gameState;
     TransitionState transitionState;
     SettingsState settingsState;
-
+    LoadingState loadingState;
 };
 
 extern GameContext gGame;
