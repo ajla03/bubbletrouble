@@ -138,3 +138,8 @@ IDB_SINGLE_SCORE_HOLDER   BITMAP "../assets/bitmaps/singleplayerScoreHolder.bmp"
 IDB_MULTI_SCORE_HOLDER    BITMAP "../assets/bitmaps/multiplayerScoreHolder.bmp"
 IDB_SINGLE_BANNER   BITMAP "../assets/bitmaps/singleplayerBanner.bmp"
 IDB_MULTI_BANNER    BITMAP "../assets/bitmaps/multiplayerBanner.bmp"
+
+
+IDB_LOGIN_BG         BITMAP "../assets/bitmaps/loginBg.bmp"
+IDB_LOGIN_POPUP      BITMAP "../assets/bitmaps/loginPopup.bmp"
+IDB_LOGIN_BUTTON     BITMAP "../assets/bitmaps/loginButton.bmp"

@@ -133,9 +133,14 @@ void RenderHero(
 void RenderDashboard(HDC, RECT);
 
 
-
 // ================= LOADING (in loading.cpp) ===================
 void InitializeLoading(HWND hwnd);
 void UpdateLoading();
 void RenderLoading(HDC hdc, RECT rect);
 bool IsLoadingComplete();
+
+
+//================== LOGIN POPUP
+void RenderLoginScreen(HDC hdcBuffer, RECT rect, HWND hwnd);
+void InitLoginInput();
+

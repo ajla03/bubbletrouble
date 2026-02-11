@@ -112,6 +112,23 @@ void HandleMouseClick(HWND hwnd, int mx, int my)
 
     const auto& mode = gGame.gameState.currentMode;
 
+    if(mode == GAME_MODE_LOGIN){
+        if(IsPointInButton(gGame.loginButtonInfo, mx, my)){
+            if(gGame.loginInput.length > 0)
+            {
+                strcpy_s(
+                    gGame.playerName,
+                    sizeof(gGame.playerName),
+                    gGame.loginInput.text
+                );
+
+                gGame.gameState.pendingHome = true;
+                StartWallTransition(hwnd);
+            }
+            return;
+        }
+    }
+
     if(mode == GAME_MODE_DASHBOARD){
         if(IsPointInButton(gGame.backButtonInfo, mx, my)){
         gGame.gameState.pendingHome = true;

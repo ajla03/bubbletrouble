@@ -90,6 +90,7 @@ void ResetGame(HWND hwnd) {
         InitLevel(hwnd);
     }
 
+
 }
 
 void ResetBetweenLevels(HWND hwnd) {

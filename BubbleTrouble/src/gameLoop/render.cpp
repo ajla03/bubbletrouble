@@ -25,24 +25,31 @@ void RefreshScreen(HWND hwnd) {
         }
 
         if(IsLoadingComplete()) {
-            gGame.gameState.currentMode = GAME_MODE_MENU;
+            gGame.gameState.currentMode = GAME_MODE_LOGIN;
+            InitLoginInput();
         }
         ReleaseDC(hwnd, hdc);
         return;
     }
-    if(gGame.gameState.currentMode == GAME_MODE_MENU) {
+    else if(gGame.gameState.currentMode == GAME_MODE_MENU) {
         InitializeMenu(hwnd);
         RenderMenu(gRes.hdcBuffer, rect);
         DrawTransitionWalls(gRes.hdcBuffer, rect);
+
     } else if(gGame.gameState.currentMode == GAME_MODE_SETTINGS){
        RenderSettings(gRes.hdcBuffer, rect);
        DrawTransitionWalls(gRes.hdcBuffer, rect);
+
     }
     else if(gGame.gameState.currentMode == GAME_MODE_HELP){
        RenderHelp(gRes.hdcBuffer, rect);
        DrawTransitionWalls(gRes.hdcBuffer, rect);
     }
-   else if(gGame.gameState.currentMode == GAME_MODE_DASHBOARD){
+   else if(gGame.gameState.currentMode == GAME_MODE_LOGIN){
+        RenderLoginScreen(gRes.hdcBuffer, rect, hwnd);
+        DrawTransitionWalls(gRes.hdcBuffer, rect);
+
+   }else if(gGame.gameState.currentMode == GAME_MODE_DASHBOARD){
         RenderDashboard(gRes.hdcBuffer, rect);
         DrawTransitionWalls(gRes.hdcBuffer, rect);
     }else {
@@ -50,6 +57,7 @@ void RefreshScreen(HWND hwnd) {
         RenderLevel(gRes.hdcBuffer, rect);
         RenderDynamicGameUI(gRes.hdcBuffer, rect);
         DrawTransitionWalls(gRes.hdcBuffer, rect);
+
     }
 
     BitBlt(hdc, 0, 0, rect.right, rect.bottom, gRes.hdcBuffer, 0, 0, SRCCOPY);
@@ -61,4 +69,3 @@ void RefreshScreen(HWND hwnd) {
 
 void RefreshSound(){
 }
-

@@ -12,6 +12,8 @@ static void UpdateLevelLogic(HWND hwnd);
 static void UpdateHearts();
 static void UpdateHeroCoolDown(float dt);
 static void UpdateScoreAnimation();
+static void UpdateLoginInput(float dt);
+
 
 void Update(HWND hwnd){
     if(gGame.gameState.pendingHome || gGame.transitionState == TRANSITION_CLOSING || gGame.transitionState == TRANSITION_WAIT )
@@ -25,7 +27,11 @@ void Update(HWND hwnd){
             || gGame.gameState.currentMode == GAME_MODE_SETTINGS
             || gGame.gameState.currentMode == GAME_MODE_HELP
             || gGame.gameState.currentMode == GAME_MODE_DASHBOARD
-            || gGame.gameState.currentMode == GAME_MODE_LOADING) {
+            || gGame.gameState.currentMode == GAME_MODE_LOADING
+            || gGame.gameState.currentMode == GAME_MODE_LOGIN) {
+
+            if(gGame.gameState.currentMode == GAME_MODE_LOGIN)
+                UpdateLoginInput(0.05f);
             UpdateTorches();
             return;
         }
@@ -380,6 +386,18 @@ static void UpdateLevelLogic(HWND hwnd){
             }
         }
     }
-
-
 }
+
+void UpdateLoginInput(float dt)
+{
+    gGame.loginInput.caretTimer += dt;
+
+    if(gGame.loginInput.caretTimer >= 0.5f)
+    {
+        gGame.loginInput.caretVisible =
+            !gGame.loginInput.caretVisible;
+
+        gGame.loginInput.caretTimer = 0.0f;
+    }
+}
+

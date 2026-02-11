@@ -64,7 +64,8 @@ enum GameMode {
     GAME_MODE_PLAYING,
     GAME_MODE_PAUSE,
     GAME_OVER,
-    GAME_MODE_DASHBOARD
+    GAME_MODE_DASHBOARD,
+    GAME_MODE_LOGIN
 };
 
 struct MenuButton {
@@ -194,7 +195,19 @@ struct SettingsState{
  DotAnimation dotAnimation;
 };
 
-// DATA BASE
+// DATABASE
 void SaveFinalScore();
 void ResetScoreFlag();
+
+
+// Login Screen
+struct LoginInput
+{
+    char text[12];
+    int length;
+    bool active;
+    bool caretVisible;
+    float caretTimer;
+};
+
 

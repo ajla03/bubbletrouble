@@ -155,6 +155,8 @@ LRESULT CALLBACK WindowProcedure(HWND hwnd, UINT message, WPARAM wParam, LPARAM 
 
         case WM_CREATE:
         {
+
+
             // Kreiraj fontove
             gRes.hFont = CreateFont(
                 32, 0, 0, 0,
@@ -180,6 +182,20 @@ LRESULT CALLBACK WindowProcedure(HWND hwnd, UINT message, WPARAM wParam, LPARAM 
                 TEXT("Kenney Mini Square")
             );
 
+            gRes.hFontTable = CreateFont(
+                20, 0, 0, 0,
+                FW_BOLD,
+                FALSE, FALSE, FALSE,
+                DEFAULT_CHARSET,
+                OUT_TT_PRECIS,
+                CLIP_DEFAULT_PRECIS,
+                ANTIALIASED_QUALITY,
+                VARIABLE_PITCH,
+                TEXT("Kenney Mini Square")
+            );
+
+
+
             // Inicijalizuj gRes.hdcBuffer i ostalo
             HDC hdc = GetDC(hwnd);
             gRes.Init(hdc, hwnd);
@@ -187,8 +203,27 @@ LRESULT CALLBACK WindowProcedure(HWND hwnd, UINT message, WPARAM wParam, LPARAM 
 
             return 0;
         }
-
+       case WM_CTLCOLOREDIT:
+        {
+            HDC hdcEdit = (HDC)wParam;
+            SetTextColor(hdcEdit, RGB(255, 255, 255));
+            SetBkMode(hdcEdit, TRANSPARENT);
+            return (LRESULT)GetStockObject(NULL_BRUSH);
+        }
+        case WM_ERASEBKGND:
+            return 1;
         case WM_SIZE: {
+
+             SelectObject(gRes.hdcMem, gRes.loginPopup);
+             BITMAP bm;
+             GetObject(gRes.loginPopup, sizeof(BITMAP), &bm);
+
+             RECT rect;
+             GetClientRect(hwnd, &rect);
+
+             int x = rect.right/2 - bm.bmWidth/2;
+             int y = rect.bottom/2 - bm.bmHeight/2;
+
             if (wParam == SIZE_MINIMIZED) {
                  if(gGame.gameState.currentMode == GAME_MODE_PLAYING){
                     gGame.gameState.currentMode = GAME_MODE_PAUSE;
@@ -256,6 +291,28 @@ LRESULT CALLBACK WindowProcedure(HWND hwnd, UINT message, WPARAM wParam, LPARAM 
 
         case WM_KEYDOWN: {
             HandleKeyDown(hwnd, wParam);
+            return 0;
+        }
+        case WM_CHAR:{
+            if(gGame.gameState.currentMode == GAME_MODE_LOGIN && gGame.loginInput.active)
+        {
+            if(wParam == VK_BACK)
+            {
+                if(gGame.loginInput.length > 0)
+                {
+                    gGame.loginInput.length--;
+                    gGame.loginInput.text[gGame.loginInput.length] = '\0';
+                }
+            }
+            else if(wParam >= 32 && wParam <= 126) // printable chars
+            {
+                if(gGame.loginInput.length < 11)
+                {
+                    gGame.loginInput.text[gGame.loginInput.length++] = (char)wParam;
+                    gGame.loginInput.text[gGame.loginInput.length] = '\0';
+                }
+            }
+        }
             return 0;
         }
 
