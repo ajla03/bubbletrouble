@@ -1,150 +1,218 @@
 #include "loading.h"
-#include "gameContext.h"
 #include "resourceManager.h"
-#include<stdio.h>
+#include "resources.h"
+#include <windows.h>
 #include <cmath>
+#include <cstdio>
 
-LoadingState gLoading = {0};
+#pragma comment(lib, "Msimg32.lib")
+
+LoadingState gLoading = { 0 };
 
 void InitializeLoading(HWND hwnd) {
-    RECT rect;
-    GetClientRect(hwnd, &rect);
-
-    int GROUND_Y = rect.bottom - 100;
-
-    // Inicijalizuj balončiće
-    gLoading.bubbles[0] = { rect.right * 0.2f, (float)GROUND_Y, 120, 0.0f, RGB(255, 71, 87) };
-    gLoading.bubbles[1] = { rect.right * 0.4f, (float)GROUND_Y, 90, 0.3f, RGB(255, 165, 2) };
-    gLoading.bubbles[2] = { rect.right * 0.6f, (float)GROUND_Y, 110, 0.6f, RGB(30, 144, 255) };
-    gLoading.bubbles[3] = { rect.right * 0.8f, (float)GROUND_Y, 85, 0.9f, RGB(46, 213, 115) };
+    // Hack: Ako slike nisu učitane, učitaj ih sad
+    if (gRes.background == NULL) {
+        HINSTANCE hInstance = (HINSTANCE)GetWindowLongPtr(hwnd, GWLP_HINSTANCE);
+        // Pretpostavka da funkcija postoji (deklarisana u game.h ili slično)
+        // LoadBitmaps(hwnd, hInstance);
+    }
 
     gLoading.progress = 0;
-    gLoading.startTime = GetTickCount();
     gLoading.isComplete = false;
+    gLoading.startTime = GetTickCount();
+
+    // Reset animacije
+    gLoading.ballIsFalling = false;
+    gLoading.ballPopped = false;
+    gLoading.ballVy = 0;
+    gLoading.harpoonActive = false;
+    gLoading.harpoonHeight = 0;
 }
 
 void UpdateLoading() {
-    static DWORD lastUpdate = 0;
-    DWORD current = GetTickCount();
+    static DWORD last = 0;
+    DWORD now = GetTickCount();
 
-    // Update progress svakih 50ms
-    if (current - lastUpdate >= 50) {
+    if (now - last > 30) {
         if (gLoading.progress < 100) {
             gLoading.progress++;
         } else {
-            gLoading.isComplete = true;
+            static int finishDelay = 0;
+            finishDelay++;
+            if (finishDelay > 20) gLoading.isComplete = true;
         }
-        lastUpdate = current;
+
+        // Faza 2: Pad (80% do 90%)
+        if (gLoading.progress > 80 && gLoading.progress <= 90) {
+            gLoading.ballIsFalling = true;
+            gLoading.ballVy += 2.0f;
+            gLoading.ballY += gLoading.ballVy;
+        }
+        // Faza 3: Pucanje (90%+)
+        else if (gLoading.progress > 90 && !gLoading.ballPopped) {
+            gLoading.harpoonActive = true;
+            gLoading.harpoonHeight += 35.0f; // Brži harpun jer mora preći veći put
+
+            // Povećali smo granicu jer je heroj sada na dnu, a balon visoko
+            if (gLoading.harpoonHeight > 250) {
+                gLoading.ballPopped = true;
+            }
+        }
+        last = now;
     }
 }
 
 void RenderLoading(HDC hdc, RECT rect) {
-    // Pozadina
-    HBRUSH bgBrush = CreateSolidBrush(RGB(26, 26, 46));
-    FillRect(hdc, &rect, bgBrush);
-    DeleteObject(bgBrush);
+    HDC memDC = CreateCompatibleDC(hdc);
+    HBITMAP memBM = CreateCompatibleBitmap(hdc, rect.right, rect.bottom);
+    HBITMAP oldBM = (HBITMAP)SelectObject(memDC, memBM);
 
-    // "Tlo"
-    HBRUSH groundBrush = CreateSolidBrush(RGB(255, 71, 87));
-    RECT groundRect = { 0, rect.bottom - 100, rect.right, rect.bottom - 92 };
-    FillRect(hdc, &groundRect, groundBrush);
-    DeleteObject(groundBrush);
+    // 1. POZADINA
+    if (gRes.background) {
+        HDC resDC = CreateCompatibleDC(hdc);
+        HBITMAP oldRes = (HBITMAP)SelectObject(resDC, gRes.background);
+        BITMAP bm; GetObject(gRes.background, sizeof(BITMAP), &bm);
+        StretchBlt(memDC, 0, 0, rect.right, rect.bottom, resDC, 0, 0, bm.bmWidth, bm.bmHeight, SRCCOPY);
+        SelectObject(resDC, oldRes); DeleteDC(resDC);
+    } else {
+        FillRect(memDC, &rect, (HBRUSH)GetStockObject(BLACK_BRUSH));
+    }
 
-    // Balončići sa bounce animacijom
-    static float time = 0;
-    time += 0.05f;
+    // --- KOORDINATE ---
+    int centerX = rect.right / 2;
+    int centerY = rect.bottom / 2;
 
-    for (int i = 0; i < 4; i++) {
-        LoadingBubble* b = &gLoading.bubbles[i];
+    int barW = 400;
+    int barH = 20;
+    int barX = centerX - (barW / 2);
+    int barY = centerY;
 
-        // Bounce animacija
-        float phase = time * 3.14159f + b->bouncePhase * 3.14159f * 2;
-        float bounce = sin(phase) * sin(phase);
-        float currentY = b->y - bounce * 150;
+    // Heroj dimenzije
+    int heroW = 70;
+    int heroH = 90;
 
-        // Crtaj balončić
-        int centerX = (int)b->x;
-        int centerY = (int)currentY;
-        int radius = (int)b->size / 2;
+    // Fiksiramo heroja na samo dno ekrana (bez oduzimanja, ili vrlo malo ako treba)
+    int heroY = rect.bottom - heroH;
 
-        // Gradijent efekat
-        for (int r = radius; r > 0; r--) {
-            float factor = (float)r / radius;
-            int newR = GetRValue(b->color) + (int)((255 - GetRValue(b->color)) * (1.0f - factor) * 0.4f);
-            int newG = GetGValue(b->color) + (int)((255 - GetGValue(b->color)) * (1.0f - factor) * 0.4f);
-            int newB = GetBValue(b->color) + (int)((255 - GetBValue(b->color)) * (1.0f - factor) * 0.4f);
+    // --- LOGIKA KRETANJA ---
+    int targetX = (barX + barW) - (heroW / 2);
+    int startX = -heroW;
 
-            HBRUSH brush = CreateSolidBrush(RGB(newR, newG, newB));
-            HPEN pen = CreatePen(PS_SOLID, 1, RGB(newR, newG, newB));
+    float moveFactor = (float)gLoading.progress / 90.0f;
+    if (moveFactor > 1.0f) moveFactor = 1.0f;
 
-            SelectObject(hdc, brush);
-            SelectObject(hdc, pen);
-            Ellipse(hdc, centerX - r, centerY - r, centerX + r, centerY + r);
+    int heroX = startX + (int)((targetX - startX) * moveFactor);
 
-            DeleteObject(brush);
-            DeleteObject(pen);
+    // 3. LOADING BAR
+    HBRUSH frameBrush = CreateSolidBrush(RGB(50, 50, 50));
+    RECT frameRect = { barX - 2, barY - 2, barX + barW + 2, barY + barH + 2 };
+    FillRect(memDC, &frameRect, frameBrush); DeleteObject(frameBrush);
+
+    int fillW = (barW * gLoading.progress) / 100;
+    HBRUSH fillBrush = CreateSolidBrush(RGB(220, 40, 40));
+    RECT fillRect = { barX, barY, barX + fillW, barY + barH };
+    FillRect(memDC, &fillRect, fillBrush); DeleteObject(fillBrush);
+
+    // 4. BALON
+    if (!gLoading.ballPopped) {
+        float bx, by;
+        float radius = 15.0f;
+        if (!gLoading.ballIsFalling) {
+            float t = (float)gLoading.progress / 80.0f; if (t > 1.0f) t = 1.0f;
+            bx = barX + (barW * t);
+            by = barY - radius - fabs(sinf(t * 15.0f)) * 50.0f;
+            gLoading.ballY = by;
+        } else {
+            bx = barX + barW + radius;
+            by = gLoading.ballY;
+            if (by > rect.bottom - radius) by = (float)(rect.bottom - radius);
+        }
+        HBRUSH ballBrush = CreateSolidBrush(RGB(255, 60, 60));
+        SelectObject(memDC, ballBrush);
+        Ellipse(memDC, (int)(bx - radius), (int)(by - radius), (int)(bx + radius), (int)(by + radius));
+        DeleteObject(ballBrush);
+    } else {
+        SetBkMode(memDC, TRANSPARENT);
+        SetTextColor(memDC, RGB(255, 255, 0));
+        HFONT hFontPow = CreateFont(40, 0, 0, 0, FW_BOLD, 0, 0, 0, 0, 0, 0, 0, 0, "Comic Sans MS");
+        HFONT oldF = (HFONT)SelectObject(memDC, hFontPow);
+        TextOut(memDC, barX + barW, barY + 50, "POP!", 4);
+        SelectObject(memDC, oldF); DeleteObject(hFontPow);
+    }
+
+    // 5. HARPUN
+    if (gLoading.harpoonActive) {
+        int hX = heroX + (heroW / 2);
+        int hBaseY = rect.bottom;
+        int hTopY = hBaseY - (int)gLoading.harpoonHeight;
+
+        // Lanac
+        HPEN harpPen = CreatePen(PS_SOLID, 2, RGB(200, 0, 0));
+        HPEN oldPen = (HPEN)SelectObject(memDC, harpPen);
+        MoveToEx(memDC, hX, hBaseY, NULL);
+        for (int y = hBaseY; y > hTopY; y -= 6) {
+            int offset = (y % 12) ? 3 : -3;
+            LineTo(memDC, hX + offset, y);
+        }
+        SelectObject(memDC, oldPen); DeleteObject(harpPen);
+
+        // Vrh Harpuna (Arrow) - KORISTIMO TransparentBlt SA BIJELOM BOJOM
+        if (gRes.arrow) {
+            HDC resDC = CreateCompatibleDC(hdc);
+            HBITMAP oldRes = (HBITMAP)SelectObject(resDC, gRes.arrow);
+            BITMAP bmArrow; GetObject(gRes.arrow, sizeof(BITMAP), &bmArrow);
+
+            int arrowX = hX - (bmArrow.bmWidth / 2);
+            int arrowY = hTopY;
+
+            // RGB(255, 255, 255) uklanja bijelu pozadinu
+            TransparentBlt(memDC, arrowX, arrowY, bmArrow.bmWidth, bmArrow.bmHeight,
+                           resDC, 0, 0, bmArrow.bmWidth, bmArrow.bmHeight,
+                           RGB(255, 255, 255));
+
+            SelectObject(resDC, oldRes); DeleteDC(resDC);
+        }
+    }
+
+    // 6. HEROJ - KORISTIMO TransparentBlt SA BIJELOM BOJOM
+    if (gRes.character) {
+        HDC resDC = CreateCompatibleDC(hdc);
+        HBITMAP oldRes = (HBITMAP)SelectObject(resDC, gRes.character);
+        BITMAP bm; GetObject(gRes.character, sizeof(BITMAP), &bm);
+        int frameW = bm.bmWidth / 4;
+        int frameH = bm.bmHeight / 3;
+
+        int row = 0;
+        if (gLoading.harpoonActive || moveFactor >= 1.0f) {
+            row = 2; // Leđa
+        } else {
+            row = 0; // Hoda desno
         }
 
-        // Kontura
-        HPEN outlinePen = CreatePen(PS_SOLID, 2, RGB(0, 0, 0));
-        SelectObject(hdc, outlinePen);
-        SelectObject(hdc, GetStockObject(NULL_BRUSH));
-        Ellipse(hdc, centerX - radius, centerY - radius, centerX + radius, centerY + radius);
-        DeleteObject(outlinePen);
+        int srcX = 0;
+        if (row == 0) {
+             int walkFrame = (gLoading.progress / 5) % 4;
+             srcX = walkFrame * frameW;
+        }
+
+        // RGB(255, 255, 255) uklanja bijelu pozadinu oko karaktera
+        TransparentBlt(memDC, heroX, heroY, heroW, heroH,
+                       resDC, srcX, row * frameH, frameW, frameH,
+                       RGB(0, 0, 0));
+
+        SelectObject(resDC, oldRes); DeleteDC(resDC);
     }
 
-    // LOADING tekst
-    SetBkMode(hdc, TRANSPARENT);
-    SetTextColor(hdc, RGB(255, 255, 255));
+    // 7. TEXT
+    SetBkMode(memDC, TRANSPARENT);
+    SetTextColor(memDC, RGB(255, 255, 255));
+    char buf[30]; sprintf(buf, "LOADING... %d%%", gLoading.progress);
+    SIZE sz; GetTextExtentPoint32(memDC, buf, strlen(buf), &sz);
+    int textX = barX + (barW - sz.cx) / 2;
+    TextOut(memDC, textX, barY - 30, buf, strlen(buf));
 
-    HFONT hFont = CreateFont(32, 0, 0, 0, FW_BOLD, FALSE, FALSE, FALSE,
-                             DEFAULT_CHARSET, OUT_DEFAULT_PRECIS, CLIP_DEFAULT_PRECIS,
-                             DEFAULT_QUALITY, DEFAULT_PITCH | FF_DONTCARE, "Arial");
-    HFONT hOldFont = (HFONT)SelectObject(hdc, hFont);
-
-    const char* text = "LOADING...";
-    SIZE sz;
-    GetTextExtentPoint32(hdc, text, strlen(text), &sz);
-    TextOut(hdc, (rect.right - sz.cx) / 2, 50, text, strlen(text));
-
-    SelectObject(hdc, hOldFont);
-    DeleteObject(hFont);
-
-    // Progress bar
-    int barWidth = 400;
-    int barHeight = 40;
-    int barX = (rect.right - barWidth) / 2;
-    int barY = rect.bottom - 150;
-
-    // Okvir
-    HBRUSH borderBrush = CreateSolidBrush(RGB(0, 0, 0));
-    RECT borderRect = { barX, barY, barX + barWidth, barY + barHeight };
-    FillRect(hdc, &borderRect, borderBrush);
-    DeleteObject(borderBrush);
-
-    // Progress
-    int progressWidth = (barWidth * gLoading.progress) / 100;
-    if (progressWidth > 0) {
-        HBRUSH progressBrush = CreateSolidBrush(RGB(46, 213, 115));
-        RECT progressRect = { barX, barY, barX + progressWidth, barY + barHeight };
-        FillRect(hdc, &progressRect, progressBrush);
-        DeleteObject(progressBrush);
-    }
-
-    // Border
-    HPEN borderPen = CreatePen(PS_SOLID, 4, RGB(255, 255, 255));
-    HPEN oldPen = (HPEN)SelectObject(hdc, borderPen);
-    SelectObject(hdc, GetStockObject(NULL_BRUSH));
-    Rectangle(hdc, barX, barY, barX + barWidth, barY + barHeight);
-    SelectObject(hdc, oldPen);
-    DeleteObject(borderPen);
-
-    // Procenat
-    char progressText[10];
-    sprintf(progressText, "%d%%", gLoading.progress);
-    GetTextExtentPoint32(hdc, progressText, strlen(progressText), &sz);
-    TextOut(hdc, barX + (barWidth - sz.cx) / 2, barY + (barHeight - sz.cy) / 2,
-            progressText, strlen(progressText));
+    BitBlt(hdc, 0, 0, rect.right, rect.bottom, memDC, 0, 0, SRCCOPY);
+    SelectObject(memDC, oldBM); DeleteObject(memBM); DeleteDC(memDC);
 }
 
 bool IsLoadingComplete() {

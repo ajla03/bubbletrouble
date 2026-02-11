@@ -2,6 +2,7 @@
 #include "gameContext.h"
 #include "resourceManager.h"
 #include "game.h"
+#include "loading.h"
 #include <windows.h>
 #include <algorithm>
 #include <cstdio>

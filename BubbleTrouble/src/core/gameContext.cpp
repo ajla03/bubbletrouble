@@ -80,10 +80,16 @@ GameContext gGame = {
     },
     /* transitionState */ TRANSITION_NONE,
     /* settingsState */ {},
-     /* loadingState */ {
+    /* loadingState */ {
         {},      // bubbles
         0,       // progress
         0,       // startTime
-        false    // isComplete
+        false,   // isComplete
+        0.0f, 0.0f, // ballX, ballY
+        0.0f,       // ballVy
+        false,      // ballIsFalling
+        false,      // ballPopped
+        0.0f,       // harpoonHeight
+        false       // harpoonActive
     }
 };
