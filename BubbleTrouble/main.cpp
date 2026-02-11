@@ -72,6 +72,7 @@ int WINAPI WinMain(HINSTANCE hThisInstance, HINSTANCE hPrevInstance, LPSTR lpszA
     // ============================================================
     ShowWindow(hwnd, nCmdShow);
     UpdateWindow(hwnd);
+    LoadBitmaps(hwnd, hThisInstance);
 
     // ============================================================
     // 3. SADA INICIJALIZUJ LOADING (prozor je vidljiv i validan)
@@ -104,7 +105,6 @@ int WINAPI WinMain(HINSTANCE hThisInstance, HINSTANCE hPrevInstance, LPSTR lpszA
     // 5. STVARNO UČITAVANJE RESURSA
     // ============================================================
     // Animacija je gotova, sada učitaj teške bitmape
-    LoadBitmaps(hwnd, hThisInstance);
 
     /* Init default settings */
     InitDefaultSettings();
