@@ -294,25 +294,7 @@ LRESULT CALLBACK WindowProcedure(HWND hwnd, UINT message, WPARAM wParam, LPARAM 
             return 0;
         }
         case WM_CHAR:{
-            if(gGame.gameState.currentMode == GAME_MODE_LOGIN && gGame.loginInput.active)
-        {
-            if(wParam == VK_BACK)
-            {
-                if(gGame.loginInput.length > 0)
-                {
-                    gGame.loginInput.length--;
-                    gGame.loginInput.text[gGame.loginInput.length] = '\0';
-                }
-            }
-            else if(wParam >= 32 && wParam <= 126) // printable chars
-            {
-                if(gGame.loginInput.length < 11)
-                {
-                    gGame.loginInput.text[gGame.loginInput.length++] = (char)wParam;
-                    gGame.loginInput.text[gGame.loginInput.length] = '\0';
-                }
-            }
-        }
+            HandleCharInput(hwnd, wParam);
             return 0;
         }
 
