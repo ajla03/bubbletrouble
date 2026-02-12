@@ -276,6 +276,13 @@ void UpdateLayout(int oldW, int oldH, int newW, int newH)
     float scaleX = (float)newBgW / (float)oldBgW;
     float scaleY = (float)newBgH / (float)oldBgH;
 
+    if (gGame.transitionState.transitionVars != TRANSITION_NONE)
+    {
+        float globalScaleY = (float)newH / (float)oldH;
+
+        gGame.animatedWalls.wallTopY = (int)(gGame.animatedWalls.wallTopY * globalScaleY);        gGame.animatedWalls.wallBottomY = (int)(gGame.animatedWalls.wallBottomY * scaleY);
+        gGame.animatedWalls.wallBottomY = (int)(gGame.animatedWalls.wallBottomY * globalScaleY);
+    }
     Level& lvl = gGame.levels[gGame.currentLevel];
 
     for (int i = 0; i < MAX_BALLOONS; i++)
