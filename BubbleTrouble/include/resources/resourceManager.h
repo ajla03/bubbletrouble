@@ -13,7 +13,6 @@ struct ResourceManager{
     HBITMAP heartBkg, heartBkgMask;
     HBITMAP heartBorder, heartBorderMask;
     HBITMAP menuScreen, menuCharacter, menuCharacterMask;
-    HBITMAP hButtonsHolder, hButtonsHolderMask;
     HBITMAP restartButton, restartButtonMask;
     HBITMAP homeButton, homeButtonMask;
     HBITMAP nextButton, nextButtonMask;

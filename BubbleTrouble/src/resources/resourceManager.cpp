@@ -22,8 +22,6 @@ bool ResourceManager::LoadAll(HINSTANCE hInstance) {
     menuScreen        = LoadBitmap(hInstance, MAKEINTRESOURCE(IDB_MENU_SCREEN));
     menuCharacter     = LoadBitmap(hInstance, MAKEINTRESOURCE(IDB_MENU_CHARACTER));
     menuCharacterMask = LoadBitmap(hInstance, MAKEINTRESOURCE(IDB_MENU_CHARACTER_MASK));
-    hButtonsHolder    = LoadBitmap(hInstance, MAKEINTRESOURCE(IDB_BUTTONS_HOLDER));
-    hButtonsHolderMask= LoadBitmap(hInstance, MAKEINTRESOURCE(IDB_BUTTONS_HOLDER_MASK));
     hMenuButton       = LoadBitmap(hInstance, MAKEINTRESOURCE(IDB_MENU_BUTTON));
     hMenuButtonMask   = LoadBitmap(hInstance, MAKEINTRESOURCE(IDB_MENU_BUTTON_MASK));
     pauseButton = LoadBitmap(hInstance, MAKEINTRESOURCE(IDB_PAUSE));

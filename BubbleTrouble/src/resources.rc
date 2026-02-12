@@ -64,20 +64,7 @@ IDB_MENU_SCREEN    BITMAP "../assets/bitmaps/menuBg.bmp"
 IDB_MENU_CHARACTER      BITMAP "../assets/bitmaps/start-screen.bmp"
 IDB_MENU_CHARACTER_MASK  BITMAP "../assets/bitmaps/start-screen_mask.bmp"
 
-//IDB_BUTTONS_HOLDER BITMAP "../assets/buttonsholder1.bmp"
-
-//IDB_BUTTONS_HOLDER_MASK BITMAP "../assets/buttonsholder1_mask.bmp"
-
-IDC_GAME_CURSOR   CURSOR   "../assets/cursor/pinkBubble.cur"
-
-IDB_BUTTONS_HOLDER BITMAP "../assets/bitmaps/meni1.bmp"
-
-IDB_BUTTONS_HOLDER_MASK BITMAP "../assets/bitmaps/meni1_mask.bmp"
-
-IDB_MENU_BUTTON      BITMAP "../assets/bitmaps/button.bmp"
-IDB_MENU_BUTTON_MASK BITMAP "../assets/bitmaps/button_mask.bmp"
-
-IDB_PLAYER1_MENU    BITMAP  "../assets/bitmaps/player1.bmp"
+IDB_PLAYER1_MENU     BITMAP "../assets/bitmaps/player1.bmp"
 IDB_PLAYER1_MENU_MASK BITMAP "../assets/bitmaps/player1_mask.bmp"
 
 IDB_PLAYER2_MENU    BITMAP  "../assets/bitmaps/player2.bmp"
@@ -86,16 +73,6 @@ IDB_PLAYER2_MENU_MASK BITMAP "../assets/bitmaps/player2_mask.bmp"
 IDB_SETTINGS_MENU    BITMAP  "../assets/bitmaps/settings1.bmp"
 IDB_SETTINGS_MENU_MASK BITMAP "../assets/bitmaps/settings_mask.bmp"
 
-IDB_YELLOW_BUTTON       BITMAP  "../assets/bitmaps/yellowbutton.bmp"
-IDB_YELLOW_BUTTON_MASK  BITMAP  "../assets/bitmaps/yellowbutton_mask.bmp"
-IDB_GREEN_BUTTON        BITMAP  "../assets/bitmaps/greenbutton.bmp"
-IDB_GREEN_BUTTON_MASK   BITMAP  "../assets/bitmaps/greenbutton_mask.bmp"
-IDB_GREY_BUTTON         BITMAP  "../assets/bitmaps/greybutton.bmp"
-IDB_GREY_BUTTON_MASK    BITMAP  "../assets/bitmaps/greybutton_mask.bmp"
-IDB_BACK_BUTTON         BITMAP  "../assets/bitmaps/yellowButton1.bmp"
-IDB_BACK_BUTTON_MASK    BITMAP  "../assets/bitmaps/yellowButtonMask1.bmp"
-IDB_MUSICON             BITMAP  "../assets/bitmaps/soundOnWhite.bmp"
-IDB_MUSICON_MASK        BITMAP  "../assets/bitmaps/soundOnBlack.bmp"
 IDB_MUSIC_HOLDER        BITMAP  "../assets/bitmaps/musicHolderWhite.bmp"
 IDB_MUSIC_HOLDER_MASK        BITMAP  "../assets/bitmaps/musicHolderBlack.bmp"
 IDB_MUSICON_HOVER          BITMAP "../assets/bitmaps/musicOnHover.bmp"
@@ -113,8 +90,8 @@ IDB_PLAYER_HOVER               BITMAP  "../assets/bitmaps/settingsPlayerHover.bm
 IDB_HERO2                      BITMAP  "../assets/bitmaps/hero2Black.bmp"
 IDB_HERO2_MASK                      BITMAP  "../assets/bitmaps/hero2White.bmp"
 
-IDB_LOGO            BITMAP  "../assets/bitmaps/logoo.bmp"
-IDB_LOGO_MASK       BITMAP  "../assets/bitmaps/logoo_mask.bmp"
+IDB_BACK_BUTTON         BITMAP  "../assets/bitmaps/yellowButton1.bmp"
+IDB_BACK_BUTTON_MASK    BITMAP  "../assets/bitmaps/yellowButtonMask1.bmp"
 
 IDR_SLIDING_SOUND  WAVE "../assets/sounds/Sliding-audio.wav"
 IDR_DAMAGE_SOUND   WAVE "../assets/sounds/damage.wav"
@@ -143,3 +120,7 @@ IDB_MULTI_BANNER    BITMAP "../assets/bitmaps/multiplayerBanner.bmp"
 IDB_LOGIN_BG         BITMAP "../assets/bitmaps/loginBg.bmp"
 IDB_LOGIN_POPUP      BITMAP "../assets/bitmaps/loginPopup.bmp"
 IDB_LOGIN_BUTTON     BITMAP "../assets/bitmaps/loginButton.bmp"
+
+IDC_GAME_CURSOR   CURSOR   "../assets/cursor/pinkBubble.cur"
+
+
