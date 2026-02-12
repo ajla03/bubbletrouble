@@ -56,6 +56,7 @@ GameContext gGame = {
     /* backButtonInfo */     {},
     /* settingsSoundButtonInfo */ {},
     /* settingsMusicButtonInfo */ {},
+    /* loginButtonInfo */         {},
     /* player1 */       {},
     /* player2 */       {},
     /* dashboardButtoInfo*/  {},
@@ -92,5 +93,6 @@ GameContext gGame = {
         0.0f,       // harpoonHeight
         false,
         0.0f
-    }
+},
+    /* loginInput */ {}
 };

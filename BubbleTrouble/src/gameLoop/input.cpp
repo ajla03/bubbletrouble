@@ -7,7 +7,7 @@
 
 static bool CanProgressInput();
 static void UpdatePlayer1Input(HWND);
-
+static void SaveLoginInfo(HWND);
 
 void CheckInputs(HWND hwnd){
 
@@ -111,6 +111,13 @@ void HandleMouseClick(HWND hwnd, int mx, int my)
         return;
 
     const auto& mode = gGame.gameState.currentMode;
+
+    if(mode == GAME_MODE_LOGIN){
+        if(IsPointInButton(gGame.loginButtonInfo, mx, my)){
+            SaveLoginInfo(hwnd);
+            return;
+        }
+    }
 
     if(mode == GAME_MODE_DASHBOARD){
         if(IsPointInButton(gGame.backButtonInfo, mx, my)){
@@ -408,5 +415,50 @@ void CheckHover(Button& button, int mx, int my)
     else
     {
         button.isHover = false;
+    }
+}
+
+
+void HandleCharInput(HWND hwnd, WPARAM wParam)
+{
+    if (gGame.gameState.currentMode == GAME_MODE_LOGIN &&
+        gGame.loginInput.active)
+    {
+        // BACKSPACE
+        if (wParam == VK_BACK)
+        {
+            if (gGame.loginInput.length > 0)
+            {
+                gGame.loginInput.length--;
+                gGame.loginInput.text[gGame.loginInput.length] = '\0';
+            }
+        }
+
+        if(wParam == VK_RETURN ){
+            SaveLoginInfo(hwnd);
+        }
+        // Printable ASCII karakteri
+        else if (wParam >= 32 && wParam <= 126)
+        {
+            if (gGame.loginInput.length < 11)
+            {
+                gGame.loginInput.text[gGame.loginInput.length++] = (char)wParam;
+                gGame.loginInput.text[gGame.loginInput.length] = '\0';
+            }
+        }
+    }
+}
+
+static void SaveLoginInfo(HWND hwnd){
+    if(gGame.loginInput.length > 0)
+    {
+        strcpy_s(
+            gGame.playerName,
+            sizeof(gGame.playerName),
+            gGame.loginInput.text
+        );
+
+        gGame.gameState.pendingHome = true;
+        StartWallTransition(hwnd);
     }
 }

@@ -117,6 +117,10 @@ bool ResourceManager::LoadAll(HINSTANCE hInstance) {
     singleplayerBanner = LoadBitmap(hInstance, MAKEINTRESOURCE(IDB_SINGLE_BANNER));
     multiplayerBanner = LoadBitmap(hInstance, MAKEINTRESOURCE(IDB_MULTI_BANNER));
 
+    loginBg = LoadBitmap(hInstance, MAKEINTRESOURCE(IDB_LOGIN_BG));
+    loginPopup = LoadBitmap(hInstance, MAKEINTRESOURCE(IDB_LOGIN_POPUP));
+    loginButton = LoadBitmap(hInstance, MAKEINTRESOURCE(IDB_LOGIN_BUTTON));
+
     HRSRC hRes = FindResource(hInstance, MAKEINTRESOURCE(IDR_MINI_FONT), RT_RCDATA);
 
     DWORD size = SizeofResource(hInstance, hRes);

@@ -255,7 +255,7 @@ static void RenderScoreTable(
     int firstRowY = y + 32;
     int rowHeight = 37;
 
-    HFONT oldFont = (HFONT)SelectObject(hdcBuffer, gRes.hFont);
+    HFONT oldFont = (HFONT)SelectObject(hdcBuffer, gRes.hFontTable);
     SetBkMode(hdcBuffer, TRANSPARENT);
 
     for (int i = 0; i < 5; i++) {

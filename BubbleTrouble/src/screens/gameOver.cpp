@@ -69,21 +69,17 @@ void DrawGameOverScreen(HDC hdc, RECT rect)
 }
 
 void SaveFinalScore() {
-    char playerName[50];
+    char playerName[32];
     const char* gameMode;
-    int finalScore;
-
-    printf("entered here ...");
+    int finalScore = gGame.totalScore;
 
     if (gGame.gameState.isMultiplayer) {
-        strcpy(playerName, "Team");
+        snprintf(playerName, sizeof(playerName), "%s's Team", gGame.playerName);
         gameMode = "MultiPlayer";
-        finalScore = gGame.totalScore;
     } else {
-        // Single player
-        strcpy(playerName, "Player");
+        strncpy(playerName, gGame.playerName, sizeof(playerName));
+        playerName[sizeof(playerName)-1] = '\0';
         gameMode = "SinglePlayer";
-        finalScore = gGame.totalScore;
     }
 
     if (!SaveScore(playerName, finalScore, gGame.currentLevel, gameMode)) {

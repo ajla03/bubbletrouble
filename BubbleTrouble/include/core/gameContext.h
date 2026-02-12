@@ -68,6 +68,7 @@ struct GameContext{
      Button player1, player2;
      Button dashboardButtonInfo;
      RECT helpIconRect;
+     Button loginButtonInfo;
      bool helpIconHovered;
 
     // STATE
@@ -76,6 +77,10 @@ struct GameContext{
     TransitionState transitionState;
     SettingsState settingsState;
     LoadingState loadingState;
+    LoginInput loginInput;
+
+    // Player Name
+    char playerName[12];
 };
 
 extern GameContext gGame;
