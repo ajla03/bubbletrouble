@@ -79,7 +79,17 @@ GameContext gGame = {
         0,                   // (reserved)
         false               // isMultiplayer
     },
-    /* transitionState */ TRANSITION_NONE,
+    /* transitionState */ {
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        TRANSITION_NONE
+    },
     /* settingsState */ {},
     /* loadingState */ {
         {},      // bubbles

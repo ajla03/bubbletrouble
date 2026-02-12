@@ -79,9 +79,6 @@ struct GameState{
     bool isGameOver;
     bool isLevelCleared;
     GameMode currentMode;
-    bool pendingHome;
-    bool pendingRestart;
-    bool pendingNextLevel;
     bool popupSettings;
     bool hasShield;
     int shieldTimeLeft;
@@ -123,11 +120,23 @@ struct Button {
 };
 
 
-enum TransitionState{
+enum TransitionVars{
  TRANSITION_NONE,
  TRANSITION_CLOSING,
  TRANSITION_OPENING,
  TRANSITION_WAIT,
+ };
+
+ struct TransitionState{
+    bool pendingHome;
+    bool pendingRestart;
+    bool pendingNextLevel;
+    bool pendingSettings;
+    bool pendingDashboard;
+    bool pendingSingle;
+    bool pendingMulti;
+    bool pendingHelp;
+    TransitionVars transitionVars;
  };
 
 struct AnimatedWalls{
