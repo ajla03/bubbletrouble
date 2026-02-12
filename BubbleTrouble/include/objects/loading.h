@@ -21,7 +21,8 @@ struct LoadingState {
     bool ballPopped;         // Da li je pogođen?
 
     float harpoonHeight;     // Visina harpuna
-    bool harpoonActive;      // Da li je ispaljen?
+    bool harpoonActive;      // Da li je ispaljen?]
+    float groundLevel;
 };
 
 void InitializeLoading(HWND hwnd);

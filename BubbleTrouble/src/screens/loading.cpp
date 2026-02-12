@@ -174,17 +174,17 @@ void RenderLoading(HDC hdc, RECT rect) {
         }
     }
 
-    // 6. HEROJ - KORISTIMO TransparentBlt SA BIJELOM BOJOM
-    if (gRes.character) {
+ if (gRes.character && gRes.characterMask) {
         HDC resDC = CreateCompatibleDC(hdc);
-        HBITMAP oldRes = (HBITMAP)SelectObject(resDC, gRes.character);
+        HBITMAP oldRes = (HBITMAP)SelectObject(resDC, gRes.characterMask); // Maska prvo
+
         BITMAP bm; GetObject(gRes.character, sizeof(BITMAP), &bm);
         int frameW = bm.bmWidth / 4;
         int frameH = bm.bmHeight / 3;
 
         int row = 0;
         if (gLoading.harpoonActive || moveFactor >= 1.0f) {
-            row = 2; // Leđa
+            row = 2; // Leđa (puca/čeka)
         } else {
             row = 0; // Hoda desno
         }
@@ -195,14 +195,17 @@ void RenderLoading(HDC hdc, RECT rect) {
              srcX = walkFrame * frameW;
         }
 
-        // RGB(255, 255, 255) uklanja bijelu pozadinu oko karaktera
-        TransparentBlt(memDC, heroX, heroY, heroW, heroH,
-                       resDC, srcX, row * frameH, frameW, frameH,
-                       RGB(0, 0, 0));
+        // 1. Maska (SRCAND)
+        StretchBlt(memDC, heroX, heroY, heroW, heroH,
+                   resDC, srcX, row * frameH, frameW, frameH, SRCAND);
+
+        // 2. Slika (SRCPAINT)
+        SelectObject(resDC, gRes.character);
+        StretchBlt(memDC, heroX, heroY, heroW, heroH,
+                   resDC, srcX, row * frameH, frameW, frameH, SRCPAINT);
 
         SelectObject(resDC, oldRes); DeleteDC(resDC);
     }
-
     // 7. TEXT
     SetBkMode(memDC, TRANSPARENT);
     SetTextColor(memDC, RGB(255, 255, 255));
