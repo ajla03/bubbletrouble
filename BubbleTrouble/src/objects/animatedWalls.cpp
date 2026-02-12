@@ -11,7 +11,7 @@ void StartWallTransition(HWND hwnd){
     gGame.animatedWalls.wallTopY = -gGame.animatedWall.height;
     gGame.animatedWalls.wallBottomY = rect.bottom;
 
-    gGame.transitionState = TRANSITION_CLOSING;
+    gGame.transitionState.transitionVars = TRANSITION_CLOSING;
     if(gGame.settingsState.soundState.soundEffectsOn)
         PlaySound(MAKEINTRESOURCE(IDR_SLIDING_SOUND),
                                   GetModuleHandle(NULL),
@@ -23,7 +23,7 @@ void StartWallTransition(HWND hwnd){
 void DrawTransitionWalls(HDC hdc, RECT rect){
 
 
-    if(gGame.transitionState == TRANSITION_NONE)
+    if(gGame.transitionState.transitionVars == TRANSITION_NONE)
         return;
 
     int screenWidth = rect.right;

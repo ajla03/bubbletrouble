@@ -29,8 +29,8 @@ void CheckInputs(HWND hwnd){
 
 static bool CanProgressInput() {
     return gGame.gameState.currentMode == GAME_MODE_PLAYING &&
-           gGame.transitionState != TRANSITION_WAIT &&
-           gGame.transitionState != TRANSITION_CLOSING;
+           gGame.transitionState.transitionVars != TRANSITION_WAIT &&
+           gGame.transitionState.transitionVars != TRANSITION_CLOSING;
 }
 
 static void UpdatePlayer1Input(HWND hwnd){
@@ -107,7 +107,7 @@ static void UpdatePlayer1Input(HWND hwnd){
 
 void HandleMouseClick(HWND hwnd, int mx, int my)
 {
-    if(gGame.transitionState != TRANSITION_NONE)
+    if(gGame.transitionState.transitionVars != TRANSITION_NONE)
         return;
 
     const auto& mode = gGame.gameState.currentMode;
@@ -121,7 +121,7 @@ void HandleMouseClick(HWND hwnd, int mx, int my)
 
     if(mode == GAME_MODE_DASHBOARD){
         if(IsPointInButton(gGame.backButtonInfo, mx, my)){
-        gGame.gameState.pendingHome = true;
+        gGame.transitionState.pendingHome = true;
         StartWallTransition(hwnd);
         return;
         }
@@ -185,7 +185,7 @@ void HandleSettingsClick(HWND hwnd, int mx, int my){
 
     // Back button
     if(IsPointInButton(gGame.backButtonInfo, mx, my)){
-        gGame.gameState.pendingHome = true;
+        gGame.transitionState.pendingHome = true;
         StartWallTransition(hwnd);
         return;
     }
@@ -224,7 +224,7 @@ void HandleSettingsClick(HWND hwnd, int mx, int my){
 void HandleHelpClick(HWND hwnd, int mx, int my) {
     // Back button logika (koristimo istu logiku tranzicije kao u settings)
     if(IsPointInButton(gGame.backButtonInfo, mx, my)){
-        gGame.gameState.pendingHome = true; // Ovo signalizira povratak u Menu
+        gGame.transitionState.pendingHome = true; // Ovo signalizira povratak u Menu
         StartWallTransition(hwnd);
         return;
     }
@@ -255,7 +255,7 @@ void HandlePauseClick(HWND hwnd, int mx, int my)
 
     if (IsPointInButton(gGame.homeButtonInfo, mx, my))
     {
-        gGame.gameState.pendingHome = true;
+        gGame.transitionState.pendingHome = true;
         StartWallTransition(hwnd);
     }
 }
@@ -264,14 +264,14 @@ void HandleEndScreenClick(HWND hwnd, int mx, int my)
 {
     if (IsPointInButton(gGame.restartButtonInfo, mx, my))
     {
-        gGame.gameState.pendingRestart = true;
+        gGame.transitionState.pendingRestart = true;
         StartWallTransition(hwnd);
         return;
     }
 
     if (IsPointInButton(gGame.homeButtonInfo, mx, my))
     {
-        gGame.gameState.pendingHome = true;
+        gGame.transitionState.pendingHome = true;
         StartWallTransition(hwnd);
         return;
     }
@@ -279,7 +279,7 @@ void HandleEndScreenClick(HWND hwnd, int mx, int my)
     if (gGame.gameState.isLevelCleared &&
         IsPointInButton(gGame.nextButtonInfo, mx, my))
     {
-        gGame.gameState.pendingNextLevel = true;
+        gGame.transitionState.pendingNextLevel = true;
         StartWallTransition(hwnd);
     }
 }
@@ -458,7 +458,7 @@ static void SaveLoginInfo(HWND hwnd){
             gGame.loginInput.text
         );
 
-        gGame.gameState.pendingHome = true;
+        gGame.transitionState.pendingHome = true;
         StartWallTransition(hwnd);
     }
 }

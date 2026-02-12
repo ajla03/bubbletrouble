@@ -256,7 +256,8 @@ if (gRes.hIcon) {  // pretpostavljam da imate HICON u gRes strukturi
 void HandleMenuClick(HWND hwnd, int x, int y) {
     POINT pt = {x, y};
      if (PtInRect(&gGame.helpIconRect, pt)) {
-        gGame.gameState.currentMode = GAME_MODE_HELP;
+        gGame.transitionState.pendingHelp = true;
+        StartWallTransition(hwnd);
         return;
     }
 
@@ -265,14 +266,15 @@ void HandleMenuClick(HWND hwnd, int x, int y) {
             switch(i) {
                 case 0: gGame.gameState.isMultiplayer = false; StartGame(hwnd); gGame.menuButtons[0].isHovered = false; break;
                 case 1: gGame.gameState.isMultiplayer = true; StartGame(hwnd); InitMultiplayer(hwnd); gGame.menuButtons[1].isHovered = false;  break;
-                case 2: gGame.gameState.currentMode = GAME_MODE_SETTINGS; gGame.menuButtons[2].isHovered = false; break;
+                case 2: gGame.transitionState.pendingSettings = true; StartWallTransition(hwnd); break;
             }
             break;
         }
     }
 
     if(IsPointInButton(gGame.dashboardButtonInfo, x, y)){
-        gGame.gameState.currentMode = GAME_MODE_DASHBOARD;
+        gGame.transitionState.pendingDashboard = true;
+        StartWallTransition(hwnd);
     }
 }
 

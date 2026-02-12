@@ -67,8 +67,8 @@ void UpdatePlayer2Input(HWND hwnd) {
     if (gGame.player2Stats.lives <= 0) return;
 
     if(gGame.gameState.currentMode != GAME_MODE_PLAYING ||
-       gGame.transitionState == TRANSITION_WAIT ||
-       gGame.transitionState == TRANSITION_CLOSING)
+       gGame.transitionState.transitionVars == TRANSITION_WAIT ||
+       gGame.transitionState.transitionVars == TRANSITION_CLOSING)
         return;
 
     RECT rect;
