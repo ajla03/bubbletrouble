@@ -22,7 +22,6 @@ void StartWallTransition(HWND hwnd){
 
 void DrawTransitionWalls(HDC hdc, RECT rect){
 
-
     if(gGame.transitionState.transitionVars == TRANSITION_NONE)
         return;
 

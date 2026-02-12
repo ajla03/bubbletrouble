@@ -18,8 +18,13 @@ static void UpdateLoginInput(float dt);
 void Update(HWND hwnd){
     if(gGame.transitionState.transitionVars != TRANSITION_NONE )
        {
-        if(gGame.gameState.currentMode!= GAME_MODE_PAUSE && gGame.gameState.currentMode != GAME_OVER )
+        if(gGame.gameState.currentMode!= GAME_MODE_PAUSE && gGame.gameState.currentMode != GAME_OVER ){
             UpdateTorches();
+        }
+
+        if(gGame.transitionState.transitionVars == TRANSITION_SOON_TO_END )
+            UpdateBalloons(hwnd);
+
         UpdateWallTransition(hwnd);
         return;
        }
@@ -213,13 +218,29 @@ void UpdateWallTransition(HWND hwnd){
                 gGame.gameState.currentMode = GAME_MODE_HELP;
             }else if(gGame.transitionState.pendingDashboard){
                 gGame.gameState.currentMode = GAME_MODE_DASHBOARD;
+            }else if(gGame.transitionState.pendingSingle){
+                StartGame(hwnd);
+                gGame.menuButtons[0].isHovered = false;
+            }else if(gGame.transitionState.pendingMulti){
+                StartGame(hwnd);
+                InitMultiplayer(hwnd);
+                gGame.menuButtons[1].isHovered = false;
             }
-
             gGame.transitionState.transitionVars = TRANSITION_OPENING;
         }
     }
      else if (gGame.transitionState.transitionVars == TRANSITION_OPENING)
     {
+        gGame.animatedWalls.wallTopY -= gGame.animatedWalls.wallSpeed;
+        gGame.animatedWalls.wallBottomY += gGame.animatedWalls.wallSpeed;
+
+        if (gGame.animatedWalls.wallTopY <= -gGame.animatedWall.height / 2 && gGame.transitionState.transitionVars != TRANSITION_SOON_TO_END)
+        {
+            gGame.transitionState.transitionVars = TRANSITION_SOON_TO_END;
+        }
+    }
+    else if(gGame.transitionState.transitionVars == TRANSITION_SOON_TO_END){
+
         gGame.animatedWalls.wallTopY -= gGame.animatedWalls.wallSpeed;
         gGame.animatedWalls.wallBottomY += gGame.animatedWalls.wallSpeed;
 
@@ -233,6 +254,8 @@ void UpdateWallTransition(HWND hwnd){
             gGame.transitionState.pendingSettings = false;
             gGame.transitionState.pendingDashboard = false;
             gGame.transitionState.pendingHelp = false;
+            gGame.transitionState.pendingSingle = false;
+            gGame.transitionState.pendingMulti = false;
         }
     }
 }

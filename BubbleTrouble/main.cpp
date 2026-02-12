@@ -128,7 +128,6 @@ int WINAPI WinMain(HINSTANCE hThisInstance, HINSTANCE hPrevInstance, LPSTR lpszA
             TranslateMessage(&messages);
             DispatchMessage(&messages);
         }
-
         CheckInputs(hwnd);
         Update(hwnd);
         RefreshScreen(hwnd);

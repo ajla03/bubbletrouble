@@ -29,8 +29,8 @@ void CheckInputs(HWND hwnd){
 
 static bool CanProgressInput() {
     return gGame.gameState.currentMode == GAME_MODE_PLAYING &&
-           gGame.transitionState.transitionVars != TRANSITION_WAIT &&
-           gGame.transitionState.transitionVars != TRANSITION_CLOSING;
+           gGame.transitionState.transitionVars == TRANSITION_NONE
+           || gGame.transitionState.transitionVars == TRANSITION_SOON_TO_END;
 }
 
 static void UpdatePlayer1Input(HWND hwnd){

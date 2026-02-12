@@ -264,8 +264,8 @@ void HandleMenuClick(HWND hwnd, int x, int y) {
     for (int i = 0; i < NUM_MENU_BUTTONS; i++) {
         if (PtInRect(&gGame.menuButtons[i].rect, pt)) {
             switch(i) {
-                case 0: gGame.gameState.isMultiplayer = false; StartGame(hwnd); gGame.menuButtons[0].isHovered = false; break;
-                case 1: gGame.gameState.isMultiplayer = true; StartGame(hwnd); InitMultiplayer(hwnd); gGame.menuButtons[1].isHovered = false;  break;
+                case 0: gGame.gameState.isMultiplayer = false; gGame.transitionState.pendingSingle = true; StartWallTransition(hwnd); break;
+                case 1: gGame.gameState.isMultiplayer = true; gGame.transitionState.pendingMulti = true; StartWallTransition(hwnd); break;
                 case 2: gGame.transitionState.pendingSettings = true; StartWallTransition(hwnd); break;
             }
             break;
