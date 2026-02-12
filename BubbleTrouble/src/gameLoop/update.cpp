@@ -18,21 +18,19 @@ static void UpdateLoginInput(float dt);
 void Update(HWND hwnd){
     if(gGame.gameState.pendingHome || gGame.transitionState == TRANSITION_CLOSING || gGame.transitionState == TRANSITION_WAIT )
        {
+        if(gGame.gameState.currentMode!= GAME_MODE_PAUSE && gGame.gameState.currentMode != GAME_OVER )
+            UpdateTorches();
         UpdateWallTransition(hwnd);
         return;
        }
-    else if(   gGame.gameState.currentMode == GAME_MODE_PAUSE
-            || gGame.gameState.currentMode == GAME_OVER
-            || gGame.gameState.currentMode == GAME_MODE_MENU
-            || gGame.gameState.currentMode == GAME_MODE_SETTINGS
-            || gGame.gameState.currentMode == GAME_MODE_HELP
-            || gGame.gameState.currentMode == GAME_MODE_DASHBOARD
-            || gGame.gameState.currentMode == GAME_MODE_LOADING
-            || gGame.gameState.currentMode == GAME_MODE_LOGIN) {
+    else if( gGame.gameState.currentMode != GAME_MODE_PLAYING ) {
 
             if(gGame.gameState.currentMode == GAME_MODE_LOGIN)
                 UpdateLoginInput(0.05f);
-            UpdateTorches();
+            if((gGame.gameState.currentMode == GAME_MODE_SETTINGS && gGame.settingsState.waitingForKey == KEYBIND_NONE ) ||
+               gGame.gameState.currentMode == GAME_MODE_HELP  ||
+               gGame.gameState.currentMode == GAME_MODE_DASHBOARD)
+                UpdateTorches();
             return;
         }
 
