@@ -440,10 +440,16 @@ void HandleCharInput(HWND hwnd, WPARAM wParam)
         // Printable ASCII karakteri
         else if (wParam >= 32 && wParam <= 126)
         {
-            if (gGame.loginInput.length < 11)
-            {
-                gGame.loginInput.text[gGame.loginInput.length++] = (char)wParam;
-                gGame.loginInput.text[gGame.loginInput.length] = '\0';
+            bool isAllowed = isalnum((unsigned char)wParam) ||
+                     (char)wParam == '.' ||
+                     (char)wParam == '_';
+
+            if(isAllowed){
+                if (gGame.loginInput.length < 11)
+                {
+                    gGame.loginInput.text[gGame.loginInput.length++] = (char)wParam;
+                    gGame.loginInput.text[gGame.loginInput.length] = '\0';
+                }
             }
         }
     }
