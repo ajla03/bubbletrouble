@@ -90,6 +90,7 @@ GameContext gGame = {
         false,      // ballIsFalling
         false,      // ballPopped
         0.0f,       // harpoonHeight
-        false       // harpoonActive
+        false,
+        0.0f
     }
 };
