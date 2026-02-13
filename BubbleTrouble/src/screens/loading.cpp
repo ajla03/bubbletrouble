@@ -67,16 +67,20 @@ void RenderLoading(HDC hdc, RECT rect) {
     HBITMAP memBM = CreateCompatibleBitmap(hdc, rect.right, rect.bottom);
     HBITMAP oldBM = (HBITMAP)SelectObject(memDC, memBM);
 
-    // 1. POZADINA
+    // 1. POZADINA - Tamno siva (charcoal) uvijek
+    HBRUSH bgBrush = CreateSolidBrush(RGB(35, 35, 40));
+    FillRect(memDC, &rect, bgBrush);
+    DeleteObject(bgBrush);
+
+    /* Zakomentarisano - koristimo solid sivu umjesto bitmap-a
     if (gRes.background) {
         HDC resDC = CreateCompatibleDC(hdc);
         HBITMAP oldRes = (HBITMAP)SelectObject(resDC, gRes.background);
         BITMAP bm; GetObject(gRes.background, sizeof(BITMAP), &bm);
         StretchBlt(memDC, 0, 0, rect.right, rect.bottom, resDC, 0, 0, bm.bmWidth, bm.bmHeight, SRCCOPY);
         SelectObject(resDC, oldRes); DeleteDC(resDC);
-    } else {
-        FillRect(memDC, &rect, (HBRUSH)GetStockObject(BLACK_BRUSH));
     }
+    */
 
     // --- KOORDINATE ---
     int centerX = rect.right / 2;
@@ -176,14 +180,11 @@ void RenderLoading(HDC hdc, RECT rect) {
         int hBaseY = rect.bottom;
         int hTopY = hBaseY - (int)gLoading.harpoonHeight;
 
-        // Lanac
-        HPEN harpPen = CreatePen(PS_SOLID, 2, RGB(200, 0, 0));
+        // Jednostavna ravna linija umjesto lanca
+        HPEN harpPen = CreatePen(PS_SOLID, 3, RGB(220, 220, 220)); // Srebrna linija
         HPEN oldPen = (HPEN)SelectObject(memDC, harpPen);
         MoveToEx(memDC, hX, hBaseY, NULL);
-        for (int y = hBaseY; y > hTopY; y -= 6) {
-            int offset = (y % 12) ? 3 : -3;
-            LineTo(memDC, hX + offset, y);
-        }
+        LineTo(memDC, hX, hTopY); // Samo ravna linija gore
         SelectObject(memDC, oldPen); DeleteObject(harpPen);
 
         // Vrh Harpuna (Arrow) - KORISTIMO TransparentBlt SA BIJELOM BOJOM
