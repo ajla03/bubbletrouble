@@ -104,8 +104,8 @@ void RenderLoading(HDC hdc, RECT rect) {
     int heroX = startX + (int)((targetX - startX) * moveFactor);
 
     // 3. LOADING BAR - SA OKVIROM
-    // Spoljašnji okvir (zlatna boja za arcade look)
-    HBRUSH outerFrameBrush = CreateSolidBrush(RGB(255, 215, 0)); // Zlatna
+    // Spoljašnji okvir (bijela boja za bolji kontrast sa gradijentom)
+    HBRUSH outerFrameBrush = CreateSolidBrush(RGB(255, 255, 255)); // Bijela
     RECT outerRect = { barX - 4, barY - 4, barX + barW + 4, barY + barH + 4 };
     FillRect(memDC, &outerRect, outerFrameBrush);
     DeleteObject(outerFrameBrush);
@@ -116,12 +116,32 @@ void RenderLoading(HDC hdc, RECT rect) {
     FillRect(memDC, &innerRect, innerFrameBrush);
     DeleteObject(innerFrameBrush);
 
-    // Fill (crveni progres)
+    // Fill (crveni progres sa gradijentom)
     int fillW = (barW * gLoading.progress) / 100;
-    HBRUSH fillBrush = CreateSolidBrush(RGB(220, 40, 40));
-    RECT fillRect = { barX, barY, barX + fillW, barY + barH };
-    FillRect(memDC, &fillRect, fillBrush);
-    DeleteObject(fillBrush);
+
+    if (fillW > 0) {
+        // Gradijent od tamno crvene do svijetle crvene
+        TRIVERTEX vertex[2];
+        vertex[0].x = barX;
+        vertex[0].y = barY;
+        vertex[0].Red = 0x6000;    // Tamno crvena lijevo
+        vertex[0].Green = 0x1000;
+        vertex[0].Blue = 0x1000;
+        vertex[0].Alpha = 0x0000;
+
+        vertex[1].x = barX + fillW;
+        vertex[1].y = barY + barH;
+        vertex[1].Red = 0xFF00;    // Svijetlo crvena desno
+        vertex[1].Green = 0x3000;
+        vertex[1].Blue = 0x3000;
+        vertex[1].Alpha = 0x0000;
+
+        GRADIENT_RECT gRect;
+        gRect.UpperLeft = 0;
+        gRect.LowerRight = 1;
+
+        GradientFill(memDC, vertex, 2, &gRect, 1, GRADIENT_FILL_RECT_H);
+    }
 
     // 4. BALON
     if (!gLoading.ballPopped) {
