@@ -51,12 +51,10 @@ void UpdateLoading() {
         // Faza 3: Pucanje (90%+)
         else if (gLoading.progress > 90 && !gLoading.ballPopped) {
             gLoading.harpoonActive = true;
-            gLoading.harpoonHeight += 35.0f; // Brži harpun jer mora preći veći put
+            gLoading.harpoonHeight += 35.0f;
 
-            // Povećali smo granicu jer je heroj sada na dnu, a balon visoko
-            if (gLoading.harpoonHeight > 250) {
-                gLoading.ballPopped = true;
-            }
+            // Dinamička provjera - postavi targetnu visinu u renderu
+            // Ovdje samo rastemo, provjera je u RenderLoading funkciji
         }
         last = now;
     }
@@ -202,6 +200,16 @@ void RenderLoading(HDC hdc, RECT rect) {
                            RGB(255, 255, 255));
 
             SelectObject(resDC, oldRes); DeleteDC(resDC);
+        }
+
+        // DINAMIČKA PROVJERA POGOTKA - bazirana na stvarnoj poziciji balona
+        if (!gLoading.ballPopped) {
+            float ballY = gLoading.ballY;
+
+            // Provjeri da li je vrh harpuna stigao do balona (sa malim offsetom)
+            if (hTopY <= (int)ballY + 20) { // +20 je tolerance zona
+                gLoading.ballPopped = true;
+            }
         }
     }
 
