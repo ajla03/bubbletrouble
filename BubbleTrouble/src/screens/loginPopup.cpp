@@ -65,12 +65,16 @@ static void RenderNextButton(HDC hdcBuffer, RECT rect) {
     int bottomQuarterHeight = bmPopup.bmHeight / 5 - 50 ;
     int y = startOfBottomQuarter + (bottomQuarterHeight / 2) - (bmButton.bmHeight / 2);
 
-    SelectObject(gRes.hdcMem, gRes.loginButton);
 
     gGame.loginButtonInfo.x = x;
     gGame.loginButtonInfo.y = y;
     gGame.loginButtonInfo.width = bmButton.bmWidth;
     gGame.loginButtonInfo.height = bmButton.bmHeight/2;
+
+    if(gGame.loginButtonInfo.isHover)
+        SelectObject(gRes.hdcMem, gRes.loginButtonHover);
+    else
+        SelectObject(gRes.hdcMem, gRes.loginButton);
 
     TransparentBlt(hdcBuffer, x, y, bmButton.bmWidth, bmButton.bmHeight/2,
                    gRes.hdcMem, 0, 0, bmButton.bmWidth, bmButton.bmHeight,

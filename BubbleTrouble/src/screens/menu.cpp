@@ -245,11 +245,16 @@ if (gRes.hIcon) {  // pretpostavljam da imate HICON u gRes strukturi
             charY = rect.bottom - charH - max(20, rect.bottom / 30);
         }
 
+        if(currentChar==gRes.settingsMenuChar){
+            charW+=6;
+            charX-=1;
+            charY-=2;
+        }
+
         HBITMAP oldMemBmp = (HBITMAP)SelectObject(gRes.hdcMem, currentCharMask);
         StretchBlt(hdc, charX, charY, charW, charH, gRes.hdcMem, 0, 0, bm.bmWidth, bm.bmHeight, SRCAND);
         SelectObject(gRes.hdcMem, currentChar);
         StretchBlt(hdc, charX, charY, charW, charH, gRes.hdcMem, 0, 0, bm.bmWidth, bm.bmHeight, SRCPAINT);
-        SelectObject(gRes.hdcMem, oldMemBmp);
     }
 }
 

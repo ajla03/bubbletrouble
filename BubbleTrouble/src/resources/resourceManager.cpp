@@ -118,6 +118,7 @@ bool ResourceManager::LoadAll(HINSTANCE hInstance) {
     loginBg = LoadBitmap(hInstance, MAKEINTRESOURCE(IDB_LOGIN_BG));
     loginPopup = LoadBitmap(hInstance, MAKEINTRESOURCE(IDB_LOGIN_POPUP));
     loginButton = LoadBitmap(hInstance, MAKEINTRESOURCE(IDB_LOGIN_BUTTON));
+    loginButtonHover = LoadBitmap(hInstance, MAKEINTRESOURCE(IDB_LOGIN_BUTTON_HOVER));
 
     HRSRC hRes = FindResource(hInstance, MAKEINTRESOURCE(IDR_MINI_FONT), RT_RCDATA);
 

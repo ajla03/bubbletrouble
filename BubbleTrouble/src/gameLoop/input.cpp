@@ -287,6 +287,13 @@ void HandleEndScreenClick(HWND hwnd, int mx, int my)
 
 void HandleMouseMove(HWND hwnd, int x, int y)
 {
+
+    // LOGIN
+    if(gGame.gameState.currentMode == GAME_MODE_LOGIN){
+        CheckHover(gGame.loginButtonInfo, x, y);
+        return;
+    }
+
     // DASHBOARD
     if(gGame.gameState.currentMode == GAME_MODE_DASHBOARD){
         CheckHover(gGame.backButtonInfo,x, y);

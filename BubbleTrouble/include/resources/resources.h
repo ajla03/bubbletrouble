@@ -99,6 +99,7 @@
 #define IDB_LOGIN_BG               194
 #define IDB_LOGIN_POPUP            195
 #define IDB_LOGIN_BUTTON           196
+#define IDB_LOGIN_BUTTON_HOVER     197
 // ============ KONSTANTE ZA HARPUN ============ //
 #define IDR_HARPOON_SOUND   201
 #define IDR_BALLOON_POP     202

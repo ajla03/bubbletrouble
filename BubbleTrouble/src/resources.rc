@@ -120,7 +120,7 @@ IDB_MULTI_BANNER    BITMAP "../assets/bitmaps/multiplayerBanner.bmp"
 IDB_LOGIN_BG         BITMAP "../assets/bitmaps/loginBg.bmp"
 IDB_LOGIN_POPUP      BITMAP "../assets/bitmaps/loginPopup.bmp"
 IDB_LOGIN_BUTTON     BITMAP "../assets/bitmaps/loginButton.bmp"
+IDB_LOGIN_BUTTON_HOVER    BITMAP "../assets/bitmaps/loginButtonHover.bmp"
 
 IDC_GAME_CURSOR   CURSOR   "../assets/cursor/pinkBubble.cur"
-
 
