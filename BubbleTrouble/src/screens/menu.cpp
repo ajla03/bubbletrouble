@@ -70,62 +70,6 @@ void RenderMenu(HDC hdc, RECT rect) {
         DeleteObject(hBrush);
     }
 
-    // === TORCHES ===
-    /*if (gRes.torch && gRes.torchMask) {
-        float torchScale = 3.5f;
-        if (rect.right < 1400) torchScale = 2.5f;
-        if (rect.right < 900)  torchScale = 1.8f;
-
-        if (rect.right > 600) {
-            int torchW = (int)(gGame.torchInfo.width * torchScale);
-            int torchH = (int)(gGame.torchInfo.height * torchScale);
-            int padding = (rect.right < 1000) ? 5 : 20;
-            int liftUpAmount = rect.bottom / 6;
-            int torchY = (rect.bottom / 2) - (torchH / 2) - liftUpAmount;
-            int torchX1 = padding;
-            int torchX2 = rect.right - torchW - padding;
-
-            int torchSrcX = gGame.torchInfo.currentFrame * gGame.torchInfo.width;
-            int torchSrcY = gGame.torchInfo.currentRow * gGame.torchInfo.height;
-
-
-            HBITMAP oldMemBmp = (HBITMAP)SelectObject(gRes.hdcMem, gRes.torchMask);
-            StretchBlt(hdc, torchX1, torchY, torchW, torchH, gRes.hdcMem, torchSrcX, torchSrcY, gGame.torchInfo.width, gGame.torchInfo.height, SRCPAINT);
-            SelectObject(gRes.hdcMem, gRes.torch);
-            StretchBlt(hdc, torchX1, torchY, torchW, torchH, gRes.hdcMem, torchSrcX, torchSrcY, gGame.torchInfo.width, gGame.torchInfo.height, SRCAND);
-
-            SelectObject(gRes.hdcMem, gRes.torchMask);
-            StretchBlt(hdc, torchX2, torchY, torchW, torchH, gRes.hdcMem, torchSrcX, torchSrcY, gGame.torchInfo.width, gGame.torchInfo.height, SRCPAINT);
-            SelectObject(gRes.hdcMem, gRes.torch);
-            StretchBlt(hdc, torchX2, torchY, torchW, torchH, gRes.hdcMem, torchSrcX, torchSrcY, gGame.torchInfo.width, gGame.torchInfo.height, SRCAND);
-
-            SelectObject(gRes.hdcMem, oldMemBmp);
-
-        }
-    }*/
-/*
-  // === LOGO (ICON) ===
-if (gRes.hIcon) {  // pretpostavljam da imate HICON u gRes strukturi
-    int logoWidth = rect.right / 2;
-    int logoHeight = logoWidth;  // ikone su obično kvadratne
-    int maxLogoHeight = rect.bottom / 3;
-
-    if (logoHeight > maxLogoHeight) {
-        logoHeight = maxLogoHeight;
-        logoWidth = maxLogoHeight;  // održava kvadratni oblik
-    }
-
-    int logoX = (rect.right - logoWidth) / 5.8;
-    int logoY = -20;
-
-    // Crta ikonu sa automatskom transparencijom
-    DrawIconEx(hdc, logoX, logoY, gRes.hIcon,
-               logoWidth, logoHeight,
-               0,           // frame index (za animirane ikone)
-               NULL,        // bez background brush-a
-               DI_NORMAL);  // normalan crtež sa transparencijom
-}*/
-
     // === BUTTONS ===
     // Use the same font as settings screen
     HFONT hOldButtonFont = (HFONT)SelectObject(hdc, gRes.hFont);
@@ -256,6 +200,17 @@ if (gRes.hIcon) {  // pretpostavljam da imate HICON u gRes strukturi
         SelectObject(gRes.hdcMem, currentChar);
         StretchBlt(hdc, charX, charY, charW, charH, gRes.hdcMem, 0, 0, bm.bmWidth, bm.bmHeight, SRCPAINT);
     }
+
+    // NEWBIE, SILVER, BRONZE & GOLD BADGE
+    BITMAP bm;
+    GetObject(gRes.newbie, sizeof(BITMAP), &bm);
+    int x = rect.right - bm.bmWidth - 10;
+    int y = rect.bottom - bm.bmHeight - 10;
+    SelectObject(gRes.hdcMem, gRes.newbie);
+    TransparentBlt(hdc, x, y, bm.bmWidth, bm.bmHeight,
+                   gRes.hdcMem, 0, 0, bm.bmWidth, bm.bmHeight, RGB(255,255,255));
+
+
 }
 
 void HandleMenuClick(HWND hwnd, int x, int y) {

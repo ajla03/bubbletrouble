@@ -120,6 +120,8 @@ bool ResourceManager::LoadAll(HINSTANCE hInstance) {
     loginButton = LoadBitmap(hInstance, MAKEINTRESOURCE(IDB_LOGIN_BUTTON));
     loginButtonHover = LoadBitmap(hInstance, MAKEINTRESOURCE(IDB_LOGIN_BUTTON_HOVER));
 
+    newbie = LoadBitmap(hInstance, MAKEINTRESOURCE(IDB_NEWBIE));
+
     HRSRC hRes = FindResource(hInstance, MAKEINTRESOURCE(IDR_MINI_FONT), RT_RCDATA);
 
     DWORD size = SizeofResource(hInstance, hRes);
