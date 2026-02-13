@@ -80,24 +80,58 @@ void RenderLoading(HDC hdc, RECT rect) {
     }
     */
 
-    // --- KOORDINATE ---
+    // --- KOORDINATE - OPTIMIZOVANO ZA 1280x720 I FULLSCREEN ---
     int centerX = rect.right / 2;
     int centerY = rect.bottom / 2;
 
-    int barW = 400;
-    int barH = 20;
+    // Progress bar skalira pametno
+    int barW;
+    if (rect.right <= 1280) {
+        // Mali ekran (1280x720) - fiksna veličina
+        barW = 450;
+    } else {
+        // Fullscreen - skalira se (50% širine)
+        barW = (rect.right * 50) / 100;
+        if (barW > 900) barW = 900;  // Max 900px
+    }
+
+    int barH;
+    if (rect.bottom <= 720) {
+        // Mali ekran - fiksna visina
+        barH = 25;
+    } else {
+        // Fullscreen - proporcionalna visina
+        barH = rect.bottom / 35;
+        if (barH < 25) barH = 25;
+        if (barH > 45) barH = 45;
+    }
+
     int barX = centerX - (barW / 2);
     int barY = centerY;
 
-    // Heroj dimenzije
-    int heroW = 70;
-    int heroH = 90;
+    // Heroj dimenzije - takođe optimizovane
+    int heroW;
+    int heroH;
+    if (rect.right <= 1280) {
+        // Mali ekran
+        heroW = 70;
+        heroH = 90;
+    } else {
+        // Fullscreen - skalira
+        heroW = rect.right / 18;
+        if (heroW < 70) heroW = 70;
+        if (heroW > 130) heroW = 130;
+
+        heroH = (heroW * 9) / 7;
+        if (heroH < 90) heroH = 90;
+        if (heroH > 160) heroH = 160;
+    }
 
     // Fiksiramo heroja na samo dno ekrana (bez oduzimanja, ili vrlo malo ako treba)
     int heroY = rect.bottom - heroH;
 
-    // --- LOGIKA KRETANJA ---
-    int targetX = (barX + barW) - (heroW / 2);
+    // --- LOGIKA KRETANJA - do pozicije balona (15% van bara) ---
+    int targetX = (int)(barX + (barW * 1.15f)) - (heroW / 2); // Hoda do pozicije balona
     int startX = -heroW;
 
     float moveFactor = (float)gLoading.progress / 90.0f;
@@ -105,10 +139,20 @@ void RenderLoading(HDC hdc, RECT rect) {
 
     int heroX = startX + (int)((targetX - startX) * moveFactor);
 
-    // 3. LOADING BAR - SA OKVIROM
+    // 3. LOADING BAR - SA OKVIROM (optimizovan za obe rezolucije)
+    int frameThickness;
+    if (rect.bottom <= 720) {
+        frameThickness = 4; // Mali ekran
+    } else {
+        frameThickness = barH / 6; // Fullscreen
+        if (frameThickness < 4) frameThickness = 4;
+        if (frameThickness > 7) frameThickness = 7;
+    }
+
     // Spoljašnji okvir (bijela boja za bolji kontrast sa gradijentom)
     HBRUSH outerFrameBrush = CreateSolidBrush(RGB(255, 255, 255)); // Bijela
-    RECT outerRect = { barX - 4, barY - 4, barX + barW + 4, barY + barH + 4 };
+    RECT outerRect = { barX - frameThickness, barY - frameThickness,
+                       barX + barW + frameThickness, barY + barH + frameThickness };
     FillRect(memDC, &outerRect, outerFrameBrush);
     DeleteObject(outerFrameBrush);
 
@@ -145,17 +189,30 @@ void RenderLoading(HDC hdc, RECT rect) {
         GradientFill(memDC, vertex, 2, &gRect, 1, GRADIENT_FILL_RECT_H);
     }
 
-    // 4. BALON
+    // 4. BALON - optimizovan za obe rezolucije
     if (!gLoading.ballPopped) {
         float bx, by;
-        float radius = 15.0f;
+        float radius;
+
+        if (rect.bottom <= 720) {
+            // Mali ekran - fiksni radius
+            radius = 16.0f;
+        } else {
+            // Fullscreen - proporcionalni radius
+            radius = (float)(barH * 0.8f);
+            if (radius < 16.0f) radius = 16.0f;
+            if (radius > 28.0f) radius = 28.0f;
+        }
+
         if (!gLoading.ballIsFalling) {
+            // Balon skakuće NA baru i malo PREKO ivice (1.15 = 115% - prelazi ivicu)
             float t = (float)gLoading.progress / 80.0f; if (t > 1.0f) t = 1.0f;
-            bx = barX + (barW * t);
+            bx = barX + (barW * t * 1.15f); // Dodato 1.15 da ide 15% dalje od kraja
             by = barY - radius - fabs(sinf(t * 15.0f)) * 50.0f;
             gLoading.ballY = by;
         } else {
-            bx = barX + barW + radius;
+            // Pada sa kraja bara + malo offset-a
+            bx = barX + (barW * 1.15f) + radius;
             by = gLoading.ballY;
             if (by > rect.bottom - radius) by = (float)(rect.bottom - radius);
         }
@@ -166,9 +223,19 @@ void RenderLoading(HDC hdc, RECT rect) {
     } else {
         SetBkMode(memDC, TRANSPARENT);
         SetTextColor(memDC, RGB(255, 255, 0));
-        HFONT hFontPow = CreateFont(40, 0, 0, 0, FW_BOLD, 0, 0, 0, 0, 0, 0, 0, 0, "Comic Sans MS");
+
+        int fontSize;
+        if (rect.bottom <= 720) {
+            fontSize = 40; // Mali ekran
+        } else {
+            fontSize = rect.bottom / 18; // Fullscreen
+            if (fontSize < 40) fontSize = 40;
+            if (fontSize > 70) fontSize = 70;
+        }
+
+        HFONT hFontPow = CreateFont(fontSize, 0, 0, 0, FW_BOLD, 0, 0, 0, 0, 0, 0, 0, 0, "Comic Sans MS");
         HFONT oldF = (HFONT)SelectObject(memDC, hFontPow);
-        TextOut(memDC, barX + barW, barY + 50, "POP!", 4);
+        TextOut(memDC, barX + (int)(barW * 1.15f), barY + 50, "POP!", 4);
         SelectObject(memDC, oldF); DeleteObject(hFontPow);
     }
 
@@ -178,8 +245,17 @@ void RenderLoading(HDC hdc, RECT rect) {
         int hBaseY = rect.bottom;
         int hTopY = hBaseY - (int)gLoading.harpoonHeight;
 
-        // Jednostavna ravna linija umjesto lanca
-        HPEN harpPen = CreatePen(PS_SOLID, 3, RGB(220, 220, 220)); // Srebrna linija
+        // Jednostavna ravna linija umjesto lanca - optimizovana debljina
+        int harpoonThickness;
+        if (rect.bottom <= 720) {
+            harpoonThickness = 3; // Mali ekran
+        } else {
+            harpoonThickness = barH / 8;
+            if (harpoonThickness < 3) harpoonThickness = 3;
+            if (harpoonThickness > 6) harpoonThickness = 6;
+        }
+
+        HPEN harpPen = CreatePen(PS_SOLID, harpoonThickness, RGB(220, 220, 220)); // Srebrna linija
         HPEN oldPen = (HPEN)SelectObject(memDC, harpPen);
         MoveToEx(memDC, hX, hBaseY, NULL);
         LineTo(memDC, hX, hTopY); // Samo ravna linija gore
@@ -205,9 +281,18 @@ void RenderLoading(HDC hdc, RECT rect) {
         // DINAMIČKA PROVJERA POGOTKA - bazirana na stvarnoj poziciji balona
         if (!gLoading.ballPopped) {
             float ballY = gLoading.ballY;
+            float ballRadius;
+
+            if (rect.bottom <= 720) {
+                ballRadius = 16.0f; // Mali ekran
+            } else {
+                ballRadius = (float)(barH * 0.8f);
+                if (ballRadius < 16.0f) ballRadius = 16.0f;
+                if (ballRadius > 28.0f) ballRadius = 28.0f;
+            }
 
             // Provjeri da li je vrh harpuna stigao do balona (sa malim offsetom)
-            if (hTopY <= (int)ballY + 20) { // +20 je tolerance zona
+            if (hTopY <= (int)ballY + (int)ballRadius) { // tolerance zona bazirana na radiusu
                 gLoading.ballPopped = true;
             }
         }
@@ -247,7 +332,7 @@ void RenderLoading(HDC hdc, RECT rect) {
         SelectObject(resDC, oldRes); DeleteDC(resDC);
     }
 
-    // 7. TEXT - ISPOD BARA sa animiranim tačkama
+    // 7. TEXT - ISPOD BARA sa animiranim tačkama i optimizovanim fontom
     SetBkMode(memDC, TRANSPARENT);
     SetTextColor(memDC, RGB(255, 255, 255));
 
@@ -269,11 +354,27 @@ void RenderLoading(HDC hdc, RECT rect) {
         sprintf(buf, "LOADING%s %d%%", dots, gLoading.progress);
     }
 
+    // Optimizovani font size za obe rezolucije
+    int loadingFontSize;
+    if (rect.bottom <= 720) {
+        loadingFontSize = 16; // Mali ekran
+    } else {
+        loadingFontSize = rect.bottom / 45; // Fullscreen
+        if (loadingFontSize < 16) loadingFontSize = 16;
+        if (loadingFontSize > 28) loadingFontSize = 28;
+    }
+
+    HFONT hLoadingFont = CreateFont(loadingFontSize, 0, 0, 0, FW_NORMAL, 0, 0, 0, 0, 0, 0, 0, 0, "Arial");
+    HFONT oldLoadingFont = (HFONT)SelectObject(memDC, hLoadingFont);
+
     SIZE sz;
     GetTextExtentPoint32(memDC, buf, strlen(buf), &sz);
     int textX = barX + (barW - sz.cx) / 2;
     int textY = barY + barH + 10; // PROMIJENIO - tekst sada ide ispod bara
     TextOut(memDC, textX, textY, buf, strlen(buf));
+
+    SelectObject(memDC, oldLoadingFont);
+    DeleteObject(hLoadingFont);
 
     BitBlt(hdc, 0, 0, rect.right, rect.bottom, memDC, 0, 0, SRCCOPY);
     SelectObject(memDC, oldBM); DeleteObject(memBM); DeleteDC(memDC);
