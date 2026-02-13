@@ -103,15 +103,25 @@ void RenderLoading(HDC hdc, RECT rect) {
 
     int heroX = startX + (int)((targetX - startX) * moveFactor);
 
-    // 3. LOADING BAR
-    HBRUSH frameBrush = CreateSolidBrush(RGB(50, 50, 50));
-    RECT frameRect = { barX - 2, barY - 2, barX + barW + 2, barY + barH + 2 };
-    FillRect(memDC, &frameRect, frameBrush); DeleteObject(frameBrush);
+    // 3. LOADING BAR - SA OKVIROM
+    // Spoljašnji okvir (zlatna boja za arcade look)
+    HBRUSH outerFrameBrush = CreateSolidBrush(RGB(255, 215, 0)); // Zlatna
+    RECT outerRect = { barX - 4, barY - 4, barX + barW + 4, barY + barH + 4 };
+    FillRect(memDC, &outerRect, outerFrameBrush);
+    DeleteObject(outerFrameBrush);
 
+    // Unutrašnji frame (tamna pozadina)
+    HBRUSH innerFrameBrush = CreateSolidBrush(RGB(30, 30, 30));
+    RECT innerRect = { barX, barY, barX + barW, barY + barH };
+    FillRect(memDC, &innerRect, innerFrameBrush);
+    DeleteObject(innerFrameBrush);
+
+    // Fill (crveni progres)
     int fillW = (barW * gLoading.progress) / 100;
     HBRUSH fillBrush = CreateSolidBrush(RGB(220, 40, 40));
     RECT fillRect = { barX, barY, barX + fillW, barY + barH };
-    FillRect(memDC, &fillRect, fillBrush); DeleteObject(fillBrush);
+    FillRect(memDC, &fillRect, fillBrush);
+    DeleteObject(fillBrush);
 
     // 4. BALON
     if (!gLoading.ballPopped) {
@@ -174,7 +184,8 @@ void RenderLoading(HDC hdc, RECT rect) {
         }
     }
 
- if (gRes.character && gRes.characterMask) {
+    // 6. KARAKTER
+    if (gRes.character && gRes.characterMask) {
         HDC resDC = CreateCompatibleDC(hdc);
         HBITMAP oldRes = (HBITMAP)SelectObject(resDC, gRes.characterMask); // Maska prvo
 
@@ -206,13 +217,34 @@ void RenderLoading(HDC hdc, RECT rect) {
 
         SelectObject(resDC, oldRes); DeleteDC(resDC);
     }
-    // 7. TEXT
+
+    // 7. TEXT - ISPOD BARA sa animiranim tačkama
     SetBkMode(memDC, TRANSPARENT);
     SetTextColor(memDC, RGB(255, 255, 255));
-    char buf[30]; sprintf(buf, "LOADING... %d%%", gLoading.progress);
-    SIZE sz; GetTextExtentPoint32(memDC, buf, strlen(buf), &sz);
+
+    char buf[30];
+
+    if (gLoading.progress >= 100) {
+        // Kada je 100%, prikaži COMPLETE
+        sprintf(buf, "COMPLETE!");
+        SetTextColor(memDC, RGB(0, 255, 0)); // Zelena boja za complete
+    } else {
+        // Animirane tačke (. .. ... .) dok se učitava
+        int dotCount = (GetTickCount() / 500) % 4; // Mijenja se svake 500ms
+        char dots[5] = "";
+        for (int i = 0; i < dotCount; i++) {
+            dots[i] = '.';
+        }
+        dots[dotCount] = '\0';
+
+        sprintf(buf, "LOADING%s %d%%", dots, gLoading.progress);
+    }
+
+    SIZE sz;
+    GetTextExtentPoint32(memDC, buf, strlen(buf), &sz);
     int textX = barX + (barW - sz.cx) / 2;
-    TextOut(memDC, textX, barY - 30, buf, strlen(buf));
+    int textY = barY + barH + 10; // PROMIJENIO - tekst sada ide ispod bara
+    TextOut(memDC, textX, textY, buf, strlen(buf));
 
     BitBlt(hdc, 0, 0, rect.right, rect.bottom, memDC, 0, 0, SRCCOPY);
     SelectObject(memDC, oldBM); DeleteObject(memBM); DeleteDC(memDC);
