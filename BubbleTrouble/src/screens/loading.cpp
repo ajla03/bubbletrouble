@@ -101,9 +101,9 @@ void RenderLoading(HDC hdc, RECT rect) {
         barH = 25;
     } else {
         // Fullscreen - proporcionalna visina
-        barH = rect.bottom / 35;
+        barH = rect.bottom / 50;
         if (barH < 25) barH = 25;
-        if (barH > 45) barH = 45;
+        if (barH > 35) barH = 35;
     }
 
     int barX = centerX - (barW / 2);
@@ -235,7 +235,7 @@ void RenderLoading(HDC hdc, RECT rect) {
 
         HFONT hFontPow = CreateFont(fontSize, 0, 0, 0, FW_BOLD, 0, 0, 0, 0, 0, 0, 0, 0, "Comic Sans MS");
         HFONT oldF = (HFONT)SelectObject(memDC, hFontPow);
-        TextOut(memDC, barX + (int)(barW * 1.15f), barY + 50, "POP!", 4);
+        TextOut(memDC, barX + (int)(barW * 1.15f), barY - fontSize, "POP!", 4);
         SelectObject(memDC, oldF); DeleteObject(hFontPow);
     }
 
