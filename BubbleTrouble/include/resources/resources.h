@@ -101,6 +101,9 @@
 #define IDB_LOGIN_BUTTON           196
 #define IDB_LOGIN_BUTTON_HOVER     197
 #define IDB_NEWBIE                 198
+#define IDB_BRONZE                 199
+#define IDB_SILVER                 200
+#define IDB_GOLD                   201
 
 // ============ KONSTANTE ZA HARPUN ============ //
 #define IDR_HARPOON_SOUND   201

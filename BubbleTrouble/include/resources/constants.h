@@ -28,7 +28,7 @@
 #define MAX_LEVELS 6
 #define CURRENT_LEVEL gGame.levels[gGame.currentLevel]
 
-#define BONUS_PER_SECOND 5
+#define BONUS_PER_SECOND 0.5
 
 
 /* POWERUP KONSTANTE */

@@ -121,6 +121,9 @@ bool ResourceManager::LoadAll(HINSTANCE hInstance) {
     loginButtonHover = LoadBitmap(hInstance, MAKEINTRESOURCE(IDB_LOGIN_BUTTON_HOVER));
 
     newbie = LoadBitmap(hInstance, MAKEINTRESOURCE(IDB_NEWBIE));
+    bronze = LoadBitmap(hInstance, MAKEINTRESOURCE(IDB_BRONZE));
+    silver = LoadBitmap(hInstance, MAKEINTRESOURCE(IDB_SILVER));
+    gold = LoadBitmap(hInstance, MAKEINTRESOURCE(IDB_GOLD));
 
     HRSRC hRes = FindResource(hInstance, MAKEINTRESOURCE(IDR_MINI_FONT), RT_RCDATA);
 

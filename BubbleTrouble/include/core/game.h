@@ -144,3 +144,4 @@ bool IsLoadingComplete();
 void RenderLoginScreen(HDC hdcBuffer, RECT rect, HWND hwnd);
 void InitLoginInput();
 void HandleCharInput(HWND hwnd, WPARAM wParam);
+

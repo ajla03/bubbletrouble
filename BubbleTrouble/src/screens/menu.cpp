@@ -4,6 +4,7 @@
 #include <algorithm>
 #include "gameContext.h"
 #include "game.h"
+#include "database.h"
 #include "resourceManager.h"
 
 // Helper macros if std::max/min don't work
@@ -13,6 +14,8 @@
 #ifndef min
 #define min(a,b) (((a) < (b)) ? (a) : (b))
 #endif
+
+static void DrawBadge(HDC, RECT);
 
 void InitializeMenu(HWND hwnd) {
     RECT clientRect;
@@ -202,13 +205,7 @@ void RenderMenu(HDC hdc, RECT rect) {
     }
 
     // NEWBIE, SILVER, BRONZE & GOLD BADGE
-    BITMAP bm;
-    GetObject(gRes.newbie, sizeof(BITMAP), &bm);
-    int x = rect.right - bm.bmWidth - 10;
-    int y = rect.bottom - bm.bmHeight - 10;
-    SelectObject(gRes.hdcMem, gRes.newbie);
-    TransparentBlt(hdc, x, y, bm.bmWidth, bm.bmHeight,
-                   gRes.hdcMem, 0, 0, bm.bmWidth, bm.bmHeight, RGB(255,255,255));
+    DrawBadge(hdc, rect);
 
 
 }
@@ -251,5 +248,54 @@ void HandleMenuMouseMove(HWND hwnd, int x, int y) {
     if (wasHelpHovered != gGame.helpIconHovered) needsRedraw = true;
 
     if (needsRedraw) InvalidateRect(hwnd, NULL, FALSE);
+
+}
+
+
+static void DrawBadge(HDC hdcBuffer, RECT rect){
+
+    int bestScore = GetBestScoreForPlayer(gGame.playerName);
+    HBITMAP currentBmp;
+    int paddingY1, paddingY2;
+    if(bestScore >=0 && bestScore<=1000){
+        currentBmp = gRes.newbie;
+        paddingY1 = 148;
+        paddingY2 = 178;
+    }else if(bestScore > 1000 && bestScore<= 3000){
+        currentBmp = gRes.bronze;
+        paddingY1 = 143;
+        paddingY2 = 173;
+    }else if(bestScore > 3000 && bestScore<= 6000){
+        currentBmp = gRes.silver;
+        paddingY1 = 144;
+        paddingY2 = 174;
+    }else if(bestScore > 6000){
+        currentBmp = gRes.gold;
+        paddingY1 = 143;
+        paddingY2 = 173;
+    }
+
+    BITMAP bm;
+    GetObject(currentBmp, sizeof(BITMAP), &bm);
+    int x = rect.right - bm.bmWidth - 10;
+    int y = rect.bottom - bm.bmHeight - 10;
+    SelectObject(gRes.hdcMem, currentBmp);
+    TransparentBlt(hdcBuffer, x, y, bm.bmWidth, bm.bmHeight,
+                   gRes.hdcMem, 0, 0, bm.bmWidth, bm.bmHeight, RGB(255,255,255));
+
+    char scoreText[32];
+    sprintf(scoreText, "%d", bestScore);
+
+    RECT textRect;
+    textRect.left   = x;
+    textRect.right  = x + bm.bmWidth;
+    textRect.top    = y + paddingY1;
+    textRect.bottom = y + paddingY2;
+
+    SetBkMode(hdcBuffer, TRANSPARENT);
+    HFONT hOldFont = (HFONT) SelectObject(hdcBuffer, gRes.hFont);
+    SetTextColor(hdcBuffer, RGB(255, 255, 255));
+    DrawTextA(hdcBuffer, scoreText, -1, &textRect, DT_CENTER | DT_VCENTER | DT_SINGLELINE);
+    SelectObject(hdcBuffer, hOldFont);
 
 }

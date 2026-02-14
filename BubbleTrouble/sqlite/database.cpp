@@ -134,4 +134,39 @@ bool GetTopScores(HighScore* scores, int count, const char* mode) {
     return true;
 }
 
+static int GetMaxCallback(void *data, int argc, char **argv, char **colName) {
+    int* resultPtr = static_cast<int*>(data);
+
+    if (argc > 0 && argv[0]) {
+        *resultPtr = atoi(argv[0]);
+    } else {
+        *resultPtr = 0;
+    }
+    return 0;
+}
+
+int GetBestScoreForPlayer(const char* playerName){
+    if(!db) return 0;
+
+    int maxScore = 0;
+
+    char* sql = sqlite3_mprintf(
+    "SELECT MAX(score) FROM high_scores WHERE player_name = %Q",
+     playerName);
+
+    char* errMsg = nullptr;
+    int rc = sqlite3_exec(db, sql, GetMaxCallback, &maxScore, &errMsg );
+
+    sqlite3_free(sql);
+
+    if(rc!=SQLITE_OK){
+        MessageBoxA(NULL, errMsg, "GetMaxScore Error", MB_OK | MB_ICONERROR);
+        sqlite3_free(errMsg);
+        return 0;
+    }
+
+    return maxScore;
+}
+
+
 

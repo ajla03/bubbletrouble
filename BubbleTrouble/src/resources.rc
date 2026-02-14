@@ -125,3 +125,6 @@ IDB_LOGIN_BUTTON_HOVER    BITMAP "../assets/bitmaps/loginButtonHover.bmp"
 IDC_GAME_CURSOR   CURSOR   "../assets/cursor/pinkBubble.cur"
 
 IDB_NEWBIE     BITMAP "../assets/bitmaps/newbie.bmp"
+IDB_BRONZE     BITMAP "../assets/bitmaps/bronze.bmp"
+IDB_SILVER     BITMAP "../assets/bitmaps/silver.bmp"
+IDB_GOLD       BITMAP "../assets/bitmaps/gold.bmp"
