@@ -114,7 +114,6 @@ void CheckCollisions(){
         float dy = b->y - closestY;
         float distance = sqrt(dx*dx + dy*dy);
 
-        // PROMJENA: Dodan uvjet p1Alive
         if(p1Alive && distance < b->radius && gGame.hero.heroHitCooldown <= 0){
             if(gGame.settingsState.soundState.soundEffectsOn)
                 PlaySound(MAKEINTRESOURCE(IDR_DAMAGE_SOUND), GetModuleHandle(NULL), SND_RESOURCE | SND_ASYNC);
@@ -190,7 +189,6 @@ void CheckCollisions(){
         Balloon* b = &CURRENT_LEVEL.balloons[i];
 
         // ========== CHECK COLLISION WITH PLAYER 2 ==========
-        // PROMJENA: Provjera života za P2
         if (gGame.player2Stats.lives > 0) {
             float closestX = std::max(float(gGame.hero2.x + 5),
                                      std::min(b->x, (float)(gGame.hero2.x + gGame.hero2.width - 5)));

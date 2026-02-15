@@ -46,9 +46,7 @@ struct ResourceManager{
     HBITMAP timePowerup, timePowerupMask;
     HBITMAP freezePowerup, freezePowerupMask;
     HBITMAP hero2, hero2Mask;
-    HICON hIcon;
-    HBITMAP help;
-    HBITMAP helpHover;
+    HBITMAP help, helpHover;
     HBITMAP podium, podiumHover;
     HBITMAP singleScoreHolder, multiScoreHolder;
     HBITMAP singleplayerBanner, multiplayerBanner;
@@ -57,12 +55,11 @@ struct ResourceManager{
 
     HFONT hFont, hFontTitle, hFontTable;
     HANDLE hFontRes;
-
+    HICON hIcon;
     void Init(HDC hdc, HWND hwnd);
     void UpdateDC(HDC hdc, HWND hwnd);
     bool LoadAll(HINSTANCE hInstance);
     void ReleaseAll();
-
 };
 
 extern ResourceManager gRes;

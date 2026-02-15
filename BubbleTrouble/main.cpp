@@ -62,51 +62,31 @@ int WINAPI WinMain(HINSTANCE hThisInstance, HINSTANCE hPrevInstance, LPSTR lpszA
     SendMessage(hwnd, WM_SETICON, ICON_BIG,   (LPARAM)gRes.hIcon);
     SendMessage(hwnd, WM_SETICON, ICON_SMALL, (LPARAM)gRes.hIcon);
 
-    // ============================================================
-    // 1. POSTAVI MOD NA LOADING (PRIJE PRIKAZA PROZORA)
-    // ============================================================
     gGame.gameState.currentMode = GAME_MODE_LOADING;
 
-    // ============================================================
-    // 2. PRIKAŽI PROZOR (WM_CREATE će inicijalizovati gRes.hdcBuffer)
-    // ============================================================
     ShowWindow(hwnd, nCmdShow);
     UpdateWindow(hwnd);
     LoadBitmaps(hwnd, hThisInstance);
 
-    // ============================================================
-    // 3. SADA INICIJALIZUJ LOADING (prozor je vidljiv i validan)
-    // ============================================================
     InitializeLoading(hwnd);
 
-    // ============================================================
-    // 4. LOADING ANIMACIJA (PETLJA)
-    // ============================================================
-    // Vrtimo petlju dok traje loading animacija
+
     while (gGame.gameState.currentMode == GAME_MODE_LOADING) {
         DWORD start = GetTickCount();
 
-        // Obrađuj Windows poruke
         if (PeekMessage(&messages, NULL, 0, 0, PM_REMOVE)){
             if (messages.message == WM_QUIT) return messages.wParam;
             TranslateMessage(&messages);
             DispatchMessage(&messages);
         }
 
-        // Iscrtaj loading ekran i ažuriraj progress bar
         RefreshScreen(hwnd);
 
-        // Ograniči FPS za loading ekran
         DWORD elapsed = GetTickCount() - start;
         if (elapsed < 16) Sleep(16 - elapsed);
     }
 
-    // ============================================================
-    // 5. STVARNO UČITAVANJE RESURSA
-    // ============================================================
-    // Animacija je gotova, sada učitaj teške bitmape
 
-    /* Init default settings */
     InitDefaultSettings();
 
     // Inicijalizacija zvuka
@@ -115,9 +95,7 @@ int WINAPI WinMain(HINSTANCE hThisInstance, HINSTANCE hPrevInstance, LPSTR lpszA
     mciSendString("play bgMusic notify", NULL, 0, hwnd);
     mciSendString("setaudio bgMusic volume to 200", NULL, 0, NULL);
 
-    // ============================================================
-    // 6. GLAVNA PETLJA IGRE
-    // ============================================================
+
     float targetFPS = 60.0f;
     DWORD frameTimeMs = (DWORD) (1000.0f / targetFPS);
 
@@ -131,7 +109,6 @@ int WINAPI WinMain(HINSTANCE hThisInstance, HINSTANCE hPrevInstance, LPSTR lpszA
         CheckInputs(hwnd);
         Update(hwnd);
         RefreshScreen(hwnd);
-        RefreshSound();
 
         DWORD elapsed = GetTickCount() - start;
         if (elapsed < frameTimeMs)
@@ -154,7 +131,6 @@ LRESULT CALLBACK WindowProcedure(HWND hwnd, UINT message, WPARAM wParam, LPARAM 
 
         case WM_CREATE:
         {
-
 
             // Kreiraj fontove
             gRes.hFont = CreateFont(
@@ -202,15 +178,6 @@ LRESULT CALLBACK WindowProcedure(HWND hwnd, UINT message, WPARAM wParam, LPARAM 
 
             return 0;
         }
-       case WM_CTLCOLOREDIT:
-        {
-            HDC hdcEdit = (HDC)wParam;
-            SetTextColor(hdcEdit, RGB(255, 255, 255));
-            SetBkMode(hdcEdit, TRANSPARENT);
-            return (LRESULT)GetStockObject(NULL_BRUSH);
-        }
-        case WM_ERASEBKGND:
-            return 1;
         case WM_SIZE: {
 
              SelectObject(gRes.hdcMem, gRes.loginPopup);

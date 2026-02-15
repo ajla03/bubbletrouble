@@ -104,64 +104,62 @@ static void UpdatePlayer1Input(HWND hwnd){
     gGame.inputState.wasSpacePressed = isSpacePressed;
 
 }
-
 void HandleMouseClick(HWND hwnd, int mx, int my)
 {
-    if(gGame.transitionState.transitionVars != TRANSITION_NONE)
+    if (gGame.transitionState.transitionVars != TRANSITION_NONE)
         return;
 
     const auto& mode = gGame.gameState.currentMode;
 
-    if(mode == GAME_MODE_LOGIN){
-        if(IsPointInButton(gGame.loginButtonInfo, mx, my)){
-            SaveLoginInfo(hwnd);
-            return;
-        }
-    }
-
-    if(mode == GAME_MODE_DASHBOARD){
-        if(IsPointInButton(gGame.backButtonInfo, mx, my)){
-        gGame.transitionState.pendingHome = true;
-        StartWallTransition(hwnd);
-        return;
-        }
-    }
-
-    if (mode == GAME_OVER || gGame.gameState.isLevelCleared)
-    {
+    if (gGame.gameState.isLevelCleared) {
         HandleEndScreenClick(hwnd, mx, my);
         return;
     }
 
-    if (mode == GAME_MODE_MENU)
+    switch (mode)
     {
-        HandleMenuClick(hwnd, mx, my);
-        return;
-    }
+        case GAME_MODE_LOGIN:
+            if (IsPointInButton(gGame.loginButtonInfo, mx, my)) {
+                SaveLoginInfo(hwnd);
+            }
+            break;
 
-    if (mode == GAME_MODE_PLAYING)
-    {
-        HandlePlayingClick(hwnd, mx, my);
-        return;
-    }
+        case GAME_MODE_DASHBOARD:
+            if (IsPointInButton(gGame.backButtonInfo, mx, my)) {
+                gGame.transitionState.pendingHome = true;
+                StartWallTransition(hwnd);
+            }
+            break;
 
-    if (mode == GAME_MODE_PAUSE)
-    {
-        HandlePauseClick(hwnd, mx, my);
-        return;
-    }
+        case GAME_OVER:
+            HandleEndScreenClick(hwnd, mx, my);
+            break;
 
-    if(mode == GAME_MODE_SETTINGS){
-        if(gGame.settingsState.waitingForKey != KEYBIND_NONE)
-            return;
-        HandleSettingsClick(hwnd, mx, my);
-        return;
-    }
-    if (mode == GAME_MODE_HELP) {
-        HandleHelpClick(hwnd, mx, my);
-        return;
-    }
+        case GAME_MODE_MENU:
+            HandleMenuClick(hwnd, mx, my);
+            break;
 
+        case GAME_MODE_PLAYING:
+            HandlePlayingClick(hwnd, mx, my);
+            break;
+
+        case GAME_MODE_PAUSE:
+            HandlePauseClick(hwnd, mx, my);
+            break;
+
+        case GAME_MODE_SETTINGS:
+            if (gGame.settingsState.waitingForKey == KEYBIND_NONE) {
+                HandleSettingsClick(hwnd, mx, my);
+            }
+            break;
+
+        case GAME_MODE_HELP:
+            HandleHelpClick(hwnd, mx, my);
+            break;
+
+        default:
+            break;
+    }
 }
 
 void HandleSettingsClick(HWND hwnd, int mx, int my){

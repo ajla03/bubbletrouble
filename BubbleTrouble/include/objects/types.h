@@ -27,7 +27,6 @@ struct StaticObject{
 };
 
 
-
 struct Door : public StaticObject{
  int originalWidth, originalHeight;
  bool active = true;
@@ -36,7 +35,6 @@ struct Door : public StaticObject{
 struct Pillar : public StaticObject{
  int originalWidth, originalHeight;
 };
-
 
 
 struct Balloon {
@@ -161,7 +159,7 @@ struct PowerUp {
    DWORD spawnTime;
 };
 
-/*  SETTINGS */
+/* ======  SETTINGS ====== */
 
 enum KeyBindingMode{
     KEYBIND_NONE = 0,
@@ -204,10 +202,6 @@ struct SettingsState{
  // ANIMATION
  DotAnimation dotAnimation;
 };
-
-// DATABASE
-void SaveFinalScore();
-void ResetScoreFlag();
 
 
 // Login Screen

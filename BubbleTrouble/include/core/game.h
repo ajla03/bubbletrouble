@@ -6,7 +6,6 @@
 // ================= SYSTEM =================
 void LoadCustomFont();
 void LoadBitmaps(HWND hwnd, HINSTANCE hInstance);
-void RefreshSound();
 
 // ================= UI HELPERS (in gameUI.cpp) =================
 void DrawButton(HDC hdc, HBITMAP bmp, HBITMAP mask, Button& info);
@@ -144,4 +143,10 @@ bool IsLoadingComplete();
 void RenderLoginScreen(HDC hdcBuffer, RECT rect, HWND hwnd);
 void InitLoginInput();
 void HandleCharInput(HWND hwnd, WPARAM wParam);
+
+// ======== DATABASE ========
+void SaveFinalScore();
+void ResetScoreFlag();
+int GetBestScoreForPlayer(const char* playerName);
+
 

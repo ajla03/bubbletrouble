@@ -9,7 +9,7 @@ static sqlite3* db = nullptr;
 
 static int GetScoresCallback(void *data, int argc, char **argv, char **colName);
 
-// Poziva se za svaki red rezultata SQL upita
+// Poziva se za svaki red rezultata upita
 static int GetScoresCallback(void *data, int argc, char **argv, char **colName) {
     HighScore** scorePtr = static_cast<HighScore**>(data);
 

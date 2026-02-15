@@ -42,7 +42,7 @@ struct GameContext{
      StaticObject leftWall, rightWall, floorWall, animatedWall;
      StaticObject levelPlaceholderInfo;
      StaticObject playerHolderInfo, scoreHolderInfo;
-     StaticObject player2HolderInfo, score2HolderInfo;  // NEW: Player 2 UI elements
+     StaticObject player2HolderInfo, score2HolderInfo;
      StaticObject heartInfo, heartBgInfo, heartBorderInfo;
 
      HeartAnim hearts[5];  // Old - keep for compatibility
