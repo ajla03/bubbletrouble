@@ -81,7 +81,7 @@ void UpdatePowerups(HWND hwnd) {
 
     int FLOOR_Y = rect.bottom - gGame.floorWall.height;
 
-    for(int i = 0; i < MAX_POWERUPS; i++) {
+   for(int i = 0; i < MAX_POWERUPS; i++) {
         if(!CURRENT_LEVEL.powerups[i].active) continue;
 
         PowerUp* p = &CURRENT_LEVEL.powerups[i];
@@ -89,18 +89,49 @@ void UpdatePowerups(HWND hwnd) {
         // Padanje
         p->y += p->speedY;
 
-        // Ukloni ako padne na pod
-        if(p->y + p->height >= FLOOR_Y) {
-            p->active = false;
-            CURRENT_LEVEL.activePowerupCount--;
-            continue;
-        }
-
-        // Koordinate powerupa
+        // Koordinate powerupa (pomaknuto iznad provjere za pod)
         float powerupLeft = p->x;
         float powerupRight = p->x + p->width;
         float powerupTop = p->y;
         float powerupBottom = p->y + p->height;
+
+        // === PROVJERA SUDARA SA PREPREKAMA ===
+        bool hitObstacle = false;
+
+        // 1. Dugački zid
+        if (CURRENT_LEVEL.longWall.width > 0 &&
+            powerupBottom > CURRENT_LEVEL.longWall.y && powerupTop < CURRENT_LEVEL.longWall.y + CURRENT_LEVEL.longWall.height &&
+            powerupRight > CURRENT_LEVEL.longWall.x && powerupLeft < CURRENT_LEVEL.longWall.x + CURRENT_LEVEL.longWall.width) {
+            hitObstacle = true;
+        }
+
+        // 2. Vrata
+        if (CURRENT_LEVEL.door.active && CURRENT_LEVEL.door.width > 0 &&
+            powerupBottom > CURRENT_LEVEL.door.y && powerupTop < CURRENT_LEVEL.door.y + CURRENT_LEVEL.door.height &&
+            powerupRight > CURRENT_LEVEL.door.x && powerupLeft < CURRENT_LEVEL.door.x + CURRENT_LEVEL.door.width) {
+            hitObstacle = true;
+        }
+
+        // 3. Stub 1 (Level 4)
+        if (CURRENT_LEVEL.pillar1.width > 0 &&
+            powerupBottom > CURRENT_LEVEL.pillar1.y && powerupTop < CURRENT_LEVEL.pillar1.y + CURRENT_LEVEL.pillar1.height &&
+            powerupRight > CURRENT_LEVEL.pillar1.x && powerupLeft < CURRENT_LEVEL.pillar1.x + CURRENT_LEVEL.pillar1.width) {
+            hitObstacle = true;
+        }
+
+        // 4. Stub 2 (Level 4)
+        if (CURRENT_LEVEL.pillar2.width > 0 &&
+            powerupBottom > CURRENT_LEVEL.pillar2.y && powerupTop < CURRENT_LEVEL.pillar2.y + CURRENT_LEVEL.pillar2.height &&
+            powerupRight > CURRENT_LEVEL.pillar2.x && powerupLeft < CURRENT_LEVEL.pillar2.x + CURRENT_LEVEL.pillar2.width) {
+            hitObstacle = true;
+        }
+
+        // Ukloni ako padne na pod ILI na neku od prepreka
+        if(powerupBottom >= FLOOR_Y || hitObstacle) {
+            p->active = false;
+            CURRENT_LEVEL.activePowerupCount--;
+            continue;
+        }
 
         // === PROVJERA SUDARA SA PLAYER 1 ===
         float heroLeft = gGame.hero.x;
