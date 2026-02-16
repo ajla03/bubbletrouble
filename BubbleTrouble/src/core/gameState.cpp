@@ -23,6 +23,8 @@ void ResetGame(HWND hwnd) {
     gGame.totalScore = 0;
     gGame.displayScore = 0;
     gGame.pauseButtonInfo.isHover = false;
+    gGame.gameState.balloonsAreFrozen = false;
+    gGame.gameState.freezeTimeLeft = 0;
 
 
     // Reset Player 1
@@ -105,6 +107,9 @@ void ResetBetweenLevels(HWND hwnd) {
 
     CURRENT_LEVEL.activeBalloonCount = 0;
     CURRENT_LEVEL.staticRedraw = true;
+
+    gGame.gameState.balloonsAreFrozen = false;
+    gGame.gameState.freezeTimeLeft = 0;
 
     // Reset hero
     RECT clientRect;

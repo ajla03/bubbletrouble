@@ -198,13 +198,15 @@ void FreezeBalloons() {
 
         Balloon* b = &CURRENT_LEVEL.balloons[i];
 
-        b->frozenSpeedX = b->speedX;
-        b->frozenSpeedY = b->speedY;
+        if(!b->isFrozen) {
+            b->frozenSpeedX = b->speedX;
+            b->frozenSpeedY = b->speedY;
 
-        b->speedX = 0.0f;
-        b->speedY = 0.0f;
+            b->speedX = 0.0f;
+            b->speedY = 0.0f;
 
-        b->isFrozen = true;
+            b->isFrozen = true;
+        }
     }
 }
 
