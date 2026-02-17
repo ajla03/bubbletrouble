@@ -161,13 +161,14 @@ void UpdatePlayer2Input(HWND hwnd) {
                 gGame.hero2.floorY = lowerFloorY;
             }
 
-            if (GetAsyncKeyState(VK_UP) & 0x8000) {
+            if (GetAsyncKeyState(0x57) & 0x8000) {
                 gGame.hero2.floorY -= 5;
                 if (gGame.hero2.floorY < upperFloorY) {
                     gGame.hero2.floorY = upperFloorY;
                 }
             }
-            if (GetAsyncKeyState(VK_DOWN) & 0x8000) {
+
+            if (GetAsyncKeyState(0x53) & 0x8000) {
                 gGame.hero2.floorY += 5;
                 if (gGame.hero2.floorY > lowerFloorY) {
                     gGame.hero2.floorY = lowerFloorY;
