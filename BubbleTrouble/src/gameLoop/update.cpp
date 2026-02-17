@@ -460,28 +460,20 @@ static void UpdateLevelLogic(HWND hwnd){
     }
 
     // === LEVEL 8: OBA STUBA NESTAJU ISTOVREMENO ===
-    // Pillars disappear only when BOTH outer sections (left AND right) are fully cleared.
+    // Oba stuba nestaju cim se sredisnji (zuti) balon u potpunosti unisti.
+    // Tj. kada nema vise aktivnih balona zute boje (RGB(255,210,0)).
     if (gGame.currentLevel == 7) {
         if (CURRENT_LEVEL.pillar1.width > 0 || CURRENT_LEVEL.pillar2.width > 0) {
-            RECT rect8;
-            GetClientRect(hwnd, &rect8);
+            bool centerBalloonAlive = false;
+            for (int i = 0; i < MAX_BALLOONS; i++) {
+                if (CURRENT_LEVEL.balloons[i].active &&
+                    CURRENT_LEVEL.balloons[i].color == RGB(255, 210, 0)) {
+                    centerBalloonAlive = true;
+                    break;
+                }
+            }
 
-            int bgW8       = rect8.right - gGame.leftWall.width - gGame.rightWall.width;
-            int secW8      = bgW8 / 3;
-
-            // Section 1 bounds (left outer section)
-            float sec1Left  = (float)gGame.leftWall.width;
-            float sec1Right = (float)(gGame.leftWall.width + secW8);
-
-            // Section 3 bounds (right outer section)
-            float sec3Left  = (float)(gGame.leftWall.width + 2 * secW8);
-            float sec3Right = (float)(rect8.right - gGame.rightWall.width);
-
-            bool leftCleared  = AreSectionBalloonsDestroyed(sec1Left, sec1Right);
-            bool rightCleared = AreSectionBalloonsDestroyed(sec3Left, sec3Right);
-
-            // Both must be cleared before pillars fall — simultaneous disappear
-            if (leftCleared && rightCleared) {
+            if (!centerBalloonAlive) {
                 CURRENT_LEVEL.pillar1.width  = 0;
                 CURRENT_LEVEL.pillar1.height = 0;
                 CURRENT_LEVEL.pillar2.width  = 0;

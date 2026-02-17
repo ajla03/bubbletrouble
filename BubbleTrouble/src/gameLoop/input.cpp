@@ -214,7 +214,7 @@ case GAME_MODE_LEVEL_SELECT:
             int totalW2 = 3 * btnW + 2 * gapX;
             int startY = sheet.top + 130;
 
-            for (int i = 0; i < 7; i++) {
+            for (int i = 0; i < 8; i++) {
                 int row = i / cols;
                 int col = i % cols;
                 int startX = sheet.left + ((sheet.right - sheet.left) - (row == 0 ? totalW1 : totalW2)) / 2;

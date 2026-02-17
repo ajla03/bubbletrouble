@@ -3,8 +3,25 @@
 #include "gameContext.h"
 #include <stdio.h>
 
+// Stubovi su aktivni na pocetku levela; nestaju cim se prvi balon unisti
+static bool s_pillarsActive = true;
+
+// Poziva se iz Update() svaki frame dok je level 8 aktivan
+void UpdateLevel8Pillars() {
+    if (!s_pillarsActive) return;
+
+    // Level pocinje sa 3 balona (levelScore = 0). Cim score poraste,
+    // znaci da je barem jedan balon unisten — ukloni oba stuba odmah.
+    if (CURRENT_LEVEL.levelScore > 0) {
+        s_pillarsActive = false;
+        CURRENT_LEVEL.pillar1.width  = 0;
+        CURRENT_LEVEL.pillar1.height = 0;
+        CURRENT_LEVEL.pillar2.width  = 0;
+        CURRENT_LEVEL.pillar2.height = 0;
+    }
+}
+
 void RenderLevel8(HDC hdcBuffer, RECT rect){
-    // === BACKGROUND ===
     SelectObject(gRes.hdcMem, gRes.hBgLevel2);
 
     int bgX = gGame.leftWall.width;
@@ -22,8 +39,7 @@ void RenderLevel8(HDC hdcBuffer, RECT rect){
         SRCCOPY
     );
 
-    // === FIRST PILLAR (LEFT) ===
-    // Both pillars disappear simultaneously (controlled via UpdateLevelLogic)
+
     if(CURRENT_LEVEL.pillar1.width > 0){
         SelectObject(gRes.hdcMem, gRes.longWall);
         SetStretchBltMode(hdcBuffer, HALFTONE);
@@ -101,47 +117,54 @@ void InitLevel8(HWND hwnd){
 
     RecalculateLevel8Layout(hwnd);
 
+    // Reset flag i score za stub-mehaniku
+    s_pillarsActive = true;
+    CURRENT_LEVEL.levelScore = 0;
+
     // === CLEAR ALL BALLOONS ===
     for(int i = 0; i < MAX_BALLOONS; i++)
         CURRENT_LEVEL.balloons[i].active = false;
 
     // === CREATE 3 BALLOONS - ONE PER SECTION ===
-    // Layout: [  Section1  |P1|  Section2  |P2|  Section3  ]
-    //
-    // From the reference image:
-    //   Section 1 (Left)   - Large RED balloon,    radius 80
-    //   Section 2 (Middle) - Medium YELLOW balloon, radius 55
-    //   Section 3 (Right)  - Medium ORANGE balloon, radius 65
-    //
-    // MECHANIC: Both pillars disappear SIMULTANEOUSLY when
-    //           ALL balloons in Section1 AND Section3 are destroyed.
+    // Layout: [  Section1(25%)  |P1|  Section2(50%)  |P2|  Section3(25%)  ]
+    // Pillars are at 25% and 75% so the middle section is wider.
 
     int bgW = rect.right - gGame.leftWall.width - gGame.rightWall.width;
-    int sectionWidth = bgW / 3;
+
+    // Pillar positions at 25% and 75% of bgW
+    int pillar1CenterX = gGame.leftWall.width + bgW / 4;
+    int pillar2CenterX = gGame.leftWall.width + 3 * bgW / 4;
 
     // Section 1 (Left) - Large red balloon
-    float section1CenterX = gGame.leftWall.width + sectionWidth / 2.0f;
+    float section1CenterX = gGame.leftWall.width + (float)(bgW / 4) / 2.0f;
     InitBalloon(0, section1CenterX, 120.0f, 80.0f, -3.0f, RGB(220, 30, 30));   // Red
 
     // Section 2 (Middle) - Medium yellow balloon
-    float section2CenterX = gGame.leftWall.width + sectionWidth + sectionWidth / 2.0f;
+    float section2CenterX = (float)(pillar1CenterX + pillar2CenterX) / 2.0f;
     InitBalloon(1, section2CenterX, 150.0f, 55.0f,  2.5f, RGB(255, 210, 0));   // Yellow
 
     // Section 3 (Right) - Medium-large orange balloon
-    float section3CenterX = gGame.leftWall.width + 2 * sectionWidth + sectionWidth / 2.0f;
+    float section3CenterX = pillar2CenterX + (float)(bgW / 4) / 2.0f;
     InitBalloon(2, section3CenterX, 130.0f, 65.0f, -2.8f, RGB(255, 130, 0));   // Orange
+
+    // === SPAWN BOTH PLAYERS IN THE CENTER SECTION ===
+    // Player 1 - slightly left of center
+    int centerX = rect.right / 2;
+    gGame.hero.x = centerX - gGame.hero.width - 20;
+    gGame.hero.y = rect.bottom - gGame.floorWall.height - gGame.hero.height;
+    gGame.hero.floorY = 0;
+    gGame.hero.isOnLadder = false;
+
+    // Player 2 - slightly right of center (only matters in multiplayer, no harm in singleplayer)
+    if(gGame.gameState.isMultiplayer) {
+        gGame.hero2.x = centerX + 20;
+        gGame.hero2.y = rect.bottom - gGame.floorWall.height - gGame.hero2.height;
+        gGame.hero2.floorY = 0;
+        gGame.hero2.isOnLadder = false;
+    }
 
     InitPowerupSystemForLevel();
 
-    // === MULTIPLAYER POSITIONING ===
-    if (gGame.gameState.isMultiplayer) {
-        gGame.hero.x  = gGame.leftWall.width + 50;
-        gGame.hero2.x = gGame.leftWall.width + 130;
-
-        RECT r;
-        GetClientRect(hwnd, &r);
-        gGame.hero2.y = r.bottom - gGame.floorWall.height - gGame.hero2.height;
-    }
 }
 
 void RecalculateLevel8Layout(HWND hwnd)
@@ -151,15 +174,15 @@ void RecalculateLevel8Layout(HWND hwnd)
 
     int bgW = rect.right - gGame.leftWall.width - gGame.rightWall.width;
     int bgH = rect.bottom - gGame.floorWall.height;
-    int sectionWidth = bgW / 3;
 
-    // === PILLAR 1 (divides section 1 and 2) ===
-    CURRENT_LEVEL.pillar1.x      = gGame.leftWall.width + sectionWidth - CURRENT_LEVEL.pillar1.width / 2;
+    // Pillars at 25% and 75% — gives a wide middle section and narrow outer sections
+    // === PILLAR 1 (divides section 1 and 2, at 25% of bgW) ===
+    CURRENT_LEVEL.pillar1.x      = gGame.leftWall.width + bgW / 4 - CURRENT_LEVEL.pillar1.width / 2;
     CURRENT_LEVEL.pillar1.y      = 0;
     CURRENT_LEVEL.pillar1.height = bgH;
 
-    // === PILLAR 2 (divides section 2 and 3) ===
-    CURRENT_LEVEL.pillar2.x      = gGame.leftWall.width + 2 * sectionWidth - CURRENT_LEVEL.pillar2.width / 2;
+    // === PILLAR 2 (divides section 2 and 3, at 75% of bgW) ===
+    CURRENT_LEVEL.pillar2.x      = gGame.leftWall.width + 3 * bgW / 4 - CURRENT_LEVEL.pillar2.width / 2;
     CURRENT_LEVEL.pillar2.y      = 0;
     CURRENT_LEVEL.pillar2.height = bgH;
 }

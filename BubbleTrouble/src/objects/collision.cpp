@@ -190,7 +190,7 @@ void CheckCollisions(){
                             // SPAŠAVANJE OTKLJUČANIH NIVOA (PROGRESS)
                             if (gGame.currentLevel + 1 > gGame.unlockedLevelMulti) {
                                 gGame.unlockedLevelMulti = gGame.currentLevel + 1;
-                                if (gGame.unlockedLevelMulti > 6) gGame.unlockedLevelMulti = 6;
+                                if (gGame.unlockedLevelMulti > 7) gGame.unlockedLevelMulti = 7;
                                 SavePlayerProgress(gGame.playerName, "2 PLAYERS", gGame.unlockedLevelMulti);
                             }
                         } else {
@@ -199,7 +199,7 @@ void CheckCollisions(){
                             // SPAŠAVANJE OTKLJUČANIH NIVOA (PROGRESS)
                             if (gGame.currentLevel + 1 > gGame.unlockedLevelSingle) {
                                 gGame.unlockedLevelSingle = gGame.currentLevel + 1;
-                                if (gGame.unlockedLevelSingle > 6) gGame.unlockedLevelSingle = 6;
+                                if (gGame.unlockedLevelSingle > 7) gGame.unlockedLevelSingle = 7;
                                 SavePlayerProgress(gGame.playerName, "1 PLAYER", gGame.unlockedLevelSingle);
                             }
                         }
@@ -291,7 +291,7 @@ void CheckCollisions(){
                         // SPAŠAVANJE PROGRESSA
                         if (gGame.currentLevel + 1 > gGame.unlockedLevelMulti) {
                             gGame.unlockedLevelMulti = gGame.currentLevel + 1;
-                            if (gGame.unlockedLevelMulti > 6) gGame.unlockedLevelMulti = 6;
+                            if (gGame.unlockedLevelMulti > 7) gGame.unlockedLevelMulti = 7;
                             SavePlayerProgress(gGame.playerName, "2 PLAYERS", gGame.unlockedLevelMulti);
                         }
                     }
