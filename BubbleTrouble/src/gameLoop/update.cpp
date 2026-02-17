@@ -312,13 +312,12 @@ void UpdateLayout(int oldW, int oldH, int newW, int newH)
         if (gGame.hero.floorY == 0) {
             gGame.hero.y = newH - gGame.floorWall.height - gGame.hero.height;
         } else if (CURRENT_LEVEL.door.active) {
-            // Ako je na gornjem spratu, zadrži ga na novoj visini platforme
+
             int newPlatformY = (int)(newBgH * 0.42f);
             gGame.hero.floorY = newPlatformY - gGame.hero.height;
             gGame.hero.y = gGame.hero.floorY;
         }
-        // opcionalno: update grounded Y
-       // gGame.hero.y = newH - gGame.floorWall.height - gGame.hero.height;
+
     }
 
     // UPDATE HARPOON
