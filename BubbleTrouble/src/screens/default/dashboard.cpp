@@ -182,6 +182,23 @@ static void RenderBackButton(HDC hdcBuffer, RECT sheet) {
     TransparentBlt(hdcBuffer, x, y, btnWidth, btnHeight / 2,
                    gRes.hdcMem, 0, 0, bm.bmWidth, bm.bmHeight, RGB(255, 255, 255));
 
+    if (gGame.backButtonInfo.isHover) {
+        HPEN glowPen = CreatePen(PS_SOLID, 4, RGB(255, 140, 0));
+        HGDIOBJ oldPen = SelectObject(hdcBuffer, glowPen);
+        HGDIOBJ oldBrush = SelectObject(hdcBuffer, GetStockObject(HOLLOW_BRUSH));
+        int visualHeight = gGame.backButtonInfo.height / 2;
+        RoundRect(hdcBuffer,
+                  x,
+                  y - 2,
+                  x + btnWidth + 2,
+                  y + visualHeight + 2,
+                  20, 20);
+
+        SelectObject(hdcBuffer, oldPen);
+        SelectObject(hdcBuffer, oldBrush);
+        DeleteObject(glowPen);
+    }
+
     RECT textRect = { x, y, x + btnWidth, y + btnHeight / 2 };
     SetBkMode(hdcBuffer, TRANSPARENT);
     SetTextColor(hdcBuffer, RGB(255, 255, 255));
