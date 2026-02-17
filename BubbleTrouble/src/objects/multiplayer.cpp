@@ -100,8 +100,18 @@ void UpdatePlayer2Input(HWND hwnd) {
         gGame.hero2.x = desnaGranica;
     }
 
+    bool heroNearLadderP2 = false;
+    if (CURRENT_LEVEL.ladder.width > 0) {
+        StaticObject& ladder = CURRENT_LEVEL.ladder;
+        heroNearLadderP2 =
+            (gGame.hero2.x + gGame.hero2.width + 80 > ladder.x) &&
+            (gGame.hero2.x < ladder.x + ladder.width + 80);
+    }
+
     // Door collision
-    CheckHeroDoorCollisionP2();
+    if (!heroNearLadderP2) {
+        CheckHeroDoorCollisionP2();
+    }
 
     // Pillar collision
     CheckHeroPillarCollision2(&CURRENT_LEVEL.pillar1);
@@ -129,7 +139,7 @@ void UpdatePlayer2Input(HWND hwnd) {
         gGame.harpoon2.isActive = true;
         gGame.harpoon2.length = 0;
         gGame.harpoon2.x = gGame.hero2.x + (gGame.hero2.width / 2) - (gGame.harpoon2.width / 2);
-        gGame.harpoon2.y = rect.bottom - gGame.floorWall.height;
+        gGame.harpoon2.y = (gGame.hero2.floorY == 0) ? (rect.bottom - gGame.floorWall.height) : (gGame.hero2.floorY + gGame.hero2.height);
         gGame.harpoon2.ownerPlayer = 2;
 
         if(gGame.gameState.currentMode == GAME_MODE_PLAYING &&
@@ -167,7 +177,13 @@ void RenderHero(
         drawH = (int)(hero->height * scale);
     }
 
-    hero->y = rect.bottom - gGame.floorWall.height - drawH;
+// Ako floorY nije specifično definisan (za ostale levele), spusti heroja na glavno dno
+    if (hero->floorY == 0) {
+        hero->y = rect.bottom - gGame.floorWall.height - drawH;
+    } else {
+        // Za Level 7: Zadrži heroja na definisanom spratu i prilagodi visinu zbog skaliranja slike
+        hero->y = hero->floorY - (drawH - hero->height);
+    }
 
     // === MASK ===
     SelectObject(gRes.hdcMem, heroMask);
@@ -225,9 +241,11 @@ void UpdateHarpoon2(HWND hwnd) {
     GetClientRect(hwnd, &rect);
 
     gGame.harpoon2.length += gGame.harpoon2.dy;
-    gGame.harpoon2.y = rect.bottom - gGame.floorWall.height;
 
-    if (gGame.harpoon2.length >= rect.bottom) {
+    int baseY = (gGame.hero2.floorY == 0) ? (rect.bottom - gGame.floorWall.height) : (gGame.hero2.floorY + gGame.hero2.height);
+    gGame.harpoon2.y = baseY;
+
+    if (gGame.harpoon2.length >= baseY) {
         gGame.harpoon2.isActive = false;
     }
 }

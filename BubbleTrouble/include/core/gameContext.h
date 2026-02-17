@@ -22,6 +22,8 @@ struct Level{
      int activePowerupCount;
      DWORD lastPowerupSpawn;
      DWORD nextPowerupSpawnTime;
+     StaticObject ladder;        // merdevine (Level 7)
+     int ladderOrigW, ladderOrigH;
 };
 
 

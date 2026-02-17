@@ -125,6 +125,7 @@ bool ResourceManager::LoadAll(HINSTANCE hInstance) {
     silver = LoadBitmap(hInstance, MAKEINTRESOURCE(IDB_SILVER));
     gold = LoadBitmap(hInstance, MAKEINTRESOURCE(IDB_GOLD));
 
+    ladder = LoadBitmap(hInstance, MAKEINTRESOURCE(IDB_LADDER));
     HRSRC hRes = FindResource(hInstance, MAKEINTRESOURCE(IDR_MINI_FONT), RT_RCDATA);
 
     DWORD size = SizeofResource(hInstance, hRes);

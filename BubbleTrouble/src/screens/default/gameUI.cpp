@@ -277,7 +277,7 @@ void RenderDynamicGameUI(HDC hdc, RECT rect)
     // === HARPOON ===
     if (gGame.harpoon.isActive) {
         int visible = std::min(gGame.harpoon.length, gGame.harpoon.height);
-        int y = rect.bottom - gGame.floorWall.height - visible;
+        int y = gGame.harpoon.y - visible;
 
         SelectObject(gRes.hdcMem, gRes.arrowMask);
         StretchBlt(hdc, gGame.harpoon.x, y,
@@ -308,7 +308,7 @@ void RenderDynamicGameUI(HDC hdc, RECT rect)
         // Render harpoon2
         if(gGame.harpoon2.isActive) {
             int visible = std::min(gGame.harpoon2.length, gGame.harpoon2.height);
-            int y = rect.bottom - gGame.floorWall.height - visible;
+            int y = gGame.harpoon2.y - visible;
 
             SelectObject(gRes.hdcMem, gRes.arrowMask);
             StretchBlt(hdc, gGame.harpoon2.x, y,

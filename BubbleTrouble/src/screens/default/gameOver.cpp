@@ -38,7 +38,7 @@ void DrawGameOverScreen(HDC hdc, RECT rect)
     SetTextColor(hdc, RGB(255, 255, 255));
 
     const char* text;
-    if(gGame.currentLevel == 5 && gGame.gameState.isLevelCleared)
+    if(gGame.currentLevel == 6 && gGame.gameState.isLevelCleared)
     text = "GAME PASSED! :)";
     else
         text = "GAME OVER";
@@ -86,5 +86,3 @@ void SaveFinalScore() {
         OutputDebugStringA("Failed to save score to database!\n");
     }
 }
-
-

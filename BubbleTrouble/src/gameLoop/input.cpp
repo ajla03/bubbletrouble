@@ -53,7 +53,7 @@ static void UpdatePlayer1Input(HWND hwnd){
         isMoving = true;
     }
 
-    // === BOUNDARY CHECK ===
+  // === BOUNDARY CHECK ===
     if (gGame.hero.x < gGame.leftWall.width) {
         gGame.hero.x = gGame.leftWall.width;
     }
@@ -63,13 +63,32 @@ static void UpdatePlayer1Input(HWND hwnd){
         gGame.hero.x = desnaGranica;
     }
 
-    // ===== CHECK ZA VRATA ===== //
-    CheckHeroDoorCollision();
+    // === DEFINISANJE ZONE MERDEVINA ===
+    bool heroNearLadder = false;
+    if (CURRENT_LEVEL.ladder.width > 0) {
+        StaticObject& ladder = CURRENT_LEVEL.ladder;
+        heroNearLadder =
+            (gGame.hero.x + gGame.hero.width + 80 > ladder.x) &&
+            (gGame.hero.x < ladder.x + ladder.width + 80);
+    }
+
+    // ===== CHECK ZA VRATA (Platformu) ===== //
+    // Isključi sudar s platformom ako igrač koristi merdevine
+    if (!heroNearLadder) {
+        CheckHeroDoorCollision();
+    }
 
     // ===== CHECK ZA STUBOVE (Level 4) ===== //
     if(gGame.currentLevel == 3){
-    CheckHeroPillarCollision(&CURRENT_LEVEL.pillar1);
-    CheckHeroPillarCollision(&CURRENT_LEVEL.pillar2);
+        CheckHeroPillarCollision(&CURRENT_LEVEL.pillar1);
+        CheckHeroPillarCollision(&CURRENT_LEVEL.pillar2);
+    }
+
+    // ===== CHECK ZA STUBOVE (Level 7 / ladder level) ===== //
+    if(CURRENT_LEVEL.ladder.width > 0){
+        CheckHeroPillarCollision(&CURRENT_LEVEL.longWall);
+        CheckHeroPillarCollision(&CURRENT_LEVEL.pillar1);
+        CheckHeroPillarCollision(&CURRENT_LEVEL.pillar2);
     }
 
     // === ANIMATION ===
@@ -94,7 +113,7 @@ static void UpdatePlayer1Input(HWND hwnd){
         gGame.harpoon.isActive = true;
         gGame.harpoon.length = 0;
         gGame.harpoon.x = gGame.hero.x + (gGame.hero.width / 2) - (gGame.harpoon.width / 2);
-        gGame.harpoon.y = rect.bottom - gGame.floorWall.height;
+        gGame.harpoon.y = (gGame.hero.floorY == 0) ? (rect.bottom - gGame.floorWall.height) : (gGame.hero.floorY + gGame.hero.height);
         gGame.harpoon.ownerPlayer = 1;
 
         if(gGame.gameState.currentMode == GAME_MODE_PLAYING && gGame.settingsState.soundState.soundEffectsOn)
@@ -103,7 +122,47 @@ static void UpdatePlayer1Input(HWND hwnd){
 
     gGame.inputState.wasSpacePressed = isSpacePressed;
 
+// === MERDEVINE - jednostavna logika bez state machine ===
+    // Ako je hero X blizu merdevina, UP/DOWN direktno pomijeraju Y
+    if (CURRENT_LEVEL.ladder.width > 0) {
+        StaticObject& ladder = CURRENT_LEVEL.ladder;
+        int platformY   = CURRENT_LEVEL.door.y;
+        int lowerFloorY = rect.bottom - gGame.floorWall.height - gGame.hero.height;
+        int upperFloorY = platformY - gGame.hero.height;
+        // Detektuj blizinu merdevinama sa sirinom tolerancije
+        bool heroNearLadder =
+            (gGame.hero.x + gGame.hero.width + 80 > ladder.x) &&
+            (gGame.hero.x < ladder.x + ladder.width + 80);
+
+        if (heroNearLadder) {
+            // Ako heroj kreće sa donjeg poda, pripremamo njegov floorY za penjanje
+            if (gGame.hero.floorY == 0) {
+                gGame.hero.floorY = lowerFloorY;
+            }
+
+            // Kretanje prema GORE
+            if (GetAsyncKeyState(VK_UP) & 0x8000) {
+                gGame.hero.floorY -= 5;
+                if (gGame.hero.floorY < upperFloorY)
+                    gGame.hero.floorY = upperFloorY;
+            }
+            // Kretanje prema DOLJE
+            if (GetAsyncKeyState(VK_DOWN) & 0x8000) {
+                gGame.hero.floorY += 5;
+                if (gGame.hero.floorY > lowerFloorY)
+                    gGame.hero.floorY = lowerFloorY;
+            }
+
+            // Snap na pod/platformu kad se zaustavi na ivici
+            if (gGame.hero.floorY >= lowerFloorY) {
+                gGame.hero.floorY = 0; // Vraća standardno ponašanje za glavno dno
+            } else if (gGame.hero.floorY <= upperFloorY) {
+                gGame.hero.floorY = upperFloorY; // Zaključaj za gornju platformu
+            }
+        }
+    }
 }
+
 void HandleMouseClick(HWND hwnd, int mx, int my)
 {
     if (gGame.transitionState.transitionVars != TRANSITION_NONE)

@@ -10,6 +10,8 @@ struct Hero{
  int animCounter;
  float heroHitCooldown; // in secs
  float blinkTimer;
+ bool isOnLadder;
+ int  floorY;          // Y na kojoj stoji (mijenja se ovisno o spratu)
 };
 
 struct Projectile{
@@ -213,5 +215,3 @@ struct LoginInput
     bool caretVisible;
     float caretTimer;
 };
-
-
