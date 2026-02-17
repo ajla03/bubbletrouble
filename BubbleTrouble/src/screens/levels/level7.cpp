@@ -110,6 +110,7 @@ void RenderLevel7(HDC hdcBuffer, RECT rect)
 }
 
 
+
 void RecalculateLevel7Layout(HWND hwnd)
 {
     RECT rect;
@@ -118,7 +119,6 @@ void RecalculateLevel7Layout(HWND hwnd)
     int bgX  = gGame.leftWall.width;
     int bgW  = rect.right - gGame.leftWall.width - gGame.rightWall.width;
     int bgH  = rect.bottom - gGame.floorWall.height;
-
 
     int platformH = 18;
     int platformY = (int)(bgH * 0.42f);
@@ -153,10 +153,23 @@ void RecalculateLevel7Layout(HWND hwnd)
 
     CURRENT_LEVEL.pillar2.x              = bgX + 3 * bgW / 4 - pillarW / 2;
     CURRENT_LEVEL.pillar2.y              = 0;
-    CURRENT_LEVEL.pillar2.width          = pillarW;
+    CURRENT_LEVEL.pillar2.width          = pillarW; // Resetuj na punu širinu
     CURRENT_LEVEL.pillar2.height         = upperH;
     CURRENT_LEVEL.pillar2.originalWidth  = bmpWall.bmWidth;
     CURRENT_LEVEL.pillar2.originalHeight = bmpWall.bmHeight;
+
+
+    if (CURRENT_LEVEL.activeBalloonCount > 0 || gGame.gameState.isLevelCleared) {
+        if (!CURRENT_LEVEL.balloons[0].active) {
+            CURRENT_LEVEL.longWall.width = 0;
+        }
+        if (!CURRENT_LEVEL.balloons[1].active) {
+            CURRENT_LEVEL.pillar1.width = 0;
+        }
+        if (!CURRENT_LEVEL.balloons[2].active) {
+            CURRENT_LEVEL.pillar2.width = 0;
+        }
+    }
 
     if (gRes.ladder) {
         int ladderDisplayW = 52;
