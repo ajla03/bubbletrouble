@@ -98,7 +98,7 @@ void UpdatePowerups(HWND hwnd) {
         // === PROVJERA SUDARA SA PREPREKAMA ===
         bool hitObstacle = false;
 
-        // 1. Dugački zid
+        // 1. Dugacki zid
         if (CURRENT_LEVEL.longWall.width > 0 &&
             powerupBottom > CURRENT_LEVEL.longWall.y && powerupTop < CURRENT_LEVEL.longWall.y + CURRENT_LEVEL.longWall.height &&
             powerupRight > CURRENT_LEVEL.longWall.x && powerupLeft < CURRENT_LEVEL.longWall.x + CURRENT_LEVEL.longWall.width) {

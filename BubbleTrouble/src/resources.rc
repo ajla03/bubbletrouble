@@ -126,3 +126,6 @@ IDB_NEWBIE                  BITMAP  "../assets/bitmaps/newbie.bmp"
 IDB_BRONZE                  BITMAP  "../assets/bitmaps/bronze.bmp"
 IDB_SILVER                  BITMAP  "../assets/bitmaps/silver.bmp"
 IDB_GOLD                    BITMAP  "../assets/bitmaps/gold.bmp"
+
+IDB_LADDER                   BITMAP  "../assets/bitmaps/ladder_white.bmp"
+

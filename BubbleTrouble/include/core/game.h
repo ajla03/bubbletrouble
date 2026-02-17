@@ -96,6 +96,9 @@ void RenderLevel5(HDC hdcBuffer, RECT rect);
 void RenderLevel6(HDC hdcBuffer, RECT rect);
 void RecalculateLevel3Layout(HWND);
 void RecalculateLevel4Layout(HWND hwnd);
+void InitLevel7(HWND hwnd);
+void RenderLevel7(HDC hdcBuffer, RECT rect);
+void RecalculateLevel7Layout(HWND hwnd);
 
 // ================= TRANSITIONS (in animatedWalls.cpp) ============
 void StartWallTransition(HWND hwnd);
@@ -148,5 +151,3 @@ void HandleCharInput(HWND hwnd, WPARAM wParam);
 void SaveFinalScore();
 void ResetScoreFlag();
 int GetBestScoreForPlayer(const char* playerName);
-
-

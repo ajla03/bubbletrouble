@@ -313,7 +313,7 @@ void UpdateLayout(int oldW, int oldH, int newW, int newH)
         gGame.hero.y = localY;
 
         // opcionalno: update grounded Y
-        gGame.hero.y = newH - gGame.floorWall.height - gGame.hero.height;
+       // gGame.hero.y = newH - gGame.floorWall.height - gGame.hero.height;
     }
 
     // UPDATE HARPOON
@@ -354,9 +354,11 @@ static void UpdateHarpoonHero1(HWND hwnd){
         RECT rect;
         GetClientRect(hwnd, &rect);
         gGame.harpoon.length += gGame.harpoon.dy;
-        gGame.harpoon.y = rect.bottom - gGame.floorWall.height;
 
-        if (gGame.harpoon.length >= rect.bottom){
+        int baseY = (gGame.hero.floorY == 0) ? (rect.bottom - gGame.floorWall.height) : (gGame.hero.floorY + gGame.hero.height);
+        gGame.harpoon.y = baseY;
+
+        if (gGame.harpoon.length >= baseY){
             gGame.harpoon.isActive = false;
         }
     }
@@ -375,10 +377,10 @@ static void UpdateTorches(){
 }
 
 static void UpdateLevelLogic(HWND hwnd){
-  // UPDATE DOOR IF LEVEL 3
-  if(CURRENT_LEVEL.door.width > 0 &&
-     CURRENT_LEVEL.door.height > 0 &&
-     gGame.currentLevel == 2){
+    // === UPDATE DOOR IF LEVEL 3 ===
+    if(CURRENT_LEVEL.door.width > 0 &&
+       CURRENT_LEVEL.door.height > 0 &&
+       gGame.currentLevel == 2){
         float sectionLeft  = gGame.leftWall.width;
         float sectionRight = CURRENT_LEVEL.longWall.x;
 
@@ -388,11 +390,12 @@ static void UpdateLevelLogic(HWND hwnd){
         }
     }
 
-    // UPDATE PILLARS - LEVEL 4
-     if(gGame.currentLevel == 3) {
+    // === UPDATE PILLARS - LEVEL 4 ===
+    if(gGame.currentLevel == 3) {
         RECT rect;
         GetClientRect(hwnd, &rect);
 
+        // Prvi stub za level 4
         if(CURRENT_LEVEL.pillar1.width > 0) {
             bool balloon0Destroyed = true;
             for(int i = 0; i < MAX_BALLOONS; i++) {
@@ -408,6 +411,7 @@ static void UpdateLevelLogic(HWND hwnd){
             }
         }
 
+        // Drugi stub za level 4
         if(CURRENT_LEVEL.pillar2.width > 0) {
             bool balloon1Destroyed = true;
 
@@ -422,6 +426,22 @@ static void UpdateLevelLogic(HWND hwnd){
             if(balloon1Destroyed) {
                 CURRENT_LEVEL.pillar2.width = 0;  // Ukloni drugi stub
             }
+        }
+    }
+
+    // === UPDATE PILLARS - LEVEL 7 ===
+    if (CURRENT_LEVEL.ladder.width > 0) {
+        // Prvi stub (longWall) nestaje kada pukne prvi balon s lijeva (indeks 0)
+        if (CURRENT_LEVEL.longWall.width > 0 && !CURRENT_LEVEL.balloons[0].active) {
+            CURRENT_LEVEL.longWall.width = 0;
+        }
+        // Drugi stub (pillar1) nestaje kada pukne drugi balon (indeks 1)
+        if (CURRENT_LEVEL.pillar1.width > 0 && !CURRENT_LEVEL.balloons[1].active) {
+            CURRENT_LEVEL.pillar1.width = 0;
+        }
+        // Treći stub (pillar2) nestaje kada pukne treći balon (indeks 2)
+        if (CURRENT_LEVEL.pillar2.width > 0 && !CURRENT_LEVEL.balloons[2].active) {
+            CURRENT_LEVEL.pillar2.width = 0;
         }
     }
 }

@@ -228,6 +228,8 @@ LRESULT CALLBACK WindowProcedure(HWND hwnd, UINT message, WPARAM wParam, LPARAM 
                 RecalculateLevel3Layout(hwnd);
             if(gGame.currentLevel == 3)
                 RecalculateLevel4Layout(hwnd);
+            if(CURRENT_LEVEL.ladder.width > 0)
+                RecalculateLevel7Layout(hwnd);
             CURRENT_LEVEL.staticRedraw = true;
 
             HDC hdc = GetDC(hwnd);

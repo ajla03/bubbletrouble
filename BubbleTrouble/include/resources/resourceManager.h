@@ -52,6 +52,7 @@ struct ResourceManager{
     HBITMAP singleplayerBanner, multiplayerBanner;
     HBITMAP loginBg, loginPopup, loginButton, loginButtonHover;
     HBITMAP newbie, bronze, silver, gold;
+    HBITMAP ladder;
 
     HFONT hFont, hFontTitle, hFontTable;
     HANDLE hFontRes;

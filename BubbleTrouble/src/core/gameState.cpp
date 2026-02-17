@@ -64,6 +64,8 @@ void ResetGame(HWND hwnd) {
     gGame.hero.y = 100;
     gGame.hero.currentRow = 2;
     gGame.hero.currentFrame = 0;
+    gGame.hero.isOnLadder = false;
+    gGame.hero.floorY = 0;  // InitLevel ce postaviti tacnu vrijednost
 
     // Reset harpoon
     gGame.harpoon.isActive = false;
@@ -118,6 +120,8 @@ void ResetBetweenLevels(HWND hwnd) {
     gGame.hero.y = 100;
     gGame.hero.currentRow = 2;
     gGame.hero.currentFrame = 0;
+    gGame.hero.isOnLadder = false;
+    gGame.hero.floorY = 0;  // InitLevel ce postaviti tacnu vrijednost
 
     // Reset harpoon
     gGame.harpoon.isActive = false;
