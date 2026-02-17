@@ -245,7 +245,18 @@ void UpdateHarpoon2(HWND hwnd) {
     int baseY = (gGame.hero2.floorY == 0) ? (rect.bottom - gGame.floorWall.height) : (gGame.hero2.floorY + gGame.hero2.height);
     gGame.harpoon2.y = baseY;
 
-    if (gGame.harpoon2.length >= baseY) {
+    int maxLength = baseY;
+
+    if (gGame.hero2.floorY == 0 && CURRENT_LEVEL.door.active && CURRENT_LEVEL.door.width > 0) {
+        if (gGame.harpoon2.x + gGame.harpoon2.width > CURRENT_LEVEL.door.x &&
+            gGame.harpoon2.x < CURRENT_LEVEL.door.x + CURRENT_LEVEL.door.width) {
+
+            int platformBottom = CURRENT_LEVEL.door.y + CURRENT_LEVEL.door.height;
+            maxLength = baseY - platformBottom;
+        }
+    }
+
+    if (gGame.harpoon2.length >= maxLength) {
         gGame.harpoon2.isActive = false;
     }
 }
