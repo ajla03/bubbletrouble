@@ -15,7 +15,10 @@ void ResetGame(HWND hwnd) {
     RECT rect;
     GetClientRect(hwnd, &rect);
 
-    // Reset game state
+    gGame.currentLevel = 0;
+
+    ResetLevelsGraphicsCache();
+
     CURRENT_LEVEL.timeLeft = maxTime;
     gGame.gameState.isGameOver = false;
     gGame.gameState.isLevelCleared = false;
@@ -25,7 +28,6 @@ void ResetGame(HWND hwnd) {
     gGame.pauseButtonInfo.isHover = false;
     gGame.gameState.balloonsAreFrozen = false;
     gGame.gameState.freezeTimeLeft = 0;
-
 
     // Reset Player 1
     gGame.player1Stats.lives = START_LIVES;
@@ -51,11 +53,6 @@ void ResetGame(HWND hwnd) {
             gGame.player2Stats.hearts[i].animCounter = 0;
         }
     }
-
-    // brisemo cache za level 1 -> ponovni render da bude ok !
-    gGame.currentLevel = 0;
-    ResetLevelsGraphicsCache();
-
 
     // Reset hero position
     RECT clientRect;
@@ -93,8 +90,6 @@ void ResetGame(HWND hwnd) {
         ResetScoreFlag();
         InitLevel(hwnd);
     }
-
-
 }
 
 void ResetBetweenLevels(HWND hwnd) {
