@@ -41,17 +41,13 @@ static void UpdatePlayer1Input(HWND hwnd){
     bool isMoving = false;
     KeyBindings* keys = &gGame.settingsState.player1Keys;
 
-    // === DEFINISANJE ZONE MERDEVINA ===
     bool heroNearLadder = false;
     if (CURRENT_LEVEL.ladder.width > 0) {
         StaticObject& ladder = CURRENT_LEVEL.ladder;
         int heroCenterX = gGame.hero.x + (gGame.hero.width / 2);
-
-        // Sredina heroja mora biti strogo unutar lijeve i desne ivice merdevina
         heroNearLadder = (heroCenterX > ladder.x) && (heroCenterX < ladder.x + ladder.width);
     }
 
-    // Da li se nalazimo u zraku na merdevinama (ni na gornjem, ni na donjem spratu)
     bool isMidAirOnLadder = false;
     if (CURRENT_LEVEL.ladder.width > 0 && CURRENT_LEVEL.door.active) {
         int platformY = CURRENT_LEVEL.door.y;
@@ -59,8 +55,6 @@ static void UpdatePlayer1Input(HWND hwnd){
         isMidAirOnLadder = (gGame.hero.floorY != 0 && gGame.hero.floorY != upperFloorY);
     }
 
-    // === MOVEMENT (Lijevo/Desno) ===
-    // Dozvoli kretanje lijevo/desno SAMO ako heroj stoji na nekom od podova
     if (!isMidAirOnLadder) {
         if(GetAsyncKeyState(keys->moveLeft) & 0x8000){
             gGame.hero.x -= gGame.hero.dx;
@@ -73,7 +67,6 @@ static void UpdatePlayer1Input(HWND hwnd){
             isMoving = true;
         }
 
-        // === BOUNDARY CHECK ===
         if (gGame.hero.x < gGame.leftWall.width) {
             gGame.hero.x = gGame.leftWall.width;
         }
@@ -84,26 +77,21 @@ static void UpdatePlayer1Input(HWND hwnd){
         }
     }
 
-    // ===== CHECK ZA VRATA ===== //
-    // Isključi sudar s platformom ako igrač stoji u zoni merdevina
     if (!heroNearLadder) {
         CheckHeroDoorCollision();
     }
 
-    // ===== CHECK ZA STUBOVE (Level 4) ===== //
     if(gGame.currentLevel == 3){
         CheckHeroPillarCollision(&CURRENT_LEVEL.pillar1);
         CheckHeroPillarCollision(&CURRENT_LEVEL.pillar2);
     }
 
-    // ===== CHECK ZA STUBOVE (Level 7) ===== //
     if(CURRENT_LEVEL.ladder.width > 0){
         CheckHeroPillarCollision(&CURRENT_LEVEL.longWall);
         CheckHeroPillarCollision(&CURRENT_LEVEL.pillar1);
         CheckHeroPillarCollision(&CURRENT_LEVEL.pillar2);
     }
 
-    // === ANIMATION ===
     if(isMoving) {
         gGame.hero.animCounter++;
         if(gGame.hero.animCounter > 5) {
@@ -118,18 +106,13 @@ static void UpdatePlayer1Input(HWND hwnd){
         gGame.hero.currentFrame = 0;
     }
 
-    // === HARPOON SHOOTING ===
     bool isSpacePressed = (GetAsyncKeyState(keys->shoot) & 0x8000) != 0;
 
-    // Pucanje dozvoljeno samo ako ne visimo na sredini merdevina
     if (isSpacePressed && !gGame.inputState.wasSpacePressed && !gGame.harpoon.isActive && !isMidAirOnLadder) {
         gGame.harpoon.isActive = true;
         gGame.harpoon.length = 0;
         gGame.harpoon.x = gGame.hero.x + (gGame.hero.width / 2) - (gGame.harpoon.width / 2);
-
-        // Harpun uvijek polazi sa nivoa nogu heroja
         gGame.harpoon.y = (gGame.hero.floorY == 0) ? (rect.bottom - gGame.floorWall.height) : (gGame.hero.floorY + gGame.hero.height);
-
         gGame.harpoon.ownerPlayer = 1;
 
         if(gGame.gameState.currentMode == GAME_MODE_PLAYING && gGame.settingsState.soundState.soundEffectsOn)
@@ -138,14 +121,12 @@ static void UpdatePlayer1Input(HWND hwnd){
 
     gGame.inputState.wasSpacePressed = isSpacePressed;
 
-    // === MERDEVINE (Gore/Dolje) ===
     if (CURRENT_LEVEL.ladder.width > 0) {
         int platformY   = CURRENT_LEVEL.door.y;
         int lowerFloorY = rect.bottom - gGame.floorWall.height - gGame.hero.height;
         int upperFloorY = platformY - gGame.hero.height;
 
         if (heroNearLadder) {
-            // Inicijalizacija floorY-a pri prvom kontaktu ako stižemo s glavnog poda
             if (gGame.hero.floorY == 0) {
                 gGame.hero.floorY = lowerFloorY;
             }
@@ -163,16 +144,14 @@ static void UpdatePlayer1Input(HWND hwnd){
                 }
             }
 
-            // Snap na donji ili gornji pod
             if (gGame.hero.floorY >= lowerFloorY) {
-                gGame.hero.floorY = 0; // Vraća na klasičan sistem za glavni pod
+                gGame.hero.floorY = 0;
             } else if (gGame.hero.floorY <= upperFloorY) {
-                gGame.hero.floorY = upperFloorY; // Zaključaj za platformu
+                gGame.hero.floorY = upperFloorY;
             }
         }
     }
 }
-
 
 void HandleMouseClick(HWND hwnd, int mx, int my)
 {

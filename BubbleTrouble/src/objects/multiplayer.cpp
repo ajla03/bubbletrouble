@@ -10,13 +10,11 @@ void InitMultiplayer(HWND hwnd) {
     RECT rect;
     GetClientRect(hwnd, &rect);
 
-    // Player 1 - lijeva strana
     gGame.hero.x = gGame.leftWall.width + 50;
     gGame.hero.y = rect.bottom - gGame.floorWall.height - gGame.hero.height;
     gGame.hero.currentRow = 2;
     gGame.hero.currentFrame = 0;
 
-    // Player 2 - desna strana
     gGame.hero2.width = gGame.hero.width;
     gGame.hero2.height = gGame.hero.height;
     gGame.hero2.dx = gGame.hero.dx;
@@ -28,7 +26,6 @@ void InitMultiplayer(HWND hwnd) {
     gGame.hero2.animCounter = 0;
     gGame.hero2.heroHitCooldown = 0.0f;
 
-    // Inicijalizuj oba harpuna
     gGame.harpoon.isActive = false;
     gGame.harpoon.length = 0;
 
@@ -41,8 +38,7 @@ void InitMultiplayer(HWND hwnd) {
     gGame.gameState.isMultiplayer = true;
     gGame.inputState.wasSpacePressedP2 = false;
 
-    // ← DODAJ OVO NA KRAJ
-    // Initialize player stats
+
     gGame.player1Stats.lives = START_LIVES;
     gGame.player1Stats.score = 0;
     gGame.player1Stats.displayScore = 0;
@@ -63,7 +59,6 @@ void InitMultiplayer(HWND hwnd) {
 }
 
 void UpdatePlayer2Input(HWND hwnd) {
-    // PROMJENA: Ako Player 2 nema života, nema kontrole
     if (gGame.player2Stats.lives <= 0) return;
 
     if(gGame.gameState.currentMode != GAME_MODE_PLAYING ||
@@ -78,46 +73,53 @@ void UpdatePlayer2Input(HWND hwnd) {
     bool isMoving = false;
     KeyBindings* keys = &gGame.settingsState.player2Keys;
 
-    // Movement
-    if(GetAsyncKeyState(keys->moveLeft) & 0x8000) {
-        gGame.hero2.x -= gGame.hero2.dx;
-        gGame.hero2.currentRow = 1;
-        isMoving = true;
-    }
-    else if(GetAsyncKeyState(keys->moveRight) & 0x8000) {
-        gGame.hero2.x += gGame.hero2.dx;
-        gGame.hero2.currentRow = 0;
-        isMoving = true;
-    }
-
-    // Boundary check
-    if (gGame.hero2.x < gGame.leftWall.width) {
-        gGame.hero2.x = gGame.leftWall.width;
-    }
-
-    int desnaGranica = windowWidth - gGame.rightWall.width - gGame.hero2.width;
-    if (gGame.hero2.x > desnaGranica) {
-        gGame.hero2.x = desnaGranica;
-    }
-
-    bool heroNearLadderP2 = false;
+    bool heroNearLadder = false;
     if (CURRENT_LEVEL.ladder.width > 0) {
         StaticObject& ladder = CURRENT_LEVEL.ladder;
-        heroNearLadderP2 =
-            (gGame.hero2.x + gGame.hero2.width + 80 > ladder.x) &&
-            (gGame.hero2.x < ladder.x + ladder.width + 80);
+        int heroCenterX = gGame.hero2.x + (gGame.hero2.width / 2);
+        heroNearLadder = (heroCenterX > ladder.x) && (heroCenterX < ladder.x + ladder.width);
     }
 
-    // Door collision
-    if (!heroNearLadderP2) {
+    bool isMidAirOnLadder = false;
+    if (CURRENT_LEVEL.ladder.width > 0 && CURRENT_LEVEL.door.active) {
+        int platformY = CURRENT_LEVEL.door.y;
+        int upperFloorY = platformY - gGame.hero2.height;
+        isMidAirOnLadder = (gGame.hero2.floorY != 0 && gGame.hero2.floorY != upperFloorY);
+    }
+
+    if (!isMidAirOnLadder) {
+        if(GetAsyncKeyState(keys->moveLeft) & 0x8000) {
+            gGame.hero2.x -= gGame.hero2.dx;
+            gGame.hero2.currentRow = 1;
+            isMoving = true;
+        }
+        else if(GetAsyncKeyState(keys->moveRight) & 0x8000) {
+            gGame.hero2.x += gGame.hero2.dx;
+            gGame.hero2.currentRow = 0;
+            isMoving = true;
+        }
+
+        if (gGame.hero2.x < gGame.leftWall.width) {
+            gGame.hero2.x = gGame.leftWall.width;
+        }
+
+        int desnaGranica = windowWidth - gGame.rightWall.width - gGame.hero2.width;
+        if (gGame.hero2.x > desnaGranica) {
+            gGame.hero2.x = desnaGranica;
+        }
+    }
+
+    if (!heroNearLadder) {
         CheckHeroDoorCollisionP2();
     }
 
-    // Pillar collision
     CheckHeroPillarCollision2(&CURRENT_LEVEL.pillar1);
     CheckHeroPillarCollision2(&CURRENT_LEVEL.pillar2);
 
-    // Animation
+    if (CURRENT_LEVEL.ladder.width > 0) {
+        CheckHeroPillarCollision2(&CURRENT_LEVEL.longWall);
+    }
+
     if(isMoving) {
         gGame.hero2.animCounter++;
         if(gGame.hero2.animCounter > 5) {
@@ -132,10 +134,9 @@ void UpdatePlayer2Input(HWND hwnd) {
         gGame.hero2.currentFrame = 0;
     }
 
-    // Harpoon shooting
     bool isSpacePressed = (GetAsyncKeyState(keys->shoot) & 0x8000) != 0;
 
-    if (isSpacePressed && !gGame.inputState.wasSpacePressedP2 && !gGame.harpoon2.isActive) {
+    if (isSpacePressed && !gGame.inputState.wasSpacePressedP2 && !gGame.harpoon2.isActive && !isMidAirOnLadder) {
         gGame.harpoon2.isActive = true;
         gGame.harpoon2.length = 0;
         gGame.harpoon2.x = gGame.hero2.x + (gGame.hero2.width / 2) - (gGame.harpoon2.width / 2);
@@ -149,6 +150,37 @@ void UpdatePlayer2Input(HWND hwnd) {
     }
 
     gGame.inputState.wasSpacePressedP2 = isSpacePressed;
+
+    if (CURRENT_LEVEL.ladder.width > 0) {
+        int platformY   = CURRENT_LEVEL.door.y;
+        int lowerFloorY = rect.bottom - gGame.floorWall.height - gGame.hero2.height;
+        int upperFloorY = platformY - gGame.hero2.height;
+
+        if (heroNearLadder) {
+            if (gGame.hero2.floorY == 0) {
+                gGame.hero2.floorY = lowerFloorY;
+            }
+
+            if (GetAsyncKeyState(VK_UP) & 0x8000) {
+                gGame.hero2.floorY -= 5;
+                if (gGame.hero2.floorY < upperFloorY) {
+                    gGame.hero2.floorY = upperFloorY;
+                }
+            }
+            if (GetAsyncKeyState(VK_DOWN) & 0x8000) {
+                gGame.hero2.floorY += 5;
+                if (gGame.hero2.floorY > lowerFloorY) {
+                    gGame.hero2.floorY = lowerFloorY;
+                }
+            }
+
+            if (gGame.hero2.floorY >= lowerFloorY) {
+                gGame.hero2.floorY = 0;
+            } else if (gGame.hero2.floorY <= upperFloorY) {
+                gGame.hero2.floorY = upperFloorY;
+            }
+        }
+    }
 }
 
 void RenderHero(
@@ -163,7 +195,6 @@ void RenderHero(
     int srcX = hero->currentFrame * hero->width;
     int srcY = hero->currentRow   * hero->height;
 
-    // === BLINK LOGIC ===
     if(hero->heroHitCooldown > 0){
         if((int)(hero->blinkTimer * 30) % 2 == 0)
             return;
@@ -177,15 +208,12 @@ void RenderHero(
         drawH = (int)(hero->height * scale);
     }
 
-// Ako floorY nije specifično definisan (za ostale levele), spusti heroja na glavno dno
     if (hero->floorY == 0) {
         hero->y = rect.bottom - gGame.floorWall.height - drawH;
     } else {
-        // Za Level 7: Zadrži heroja na definisanom spratu i prilagodi visinu zbog skaliranja slike
         hero->y = hero->floorY - (drawH - hero->height);
     }
 
-    // === MASK ===
     SelectObject(gRes.hdcMem, heroMask);
     if (useStretch) {
         StretchBlt(
@@ -208,7 +236,6 @@ void RenderHero(
         );
     }
 
-    // === SPRITE ===
     SelectObject(gRes.hdcMem, heroBitmap);
     if (useStretch) {
         StretchBlt(
