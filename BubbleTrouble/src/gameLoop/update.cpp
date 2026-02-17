@@ -304,14 +304,19 @@ void UpdateLayout(int oldW, int oldH, int newW, int newH)
     // UPDATE HERO
     {
         int localX = gGame.hero.x - oldBgX;
-        int localY = gGame.hero.y;
 
         localX = (int)(localX * scaleX);
-        localY = (int)(localY * scaleY);
 
         gGame.hero.x = newBgX + localX;
-        gGame.hero.y = localY;
 
+        if (gGame.hero.floorY == 0) {
+            gGame.hero.y = newH - gGame.floorWall.height - gGame.hero.height;
+        } else if (CURRENT_LEVEL.door.active) {
+            // Ako je na gornjem spratu, zadrži ga na novoj visini platforme
+            int newPlatformY = (int)(newBgH * 0.42f);
+            gGame.hero.floorY = newPlatformY - gGame.hero.height;
+            gGame.hero.y = gGame.hero.floorY;
+        }
         // opcionalno: update grounded Y
        // gGame.hero.y = newH - gGame.floorWall.height - gGame.hero.height;
     }
