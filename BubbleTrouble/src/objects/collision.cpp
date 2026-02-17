@@ -154,6 +154,12 @@ void CheckCollisions(){
                     SplitBalloon(i, gGame.harpoon.ownerPlayer);
 
                     if(CURRENT_LEVEL.activeBalloonCount == 0 && !gGame.gameState.isLevelCleared){
+                        int livesLeft = gGame.gameState.isMultiplayer
+                            ? std::max(gGame.player1Stats.lives, gGame.player2Stats.lives)
+                            : gGame.player1Stats.lives;                        int earned = (livesLeft >= 3) ? 3 : (livesLeft == 2) ? 2 : 1;
+                        if (earned > gGame.levelStars[gGame.currentLevel])
+                            gGame.levelStars[gGame.currentLevel] = earned;
+
                         gGame.gameState.isLevelCleared = true;
                         int timeBonus = CalculateTimeBonus();
                         CURRENT_LEVEL.levelScore += timeBonus;
@@ -245,6 +251,12 @@ void CheckCollisions(){
                     SplitBalloon(i, gGame.harpoon2.ownerPlayer);
 
                     if(CURRENT_LEVEL.activeBalloonCount == 0 && !gGame.gameState.isLevelCleared) {
+                         int livesLeft = gGame.gameState.isMultiplayer
+                                ? std::max(gGame.player1Stats.lives, gGame.player2Stats.lives)
+                                : gGame.player1Stats.lives;
+                         int earned = (livesLeft >= 3) ? 3 : (livesLeft == 2) ? 2 : 1;
+                         if (earned > gGame.levelStars[gGame.currentLevel])
+                                gGame.levelStars[gGame.currentLevel] = earned;
                         gGame.gameState.isLevelCleared = true;
                         int timeBonus = CalculateTimeBonus();
                         CURRENT_LEVEL.levelScore += timeBonus;

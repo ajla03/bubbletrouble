@@ -75,7 +75,6 @@ void ResetGame(HWND hwnd) {
     for (int i = 0; i < MAX_BALLOONS; i++) {
         CURRENT_LEVEL.balloons[i].active = false;
     }
-
     //Clear powerups
     CURRENT_LEVEL.activePowerupCount = 0;
     CURRENT_LEVEL.lastPowerupSpawn = GetTickCount();

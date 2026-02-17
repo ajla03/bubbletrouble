@@ -85,6 +85,8 @@ struct GameContext{
     char playerName[12];
     int unlockedLevelSingle;
     int unlockedLevelMulti;
+
+    int levelStars[MAX_LEVELS];
 };
 
 extern GameContext gGame;

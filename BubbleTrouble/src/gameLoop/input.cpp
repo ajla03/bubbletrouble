@@ -452,8 +452,8 @@ void HandleMouseMove(HWND hwnd, int x, int y)
         return;
     }
     if (gGame.gameState.currentMode == GAME_MODE_LEVEL_SELECT) {
-    CheckHover(gGame.backButtonInfo, x, y);
-    UpdateLevelSelectHover(hwnd, x, y);
+        CheckHover(gGame.backButtonInfo, x, y);
+        UpdateLevelSelectHover(hwnd, x, y);
     return;
     }
 }
