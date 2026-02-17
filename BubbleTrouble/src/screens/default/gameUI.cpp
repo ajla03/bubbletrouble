@@ -326,10 +326,10 @@ void RenderDynamicGameUI(HDC hdc, RECT rect)
 
     // === OVERLAY TEXT ===
     // PROMJENA: Level limit je sada 5 (uključuje Level 5)
-    if (gGame.gameState.isLevelCleared && gGame.currentLevel < 5)
+    if (gGame.gameState.isLevelCleared && gGame.currentLevel < MAX_LEVELS - 1)
         DrawLevelPassedScreen(hdc, rect);
     // PROMJENA: Kraj igre nakon levela 6
-    else if (gGame.gameState.isGameOver || gGame.currentLevel >= 5 && gGame.gameState.isLevelCleared)
+    else if (gGame.gameState.isGameOver || (gGame.currentLevel >= MAX_LEVELS - 1 && gGame.gameState.isLevelCleared))
         DrawGameOverScreen(hdc, rect);
     else if(gGame.gameState.currentMode == GAME_MODE_PAUSE ){
         DrawPausedScreen(hdc, rect);
