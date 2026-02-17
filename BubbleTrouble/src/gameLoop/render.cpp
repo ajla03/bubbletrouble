@@ -54,7 +54,9 @@ void RefreshScreen(HWND hwnd) {
         case GAME_MODE_DASHBOARD:
             RenderDashboard(gRes.hdcBuffer, rect);
             break;
-
+        case GAME_MODE_LEVEL_SELECT:
+            RenderLevelSelectScreen(gRes.hdcBuffer, rect);
+            break;
         default: // GAME_MODE_PLAYING, PAUSE, GAME_OVER
             RenderStaticUI(gRes.hdcBuffer, rect);
             RenderLevel(gRes.hdcBuffer, rect);

@@ -15,8 +15,6 @@ void ResetGame(HWND hwnd) {
     RECT rect;
     GetClientRect(hwnd, &rect);
 
-    gGame.currentLevel = 0;
-
     ResetLevelsGraphicsCache();
 
     CURRENT_LEVEL.timeLeft = maxTime;

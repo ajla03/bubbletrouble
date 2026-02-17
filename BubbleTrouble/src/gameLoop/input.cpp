@@ -2,6 +2,7 @@
 #include "gameContext.h"
 #include "constants.h"
 #include "game.h"
+#include "database.h"
 #include <windows.h>
 #include "resourceManager.h"
 
@@ -187,7 +188,40 @@ void HandleMouseClick(HWND hwnd, int mx, int my)
         case GAME_MODE_MENU:
             HandleMenuClick(hwnd, mx, my);
             break;
+        case GAME_MODE_LEVEL_SELECT:
+             {
+                RECT rect;
+                GetClientRect(hwnd, &rect);
 
+                int btnSize = 60;
+                int gap = 20;
+                int totalWidth = (7 * btnSize) + (6 * gap);
+                int startX = (rect.right - totalWidth) / 2;
+                int startY = rect.bottom / 2;
+
+                for(int i=0; i<7; i++){
+                    int x = startX + i * (btnSize + gap);
+                    if(mx >= x && mx <= x + btnSize && my >= startY && my <= startY + btnSize){
+                        if(i <= gGame.unlockedLevel){
+                            gGame.currentLevel = i;
+
+                            if (gGame.gameState.isMultiplayer) {
+                                gGame.transitionState.pendingMulti = true;
+                            } else {
+                                gGame.transitionState.pendingSingle = true;
+                            }
+
+                            StartWallTransition(hwnd);
+                        }
+                    }
+                }
+                // Back dugme logika (ako želiš da se vrati u meni)
+                if(IsPointInButton(gGame.backButtonInfo, mx, my)){
+                     gGame.transitionState.pendingHome = true;
+                     StartWallTransition(hwnd);
+                }
+             }
+             break;
         case GAME_MODE_PLAYING:
             HandlePlayingClick(hwnd, mx, my);
             break;
@@ -517,6 +551,7 @@ static void SaveLoginInfo(HWND hwnd){
             sizeof(gGame.playerName),
             gGame.loginInput.text
         );
+        gGame.unlockedLevel = GetPlayerMaxLevel(gGame.playerName);
 
         gGame.transitionState.pendingHome = true;
         StartWallTransition(hwnd);

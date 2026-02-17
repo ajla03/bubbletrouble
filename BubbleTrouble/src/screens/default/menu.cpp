@@ -273,7 +273,8 @@ void RenderMenu(HDC hdc, RECT rect) {
 
 void HandleMenuClick(HWND hwnd, int x, int y) {
     POINT pt = {x, y};
-     if (PtInRect(&gGame.helpIconRect, pt)) {
+
+    if (PtInRect(&gGame.helpIconRect, pt)) {
         gGame.transitionState.pendingHelp = true;
         StartWallTransition(hwnd);
         return;
@@ -282,9 +283,21 @@ void HandleMenuClick(HWND hwnd, int x, int y) {
     for (int i = 0; i < NUM_MENU_BUTTONS; i++) {
         if (PtInRect(&gGame.menuButtons[i].rect, pt)) {
             switch(i) {
-                case 0: gGame.gameState.isMultiplayer = false; gGame.transitionState.pendingSingle = true; StartWallTransition(hwnd); break;
-                case 1: gGame.gameState.isMultiplayer = true; gGame.transitionState.pendingMulti = true; StartWallTransition(hwnd); break;
-                case 2: gGame.transitionState.pendingSettings = true; StartWallTransition(hwnd); break;
+                case 0:
+                    // 1 PLAYER
+                    gGame.gameState.isMultiplayer = false;
+                    gGame.gameState.currentMode = GAME_MODE_LEVEL_SELECT; // Umjesto tranzicije idemo na mapu
+                    break;
+                case 1:
+                    // 2 PLAYERS
+                    gGame.gameState.isMultiplayer = true;
+                    gGame.gameState.currentMode = GAME_MODE_LEVEL_SELECT; // Umjesto tranzicije idemo na mapu
+                    break;
+                case 2:
+                    // SETTINGS (ovo ostaje isto, ide sa tranzicijom)
+                    gGame.transitionState.pendingSettings = true;
+                    StartWallTransition(hwnd);
+                    break;
             }
             break;
         }
@@ -295,6 +308,7 @@ void HandleMenuClick(HWND hwnd, int x, int y) {
         StartWallTransition(hwnd);
     }
 }
+
 
 void HandleMenuMouseMove(HWND hwnd, int x, int y) {
     POINT pt = {x, y};
@@ -359,4 +373,62 @@ static void DrawBadge(HDC hdcBuffer, RECT rect){
     DrawTextA(hdcBuffer, scoreText, -1, &textRect, DT_CENTER | DT_VCENTER | DT_SINGLELINE);
     SelectObject(hdcBuffer, hOldFont);
 
+}
+// Dodaj ovo u src/screens/default/menu.cpp ili slično
+
+void RenderLevelSelectScreen(HDC hdc, RECT rect) {
+    // 1. Pozadina (ista kao meni ili login)
+    SelectObject(gRes.hdcMem, gRes.loginBg); // Ili gRes.menuScreen
+    BITMAP bm;
+    GetObject(gRes.loginBg, sizeof(BITMAP), &bm);
+    StretchBlt(hdc, 0, 0, rect.right, rect.bottom, gRes.hdcMem, 0, 0, bm.bmWidth, bm.bmHeight, SRCCOPY);
+
+    // 2. Naslov
+    SetBkMode(hdc, TRANSPARENT);
+    SetTextColor(hdc, RGB(255, 255, 255));
+    SelectObject(hdc, gRes.hFontTitle);
+    const char* title = "SELECT LEVEL";
+    TextOutA(hdc, rect.right/2 - 100, 100, title, strlen(title));
+
+    // 3. Iscrtavanje dugmića za levele
+    int btnSize = 60;
+    int gap = 20;
+    int totalWidth = (7 * btnSize) + (6 * gap);
+    int startX = (rect.right - totalWidth) / 2;
+    int startY = rect.bottom / 2;
+
+    SelectObject(hdc, gRes.hFont); // Manji font za brojeve
+
+    for (int i = 0; i < 7; i++) {
+        int x = startX + i * (btnSize + gap);
+        int y = startY;
+
+        // Boja ovisno o tome da li je otključan
+        HBRUSH hBrush;
+        if (i <= gGame.unlockedLevel) {
+            hBrush = CreateSolidBrush(RGB(0, 255, 0)); // Zeleno za otključano
+        } else {
+            hBrush = CreateSolidBrush(RGB(100, 100, 100)); // Sivo za zaključano
+        }
+
+        SelectObject(hdc, hBrush);
+        Rectangle(hdc, x, y, x + btnSize, y + btnSize);
+        DeleteObject(hBrush);
+
+        // Broj levela
+        char num[2];
+        sprintf(num, "%d", i + 1);
+        TextOutA(hdc, x + 20, y + 15, num, strlen(num));
+    }
+
+    // 4. Back dugme (koristi postojeće iz gGame konteksta)
+    // Postavi poziciju back dugmeta
+    gGame.backButtonInfo.x = 50;
+    gGame.backButtonInfo.y = 50;
+    gGame.backButtonInfo.width = 50; // Prilagodi dimenzije slike
+    gGame.backButtonInfo.height = 50;
+
+    // Iscrtaj back dugme (ako imaš sliku za njega, npr gRes.backButton)
+    // Ako nemaš sliku, nacrtaj tekst "BACK"
+    TextOutA(hdc, 50, 50, "BACK", 4);
 }

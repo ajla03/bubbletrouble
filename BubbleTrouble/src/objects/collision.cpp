@@ -168,6 +168,15 @@ void CheckCollisions(){
                         } else {
                             gGame.totalScore += timeBonus;
                         }
+
+                        // --- DODATI OVO ZA OTKLJUČAVANJE NIVOA ---
+                        if (gGame.currentLevel + 1 > gGame.unlockedLevel) {
+                            gGame.unlockedLevel = gGame.currentLevel + 1; // Otključaj sljedeći (npr. prešli level 0, otključaj 1)
+                            // Max leveli na mapi idu do 6 (ukupno 7)
+                            if (gGame.unlockedLevel > 6) gGame.unlockedLevel = 6;
+                            SavePlayerProgress(gGame.playerName, gGame.unlockedLevel);
+                        }
+                        // ------------------------------------------
                     }
                     gGame.harpoon.isActive = false;
                     break;
@@ -242,6 +251,14 @@ void CheckCollisions(){
                         gGame.player1Stats.score += bonusPerPlayer;
                         gGame.player2Stats.score += bonusPerPlayer;
                         gGame.totalScore = gGame.player1Stats.score + gGame.player2Stats.score;
+
+                        // --- DODATI OVO ZA OTKLJUČAVANJE NIVOA ---
+                        if (gGame.currentLevel + 1 > gGame.unlockedLevel) {
+                            gGame.unlockedLevel = gGame.currentLevel + 1;
+                            if (gGame.unlockedLevel > 6) gGame.unlockedLevel = 6;
+                            SavePlayerProgress(gGame.playerName, gGame.unlockedLevel);
+                        }
+                        // ------------------------------------------
                     }
                     gGame.harpoon2.isActive = false;
                     break;

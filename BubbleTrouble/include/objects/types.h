@@ -65,7 +65,8 @@ enum GameMode {
     GAME_MODE_PAUSE,
     GAME_OVER,
     GAME_MODE_DASHBOARD,
-    GAME_MODE_LOGIN
+    GAME_MODE_LOGIN,
+    GAME_MODE_LEVEL_SELECT
 };
 
 struct MenuButton {
