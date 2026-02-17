@@ -128,4 +128,5 @@ IDB_SILVER                  BITMAP  "../assets/bitmaps/silver.bmp"
 IDB_GOLD                    BITMAP  "../assets/bitmaps/gold.bmp"
 
 IDB_LADDER                   BITMAP  "../assets/bitmaps/ladder_white.bmp"
+IDB_STAR                     BITMAP  "../assets/bitmaps/star.bmp"
 

@@ -103,6 +103,7 @@
 #define IDB_SILVER                  200
 #define IDB_GOLD                    201
 #define IDB_LADDER                  202
+#define IDB_STAR                    203
 // ======== OSTALE KONSTANTE  ======== //
 #define IDR_HARPOON_SOUND           201
 #define IDR_BALLOON_POP             202

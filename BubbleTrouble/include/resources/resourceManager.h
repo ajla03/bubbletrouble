@@ -53,6 +53,7 @@ struct ResourceManager{
     HBITMAP loginBg, loginPopup, loginButton, loginButtonHover;
     HBITMAP newbie, bronze, silver, gold;
     HBITMAP ladder;
+    HBITMAP star;
 
     HFONT hFont, hFontTitle, hFontTable;
     HANDLE hFontRes;

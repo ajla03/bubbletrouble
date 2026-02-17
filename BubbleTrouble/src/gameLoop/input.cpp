@@ -475,7 +475,6 @@ void HandleKeyDown(HWND hwnd, WPARAM wParam)
                                                                             : &gGame.settingsState.player2Keys;
 
 
-       // sanity check - ako smo odabrali neki key za neku akciju vec abortaj promjenu
         if(vkCode == keys->moveLeft ||
            vkCode == keys->moveRight ||
            vkCode == keys->shoot)
@@ -500,7 +499,6 @@ void HandleKeyDown(HWND hwnd, WPARAM wParam)
         return;
     }
 
-    // === NORMAL ESC HANDLING ===
     if (vkCode == VK_ESCAPE) {
         gGame.gameState.currentMode = GAME_MODE_MENU;
         InitializeMenu(hwnd);
@@ -535,7 +533,7 @@ void HandleCharInput(HWND hwnd, WPARAM wParam)
     if (gGame.gameState.currentMode == GAME_MODE_LOGIN &&
         gGame.loginInput.active)
     {
-        // BACKSPACE
+
         if (wParam == VK_BACK)
         {
             if (gGame.loginInput.length > 0)
@@ -548,7 +546,6 @@ void HandleCharInput(HWND hwnd, WPARAM wParam)
         if(wParam == VK_RETURN ){
             SaveLoginInfo(hwnd);
         }
-        // Printable ASCII karakteri
         else if (wParam >= 32 && wParam <= 126)
         {
             bool isAllowed = isalnum((unsigned char)wParam) ||

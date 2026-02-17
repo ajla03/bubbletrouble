@@ -5,7 +5,6 @@
 #include <windows.h>
 #include <stdio.h>
 
-// Deklaracije pomoćnih funkcija
 static void RenderBackground(HDC hdcBuffer, RECT rect);
 static void RenderTransparentSheet(HDC hdcBuffer, RECT rect, RECT* outSheet);
 static void RenderTorches(HDC hdcBuffer, RECT sheet);
@@ -45,22 +44,17 @@ void UpdateLevelSelectHover(HWND hwnd, int mx, int my) {
 }
 
 void RenderLevelSelectScreen(HDC hdcBuffer, RECT rect) {
-    // 1. Pozadina
     RenderBackground(hdcBuffer, rect);
 
-    // 2. Prozirni Sheet
     RECT sheet;
     RenderTransparentSheet(hdcBuffer, rect, &sheet);
 
-    // 3. Baklje
     RenderTorches(hdcBuffer, sheet);
 
-    // 4. Naslov
     HFONT oldFont = (HFONT)SelectObject(hdcBuffer, gRes.hFontTitle);
     RenderTitle(hdcBuffer, sheet);
-    SelectObject(hdcBuffer, gRes.hFont); // Vraćamo na obični font za brojeve
+    SelectObject(hdcBuffer, gRes.hFont);
 
-    // 5. Crtanje levela (Dugmići)
     int currentUnlocked = gGame.gameState.isMultiplayer ? gGame.unlockedLevelMulti : gGame.unlockedLevelSingle;
 
     int btnW = 80;
@@ -80,22 +74,18 @@ void RenderLevelSelectScreen(HDC hdcBuffer, RECT rect) {
         int row = i / cols;
         int col = i % cols;
 
-        // Centriranje reda zavisno od broja elemenata
         int startX = sheet.left + ((sheet.right - sheet.left) - (row == 0 ? totalW1 : totalW2)) / 2;
         int x = startX + col * (btnW + gapX);
         int y = startY + row * (btnH + gapY);
 
         bool isUnlocked = (i <= currentUnlocked);
 
-        // Crtamo pozadinu dugmeta (istu kao u settings meniju)
         SelectObject(gRes.hdcMem, gRes.settingsPlayer);
         TransparentBlt(hdcBuffer, x, y, btnW, btnH, gRes.hdcMem, 0, 0, bm.bmWidth, bm.bmHeight, RGB(255, 255, 255));
 
         SetBkMode(hdcBuffer, TRANSPARENT);
-        RECT textRect = { x, y, x + btnW, y + btnH };
 
         if (isUnlocked) {
-            // Narandžasti glow samo na hover
             if (s_hoveredLevel == i) {
                 HPEN glowPen = CreatePen(PS_SOLID, 4, RGB(255, 140, 0));
                 HGDIOBJ oldPen = SelectObject(hdcBuffer, glowPen);
@@ -107,7 +97,6 @@ void RenderLevelSelectScreen(HDC hdcBuffer, RECT rect) {
             }
             SetTextColor(hdcBuffer, RGB(255, 255, 255));
         } else {
-            // Tamni overlay za zaključane (ostaje isto)
             HDC maskDC = CreateCompatibleDC(hdcBuffer);
             HBITMAP maskBmp = CreateCompatibleBitmap(hdcBuffer, btnW, btnH);
             SelectObject(maskDC, maskBmp);
@@ -120,60 +109,43 @@ void RenderLevelSelectScreen(HDC hdcBuffer, RECT rect) {
             SetTextColor(hdcBuffer, RGB(130, 130, 130));
         }
 
-        // Broj levela
+        RECT textRect = { x, y, x + btnW, y + btnH - 20 };
         char numStr[4];
         sprintf(numStr, "%d", i + 1);
         DrawTextA(hdcBuffer, numStr, -1, &textRect, DT_CENTER | DT_VCENTER | DT_SINGLELINE);
 
-        // Linija ~73 koja već postoji:
-
-// Čitaj zvjezdice iz odgovarajućeg niza u zavisnosti od moda
-        int stars = 0;
-        if (gGame.gameState.isMultiplayer) {
-            stars = gGame.levelStarsMulti[i];
-        } else {
-            stars = gGame.levelStarsSingle[i];
-        }
-
+        int stars = gGame.gameState.isMultiplayer ? gGame.levelStarsMulti[i] : gGame.levelStarsSingle[i];
         if (isUnlocked && stars > 0) {
-            int starSize = 7;
-            int starSpacing = 16;
-            int totalW = stars * starSpacing - (starSpacing - starSize);
-            int sx = x + btnW / 2 - totalW / 2;
-            int sy = y + btnH - starSize - 5;
+            BITMAP bmStar;
+            GetObject(gRes.star, sizeof(BITMAP), &bmStar);
 
-            HBRUSH starBrush = CreateSolidBrush(RGB(255, 215, 0));
-            HPEN starPen = CreatePen(PS_SOLID, 1, RGB(200, 160, 0));
-            HGDIOBJ oldBrush = SelectObject(hdcBuffer, starBrush);
-            HGDIOBJ oldPen   = SelectObject(hdcBuffer, starPen);
+            int starW = 16;
+            int starH = 16;
+            int starGap = 2;
+            int totalStarW = stars * starW + (stars - 1) * starGap;
 
-            for (int s = 0; s < stars; s++) {
-                int cx = sx + s * starSpacing + starSize / 2;
-                int cy = sy + starSize / 2;
+            int sx = x + btnW / 2 - totalStarW / 2;
+            int sy = y + btnH - starH - 4;
 
-                // 5-krakna zvjezdica kao poligon
-                POINT pts[10];
-                for (int p = 0; p < 10; p++) {
-                    float angle = (float)p * 3.14159f / 5.0f - 3.14159f / 2.0f;
-                    float r = (p % 2 == 0) ? (float)starSize : (float)starSize * 0.45f;
-                    pts[p].x = cx + (int)(r * cos(angle));
-                    pts[p].y = cy + (int)(r * sin(angle));
+            HBITMAP oldMemBmp = (HBITMAP)SelectObject(gRes.hdcMem, gRes.star);
+           for (int s = 0; s < stars; s++) {
+
+                    TransparentBlt(
+                        hdcBuffer,
+                        sx + s * (starW + starGap), sy, starW, starH,
+                        gRes.hdcMem,
+                        0, 0, bmStar.bmWidth, bmStar.bmHeight,
+                        RGB(255, 255, 255)
+                    );
                 }
-                Polygon(hdcBuffer, pts, 10);
-            }
+            SelectObject(gRes.hdcMem, oldMemBmp);
+        }
+    }
 
-    SelectObject(hdcBuffer, oldBrush);
-    SelectObject(hdcBuffer, oldPen);
-    DeleteObject(starBrush);
-    DeleteObject(starPen);
-}
-
-    // 6. Back Dugme
     RenderBackButton(hdcBuffer, sheet);
 }
-}
 
-// ====================== POMOĆNE FUNKCIJE (Iz Dashboard/Settings) ======================
+
 
 static void RenderTitle(HDC hdcBuffer, RECT sheet) {
     SetBkMode(hdcBuffer, TRANSPARENT);
@@ -191,7 +163,7 @@ static void RenderBackground(HDC hdcBuffer, RECT rect){
 }
 
 static void RenderTransparentSheet(HDC hdcBuffer, RECT rect, RECT* outSheet) {
-    int padding = 120; // Širi sheet kao u Dashboardu
+    int padding = 120;
     int sheetWidth  = SHEET_W + padding * 2;
     int sheetHeight = SHEET_H;
 
