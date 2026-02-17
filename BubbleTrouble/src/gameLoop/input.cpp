@@ -41,39 +41,51 @@ static void UpdatePlayer1Input(HWND hwnd){
     bool isMoving = false;
     KeyBindings* keys = &gGame.settingsState.player1Keys;
 
-    // === MOVEMENT ===
-    if(GetAsyncKeyState(keys->moveLeft) & 0x8000){
-        gGame.hero.x -= gGame.hero.dx;
-        gGame.hero.currentRow = 1;
-        isMoving = true;
-    }
-    else if(GetAsyncKeyState(keys->moveRight) & 0x8000){
-        gGame.hero.x += gGame.hero.dx;
-        gGame.hero.currentRow = 0;
-        isMoving = true;
-    }
-
-  // === BOUNDARY CHECK ===
-    if (gGame.hero.x < gGame.leftWall.width) {
-        gGame.hero.x = gGame.leftWall.width;
-    }
-
-    int desnaGranica = windowWidth - gGame.rightWall.width - gGame.hero.width;
-    if (gGame.hero.x > desnaGranica) {
-        gGame.hero.x = desnaGranica;
-    }
-
     // === DEFINISANJE ZONE MERDEVINA ===
     bool heroNearLadder = false;
     if (CURRENT_LEVEL.ladder.width > 0) {
         StaticObject& ladder = CURRENT_LEVEL.ladder;
-        heroNearLadder =
-            (gGame.hero.x + gGame.hero.width + 80 > ladder.x) &&
-            (gGame.hero.x < ladder.x + ladder.width + 80);
+        int heroCenterX = gGame.hero.x + (gGame.hero.width / 2);
+
+        // Sredina heroja mora biti strogo unutar lijeve i desne ivice merdevina
+        heroNearLadder = (heroCenterX > ladder.x) && (heroCenterX < ladder.x + ladder.width);
     }
 
-    // ===== CHECK ZA VRATA (Platformu) ===== //
-    // Isključi sudar s platformom ako igrač koristi merdevine
+    // Da li se nalazimo u zraku na merdevinama (ni na gornjem, ni na donjem spratu)
+    bool isMidAirOnLadder = false;
+    if (CURRENT_LEVEL.ladder.width > 0 && CURRENT_LEVEL.door.active) {
+        int platformY = CURRENT_LEVEL.door.y;
+        int upperFloorY = platformY - gGame.hero.height;
+        isMidAirOnLadder = (gGame.hero.floorY != 0 && gGame.hero.floorY != upperFloorY);
+    }
+
+    // === MOVEMENT (Lijevo/Desno) ===
+    // Dozvoli kretanje lijevo/desno SAMO ako heroj stoji na nekom od podova
+    if (!isMidAirOnLadder) {
+        if(GetAsyncKeyState(keys->moveLeft) & 0x8000){
+            gGame.hero.x -= gGame.hero.dx;
+            gGame.hero.currentRow = 1;
+            isMoving = true;
+        }
+        else if(GetAsyncKeyState(keys->moveRight) & 0x8000){
+            gGame.hero.x += gGame.hero.dx;
+            gGame.hero.currentRow = 0;
+            isMoving = true;
+        }
+
+        // === BOUNDARY CHECK ===
+        if (gGame.hero.x < gGame.leftWall.width) {
+            gGame.hero.x = gGame.leftWall.width;
+        }
+
+        int desnaGranica = windowWidth - gGame.rightWall.width - gGame.hero.width;
+        if (gGame.hero.x > desnaGranica) {
+            gGame.hero.x = desnaGranica;
+        }
+    }
+
+    // ===== CHECK ZA VRATA ===== //
+    // Isključi sudar s platformom ako igrač stoji u zoni merdevina
     if (!heroNearLadder) {
         CheckHeroDoorCollision();
     }
@@ -84,7 +96,7 @@ static void UpdatePlayer1Input(HWND hwnd){
         CheckHeroPillarCollision(&CURRENT_LEVEL.pillar2);
     }
 
-    // ===== CHECK ZA STUBOVE (Level 7 / ladder level) ===== //
+    // ===== CHECK ZA STUBOVE (Level 7) ===== //
     if(CURRENT_LEVEL.ladder.width > 0){
         CheckHeroPillarCollision(&CURRENT_LEVEL.longWall);
         CheckHeroPillarCollision(&CURRENT_LEVEL.pillar1);
@@ -109,11 +121,15 @@ static void UpdatePlayer1Input(HWND hwnd){
     // === HARPOON SHOOTING ===
     bool isSpacePressed = (GetAsyncKeyState(keys->shoot) & 0x8000) != 0;
 
-    if (isSpacePressed && !gGame.inputState.wasSpacePressed && !gGame.harpoon.isActive) {
+    // Pucanje dozvoljeno samo ako ne visimo na sredini merdevina
+    if (isSpacePressed && !gGame.inputState.wasSpacePressed && !gGame.harpoon.isActive && !isMidAirOnLadder) {
         gGame.harpoon.isActive = true;
         gGame.harpoon.length = 0;
         gGame.harpoon.x = gGame.hero.x + (gGame.hero.width / 2) - (gGame.harpoon.width / 2);
+
+        // Harpun uvijek polazi sa nivoa nogu heroja
         gGame.harpoon.y = (gGame.hero.floorY == 0) ? (rect.bottom - gGame.floorWall.height) : (gGame.hero.floorY + gGame.hero.height);
+
         gGame.harpoon.ownerPlayer = 1;
 
         if(gGame.gameState.currentMode == GAME_MODE_PLAYING && gGame.settingsState.soundState.soundEffectsOn)
@@ -122,46 +138,41 @@ static void UpdatePlayer1Input(HWND hwnd){
 
     gGame.inputState.wasSpacePressed = isSpacePressed;
 
-// === MERDEVINE - jednostavna logika bez state machine ===
-    // Ako je hero X blizu merdevina, UP/DOWN direktno pomijeraju Y
+    // === MERDEVINE (Gore/Dolje) ===
     if (CURRENT_LEVEL.ladder.width > 0) {
-        StaticObject& ladder = CURRENT_LEVEL.ladder;
         int platformY   = CURRENT_LEVEL.door.y;
         int lowerFloorY = rect.bottom - gGame.floorWall.height - gGame.hero.height;
         int upperFloorY = platformY - gGame.hero.height;
-        // Detektuj blizinu merdevinama sa sirinom tolerancije
-        bool heroNearLadder =
-            (gGame.hero.x + gGame.hero.width + 80 > ladder.x) &&
-            (gGame.hero.x < ladder.x + ladder.width + 80);
 
         if (heroNearLadder) {
-            // Ako heroj kreće sa donjeg poda, pripremamo njegov floorY za penjanje
+            // Inicijalizacija floorY-a pri prvom kontaktu ako stižemo s glavnog poda
             if (gGame.hero.floorY == 0) {
                 gGame.hero.floorY = lowerFloorY;
             }
 
-            // Kretanje prema GORE
             if (GetAsyncKeyState(VK_UP) & 0x8000) {
                 gGame.hero.floorY -= 5;
-                if (gGame.hero.floorY < upperFloorY)
+                if (gGame.hero.floorY < upperFloorY) {
                     gGame.hero.floorY = upperFloorY;
+                }
             }
-            // Kretanje prema DOLJE
             if (GetAsyncKeyState(VK_DOWN) & 0x8000) {
                 gGame.hero.floorY += 5;
-                if (gGame.hero.floorY > lowerFloorY)
+                if (gGame.hero.floorY > lowerFloorY) {
                     gGame.hero.floorY = lowerFloorY;
+                }
             }
 
-            // Snap na pod/platformu kad se zaustavi na ivici
+            // Snap na donji ili gornji pod
             if (gGame.hero.floorY >= lowerFloorY) {
-                gGame.hero.floorY = 0; // Vraća standardno ponašanje za glavno dno
+                gGame.hero.floorY = 0; // Vraća na klasičan sistem za glavni pod
             } else if (gGame.hero.floorY <= upperFloorY) {
-                gGame.hero.floorY = upperFloorY; // Zaključaj za gornju platformu
+                gGame.hero.floorY = upperFloorY; // Zaključaj za platformu
             }
         }
     }
 }
+
 
 void HandleMouseClick(HWND hwnd, int mx, int my)
 {
