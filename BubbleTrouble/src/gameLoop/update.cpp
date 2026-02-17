@@ -223,8 +223,8 @@ void UpdateWallTransition(HWND hwnd){
                 StartGame(hwnd);
                 gGame.menuButtons[0].isHovered = false;
             }else if(gGame.transitionState.pendingMulti){
-                StartGame(hwnd);
                 InitMultiplayer(hwnd);
+                StartGame(hwnd);
                 gGame.menuButtons[1].isHovered = false;
             }
             gGame.transitionState.transitionVars = TRANSITION_OPENING;

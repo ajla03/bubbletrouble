@@ -10,8 +10,6 @@ void InitMultiplayer(HWND hwnd) {
     RECT rect;
     GetClientRect(hwnd, &rect);
 
-    gGame.hero.x = gGame.leftWall.width + 50;
-    gGame.hero.y = rect.bottom - gGame.floorWall.height - gGame.hero.height;
     gGame.hero.currentRow = 2;
     gGame.hero.currentFrame = 0;
     gGame.hero2.floorY = 0;
