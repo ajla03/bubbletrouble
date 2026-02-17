@@ -15,5 +15,5 @@ bool SaveScore(const char* playerName, int score, int level, const char* mode);
 bool GetTopScores(HighScore* scores, int count, const char* mode);
 bool CreateTables();
 //za unlocked levels
-int GetPlayerMaxLevel(const char* playerName);
-void SavePlayerProgress(const char* playerName, int newMaxLevel);
+int GetPlayerMaxLevel(const char* playerName, const char* mode);
+void SavePlayerProgress(const char* playerName, const char* mode, int newMaxLevel);;

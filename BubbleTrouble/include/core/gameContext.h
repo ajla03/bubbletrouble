@@ -83,7 +83,8 @@ struct GameContext{
 
     // Player Name
     char playerName[12];
-    int unlockedLevel;
+    int unlockedLevelSingle;
+    int unlockedLevelMulti;
 };
 
 extern GameContext gGame;

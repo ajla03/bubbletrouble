@@ -68,17 +68,17 @@ bool CreateTables(){
         sqlite3_free(errMsg);
         return false;
     }
-    const char *sqlProgress =
-        "CREATE TABLE IF NOT EXISTS user_progress ("
-        "player_name TEXT PRIMARY KEY,"
-        "max_level INTEGER DEFAULT 0"
+  const char *sqlProgress =
+        "CREATE TABLE IF NOT EXISTS player_progress ("
+        "player_name TEXT,"
+        "mode TEXT,"
+        "max_level INTEGER DEFAULT 0,"
+        "PRIMARY KEY (player_name, mode)"
         ");";
 
     char *errMsg2 = nullptr;
-    int rc2 = sqlite3_exec(db, sqlProgress, nullptr, nullptr, &errMsg2);
-    if (rc2 != SQLITE_OK) {
-        sqlite3_free(errMsg2);
-    }
+    sqlite3_exec(db, sqlProgress, nullptr, nullptr, &errMsg2);
+    if (errMsg2) sqlite3_free(errMsg2);
     return true;
 }
 
@@ -178,13 +178,12 @@ int GetBestScoreForPlayer(const char* playerName){
 
     return maxScore;
 }
-int GetPlayerMaxLevel(const char* playerName) {
-    if (!db) return 0; // 0 znači samo Level 1 je otključan (indeks 0)
+int GetPlayerMaxLevel(const char* playerName, const char* mode) {
+    if (!db) return 0;
 
     int maxLevel = 0;
-    char *sql = sqlite3_mprintf("SELECT max_level FROM user_progress WHERE player_name = %Q;", playerName);
+    char *sql = sqlite3_mprintf("SELECT max_level FROM player_progress WHERE player_name = %Q AND mode = %Q;", playerName, mode);
 
-    // Koristimo callback da izvučemo vrijednost
     auto callback = [](void* data, int argc, char** argv, char** colName) -> int {
         int* val = (int*)data;
         if (argc > 0 && argv[0]) *val = atoi(argv[0]);
@@ -199,13 +198,12 @@ int GetPlayerMaxLevel(const char* playerName) {
     return maxLevel;
 }
 
-void SavePlayerProgress(const char* playerName, int newMaxLevel) {
+void SavePlayerProgress(const char* playerName, const char* mode, int newMaxLevel) {
     if (!db) return;
 
-    // INSERT OR REPLACE će ažurirati level ako igrač postoji, ili ga dodati ako ne postoji
     char *sql = sqlite3_mprintf(
-        "INSERT OR REPLACE INTO user_progress (player_name, max_level) VALUES (%Q, %d);",
-        playerName, newMaxLevel
+        "INSERT OR REPLACE INTO player_progress (player_name, mode, max_level) VALUES (%Q, %Q, %d);",
+        playerName, mode, newMaxLevel
     );
 
     char *errMsg = nullptr;

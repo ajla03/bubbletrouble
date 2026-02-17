@@ -120,14 +120,12 @@ void CheckCollisions(){
 
             if(gGame.gameState.isMultiplayer){
                 --gGame.player1Stats.lives;
-                // Game over samo ako su OBA igrača mrtva (ovo se provjerava i u Update, ali može i ovdje)
                 if(gGame.player1Stats.lives <= 0 && gGame.player2Stats.lives <= 0) {
                     gGame.gameState.isGameOver = true;
-                    printf("entered here! ...");
-                        if(!gGame.gameState.isScoreSaved) {
-                            SaveFinalScore();
-                            gGame.gameState.isScoreSaved = true;
-                          }
+                    if(!gGame.gameState.isScoreSaved) {
+                        SaveFinalScore();
+                        gGame.gameState.isScoreSaved = true;
+                    }
                     gGame.gameState.currentMode = GAME_OVER;
                 }
             } else {
@@ -160,23 +158,28 @@ void CheckCollisions(){
                         int timeBonus = CalculateTimeBonus();
                         CURRENT_LEVEL.levelScore += timeBonus;
 
-                        if(gGame.gameState.isMultiplayer) {
+                        if (gGame.gameState.isMultiplayer) {
                             int bonusPerPlayer = timeBonus / 2;
                             gGame.player1Stats.score += bonusPerPlayer;
                             gGame.player2Stats.score += bonusPerPlayer;
                             gGame.totalScore = gGame.player1Stats.score + gGame.player2Stats.score;
+
+                            // SPAŠAVANJE MULTIPLAYER NIVOA
+                            if (gGame.currentLevel + 1 > gGame.unlockedLevelMulti) {
+                                gGame.unlockedLevelMulti = gGame.currentLevel + 1;
+                                if (gGame.unlockedLevelMulti > 6) gGame.unlockedLevelMulti = 6;
+                                SavePlayerProgress(gGame.playerName, "2 PLAYERS", gGame.unlockedLevelMulti);
+                            }
                         } else {
                             gGame.totalScore += timeBonus;
-                        }
 
-                        // --- DODATI OVO ZA OTKLJUČAVANJE NIVOA ---
-                        if (gGame.currentLevel + 1 > gGame.unlockedLevel) {
-                            gGame.unlockedLevel = gGame.currentLevel + 1; // Otključaj sljedeći (npr. prešli level 0, otključaj 1)
-                            // Max leveli na mapi idu do 6 (ukupno 7)
-                            if (gGame.unlockedLevel > 6) gGame.unlockedLevel = 6;
-                            SavePlayerProgress(gGame.playerName, gGame.unlockedLevel);
+                            // SPAŠAVANJE SINGLEPLAYER NIVOA
+                            if (gGame.currentLevel + 1 > gGame.unlockedLevelSingle) {
+                                gGame.unlockedLevelSingle = gGame.currentLevel + 1;
+                                if (gGame.unlockedLevelSingle > 6) gGame.unlockedLevelSingle = 6;
+                                SavePlayerProgress(gGame.playerName, "1 PLAYER", gGame.unlockedLevelSingle);
+                            }
                         }
-                        // ------------------------------------------
                     }
                     gGame.harpoon.isActive = false;
                     break;
@@ -218,7 +221,6 @@ void CheckCollisions(){
                     gGame.harpoon2.isActive = false;
                 }
 
-                // Game over samo ako su OBA igrača mrtva
                 if(gGame.player1Stats.lives <= 0 && gGame.player2Stats.lives <= 0) {
                     gGame.gameState.isGameOver = true;
                     if(!gGame.gameState.isScoreSaved) {
@@ -252,13 +254,12 @@ void CheckCollisions(){
                         gGame.player2Stats.score += bonusPerPlayer;
                         gGame.totalScore = gGame.player1Stats.score + gGame.player2Stats.score;
 
-                        // --- DODATI OVO ZA OTKLJUČAVANJE NIVOA ---
-                        if (gGame.currentLevel + 1 > gGame.unlockedLevel) {
-                            gGame.unlockedLevel = gGame.currentLevel + 1;
-                            if (gGame.unlockedLevel > 6) gGame.unlockedLevel = 6;
-                            SavePlayerProgress(gGame.playerName, gGame.unlockedLevel);
+                        // SPAŠAVANJE MULTIPLAYER NIVOA (jer Harpoon 2 postoji samo u multiplayeru)
+                        if (gGame.currentLevel + 1 > gGame.unlockedLevelMulti) {
+                            gGame.unlockedLevelMulti = gGame.currentLevel + 1;
+                            if (gGame.unlockedLevelMulti > 6) gGame.unlockedLevelMulti = 6;
+                            SavePlayerProgress(gGame.playerName, "2 PLAYERS", gGame.unlockedLevelMulti);
                         }
-                        // ------------------------------------------
                     }
                     gGame.harpoon2.isActive = false;
                     break;

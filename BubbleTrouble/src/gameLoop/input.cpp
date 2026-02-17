@@ -198,11 +198,12 @@ void HandleMouseClick(HWND hwnd, int mx, int my)
                 int totalWidth = (7 * btnSize) + (6 * gap);
                 int startX = (rect.right - totalWidth) / 2;
                 int startY = rect.bottom / 2;
+                int currentUnlocked = gGame.gameState.isMultiplayer ? gGame.unlockedLevelMulti : gGame.unlockedLevelSingle;
 
                 for(int i=0; i<7; i++){
                     int x = startX + i * (btnSize + gap);
                     if(mx >= x && mx <= x + btnSize && my >= startY && my <= startY + btnSize){
-                        if(i <= gGame.unlockedLevel){
+                        if(i <= currentUnlocked){
                             gGame.currentLevel = i;
 
                             if (gGame.gameState.isMultiplayer) {
@@ -551,7 +552,9 @@ static void SaveLoginInfo(HWND hwnd){
             sizeof(gGame.playerName),
             gGame.loginInput.text
         );
-        gGame.unlockedLevel = GetPlayerMaxLevel(gGame.playerName);
+
+        gGame.unlockedLevelSingle = GetPlayerMaxLevel(gGame.playerName, "1 PLAYER");
+        gGame.unlockedLevelMulti = GetPlayerMaxLevel(gGame.playerName, "2 PLAYERS");
 
         gGame.transitionState.pendingHome = true;
         StartWallTransition(hwnd);

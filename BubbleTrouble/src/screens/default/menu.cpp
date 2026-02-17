@@ -398,6 +398,7 @@ void RenderLevelSelectScreen(HDC hdc, RECT rect) {
     int startY = rect.bottom / 2;
 
     SelectObject(hdc, gRes.hFont); // Manji font za brojeve
+    int currentUnlocked = gGame.gameState.isMultiplayer ? gGame.unlockedLevelMulti : gGame.unlockedLevelSingle;
 
     for (int i = 0; i < 7; i++) {
         int x = startX + i * (btnSize + gap);
@@ -405,7 +406,7 @@ void RenderLevelSelectScreen(HDC hdc, RECT rect) {
 
         // Boja ovisno o tome da li je otključan
         HBRUSH hBrush;
-        if (i <= gGame.unlockedLevel) {
+        if (i <= currentUnlocked) {
             hBrush = CreateSolidBrush(RGB(0, 255, 0)); // Zeleno za otključano
         } else {
             hBrush = CreateSolidBrush(RGB(100, 100, 100)); // Sivo za zaključano
