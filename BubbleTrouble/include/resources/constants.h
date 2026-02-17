@@ -25,7 +25,7 @@
 
 #define HERO_INVINCIBLE_TIME 1.2f
 
-#define MAX_LEVELS 7
+#define MAX_LEVELS 8
 #define CURRENT_LEVEL gGame.levels[gGame.currentLevel]
 
 #define BONUS_PER_SECOND 0.5

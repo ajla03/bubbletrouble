@@ -99,6 +99,9 @@ void RecalculateLevel4Layout(HWND hwnd);
 void InitLevel7(HWND hwnd);
 void RenderLevel7(HDC hdcBuffer, RECT rect);
 void RecalculateLevel7Layout(HWND hwnd);
+void InitLevel8(HWND hwnd);
+void RenderLevel8(HDC hdcBuffer, RECT rect);
+void RecalculateLevel8Layout(HWND hwnd);
 void UpdateLevelSelectHover(HWND hwnd, int mx, int my);
 
 // ================= TRANSITIONS (in animatedWalls.cpp) ============

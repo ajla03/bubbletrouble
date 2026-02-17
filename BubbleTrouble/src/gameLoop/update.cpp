@@ -458,6 +458,37 @@ static void UpdateLevelLogic(HWND hwnd){
             CURRENT_LEVEL.pillar2.width = 0;
         }
     }
+
+    // === LEVEL 8: OBA STUBA NESTAJU ISTOVREMENO ===
+    // Pillars disappear only when BOTH outer sections (left AND right) are fully cleared.
+    if (gGame.currentLevel == 7) {
+        if (CURRENT_LEVEL.pillar1.width > 0 || CURRENT_LEVEL.pillar2.width > 0) {
+            RECT rect8;
+            GetClientRect(hwnd, &rect8);
+
+            int bgW8       = rect8.right - gGame.leftWall.width - gGame.rightWall.width;
+            int secW8      = bgW8 / 3;
+
+            // Section 1 bounds (left outer section)
+            float sec1Left  = (float)gGame.leftWall.width;
+            float sec1Right = (float)(gGame.leftWall.width + secW8);
+
+            // Section 3 bounds (right outer section)
+            float sec3Left  = (float)(gGame.leftWall.width + 2 * secW8);
+            float sec3Right = (float)(rect8.right - gGame.rightWall.width);
+
+            bool leftCleared  = AreSectionBalloonsDestroyed(sec1Left, sec1Right);
+            bool rightCleared = AreSectionBalloonsDestroyed(sec3Left, sec3Right);
+
+            // Both must be cleared before pillars fall — simultaneous disappear
+            if (leftCleared && rightCleared) {
+                CURRENT_LEVEL.pillar1.width  = 0;
+                CURRENT_LEVEL.pillar1.height = 0;
+                CURRENT_LEVEL.pillar2.width  = 0;
+                CURRENT_LEVEL.pillar2.height = 0;
+            }
+        }
+    }
 }
 
 void UpdateLoginInput(float dt)
@@ -472,4 +503,3 @@ void UpdateLoginInput(float dt)
         gGame.loginInput.caretTimer = 0.0f;
     }
 }
-

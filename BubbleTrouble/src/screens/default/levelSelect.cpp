@@ -31,7 +31,7 @@ void UpdateLevelSelectHover(HWND hwnd, int mx, int my) {
     int startY = sheet.top + 130;
 
     s_hoveredLevel = -1;
-    for (int i = 0; i < 7; i++) {
+    for (int i = 0; i < 8; i++) {
         int row = i / cols, col = i % cols;
         int startX = sheet.left + ((sheet.right - sheet.left) - (row == 0 ? totalW1 : totalW2)) / 2;
         int x = startX + col * (btnW + gapX);
@@ -70,7 +70,7 @@ void RenderLevelSelectScreen(HDC hdcBuffer, RECT rect) {
     BITMAP bm;
     GetObject(gRes.settingsPlayer, sizeof(BITMAP), &bm);
 
-    for (int i = 0; i < 7; i++) {
+    for (int i = 0; i < 8; i++) {
         int row = i / cols;
         int col = i % cols;
 
