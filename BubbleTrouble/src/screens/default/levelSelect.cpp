@@ -10,6 +10,38 @@ static void RenderTransparentSheet(HDC hdcBuffer, RECT rect, RECT* outSheet);
 static void RenderTorches(HDC hdcBuffer, RECT sheet);
 static void RenderBackButton(HDC hdcBuffer, RECT sheet);
 static void RenderTitle(HDC hdcBuffer, RECT sheet);
+static int s_hoveredLevel = -1;
+
+void UpdateLevelSelectHover(HWND hwnd, int mx, int my) {
+    RECT rect;
+    GetClientRect(hwnd, &rect);
+
+    int padding = 120;
+    int sheetWidth  = SHEET_W + padding * 2;
+    int sheetHeight = SHEET_H;
+    RECT sheet;
+    sheet.left   = rect.right / 2 - sheetWidth / 2;
+    sheet.right  = sheet.left + sheetWidth;
+    sheet.top    = rect.bottom / 2 - sheetHeight / 2;
+    sheet.bottom = sheet.top + sheetHeight;
+
+    int btnW = 80, btnH = 80, gapX = 40, gapY = 30, cols = 4;
+    int totalW1 = 4 * btnW + 3 * gapX;
+    int totalW2 = 3 * btnW + 2 * gapX;
+    int startY = sheet.top + 130;
+
+    s_hoveredLevel = -1;
+    for (int i = 0; i < 7; i++) {
+        int row = i / cols, col = i % cols;
+        int startX = sheet.left + ((sheet.right - sheet.left) - (row == 0 ? totalW1 : totalW2)) / 2;
+        int x = startX + col * (btnW + gapX);
+        int y = startY + row * (btnH + gapY);
+        if (mx >= x && mx <= x + btnW && my >= y && my <= y + btnH) {
+            s_hoveredLevel = i;
+            break;
+        }
+    }
+}
 
 void RenderLevelSelectScreen(HDC hdcBuffer, RECT rect) {
     // 1. Pozadina
@@ -62,29 +94,29 @@ void RenderLevelSelectScreen(HDC hdcBuffer, RECT rect) {
         RECT textRect = { x, y, x + btnW, y + btnH };
 
         if (isUnlocked) {
-            // Narandžasti glow efekat za otključane
-            HPEN glowPen = CreatePen(PS_SOLID, 4, RGB(255, 140, 0));
-            HGDIOBJ oldPen = SelectObject(hdcBuffer, glowPen);
-            HGDIOBJ oldBrush = SelectObject(hdcBuffer, GetStockObject(HOLLOW_BRUSH));
-            RoundRect(hdcBuffer, x - 2, y - 2, x + btnW + 2, y + btnH + 2, 20, 20);
-            SelectObject(hdcBuffer, oldPen);
-            SelectObject(hdcBuffer, oldBrush);
-            DeleteObject(glowPen);
-
+            // Narandžasti glow samo na hover
+            if (s_hoveredLevel == i) {
+                HPEN glowPen = CreatePen(PS_SOLID, 4, RGB(255, 140, 0));
+                HGDIOBJ oldPen = SelectObject(hdcBuffer, glowPen);
+                HGDIOBJ oldBrush = SelectObject(hdcBuffer, GetStockObject(HOLLOW_BRUSH));
+                RoundRect(hdcBuffer, x - 2, y - 2, x + btnW + 2, y + btnH + 2, 20, 20);
+                SelectObject(hdcBuffer, oldPen);
+                SelectObject(hdcBuffer, oldBrush);
+                DeleteObject(glowPen);
+            }
             SetTextColor(hdcBuffer, RGB(255, 255, 255));
         } else {
-            // Tamni overlay za zaključane
+            // Tamni overlay za zaključane (ostaje isto)
             HDC maskDC = CreateCompatibleDC(hdcBuffer);
             HBITMAP maskBmp = CreateCompatibleBitmap(hdcBuffer, btnW, btnH);
             SelectObject(maskDC, maskBmp);
             RECT fillR = {0, 0, btnW, btnH};
             FillRect(maskDC, &fillR, (HBRUSH)GetStockObject(BLACK_BRUSH));
-            BLENDFUNCTION bf = { AC_SRC_OVER, 0, 150, 0 }; // 150 = poluprozirno crno
+            BLENDFUNCTION bf = { AC_SRC_OVER, 0, 150, 0 };
             AlphaBlend(hdcBuffer, x, y, btnW, btnH, maskDC, 0, 0, btnW, btnH, bf);
             DeleteObject(maskBmp);
             DeleteDC(maskDC);
-
-            SetTextColor(hdcBuffer, RGB(130, 130, 130)); // Sivi tekst
+            SetTextColor(hdcBuffer, RGB(130, 130, 130));
         }
 
         // Broj levela
