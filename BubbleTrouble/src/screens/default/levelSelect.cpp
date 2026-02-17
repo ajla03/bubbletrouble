@@ -127,33 +127,40 @@ void RenderLevelSelectScreen(HDC hdcBuffer, RECT rect) {
 
         // Linija ~73 koja već postoji:
 
-  int stars = gGame.levelStars[i];
-if (isUnlocked && stars > 0) {
-    int starSize = 7;
-    int starSpacing = 16;
-    int totalW = stars * starSpacing - (starSpacing - starSize);
-    int sx = x + btnW / 2 - totalW / 2;
-    int sy = y + btnH - starSize - 5;
-
-    HBRUSH starBrush = CreateSolidBrush(RGB(255, 215, 0));
-    HPEN starPen = CreatePen(PS_SOLID, 1, RGB(200, 160, 0));
-    HGDIOBJ oldBrush = SelectObject(hdcBuffer, starBrush);
-    HGDIOBJ oldPen   = SelectObject(hdcBuffer, starPen);
-
-    for (int s = 0; s < stars; s++) {
-        int cx = sx + s * starSpacing + starSize / 2;
-        int cy = sy + starSize / 2;
-
-        // 5-krakna zvjezdica kao poligon
-        POINT pts[10];
-        for (int p = 0; p < 10; p++) {
-            float angle = (float)p * 3.14159f / 5.0f - 3.14159f / 2.0f;
-            float r = (p % 2 == 0) ? (float)starSize : (float)starSize * 0.45f;
-            pts[p].x = cx + (int)(r * cos(angle));
-            pts[p].y = cy + (int)(r * sin(angle));
+// Čitaj zvjezdice iz odgovarajućeg niza u zavisnosti od moda
+        int stars = 0;
+        if (gGame.gameState.isMultiplayer) {
+            stars = gGame.levelStarsMulti[i];
+        } else {
+            stars = gGame.levelStarsSingle[i];
         }
-        Polygon(hdcBuffer, pts, 10);
-    }
+
+        if (isUnlocked && stars > 0) {
+            int starSize = 7;
+            int starSpacing = 16;
+            int totalW = stars * starSpacing - (starSpacing - starSize);
+            int sx = x + btnW / 2 - totalW / 2;
+            int sy = y + btnH - starSize - 5;
+
+            HBRUSH starBrush = CreateSolidBrush(RGB(255, 215, 0));
+            HPEN starPen = CreatePen(PS_SOLID, 1, RGB(200, 160, 0));
+            HGDIOBJ oldBrush = SelectObject(hdcBuffer, starBrush);
+            HGDIOBJ oldPen   = SelectObject(hdcBuffer, starPen);
+
+            for (int s = 0; s < stars; s++) {
+                int cx = sx + s * starSpacing + starSize / 2;
+                int cy = sy + starSize / 2;
+
+                // 5-krakna zvjezdica kao poligon
+                POINT pts[10];
+                for (int p = 0; p < 10; p++) {
+                    float angle = (float)p * 3.14159f / 5.0f - 3.14159f / 2.0f;
+                    float r = (p % 2 == 0) ? (float)starSize : (float)starSize * 0.45f;
+                    pts[p].x = cx + (int)(r * cos(angle));
+                    pts[p].y = cy + (int)(r * sin(angle));
+                }
+                Polygon(hdcBuffer, pts, 10);
+            }
 
     SelectObject(hdcBuffer, oldBrush);
     SelectObject(hdcBuffer, oldPen);

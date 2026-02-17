@@ -78,7 +78,21 @@ bool CreateTables(){
 
     char *errMsg2 = nullptr;
     sqlite3_exec(db, sqlProgress, nullptr, nullptr, &errMsg2);
-    if (errMsg2) sqlite3_free(errMsg2);
+    if (errMsg2) sqlite3_free(errMsg2);\
+
+    const char *sqlStars =
+        "CREATE TABLE IF NOT EXISTS level_stars ("
+        "player_name TEXT,"
+        "mode TEXT,"
+        "level INTEGER,"
+        "stars INTEGER,"
+        "PRIMARY KEY (player_name, mode, level)"
+        ");";
+
+    char *errMsg3 = nullptr;
+    sqlite3_exec(db, sqlStars, nullptr, nullptr, &errMsg3);
+    if (errMsg3) sqlite3_free(errMsg3);
+
     return true;
 }
 
@@ -212,4 +226,36 @@ void SavePlayerProgress(const char* playerName, const char* mode, int newMaxLeve
     if (errMsg) sqlite3_free(errMsg);
 }
 
+void SaveLevelStars(const char* playerName, const char* mode, int level, int stars) {
+    if (!db) return;
 
+    char *sql = sqlite3_mprintf(
+        "INSERT OR REPLACE INTO level_stars (player_name, mode, level, stars) VALUES (%Q, %Q, %d, %d);",
+        playerName, mode, level, stars
+    );
+
+    char *errMsg = nullptr;
+    sqlite3_exec(db, sql, nullptr, nullptr, &errMsg);
+    sqlite3_free(sql);
+    if (errMsg) sqlite3_free(errMsg);
+}
+
+int GetLevelStars(const char* playerName, const char* mode, int level) {
+    if (!db) return 0;
+
+    int stars = 0;
+    char *sql = sqlite3_mprintf("SELECT stars FROM level_stars WHERE player_name = %Q AND mode = %Q AND level = %d;", playerName, mode, level);
+
+    auto callback = [](void* data, int argc, char** argv, char** colName) -> int {
+        int* val = (int*)data;
+        if (argc > 0 && argv[0]) *val = atoi(argv[0]);
+        return 0;
+    };
+
+    char *errMsg = nullptr;
+    sqlite3_exec(db, sql, callback, &stars, &errMsg);
+    sqlite3_free(sql);
+    if (errMsg) sqlite3_free(errMsg);
+
+    return stars;
+}

@@ -577,6 +577,10 @@ static void SaveLoginInfo(HWND hwnd){
 
         gGame.unlockedLevelSingle = GetPlayerMaxLevel(gGame.playerName, "1 PLAYER");
         gGame.unlockedLevelMulti = GetPlayerMaxLevel(gGame.playerName, "2 PLAYERS");
+        for (int i = 0; i < MAX_LEVELS; i++) {
+                    gGame.levelStarsSingle[i] = GetLevelStars(gGame.playerName, "single", i);
+                    gGame.levelStarsMulti[i]  = GetLevelStars(gGame.playerName, "multi", i);
+                }
 
         gGame.transitionState.pendingHome = true;
         StartWallTransition(hwnd);

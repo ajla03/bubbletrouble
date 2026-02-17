@@ -95,6 +95,7 @@ void ResolveBalloonPillarCollision(Balloon* b, StaticObject* wall){
     }
 }
 
+
 void CheckCollisions(){
     float harpoonCenterX = gGame.harpoon.x + gGame.harpoon.width / 2.0f;
     float harpoonTop = gGame.harpoon.y - gGame.harpoon.length;
@@ -123,7 +124,7 @@ void CheckCollisions(){
                 if(gGame.player1Stats.lives <= 0 && gGame.player2Stats.lives <= 0) {
                     gGame.gameState.isGameOver = true;
                     if(!gGame.gameState.isScoreSaved) {
-                        SaveFinalScore();
+                        SaveFinalScore(); // Pretpostavka: Imas ovu funkciju negdje definisanu ili je to SaveScore
                         gGame.gameState.isScoreSaved = true;
                     }
                     gGame.gameState.currentMode = GAME_OVER;
@@ -153,12 +154,28 @@ void CheckCollisions(){
                 if (harpoonTop <= b->y + b->radius && harpoonBottom >= b->y - b->radius) {
                     SplitBalloon(i, gGame.harpoon.ownerPlayer);
 
+                    // PROVJERA KRAJA LEVELA
                     if(CURRENT_LEVEL.activeBalloonCount == 0 && !gGame.gameState.isLevelCleared){
+
+                        // 1. Izračunaj preostale živote za zvjezdice
                         int livesLeft = gGame.gameState.isMultiplayer
                             ? std::max(gGame.player1Stats.lives, gGame.player2Stats.lives)
-                            : gGame.player1Stats.lives;                        int earned = (livesLeft >= 3) ? 3 : (livesLeft == 2) ? 2 : 1;
-                        if (earned > gGame.levelStars[gGame.currentLevel])
-                            gGame.levelStars[gGame.currentLevel] = earned;
+                            : gGame.player1Stats.lives;
+
+                        int earned = (livesLeft >= 3) ? 3 : (livesLeft == 2) ? 2 : 1;
+
+                        // 2. NOVA LOGIKA ZA ZVJEZDICE
+                        if (gGame.gameState.isMultiplayer) {
+                            if (earned > gGame.levelStarsMulti[gGame.currentLevel]) {
+                                gGame.levelStarsMulti[gGame.currentLevel] = earned;
+                                SaveLevelStars(gGame.playerName, "multi", gGame.currentLevel, earned);
+                            }
+                        } else {
+                            if (earned > gGame.levelStarsSingle[gGame.currentLevel]) {
+                                gGame.levelStarsSingle[gGame.currentLevel] = earned;
+                                SaveLevelStars(gGame.playerName, "single", gGame.currentLevel, earned);
+                            }
+                        }
 
                         gGame.gameState.isLevelCleared = true;
                         int timeBonus = CalculateTimeBonus();
@@ -170,7 +187,7 @@ void CheckCollisions(){
                             gGame.player2Stats.score += bonusPerPlayer;
                             gGame.totalScore = gGame.player1Stats.score + gGame.player2Stats.score;
 
-                            // SPAŠAVANJE MULTIPLAYER NIVOA
+                            // SPAŠAVANJE OTKLJUČANIH NIVOA (PROGRESS)
                             if (gGame.currentLevel + 1 > gGame.unlockedLevelMulti) {
                                 gGame.unlockedLevelMulti = gGame.currentLevel + 1;
                                 if (gGame.unlockedLevelMulti > 6) gGame.unlockedLevelMulti = 6;
@@ -179,7 +196,7 @@ void CheckCollisions(){
                         } else {
                             gGame.totalScore += timeBonus;
 
-                            // SPAŠAVANJE SINGLEPLAYER NIVOA
+                            // SPAŠAVANJE OTKLJUČANIH NIVOA (PROGRESS)
                             if (gGame.currentLevel + 1 > gGame.unlockedLevelSingle) {
                                 gGame.unlockedLevelSingle = gGame.currentLevel + 1;
                                 if (gGame.unlockedLevelSingle > 6) gGame.unlockedLevelSingle = 6;
@@ -251,12 +268,17 @@ void CheckCollisions(){
                     SplitBalloon(i, gGame.harpoon2.ownerPlayer);
 
                     if(CURRENT_LEVEL.activeBalloonCount == 0 && !gGame.gameState.isLevelCleared) {
-                         int livesLeft = gGame.gameState.isMultiplayer
-                                ? std::max(gGame.player1Stats.lives, gGame.player2Stats.lives)
-                                : gGame.player1Stats.lives;
+
+                         // 1. Izračunaj živote
+                         int livesLeft = std::max(gGame.player1Stats.lives, gGame.player2Stats.lives);
                          int earned = (livesLeft >= 3) ? 3 : (livesLeft == 2) ? 2 : 1;
-                         if (earned > gGame.levelStars[gGame.currentLevel])
-                                gGame.levelStars[gGame.currentLevel] = earned;
+
+                         // 2. NOVA LOGIKA ZA ZVJEZDICE (Ovdje smo sigurno u multiplayeru jer harpun 2 postoji)
+                         if (earned > gGame.levelStarsMulti[gGame.currentLevel]) {
+                             gGame.levelStarsMulti[gGame.currentLevel] = earned;
+                             SaveLevelStars(gGame.playerName, "multi", gGame.currentLevel, earned);
+                         }
+
                         gGame.gameState.isLevelCleared = true;
                         int timeBonus = CalculateTimeBonus();
                         CURRENT_LEVEL.levelScore += timeBonus;
@@ -266,7 +288,7 @@ void CheckCollisions(){
                         gGame.player2Stats.score += bonusPerPlayer;
                         gGame.totalScore = gGame.player1Stats.score + gGame.player2Stats.score;
 
-                        // SPAŠAVANJE MULTIPLAYER NIVOA (jer Harpoon 2 postoji samo u multiplayeru)
+                        // SPAŠAVANJE PROGRESSA
                         if (gGame.currentLevel + 1 > gGame.unlockedLevelMulti) {
                             gGame.unlockedLevelMulti = gGame.currentLevel + 1;
                             if (gGame.unlockedLevelMulti > 6) gGame.unlockedLevelMulti = 6;
