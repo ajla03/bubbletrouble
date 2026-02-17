@@ -106,7 +106,7 @@ void UpdatePowerups(HWND hwnd) {
         }
 
         // 2. Vrata
-        if (CURRENT_LEVEL.door.active && CURRENT_LEVEL.door.width > 0 &&
+        if (CURRENT_LEVEL.ladder.width == 0 && CURRENT_LEVEL.door.active && CURRENT_LEVEL.door.width > 0 &&
             powerupBottom > CURRENT_LEVEL.door.y && powerupTop < CURRENT_LEVEL.door.y + CURRENT_LEVEL.door.height &&
             powerupRight > CURRENT_LEVEL.door.x && powerupLeft < CURRENT_LEVEL.door.x + CURRENT_LEVEL.door.width) {
             hitObstacle = true;

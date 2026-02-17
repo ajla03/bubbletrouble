@@ -9,7 +9,7 @@
 // ========= KONSTANTE ZA KRETANJE BALONA ========= //
 #define MAX_BALLOONS 20
 #define BOUNCE_DAMPING 0.9f
-#define MIN_RADIUS 10.0f
+#define MIN_RADIUS 8.0f
 #define BALLOON_GRAVITY  0.7f
 #define MAX_FALL_SPEED   8.0f
 #define MIN_BOUNCE_SPEED   10.0f
