@@ -94,6 +94,26 @@ void RenderMenu(HDC hdc, RECT rect) {
                        gRes.hdcMem, 0, 0, bm.bmWidth, bm.bmHeight, RGB(255, 255, 255));
         SelectObject(gRes.hdcMem, oldMemBmp);
 
+        // === HOVER ORANGE GLOW ===
+        if (btn->isHovered) {
+
+            int left   = btn->rect.left;
+            int top    = btn->rect.top;
+            int right  = btn->rect.right;
+            int bottom = btn->rect.bottom;
+
+            // Deblji outer glow
+            HPEN glowPen = CreatePen(PS_SOLID, 4, RGB(255, 140, 0));
+            HGDIOBJ oldPen = SelectObject(hdc, glowPen);
+            HGDIOBJ oldBrush = SelectObject(hdc, GetStockObject(HOLLOW_BRUSH));
+
+            RoundRect(hdc, left, top-2, right+2, bottom+2, 20, 20);
+
+            SelectObject(hdc, oldPen);
+            SelectObject(hdc, oldBrush);
+            DeleteObject(glowPen);
+        }
+
         // Tekst na buttonu
         SetBkMode(hdc, TRANSPARENT);
         SetTextColor(hdc, RGB(255, 255, 255));
@@ -126,6 +146,26 @@ void RenderMenu(HDC hdc, RECT rect) {
         TransparentBlt(hdc, helpX, helpY, helpSize, helpSize,
                        gRes.hdcMem, 0, 0, bm.bmWidth, bm.bmHeight,
                        RGB(255, 255, 255));
+      // === HELP HOVER GLOW ===
+        if (gGame.helpIconHovered) {
+
+            HPEN glowPen = CreatePen(PS_SOLID, 4, RGB(255, 140, 0));
+            HGDIOBJ oldPen = SelectObject(hdc, glowPen);
+            HGDIOBJ oldBrush = SelectObject(hdc, GetStockObject(HOLLOW_BRUSH));
+
+            RoundRect(hdc,
+                      helpX - 3,
+                      helpY - 3,
+                      helpX + helpSize + 3,
+                      helpY + helpSize + 3,
+                      helpSize / 3,
+                      helpSize / 3);
+
+            SelectObject(hdc, oldPen);
+            SelectObject(hdc, oldBrush);
+            DeleteObject(glowPen);
+        }
+
         SelectObject(gRes.hdcMem, oldMemBmp);
     }
 
@@ -153,6 +193,27 @@ void RenderMenu(HDC hdc, RECT rect) {
         TransparentBlt(hdc, helpX, helpY, podiumSize, podiumSize,
                        gRes.hdcMem, 0, 0, bm.bmWidth, bm.bmHeight,
                        RGB(255, 255, 255));
+       // === DASHBOARD HOVER GLOW ===
+        if (gGame.dashboardButtonInfo.isHover) {
+
+            HPEN glowPen = CreatePen(PS_SOLID, 4, RGB(255, 140, 0));
+            HGDIOBJ oldPen = SelectObject(hdc, glowPen);
+            HGDIOBJ oldBrush = SelectObject(hdc, GetStockObject(HOLLOW_BRUSH));
+
+            RoundRect(hdc,
+                      helpX,
+                      helpY - 1,
+                      helpX + podiumSize + 3,
+                      helpY + podiumSize + 1,
+                      podiumSize / 3,
+                      podiumSize / 3);
+
+            SelectObject(hdc, oldPen);
+            SelectObject(hdc, oldBrush);
+            DeleteObject(glowPen);
+        }
+
+
         SelectObject(gRes.hdcMem, oldMemBmp);
     }
 
@@ -243,12 +304,12 @@ void HandleMenuMouseMove(HWND hwnd, int x, int y) {
         gGame.menuButtons[i].isHovered = PtInRect(&gGame.menuButtons[i].rect, pt);
         if (wasHovered != gGame.menuButtons[i].isHovered) needsRedraw = true;
     }
-      bool wasHelpHovered = gGame.helpIconHovered;
+
+    bool wasHelpHovered = gGame.helpIconHovered;
     gGame.helpIconHovered = PtInRect(&gGame.helpIconRect, pt);
-    if (wasHelpHovered != gGame.helpIconHovered) needsRedraw = true;
-
-    if (needsRedraw) InvalidateRect(hwnd, NULL, FALSE);
-
+    if (wasHelpHovered != gGame.helpIconHovered) {
+        needsRedraw = true;
+    }
 }
 
 
