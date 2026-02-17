@@ -34,7 +34,8 @@ void Update(HWND hwnd){
                 UpdateLoginInput(0.05f);
             if((gGame.gameState.currentMode == GAME_MODE_SETTINGS && gGame.settingsState.waitingForKey == KEYBIND_NONE ) ||
                gGame.gameState.currentMode == GAME_MODE_HELP  ||
-               gGame.gameState.currentMode == GAME_MODE_DASHBOARD)
+               gGame.gameState.currentMode == GAME_MODE_DASHBOARD||
+               gGame.gameState.currentMode == GAME_MODE_LEVEL_SELECT)
                 UpdateTorches();
             return;
         }

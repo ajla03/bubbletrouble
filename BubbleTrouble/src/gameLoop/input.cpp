@@ -188,41 +188,58 @@ void HandleMouseClick(HWND hwnd, int mx, int my)
         case GAME_MODE_MENU:
             HandleMenuClick(hwnd, mx, my);
             break;
-        case GAME_MODE_LEVEL_SELECT:
-             {
-                RECT rect;
-                GetClientRect(hwnd, &rect);
+case GAME_MODE_LEVEL_SELECT:
+        {
+            RECT rect;
+            GetClientRect(hwnd, &rect);
 
-                int btnSize = 60;
-                int gap = 20;
-                int totalWidth = (7 * btnSize) + (6 * gap);
-                int startX = (rect.right - totalWidth) / 2;
-                int startY = rect.bottom / 2;
-                int currentUnlocked = gGame.gameState.isMultiplayer ? gGame.unlockedLevelMulti : gGame.unlockedLevelSingle;
+            // Isti raspored kao u RenderLevelSelectScreen
+            int padding = 120;
+            int sheetWidth  = SHEET_W + padding * 2;
+            int sheetHeight = SHEET_H;
 
-                for(int i=0; i<7; i++){
-                    int x = startX + i * (btnSize + gap);
-                    if(mx >= x && mx <= x + btnSize && my >= startY && my <= startY + btnSize){
-                        if(i <= currentUnlocked){
-                            gGame.currentLevel = i;
+            RECT sheet;
+            sheet.left   = rect.right / 2 - sheetWidth / 2;
+            sheet.right  = sheet.left + sheetWidth;
+            sheet.top    = rect.bottom / 2 - sheetHeight / 2;
+            sheet.bottom = sheet.top + sheetHeight;
 
-                            if (gGame.gameState.isMultiplayer) {
-                                gGame.transitionState.pendingMulti = true;
-                            } else {
-                                gGame.transitionState.pendingSingle = true;
-                            }
+            int currentUnlocked = gGame.gameState.isMultiplayer ? gGame.unlockedLevelMulti : gGame.unlockedLevelSingle;
+            int btnW = 80;
+            int btnH = 80;
+            int gapX = 40;
+            int gapY = 30;
+            int cols = 4;
+            int totalW1 = 4 * btnW + 3 * gapX;
+            int totalW2 = 3 * btnW + 2 * gapX;
+            int startY = sheet.top + 130;
 
-                            StartWallTransition(hwnd);
+            for (int i = 0; i < 7; i++) {
+                int row = i / cols;
+                int col = i % cols;
+                int startX = sheet.left + ((sheet.right - sheet.left) - (row == 0 ? totalW1 : totalW2)) / 2;
+                int x = startX + col * (btnW + gapX);
+                int y = startY + row * (btnH + gapY);
+
+                if (mx >= x && mx <= x + btnW && my >= y && my <= y + btnH) {
+                    if (i <= currentUnlocked) {
+                        gGame.currentLevel = i;
+                        if (gGame.gameState.isMultiplayer) {
+                            gGame.transitionState.pendingMulti = true;
+                        } else {
+                            gGame.transitionState.pendingSingle = true;
                         }
+                        StartWallTransition(hwnd);
                     }
                 }
-                // Back dugme logika (ako želiš da se vrati u meni)
-                if(IsPointInButton(gGame.backButtonInfo, mx, my)){
-                     gGame.transitionState.pendingHome = true;
-                     StartWallTransition(hwnd);
-                }
-             }
-             break;
+            }
+
+            if(IsPointInButton(gGame.backButtonInfo, mx, my)){
+                 gGame.transitionState.pendingHome = true;
+                 StartWallTransition(hwnd);
+            }
+            break;
+        }
         case GAME_MODE_PLAYING:
             HandlePlayingClick(hwnd, mx, my);
             break;

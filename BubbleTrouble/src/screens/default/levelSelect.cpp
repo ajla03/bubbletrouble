@@ -1,0 +1,203 @@
+#include "game.h"
+#include "gameContext.h"
+#include "resourceManager.h"
+#include <windows.h>
+#include <stdio.h>
+
+// Deklaracije pomoćnih funkcija
+static void RenderBackground(HDC hdcBuffer, RECT rect);
+static void RenderTransparentSheet(HDC hdcBuffer, RECT rect, RECT* outSheet);
+static void RenderTorches(HDC hdcBuffer, RECT sheet);
+static void RenderBackButton(HDC hdcBuffer, RECT sheet);
+static void RenderTitle(HDC hdcBuffer, RECT sheet);
+
+void RenderLevelSelectScreen(HDC hdcBuffer, RECT rect) {
+    // 1. Pozadina
+    RenderBackground(hdcBuffer, rect);
+
+    // 2. Prozirni Sheet
+    RECT sheet;
+    RenderTransparentSheet(hdcBuffer, rect, &sheet);
+
+    // 3. Baklje
+    RenderTorches(hdcBuffer, sheet);
+
+    // 4. Naslov
+    HFONT oldFont = (HFONT)SelectObject(hdcBuffer, gRes.hFontTitle);
+    RenderTitle(hdcBuffer, sheet);
+    SelectObject(hdcBuffer, gRes.hFont); // Vraćamo na obični font za brojeve
+
+    // 5. Crtanje levela (Dugmići)
+    int currentUnlocked = gGame.gameState.isMultiplayer ? gGame.unlockedLevelMulti : gGame.unlockedLevelSingle;
+
+    int btnW = 80;
+    int btnH = 80;
+    int gapX = 40;
+    int gapY = 30;
+    int cols = 4; // 4 u prvom redu, 3 u drugom
+
+    int totalW1 = 4 * btnW + 3 * gapX;
+    int totalW2 = 3 * btnW + 2 * gapX;
+    int startY = sheet.top + 130;
+
+    BITMAP bm;
+    GetObject(gRes.settingsPlayer, sizeof(BITMAP), &bm);
+
+    for (int i = 0; i < 7; i++) {
+        int row = i / cols;
+        int col = i % cols;
+
+        // Centriranje reda zavisno od broja elemenata
+        int startX = sheet.left + ((sheet.right - sheet.left) - (row == 0 ? totalW1 : totalW2)) / 2;
+        int x = startX + col * (btnW + gapX);
+        int y = startY + row * (btnH + gapY);
+
+        bool isUnlocked = (i <= currentUnlocked);
+
+        // Crtamo pozadinu dugmeta (istu kao u settings meniju)
+        SelectObject(gRes.hdcMem, gRes.settingsPlayer);
+        TransparentBlt(hdcBuffer, x, y, btnW, btnH, gRes.hdcMem, 0, 0, bm.bmWidth, bm.bmHeight, RGB(255, 255, 255));
+
+        SetBkMode(hdcBuffer, TRANSPARENT);
+        RECT textRect = { x, y, x + btnW, y + btnH };
+
+        if (isUnlocked) {
+            // Narandžasti glow efekat za otključane
+            HPEN glowPen = CreatePen(PS_SOLID, 4, RGB(255, 140, 0));
+            HGDIOBJ oldPen = SelectObject(hdcBuffer, glowPen);
+            HGDIOBJ oldBrush = SelectObject(hdcBuffer, GetStockObject(HOLLOW_BRUSH));
+            RoundRect(hdcBuffer, x - 2, y - 2, x + btnW + 2, y + btnH + 2, 20, 20);
+            SelectObject(hdcBuffer, oldPen);
+            SelectObject(hdcBuffer, oldBrush);
+            DeleteObject(glowPen);
+
+            SetTextColor(hdcBuffer, RGB(255, 255, 255));
+        } else {
+            // Tamni overlay za zaključane
+            HDC maskDC = CreateCompatibleDC(hdcBuffer);
+            HBITMAP maskBmp = CreateCompatibleBitmap(hdcBuffer, btnW, btnH);
+            SelectObject(maskDC, maskBmp);
+            RECT fillR = {0, 0, btnW, btnH};
+            FillRect(maskDC, &fillR, (HBRUSH)GetStockObject(BLACK_BRUSH));
+            BLENDFUNCTION bf = { AC_SRC_OVER, 0, 150, 0 }; // 150 = poluprozirno crno
+            AlphaBlend(hdcBuffer, x, y, btnW, btnH, maskDC, 0, 0, btnW, btnH, bf);
+            DeleteObject(maskBmp);
+            DeleteDC(maskDC);
+
+            SetTextColor(hdcBuffer, RGB(130, 130, 130)); // Sivi tekst
+        }
+
+        // Broj levela
+        char numStr[4];
+        sprintf(numStr, "%d", i + 1);
+        DrawTextA(hdcBuffer, numStr, -1, &textRect, DT_CENTER | DT_VCENTER | DT_SINGLELINE);
+    }
+
+    // 6. Back Dugme
+    RenderBackButton(hdcBuffer, sheet);
+}
+
+// ====================== POMOĆNE FUNKCIJE (Iz Dashboard/Settings) ======================
+
+static void RenderTitle(HDC hdcBuffer, RECT sheet) {
+    SetBkMode(hdcBuffer, TRANSPARENT);
+    SetTextColor(hdcBuffer, RGB(60, 60, 60));
+    RECT textRect = { sheet.left, sheet.top + 30, sheet.right, sheet.top + 70 };
+    DrawText(hdcBuffer, "SELECT LEVEL", -1, &textRect, DT_CENTER | DT_TOP | DT_SINGLELINE);
+}
+
+static void RenderBackground(HDC hdcBuffer, RECT rect){
+    SetStretchBltMode(hdcBuffer, HALFTONE);
+    int tileW = gGame.floorWall.width;
+    int tileH = gGame.leftWall.height;
+    SelectObject(gRes.hdcMem, gRes.wall);
+    StretchBlt(hdcBuffer, 0, 0, rect.right, rect.bottom, gRes.hdcMem, 0, 0, tileW, tileH, SRCCOPY);
+}
+
+static void RenderTransparentSheet(HDC hdcBuffer, RECT rect, RECT* outSheet) {
+    int padding = 120; // Širi sheet kao u Dashboardu
+    int sheetWidth  = SHEET_W + padding * 2;
+    int sheetHeight = SHEET_H;
+
+    outSheet->left   = rect.right / 2 - sheetWidth / 2;
+    outSheet->right  = outSheet->left + sheetWidth;
+    outSheet->top    = rect.bottom / 2 - sheetHeight / 2;
+    outSheet->bottom = outSheet->top + sheetHeight;
+
+    HBITMAP bmp = CreateCompatibleBitmap(hdcBuffer, 1, 1);
+    HBITMAP hBmpOld = (HBITMAP) SelectObject(gRes.hdcMem, bmp);
+    SetPixel(gRes.hdcMem, 0, 0, RGB(255, 255, 255));
+
+    BLENDFUNCTION bf = { AC_SRC_OVER, 0, 160, 0 };
+    AlphaBlend(hdcBuffer, outSheet->left, outSheet->top,
+               outSheet->right - outSheet->left, outSheet->bottom - outSheet->top,
+               gRes.hdcMem, 0, 0, 1, 1, bf);
+
+    SelectObject(gRes.hdcMem, hBmpOld);
+    DeleteObject(bmp);
+
+    // BORDER
+    HPEN darkPen = CreatePen(PS_SOLID, 2, RGB(80,80,80));
+    HPEN oldPen = (HPEN)SelectObject(hdcBuffer, darkPen);
+    HBRUSH oldBrush = (HBRUSH)SelectObject(hdcBuffer, GetStockObject(NULL_BRUSH));
+    Rectangle(hdcBuffer, outSheet->left - 2, outSheet->top - 2, outSheet->right + 2, outSheet->bottom + 2);
+
+    HPEN lightPen = CreatePen(PS_SOLID, 1, RGB(100, 100, 100));
+    SelectObject(hdcBuffer, lightPen);
+    Rectangle(hdcBuffer, outSheet->left, outSheet->top, outSheet->right, outSheet->bottom);
+
+    SelectObject(hdcBuffer, oldPen);
+    SelectObject(hdcBuffer, oldBrush);
+    DeleteObject(darkPen); DeleteObject(lightPen);
+}
+
+static void RenderTorches(HDC hdcBuffer, RECT sheet) {
+    float torchScale = 2.0f;
+    int torchW = (int)(gGame.torchInfo.width * torchScale);
+    int torchH = (int)(gGame.torchInfo.height * torchScale);
+    int torchX1 = sheet.left / 2 - torchW / 2;
+    int torchX2 = sheet.right + sheet.left / 2 - torchW / 2;
+    int torchY = sheet.bottom / 2;
+    int torchSrcX = gGame.torchInfo.currentFrame * gGame.torchInfo.width;
+    int torchSrcY = gGame.torchInfo.currentRow * gGame.torchInfo.height;
+
+    SelectObject(gRes.hdcMem, gRes.torchMask);
+    StretchBlt(hdcBuffer, torchX1, torchY, torchW, torchH, gRes.hdcMem, torchSrcX, torchSrcY, gGame.torchInfo.width, gGame.torchInfo.height, SRCPAINT);
+    SelectObject(gRes.hdcMem, gRes.torch);
+    StretchBlt(hdcBuffer, torchX1, torchY, torchW, torchH, gRes.hdcMem, torchSrcX, torchSrcY, gGame.torchInfo.width, gGame.torchInfo.height, SRCAND);
+
+    SelectObject(gRes.hdcMem, gRes.torchMask);
+    StretchBlt(hdcBuffer, torchX2, torchY, torchW, torchH, gRes.hdcMem, torchSrcX, torchSrcY, gGame.torchInfo.width, gGame.torchInfo.height, SRCPAINT);
+    SelectObject(gRes.hdcMem, gRes.torch);
+    StretchBlt(hdcBuffer, torchX2, torchY, torchW, torchH, gRes.hdcMem, torchSrcX, torchSrcY, gGame.torchInfo.width, gGame.torchInfo.height, SRCAND);
+}
+
+static void RenderBackButton(HDC hdcBuffer, RECT sheet) {
+    int btnWidth = gGame.backButtonInfo.width;
+    int btnHeight = gGame.backButtonInfo.height;
+    int padding = 40;
+    int x = sheet.left + padding;
+    int y = sheet.bottom - btnHeight / 2 - padding;
+
+    gGame.backButtonInfo.x = x;
+    gGame.backButtonInfo.y = y;
+
+    BITMAP bm;
+    HBITMAP currentBitmap = gGame.backButtonInfo.isHover ? gRes.playerHover : gRes.settingsPlayer;
+    GetObject(currentBitmap, sizeof(BITMAP), &bm);
+    SelectObject(gRes.hdcMem, currentBitmap);
+    TransparentBlt(hdcBuffer, x, y, btnWidth, btnHeight / 2, gRes.hdcMem, 0, 0, bm.bmWidth, bm.bmHeight, RGB(255, 255, 255));
+
+    if (gGame.backButtonInfo.isHover) {
+        HPEN glowPen = CreatePen(PS_SOLID, 4, RGB(255, 140, 0));
+        HGDIOBJ oldPen = SelectObject(hdcBuffer, glowPen);
+        HGDIOBJ oldBrush = SelectObject(hdcBuffer, GetStockObject(HOLLOW_BRUSH));
+        RoundRect(hdcBuffer, x, y - 2, x + btnWidth + 2, y + (btnHeight / 2) + 2, 20, 20);
+        SelectObject(hdcBuffer, oldPen); SelectObject(hdcBuffer, oldBrush); DeleteObject(glowPen);
+    }
+
+    RECT textRect = { x, y, x + btnWidth, y + btnHeight / 2 };
+    SetBkMode(hdcBuffer, TRANSPARENT);
+    SetTextColor(hdcBuffer, RGB(255, 255, 255));
+    DrawText(hdcBuffer, "BACK", -1, &textRect, DT_CENTER | DT_VCENTER | DT_SINGLELINE);
+}
