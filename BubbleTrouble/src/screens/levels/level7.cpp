@@ -160,13 +160,14 @@ void RecalculateLevel7Layout(HWND hwnd)
 
 
     if (CURRENT_LEVEL.activeBalloonCount > 0 || gGame.gameState.isLevelCleared) {
-        if (!CURRENT_LEVEL.balloons[0].active) {
+
+        if (!(CURRENT_LEVEL.balloons[0].active && CURRENT_LEVEL.balloons[0].radius == 18.0f)) {
             CURRENT_LEVEL.longWall.width = 0;
         }
-        if (!CURRENT_LEVEL.balloons[1].active) {
+        if (!(CURRENT_LEVEL.balloons[1].active && CURRENT_LEVEL.balloons[1].radius == 18.0f)) {
             CURRENT_LEVEL.pillar1.width = 0;
         }
-        if (!CURRENT_LEVEL.balloons[2].active) {
+        if (!(CURRENT_LEVEL.balloons[2].active && CURRENT_LEVEL.balloons[2].radius == 18.0f)) {
             CURRENT_LEVEL.pillar2.width = 0;
         }
     }

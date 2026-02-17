@@ -14,6 +14,8 @@ void InitMultiplayer(HWND hwnd) {
     gGame.hero.y = rect.bottom - gGame.floorWall.height - gGame.hero.height;
     gGame.hero.currentRow = 2;
     gGame.hero.currentFrame = 0;
+    gGame.hero2.floorY = 0;
+    gGame.hero2.isOnLadder = false;
 
     gGame.hero2.width = gGame.hero.width;
     gGame.hero2.height = gGame.hero.height;

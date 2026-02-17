@@ -39,7 +39,7 @@ void ResetGame(HWND hwnd) {
         gGame.player1Stats.hearts[i].animCounter = 0;
     }
 
-    if(gGame.gameState.isMultiplayer){
+   if(gGame.gameState.isMultiplayer){
         // Reset Player 2
         gGame.player2Stats.lives = START_LIVES;
         gGame.player2Stats.score = 0;
@@ -47,6 +47,11 @@ void ResetGame(HWND hwnd) {
         gGame.player2Stats.isAlive = true;
         gGame.hero2.x = rect.right - gGame.rightWall.width - gGame.hero2.width - 50;
         gGame.hero2.y = rect.bottom - gGame.floorWall.height - gGame.hero2.height;
+
+        // --- DODATI OVO ---
+        gGame.hero2.floorY = 0;
+        gGame.hero2.isOnLadder = false;
+        // ------------------
 
         for(int i = 0; i < 5; i++) {
             gGame.player2Stats.hearts[i].currentFrame = 0;
@@ -136,7 +141,7 @@ void ResetBetweenLevels(HWND hwnd) {
     for (int i = 0; i < MAX_POWERUPS; i++)
         CURRENT_LEVEL.powerups[i].active = false;
 
-   if(gGame.gameState.isMultiplayer) {
+    if(gGame.gameState.isMultiplayer) {
         RECT clientRect;
         GetClientRect(hwnd, &clientRect);
 
@@ -144,6 +149,9 @@ void ResetBetweenLevels(HWND hwnd) {
         gGame.hero2.y = 100;
         gGame.hero2.currentRow = 2;
         gGame.hero2.currentFrame = 0;
+
+        gGame.hero2.floorY = 0;
+        gGame.hero2.isOnLadder = false;
 
         gGame.harpoon2.isActive = false;
         gGame.harpoon2.length = 0;
