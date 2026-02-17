@@ -280,7 +280,8 @@ void UpdateLayout(int oldW, int oldH, int newW, int newH)
     {
         float globalScaleY = (float)newH / (float)oldH;
 
-        gGame.animatedWalls.wallTopY = (int)(gGame.animatedWalls.wallTopY * globalScaleY);        gGame.animatedWalls.wallBottomY = (int)(gGame.animatedWalls.wallBottomY * scaleY);
+        gGame.animatedWalls.wallTopY = (int)(gGame.animatedWalls.wallTopY * globalScaleY);
+        gGame.animatedWalls.wallBottomY = (int)(gGame.animatedWalls.wallBottomY * scaleY);
         gGame.animatedWalls.wallBottomY = (int)(gGame.animatedWalls.wallBottomY * globalScaleY);
     }
     Level& lvl = gGame.levels[gGame.currentLevel];
@@ -301,26 +302,19 @@ void UpdateLayout(int oldW, int oldH, int newW, int newH)
         b.y = localY;
     }
 
-    // UPDATE HERO
     {
         int localX = gGame.hero.x - oldBgX;
-
         localX = (int)(localX * scaleX);
-
         gGame.hero.x = newBgX + localX;
 
         if (gGame.hero.floorY == 0) {
             gGame.hero.y = newH - gGame.floorWall.height - gGame.hero.height;
         } else if (CURRENT_LEVEL.door.active) {
-
             int newPlatformY = (int)(newBgH * 0.42f);
             gGame.hero.floorY = newPlatformY - gGame.hero.height;
             gGame.hero.y = gGame.hero.floorY;
         }
-
     }
-
-    // UPDATE HARPOON
 
     if (gGame.harpoon.isActive)
     {
@@ -333,7 +327,6 @@ void UpdateLayout(int oldW, int oldH, int newW, int newH)
         gGame.harpoon.x = newBgX + localX;
         gGame.harpoon.y = localY;
     }
-
 }
 
 static void UpdateTimers(){
@@ -364,9 +357,7 @@ static void UpdateHarpoonHero1(HWND hwnd){
 
         int maxLength = baseY;
 
-
         if (gGame.hero.floorY == 0 && CURRENT_LEVEL.door.active && CURRENT_LEVEL.door.width > 0) {
-
             if (gGame.harpoon.x + gGame.harpoon.width > CURRENT_LEVEL.door.x &&
                 gGame.harpoon.x < CURRENT_LEVEL.door.x + CURRENT_LEVEL.door.width) {
 
@@ -394,7 +385,6 @@ static void UpdateTorches(){
 }
 
 static void UpdateLevelLogic(HWND hwnd){
-    // === UPDATE DOOR IF LEVEL 3 ===
     if(CURRENT_LEVEL.door.width > 0 &&
        CURRENT_LEVEL.door.height > 0 &&
        gGame.currentLevel == 2){
@@ -407,12 +397,10 @@ static void UpdateLevelLogic(HWND hwnd){
         }
     }
 
-    // === UPDATE PILLARS - LEVEL 4 ===
     if(gGame.currentLevel == 3) {
         RECT rect;
         GetClientRect(hwnd, &rect);
 
-        // Prvi stub za level 4
         if(CURRENT_LEVEL.pillar1.width > 0) {
             bool balloon0Destroyed = true;
             for(int i = 0; i < MAX_BALLOONS; i++) {
@@ -424,11 +412,10 @@ static void UpdateLevelLogic(HWND hwnd){
             }
 
             if(balloon0Destroyed) {
-                CURRENT_LEVEL.pillar1.width = 0;  // Ukloni prvi stub
+                CURRENT_LEVEL.pillar1.width = 0;
             }
         }
 
-        // Drugi stub za level 4
         if(CURRENT_LEVEL.pillar2.width > 0) {
             bool balloon1Destroyed = true;
 
@@ -441,22 +428,18 @@ static void UpdateLevelLogic(HWND hwnd){
             }
 
             if(balloon1Destroyed) {
-                CURRENT_LEVEL.pillar2.width = 0;  // Ukloni drugi stub
+                CURRENT_LEVEL.pillar2.width = 0;
             }
         }
     }
 
-    // === UPDATE PILLARS - LEVEL 7 ===
     if (CURRENT_LEVEL.ladder.width > 0) {
-        // Prvi stub (longWall) nestaje kada pukne prvi balon s lijeva (indeks 0)
         if (CURRENT_LEVEL.longWall.width > 0 && !CURRENT_LEVEL.balloons[0].active) {
             CURRENT_LEVEL.longWall.width = 0;
         }
-        // Drugi stub (pillar1) nestaje kada pukne drugi balon (indeks 1)
         if (CURRENT_LEVEL.pillar1.width > 0 && !CURRENT_LEVEL.balloons[1].active) {
             CURRENT_LEVEL.pillar1.width = 0;
         }
-        // Treći stub (pillar2) nestaje kada pukne treći balon (indeks 2)
         if (CURRENT_LEVEL.pillar2.width > 0 && !CURRENT_LEVEL.balloons[2].active) {
             CURRENT_LEVEL.pillar2.width = 0;
         }
