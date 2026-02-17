@@ -316,6 +316,19 @@ void UpdateLayout(int oldW, int oldH, int newW, int newH)
         }
     }
 
+    if (gGame.gameState.isMultiplayer) {
+        int localX2 = gGame.hero2.x - oldBgX;
+        localX2 = (int)(localX2 * scaleX);
+        gGame.hero2.x = newBgX + localX2;
+
+        if (gGame.hero2.floorY == 0) {
+            gGame.hero2.y = newH - gGame.floorWall.height - gGame.hero2.height;
+        } else if (CURRENT_LEVEL.door.active) {
+            int newPlatformY = (int)(newBgH * 0.42f);
+            gGame.hero2.floorY = newPlatformY - gGame.hero2.height;
+            gGame.hero2.y = gGame.hero2.floorY;
+        }
+    }
     if (gGame.harpoon.isActive)
     {
         int localX = gGame.harpoon.x - oldBgX;

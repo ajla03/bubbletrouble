@@ -243,10 +243,10 @@ void InitLevel7(HWND hwnd)
 
     if (gGame.gameState.isMultiplayer) {
         gGame.hero.x  = gGame.leftWall.width + 50;
-        gGame.hero2.x = gGame.leftWall.width + 130;
+        gGame.hero2.x = gGame.leftWall.width + 10;
 
-        RECT r2;
-        GetClientRect(hwnd, &r2);
-        gGame.hero2.y = r2.bottom - gGame.floorWall.height - gGame.hero2.height;
+       int upperFloorY = CURRENT_LEVEL.door.y - gGame.hero.height;
+        gGame.hero2.y = upperFloorY;
+        gGame.hero2.floorY = upperFloorY;
     }
 }
