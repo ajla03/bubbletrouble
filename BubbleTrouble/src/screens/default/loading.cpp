@@ -203,10 +203,9 @@ void RenderLoading(HDC hdc, RECT rect) {
             if (fontSize > 70) fontSize = 70;
         }
 
-        HFONT hFontPow = CreateFont(fontSize, 0, 0, 0, FW_BOLD, 0, 0, 0, 0, 0, 0, 0, 0, "Comic Sans MS");
-        HFONT oldF = (HFONT)SelectObject(memDC, hFontPow);
+        HFONT oldF = (HFONT)SelectObject(memDC,gRes.hFontHelp);
         TextOut(memDC, barX + (int)(barW * 1.15f), barY - fontSize, "POP!", 4);
-        SelectObject(memDC, oldF); DeleteObject(hFontPow);
+        SelectObject(memDC, oldF);
     }
 
     // 5. HARPUN
@@ -333,8 +332,7 @@ void RenderLoading(HDC hdc, RECT rect) {
         if (loadingFontSize > 28) loadingFontSize = 28;
     }
 
-    HFONT hLoadingFont = CreateFont(loadingFontSize, 0, 0, 0, FW_NORMAL, 0, 0, 0, 0, 0, 0, 0, 0, "Arial");
-    HFONT oldLoadingFont = (HFONT)SelectObject(memDC, hLoadingFont);
+    HFONT oldLoadingFont = (HFONT)SelectObject(memDC, gRes.hFont);
 
     SIZE sz;
     GetTextExtentPoint32(memDC, buf, strlen(buf), &sz);
@@ -343,10 +341,11 @@ void RenderLoading(HDC hdc, RECT rect) {
     TextOut(memDC, textX, textY, buf, strlen(buf));
 
     SelectObject(memDC, oldLoadingFont);
-    DeleteObject(hLoadingFont);
 
     BitBlt(hdc, 0, 0, rect.right, rect.bottom, memDC, 0, 0, SRCCOPY);
-    SelectObject(memDC, oldBM); DeleteObject(memBM); DeleteDC(memDC);
+    SelectObject(memDC, oldBM);
+    DeleteObject(memBM);
+    DeleteDC(memDC);
 }
 
 bool IsLoadingComplete() {
