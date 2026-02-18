@@ -156,3 +156,7 @@ void SaveFinalScore();
 void ResetScoreFlag();
 int GetBestScoreForPlayer(const char* playerName);
 void RenderLevelSelectScreen(HDC hdc, RECT rect);
+
+// ===== CREATING FONT
+void CreateFonts();
+

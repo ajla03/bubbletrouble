@@ -562,6 +562,7 @@ void HandleCharInput(HWND hwnd, WPARAM wParam)
         if(wParam == VK_RETURN ){
             SaveLoginInfo(hwnd);
         }
+
         else if (wParam >= 32 && wParam <= 126)
         {
             bool isAllowed = isalnum((unsigned char)wParam) ||

@@ -113,22 +113,29 @@ static void RenderPlayersName(HDC hdcBuffer, int x, int y)
     );
 
     SIZE size;
-    GetTextExtentPoint32A(hdcBuffer, gGame.loginInput.text, gGame.loginInput.length, &size);
-
-    SelectObject(hdcBuffer, oldFont);
+    GetTextExtentPoint32A(hdcBuffer, gGame.loginInput.text, strlen(gGame.loginInput.text), &size);
 
     // CARET
     if(gGame.loginInput.caretVisible)
     {
         HPEN hPen = CreatePen(PS_SOLID, 3, RGB(255,165,0));
         HPEN hOld = (HPEN)SelectObject(hdcBuffer, hPen);
+        char textUpToCaret[12] = {0};
+        strncpy(textUpToCaret, gGame.loginInput.text, gGame.loginInput.length);
 
+        SIZE caretSize;
+        GetTextExtentPoint32A(hdcBuffer, textUpToCaret, gGame.loginInput.length, &caretSize);
+
+        int caretX = x + caretSize.cx;
         int caretHeight = 28;
-        MoveToEx(hdcBuffer, x + size.cx, y, NULL);
-        LineTo(hdcBuffer, x + size.cx, y + caretHeight);
+
+        MoveToEx(hdcBuffer, caretX, y, NULL);
+        LineTo(hdcBuffer, caretX, y + caretHeight);
         SelectObject(hdcBuffer, hOld);
         DeleteObject(hPen);
     }
+
+    SelectObject(hdcBuffer, oldFont);
 }
 
 

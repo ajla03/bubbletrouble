@@ -69,7 +69,7 @@ int WINAPI WinMain(HINSTANCE hThisInstance, HINSTANCE hPrevInstance, LPSTR lpszA
     LoadBitmaps(hwnd, hThisInstance);
 
     InitializeLoading(hwnd);
-
+    CreateFonts();
 
     while (gGame.gameState.currentMode == GAME_MODE_LOADING) {
         DWORD start = GetTickCount();
@@ -131,70 +131,6 @@ LRESULT CALLBACK WindowProcedure(HWND hwnd, UINT message, WPARAM wParam, LPARAM 
 
         case WM_CREATE:
         {
-
-            // Kreiraj fontove
-            gRes.hFont = CreateFont(
-                32, 0, 0, 0,
-                FW_BOLD,
-                FALSE, FALSE, FALSE,
-                DEFAULT_CHARSET,
-                OUT_TT_PRECIS,
-                CLIP_DEFAULT_PRECIS,
-                ANTIALIASED_QUALITY,
-                VARIABLE_PITCH,
-                TEXT("Kenney Mini Square")
-            );
-
-            gRes.hFontTitle = CreateFont(
-                48, 0, 0, 0,
-                FW_BOLD,
-                FALSE, FALSE, FALSE,
-                DEFAULT_CHARSET,
-                OUT_TT_PRECIS,
-                CLIP_DEFAULT_PRECIS,
-                ANTIALIASED_QUALITY,
-                VARIABLE_PITCH,
-                TEXT("Kenney Mini Square")
-            );
-
-            gRes.hFontTable = CreateFont(
-                20, 0, 0, 0,
-                FW_BOLD,
-                FALSE, FALSE, FALSE,
-                DEFAULT_CHARSET,
-                OUT_TT_PRECIS,
-                CLIP_DEFAULT_PRECIS,
-                ANTIALIASED_QUALITY,
-                VARIABLE_PITCH,
-                TEXT("Kenney Mini Square")
-            );
-
-            gRes.hFontHelp = CreateFont(
-                16, 0, 0, 0,
-                FW_BOLD,
-                FALSE, FALSE, FALSE,
-                DEFAULT_CHARSET,
-                OUT_TT_PRECIS,
-                CLIP_DEFAULT_PRECIS,
-                ANTIALIASED_QUALITY,
-                VARIABLE_PITCH,
-                TEXT("Kenney Mini Square")
-            );
-
-
-            gRes.hFontHelpSmall = CreateFont(
-                16, 0, 0, 0,
-                FW_NORMAL,
-                FALSE, FALSE, FALSE,
-                DEFAULT_CHARSET,
-                OUT_TT_PRECIS,
-                CLIP_DEFAULT_PRECIS,
-                ANTIALIASED_QUALITY,
-                VARIABLE_PITCH,
-                TEXT("Kenney Mini Square")
-            );
-
-
 
             // Inicijalizuj gRes.hdcBuffer i ostalo
             HDC hdc = GetDC(hwnd);
