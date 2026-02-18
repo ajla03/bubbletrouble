@@ -211,6 +211,9 @@ void UpdateWallTransition(HWND hwnd){
                 gGame.menuButtons[0].isHovered = false;
                 gGame.menuButtons[1].isHovered = false;
                 gGame.menuButtons[2].isHovered = false;
+                gGame.backButtonInfo.isHover = false;
+
+                gGame.s_hoveredLevel = -1;
 
                 ResetGame(hwnd);
             }else if(gGame.transitionState.pendingNextLevel){
@@ -239,12 +242,13 @@ void UpdateWallTransition(HWND hwnd){
                 StartGame(hwnd);
                 gGame.menuButtons[0].isHovered = false;
                 gGame.backButtonInfo.isHover = false;
+                gGame.backButtonInfo.isHover = false;
             }else if(gGame.transitionState.pendingMulti){
                 InitMultiplayer(hwnd);
                 StartGame(hwnd);
                 gGame.menuButtons[1].isHovered = false;
                 gGame.backButtonInfo.isHover = false;
-
+                gGame.backButtonInfo.isHover = false;
             }
             gGame.transitionState.transitionVars = TRANSITION_OPENING;
         }

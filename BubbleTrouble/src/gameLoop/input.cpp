@@ -188,7 +188,8 @@ void HandleMouseClick(HWND hwnd, int mx, int my)
         case GAME_MODE_MENU:
             HandleMenuClick(hwnd, mx, my);
             break;
-case GAME_MODE_LEVEL_SELECT:
+
+        case GAME_MODE_LEVEL_SELECT:
         {
             RECT rect;
             GetClientRect(hwnd, &rect);

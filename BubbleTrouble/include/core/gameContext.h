@@ -82,8 +82,12 @@ struct GameContext{
 
     // Player Name
     char playerName[12];
+
+    // Level Map
     int unlockedLevelSingle;
     int unlockedLevelMulti;
+    int s_hoveredLevel = -1;
+
 
     int levelStarsSingle[MAX_LEVELS];
     int levelStarsMulti[MAX_LEVELS];

@@ -101,7 +101,6 @@ void RenderMenu(HDC hdc, RECT rect) {
             int right  = btn->rect.right;
             int bottom = btn->rect.bottom;
 
-            // Deblji outer glow
             HPEN glowPen = CreatePen(PS_SOLID, 4, RGB(255, 140, 0));
             HGDIOBJ oldPen = SelectObject(hdc, glowPen);
             HGDIOBJ oldBrush = SelectObject(hdc, GetStockObject(HOLLOW_BRUSH));
@@ -253,8 +252,8 @@ void RenderMenu(HDC hdc, RECT rect) {
         }
 
         if(currentChar==gRes.settingsMenuChar){
-            charW+=6;
-            charX-=1;
+            charW+=10;
+            charX-=2;
             charY-=2;
         }
 

@@ -10,7 +10,6 @@ static void RenderTransparentSheet(HDC hdcBuffer, RECT rect, RECT* outSheet);
 static void RenderTorches(HDC hdcBuffer, RECT sheet);
 static void RenderBackButton(HDC hdcBuffer, RECT sheet);
 static void RenderTitle(HDC hdcBuffer, RECT sheet);
-static int s_hoveredLevel = -1;
 
 void UpdateLevelSelectHover(HWND hwnd, int mx, int my) {
     RECT rect;
@@ -30,13 +29,13 @@ void UpdateLevelSelectHover(HWND hwnd, int mx, int my) {
     int startX = sheet.left + ((sheet.right - sheet.left) - totalW) / 2;
     int startY = sheet.top + 140;
 
-    s_hoveredLevel = -1;
+    gGame.s_hoveredLevel = -1;
     for (int i = 0; i < 8; i++) {
         int row = i / cols, col = i % cols;
         int x = startX + col * (btnW + gapX);
         int y = startY + row * (btnH + gapY);
         if (mx >= x && mx <= x + btnW && my >= y && my <= y + btnH) {
-            s_hoveredLevel = i;
+            gGame.s_hoveredLevel = i;
             break;
         }
     }
@@ -84,7 +83,7 @@ void RenderLevelSelectScreen(HDC hdcBuffer, RECT rect) {
         SetBkMode(hdcBuffer, TRANSPARENT);
 
         if (isUnlocked) {
-            if (s_hoveredLevel == i) {
+            if (gGame.s_hoveredLevel == i) {
                 HPEN glowPen = CreatePen(PS_SOLID, 4, RGB(255, 140, 0));
                 HGDIOBJ oldPen = SelectObject(hdcBuffer, glowPen);
                 HGDIOBJ oldBrush = SelectObject(hdcBuffer, GetStockObject(HOLLOW_BRUSH));
