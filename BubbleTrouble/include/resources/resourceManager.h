@@ -55,9 +55,10 @@ struct ResourceManager{
     HBITMAP ladder;
     HBITMAP star;
 
-    HFONT hFont, hFontTitle, hFontTable;
+    HFONT hFont, hFontTitle, hFontTable, hFontHelpSmall, hFontHelp;
     HANDLE hFontRes;
     HICON hIcon;
+
     void Init(HDC hdc, HWND hwnd);
     void UpdateDC(HDC hdc, HWND hwnd);
     bool LoadAll(HINSTANCE hInstance);

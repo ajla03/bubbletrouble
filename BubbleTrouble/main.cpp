@@ -169,6 +169,31 @@ LRESULT CALLBACK WindowProcedure(HWND hwnd, UINT message, WPARAM wParam, LPARAM 
                 TEXT("Kenney Mini Square")
             );
 
+            gRes.hFontHelp = CreateFont(
+                16, 0, 0, 0,
+                FW_BOLD,
+                FALSE, FALSE, FALSE,
+                DEFAULT_CHARSET,
+                OUT_TT_PRECIS,
+                CLIP_DEFAULT_PRECIS,
+                ANTIALIASED_QUALITY,
+                VARIABLE_PITCH,
+                TEXT("Kenney Mini Square")
+            );
+
+
+            gRes.hFontHelpSmall = CreateFont(
+                16, 0, 0, 0,
+                FW_NORMAL,
+                FALSE, FALSE, FALSE,
+                DEFAULT_CHARSET,
+                OUT_TT_PRECIS,
+                CLIP_DEFAULT_PRECIS,
+                ANTIALIASED_QUALITY,
+                VARIABLE_PITCH,
+                TEXT("Kenney Mini Square")
+            );
+
 
 
             // Inicijalizuj gRes.hdcBuffer i ostalo

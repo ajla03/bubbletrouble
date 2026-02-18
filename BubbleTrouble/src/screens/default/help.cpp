@@ -53,13 +53,11 @@ static void DrawKeyButton(HDC hdc, int x, int y, int w, int h, const char* label
     SetBkMode(hdc, TRANSPARENT);
     SetTextColor(hdc, RGB(255, 255, 255));
 
-    HFONT hKeyFont = CreateFont(18, 0, 0, 0, FW_BOLD, FALSE, FALSE, FALSE, DEFAULT_CHARSET, OUT_DEFAULT_PRECIS, CLIP_DEFAULT_PRECIS, PROOF_QUALITY, DEFAULT_PITCH, "Arial");
-    HFONT oldF = (HFONT)SelectObject(hdc, hKeyFont);
+    HFONT oldF = (HFONT)SelectObject(hdc, gRes.hFontHelp);
 
     DrawText(hdc, label, -1, &r, DT_CENTER | DT_VCENTER | DT_SINGLELINE);
 
     SelectObject(hdc, oldF);
-    DeleteObject(hKeyFont);
 }
 
 static void DrawInfoBox(HDC hdc, RECT rect, const char* title, HFONT titleFont) {
@@ -79,7 +77,7 @@ static void DrawInfoBox(HDC hdc, RECT rect, const char* title, HFONT titleFont) 
     DeleteObject(titleBg);
 
     // 3. Naslov okvira
-    HFONT oldFont = (HFONT)SelectObject(hdc, titleFont);
+    HFONT oldFont = (HFONT)SelectObject(hdc, gRes.hFontTable);
     SetBkMode(hdc, TRANSPARENT);
     SetTextColor(hdc, RGB(255, 255, 255));
 
@@ -94,29 +92,7 @@ static void DrawInfoBox(HDC hdc, RECT rect, const char* title, HFONT titleFont) 
 static void RenderHelpContent(HDC hdcBuffer, RECT sheet) {
     SetBkMode(hdcBuffer, TRANSPARENT);
 
-    // --- FONTOVI ---
-    HFONT hTextFont = CreateFont(20, 0, 0, 0, FW_NORMAL, FALSE, FALSE, FALSE,
-                                DEFAULT_CHARSET, OUT_DEFAULT_PRECIS, CLIP_DEFAULT_PRECIS,
-                                PROOF_QUALITY, DEFAULT_PITCH, "Arial");
-
-    HFONT hBoxTitleFont = CreateFont(22, 0, 0, 0, FW_BOLD, FALSE, FALSE, FALSE,
-                                    DEFAULT_CHARSET, OUT_DEFAULT_PRECIS, CLIP_DEFAULT_PRECIS,
-                                    PROOF_QUALITY, DEFAULT_PITCH, "Arial");
-
-    HFONT hLabelFont = CreateFont(19, 0, 0, 0, FW_BOLD, FALSE, FALSE, FALSE,
-                                DEFAULT_CHARSET, OUT_DEFAULT_PRECIS, CLIP_DEFAULT_PRECIS,
-                                PROOF_QUALITY, DEFAULT_PITCH, "Arial");
-
-    HFONT hNoteFont = CreateFont(16, 0, 0, 0, FW_NORMAL, TRUE, FALSE, FALSE,
-                                DEFAULT_CHARSET, OUT_DEFAULT_PRECIS, CLIP_DEFAULT_PRECIS,
-                                PROOF_QUALITY, DEFAULT_PITCH, "Arial");
-
-    // Fontovi za Powerups i Tips
-    HFONT hPuTitle = CreateFont(17, 0, 0, 0, FW_BOLD, FALSE, FALSE, FALSE, DEFAULT_CHARSET, OUT_DEFAULT_PRECIS, CLIP_DEFAULT_PRECIS, PROOF_QUALITY, DEFAULT_PITCH, "Arial");
-    HFONT hPuDesc  = CreateFont(15, 0, 0, 0, FW_NORMAL, FALSE, FALSE, FALSE, DEFAULT_CHARSET, OUT_DEFAULT_PRECIS, CLIP_DEFAULT_PRECIS, PROOF_QUALITY, DEFAULT_PITCH, "Arial");
-    HFONT hTipsFont = CreateFont(17, 0, 0, 0, FW_NORMAL, FALSE, FALSE, FALSE, DEFAULT_CHARSET, OUT_DEFAULT_PRECIS, CLIP_DEFAULT_PRECIS, PROOF_QUALITY, DEFAULT_PITCH, "Arial");
-
-    HFONT oldFont = (HFONT)SelectObject(hdcBuffer, hTextFont);
+    HFONT oldFont = (HFONT)SelectObject(hdcBuffer, gRes.hFontTable);
 
     // --- UVODNI TEKST ---
     RECT textRect;
@@ -126,7 +102,7 @@ static void RenderHelpContent(HDC hdcBuffer, RECT sheet) {
     textRect.bottom = sheet.top + 180;
 
     SetTextColor(hdcBuffer, RGB(40, 40, 40));
-    const char* helpMessage = "Bubble Trouble is an arcade game where you must \n destroy all bubbles before time runs out !";
+    const char* helpMessage = "Bubble Trouble is an arcade game where you must destroy all bubbles before time runs out !";
     DrawText(hdcBuffer, helpMessage, -1, &textRect, DT_LEFT | DT_TOP | DT_WORDBREAK);
 
 
@@ -143,9 +119,9 @@ static void RenderHelpContent(HDC hdcBuffer, RECT sheet) {
     RECT rPowerups = { rControls.right + gap, startY, rControls.right + gap + otherWidth, startY + boxHeight };
     RECT rTips     = { rPowerups.right + gap, startY, rPowerups.right + gap + otherWidth, startY + boxHeight };
 
-    DrawInfoBox(hdcBuffer, rControls, "CONTROLS", hBoxTitleFont);
-    DrawInfoBox(hdcBuffer, rPowerups, "POWER-UPS", hBoxTitleFont);
-    DrawInfoBox(hdcBuffer, rTips, "TIPS", hBoxTitleFont);
+    DrawInfoBox(hdcBuffer, rControls, "CONTROLS", gRes.hFontTable);
+    DrawInfoBox(hdcBuffer, rPowerups, "POWER-UPS", gRes.hFontTable);
+    DrawInfoBox(hdcBuffer, rTips, "TIPS", gRes.hFontTable);
 
     // --- SADRŽAJ UNUTAR OKVIRA ---
 
@@ -158,7 +134,7 @@ static void RenderHelpContent(HDC hdcBuffer, RECT sheet) {
         int startX = rControls.left + 15;
         int startY = rControls.top + 50;
 
-        SelectObject(hdcBuffer, hLabelFont);
+        SelectObject(hdcBuffer, gRes.hFontTable);
 
         // 1. [<-] Move Left
         DrawKeyButton(hdcBuffer, startX, startY, btnSize, btnSize, "<-");
@@ -187,12 +163,12 @@ static void RenderHelpContent(HDC hdcBuffer, RECT sheet) {
         DrawText(hdcBuffer, "Fire Harpoon", -1, &rText3, DT_LEFT | DT_VCENTER | DT_SINGLELINE);
 
         // Note
-        SelectObject(hdcBuffer, hNoteFont);
+        SelectObject(hdcBuffer, gRes.hFontHelp);
         SetTextColor(hdcBuffer, RGB(80, 80, 80));
         RECT rNote = { rControls.left + 5, rControls.bottom - 40, rControls.right - 5, rControls.bottom };
         DrawText(hdcBuffer, "Controls can be customized in the settings menu.", -1, &rNote, DT_CENTER | DT_WORDBREAK);
 
-        SelectObject(hdcBuffer, hTextFont);
+        SelectObject(hdcBuffer, gRes.hFont);
     }
 
     // >>> POWER-UPS <<<
@@ -223,17 +199,17 @@ static void RenderHelpContent(HDC hdcBuffer, RECT sheet) {
                 DeleteDC(hdcMem);
             }
 
-            SelectObject(hdcBuffer, hPuTitle);
+            SelectObject(hdcBuffer, gRes.hFontTable);
             SetTextColor(hdcBuffer, RGB(20, 20, 20));
             RECT rTitle = { x + textOffX, y, rPowerups.right - 5, y + 20 };
             DrawText(hdcBuffer, title, -1, &rTitle, DT_LEFT | DT_TOP | DT_SINGLELINE);
 
-            SelectObject(hdcBuffer, hPuDesc);
+            SelectObject(hdcBuffer, gRes.hFontTable);
             SetTextColor(hdcBuffer, RGB(60, 60, 60));
             RECT rDesc = { x + textOffX, y + 20, rPowerups.right - 5, y + 60 };
             DrawText(hdcBuffer, desc, -1, &rDesc, DT_LEFT | DT_TOP | DT_WORDBREAK);
         };
-
+        SelectObject(hdcBuffer, gRes.hFontHelp);
         DrawPowerRow(gRes.lifePowerup,   gRes.lifePowerupMask,   "Extra Life",   "Grants an extra life.", 0);
         DrawPowerRow(gRes.timePowerup,   gRes.timePowerupMask,   "Time Extend",  "Adds extra time.", 1);
         DrawPowerRow(gRes.freezePowerup, gRes.freezePowerupMask, "Time Freeze",  "Temporarily stops all bubbles.", 2);
@@ -241,7 +217,7 @@ static void RenderHelpContent(HDC hdcBuffer, RECT sheet) {
 
     // >>> TIPS (NOVI TEKST I RASPRAVAK) <<<
     {
-        SelectObject(hdcBuffer, hTipsFont);
+        SelectObject(hdcBuffer, gRes.hFontHelpSmall);
         SetTextColor(hdcBuffer, RGB(30, 30, 30));
 
         // Lista savjeta
@@ -273,13 +249,6 @@ static void RenderHelpContent(HDC hdcBuffer, RECT sheet) {
 
     // Cleanup
     SelectObject(hdcBuffer, oldFont);
-    DeleteObject(hTextFont);
-    DeleteObject(hBoxTitleFont);
-    DeleteObject(hLabelFont);
-    DeleteObject(hNoteFont);
-    DeleteObject(hPuTitle);
-    DeleteObject(hPuDesc);
-    DeleteObject(hTipsFont);
 }
 
 // --- OSTALE FUNKCIJE ---
@@ -375,7 +344,9 @@ static void RenderBackButton(HDC hdcBuffer, RECT sheet) {
     RECT textRect = { x, y, x + btnWidth, y + btnHeight / 2 };
     SetBkMode(hdcBuffer, TRANSPARENT);
     SetTextColor(hdcBuffer, RGB(255, 255, 255));
+    HFONT hFontOld = (HFONT) SelectObject(hdcBuffer, gRes.hFont);
     DrawText(hdcBuffer, "BACK", -1, &textRect, DT_CENTER | DT_VCENTER | DT_SINGLELINE);
+    SelectObject(hdcBuffer, hFontOld);
 }
 
 static void RenderTorches(HDC hdcBuffer, RECT sheet) {
