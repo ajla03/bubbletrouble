@@ -282,28 +282,45 @@ static void RenderHeroesInHolder(HDC hdcBuffer, int x, int y, int controlW, int 
 }
 
 static void RenderSingleKeyButton(HDC hdcBuffer, int currentBtnX, int currentBtnY, int btnW, int btnH, int buttonIndex) {
+    Button* btnInfo = nullptr;
+
     if (buttonIndex == 0) {
-        gGame.settingsState.leftKeyButton.x = currentBtnX;
-        gGame.settingsState.leftKeyButton.y = currentBtnY;
-        gGame.settingsState.leftKeyButton.width = btnW;
-        gGame.settingsState.leftKeyButton.height = btnH;
+        btnInfo = &gGame.settingsState.leftKeyButton;
     } else if (buttonIndex == 1) {
-        gGame.settingsState.spaceKeyButton.x = currentBtnX;
-        gGame.settingsState.spaceKeyButton.y = currentBtnY;
-        gGame.settingsState.spaceKeyButton.width = btnW;
-        gGame.settingsState.spaceKeyButton.height = btnH;
+        btnInfo = &gGame.settingsState.spaceKeyButton;
     } else if (buttonIndex == 2) {
-        gGame.settingsState.rightKeyButton.x = currentBtnX;
-        gGame.settingsState.rightKeyButton.y = currentBtnY;
-        gGame.settingsState.rightKeyButton.width = btnW;
-        gGame.settingsState.rightKeyButton.height = btnH;
+        btnInfo = &gGame.settingsState.rightKeyButton;
     }
+
+    btnInfo->x = currentBtnX;
+    btnInfo->y = currentBtnY;
+    btnInfo->width = btnW;
+    btnInfo->height = btnH;
 
     BITMAP bmBtn;
     GetObject(gRes.settingsPlayer, sizeof(BITMAP), &bmBtn);
     SelectObject(gRes.hdcMem, gRes.settingsPlayer);
     TransparentBlt(hdcBuffer, currentBtnX, currentBtnY, btnW, btnH,
                    gRes.hdcMem, 0, 0, bmBtn.bmWidth, bmBtn.bmHeight, RGB(255, 255, 255));
+
+     if (btnInfo->isHover) {
+        HPEN glowPen = CreatePen(PS_SOLID, 4, RGB(255, 140, 0));
+        HGDIOBJ oldPen = SelectObject(hdcBuffer, glowPen);
+        HGDIOBJ oldBrush = SelectObject(hdcBuffer, GetStockObject(HOLLOW_BRUSH));
+
+        RoundRect(
+            hdcBuffer,
+            currentBtnX - 2,
+            currentBtnY - 2,
+            currentBtnX + btnW + 2,
+            currentBtnY + btnH + 2,
+            20, 20
+        );
+
+        SelectObject(hdcBuffer, oldPen);
+        SelectObject(hdcBuffer, oldBrush);
+        DeleteObject(glowPen);
+    }
 
     bool isWaiting = false;
     if (buttonIndex == 0 && gGame.settingsState.waitingForKey == KEYBIND_LEFT) isWaiting = true;
@@ -384,6 +401,24 @@ static void RenderPlayerButtons(HDC hdcBuffer, RECT sheet, int x, int y, int con
     TransparentBlt(hdcBuffer, btnX, firstBtnY, btnW, btnH,
                    gRes.hdcMem, 0, 0, bm.bmWidth, bm.bmHeight, RGB(255, 255, 255));
 
+    if (gGame.player1.isHover) {
+        HPEN glowPen = CreatePen(PS_SOLID, 4, RGB(255, 140, 0));
+        HGDIOBJ oldPen = SelectObject(hdcBuffer, glowPen);
+        HGDIOBJ oldBrush = SelectObject(hdcBuffer, GetStockObject(HOLLOW_BRUSH));
+        int visualHeight = gGame.player1.height;
+        RoundRect(hdcBuffer,
+                  btnX,
+                  firstBtnY - 2,
+                  btnX + btnW,
+                  firstBtnY + btnH + 2,
+                  20, 20);
+
+        SelectObject(hdcBuffer, oldPen);
+        SelectObject(hdcBuffer, oldBrush);
+        DeleteObject(glowPen);
+    }
+
+
     gGame.player2.x = gGame.player1.x = btnX;
     gGame.player2.y = secondBtnY;
     gGame.player1.y = firstBtnY;
@@ -401,6 +436,23 @@ static void RenderPlayerButtons(HDC hdcBuffer, RECT sheet, int x, int y, int con
     SelectObject(gRes.hdcMem, currentBitmap);
     TransparentBlt(hdcBuffer, btnX, secondBtnY, btnW, btnH,
                    gRes.hdcMem, 0, 0, bm.bmWidth, bm.bmHeight, RGB(255, 255, 255));
+
+        if (gGame.player2.isHover) {
+        HPEN glowPen = CreatePen(PS_SOLID, 4, RGB(255, 140, 0));
+        HGDIOBJ oldPen = SelectObject(hdcBuffer, glowPen);
+        HGDIOBJ oldBrush = SelectObject(hdcBuffer, GetStockObject(HOLLOW_BRUSH));
+        int visualHeight = gGame.player2.height;
+        RoundRect(hdcBuffer,
+                  btnX,
+                  secondBtnY - 2,
+                  btnX + btnW,
+                  secondBtnY + btnH + 2,
+                  20, 20);
+
+        SelectObject(hdcBuffer, oldPen);
+        SelectObject(hdcBuffer, oldBrush);
+        DeleteObject(glowPen);
+    }
 
     RECT r2 = { btnX, secondBtnY, btnX + btnW, secondBtnY + btnH };
     DrawText(hdcBuffer, "PLAYER 2", -1, &r2, DT_CENTER | DT_VCENTER | DT_SINGLELINE);
@@ -428,6 +480,23 @@ static void RenderBackButton(HDC hdcBuffer, RECT sheet) {
     SelectObject(gRes.hdcMem, currentBitmap);
     TransparentBlt(hdcBuffer, x, y, btnWidth, btnHeight / 2,
                    gRes.hdcMem, 0, 0, bm.bmWidth, bm.bmHeight, RGB(255, 255, 255));
+
+    if (gGame.backButtonInfo.isHover) {
+        HPEN glowPen = CreatePen(PS_SOLID, 4, RGB(255, 140, 0));
+        HGDIOBJ oldPen = SelectObject(hdcBuffer, glowPen);
+        HGDIOBJ oldBrush = SelectObject(hdcBuffer, GetStockObject(HOLLOW_BRUSH));
+        int visualHeight = gGame.backButtonInfo.height/2;
+        RoundRect(hdcBuffer,
+                  x,
+                  y - 2,
+                  x + gGame.backButtonInfo.width + 2,
+                  y + visualHeight + 2,
+                  20, 20);
+
+        SelectObject(hdcBuffer, oldPen);
+        SelectObject(hdcBuffer, oldBrush);
+        DeleteObject(glowPen);
+    }
 
     RECT textRect = { x, y, x + btnWidth, y + btnHeight / 2 };
     SetBkMode(hdcBuffer, TRANSPARENT);
@@ -509,6 +578,26 @@ static void RenderSoundHolder(HDC hdcBuffer, RECT sheet)
         RGB(255, 255, 255)
     );
 
+    if (gGame.settingsMusicButtonInfo.isHover) {
+    HPEN glowPen = CreatePen(PS_SOLID, 4, RGB(255, 140, 0));
+    HGDIOBJ oldPen = SelectObject(hdcBuffer, glowPen);
+    HGDIOBJ oldBrush = SelectObject(hdcBuffer, GetStockObject(HOLLOW_BRUSH));
+
+    RoundRect(
+        hdcBuffer,
+        x,
+        y - 2,
+        x + soundW,
+        y + soundH + 2,
+        20, 20
+    );
+
+    SelectObject(hdcBuffer, oldPen);
+    SelectObject(hdcBuffer, oldBrush);
+    DeleteObject(glowPen);
+    }
+
+
     RECT labelRect = { x - 350, y, x - 10, y + soundH };
     SetBkMode(hdcBuffer, TRANSPARENT);
     SetTextColor(hdcBuffer, RGB(80, 80, 80));
@@ -548,6 +637,26 @@ static void RenderSoundHolder(HDC hdcBuffer, RECT sheet)
         bmDraw.bmWidth, bmDraw.bmHeight,
         RGB(255, 255, 255)
     );
+
+    if (gGame.settingsSoundButtonInfo.isHover) {
+    HPEN glowPen = CreatePen(PS_SOLID, 4, RGB(255, 140, 0));
+    HGDIOBJ oldPen = SelectObject(hdcBuffer, glowPen);
+    HGDIOBJ oldBrush = SelectObject(hdcBuffer, GetStockObject(HOLLOW_BRUSH));
+
+    RoundRect(
+        hdcBuffer,
+        x,
+        sfxY - 2,
+        x + soundW,
+        sfxY + soundH + 2,
+        20, 20
+    );
+
+    SelectObject(hdcBuffer, oldPen);
+    SelectObject(hdcBuffer, oldBrush);
+    DeleteObject(glowPen);
+    }
+
 
     labelRect = { x - 350, sfxY, x - 10, sfxY + soundH };
     DrawText(hdcBuffer, "Sound Effects:", -1, &labelRect,

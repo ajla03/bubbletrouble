@@ -410,11 +410,16 @@ void HandleMouseMove(HWND hwnd, int x, int y)
     // SETTINGS
     if (gGame.gameState.currentMode == GAME_MODE_SETTINGS)
     {
+        if(gGame.settingsState.waitingForKey != KEYBIND_NONE)
+            return;
         CheckHover(gGame.backButtonInfo, x, y);
         CheckHover(gGame.settingsMusicButtonInfo, x, y);
         CheckHover(gGame.player1, x, y);
         CheckHover(gGame.player2, x, y);
         CheckHover(gGame.settingsSoundButtonInfo, x, y);
+        CheckHover(gGame.settingsState.rightKeyButton, x, y);
+        CheckHover(gGame.settingsState.spaceKeyButton, x, y);
+        CheckHover(gGame.settingsState.leftKeyButton, x, y);
 
         return;
     }
@@ -466,8 +471,12 @@ void HandleKeyDown(HWND hwnd, WPARAM wParam)
         gGame.settingsState.waitingForKey != KEYBIND_NONE)
     {
         // ESC ili ENTER otkazuju key binding
-        if (vkCode == VK_ESCAPE || vkCode == VK_RETURN) {
+        if (vkCode == VK_ESCAPE || vkCode == VK_RETURN || vkCode == VK_DOWN || vkCode == VK_UP
+            || vkCode == 'S') {
             gGame.settingsState.waitingForKey = KEYBIND_NONE;
+            gGame.settingsState.rightKeyButton.isHover = false;
+            gGame.settingsState.leftKeyButton.isHover = false;
+            gGame.settingsState.spaceKeyButton.isHover = false;
             return;
         }
 
@@ -480,6 +489,9 @@ void HandleKeyDown(HWND hwnd, WPARAM wParam)
            vkCode == keys->shoot)
         {
             gGame.settingsState.waitingForKey = KEYBIND_NONE;
+            gGame.settingsState.rightKeyButton.isHover = false;
+            gGame.settingsState.leftKeyButton.isHover = false;
+            gGame.settingsState.spaceKeyButton.isHover = false;
             return;
         }
 
@@ -496,6 +508,10 @@ void HandleKeyDown(HWND hwnd, WPARAM wParam)
         }
 
         gGame.settingsState.waitingForKey = KEYBIND_NONE;
+        gGame.settingsState.rightKeyButton.isHover = false;
+        gGame.settingsState.leftKeyButton.isHover = false;
+        gGame.settingsState.spaceKeyButton.isHover = false;
+
         return;
     }
 

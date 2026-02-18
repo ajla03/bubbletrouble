@@ -79,6 +79,23 @@ static void RenderNextButton(HDC hdcBuffer, RECT rect) {
     TransparentBlt(hdcBuffer, x, y, bmButton.bmWidth, bmButton.bmHeight/2,
                    gRes.hdcMem, 0, 0, bmButton.bmWidth, bmButton.bmHeight,
                    RGB(255, 255, 255));
+
+     if (gGame.loginButtonInfo.isHover) {
+        HPEN glowPen = CreatePen(PS_SOLID, 4, RGB(255, 140, 0));
+        HGDIOBJ oldPen = SelectObject(hdcBuffer, glowPen);
+        HGDIOBJ oldBrush = SelectObject(hdcBuffer, GetStockObject(HOLLOW_BRUSH));
+        int visualHeight = gGame.loginButtonInfo.height;
+        RoundRect(hdcBuffer,
+                  x,
+                  y - 2,
+                  x + gGame.loginButtonInfo.width + 2,
+                  y + visualHeight + 2,
+                  20, 20);
+
+        SelectObject(hdcBuffer, oldPen);
+        SelectObject(hdcBuffer, oldBrush);
+        DeleteObject(glowPen);
+    }
 }
 
 static void RenderPlayersName(HDC hdcBuffer, int x, int y)

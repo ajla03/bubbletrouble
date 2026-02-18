@@ -88,7 +88,7 @@ void RenderLevelSelectScreen(HDC hdcBuffer, RECT rect) {
                 HPEN glowPen = CreatePen(PS_SOLID, 4, RGB(255, 140, 0));
                 HGDIOBJ oldPen = SelectObject(hdcBuffer, glowPen);
                 HGDIOBJ oldBrush = SelectObject(hdcBuffer, GetStockObject(HOLLOW_BRUSH));
-                RoundRect(hdcBuffer, x - 2, y - 2, x + btnW + 2, y + btnH + 2, 20, 20);
+                RoundRect(hdcBuffer, x, y - 2, x + btnW, y + btnH + 2, 20, 20);
                 SelectObject(hdcBuffer, oldPen);
                 SelectObject(hdcBuffer, oldBrush);
                 DeleteObject(glowPen);
