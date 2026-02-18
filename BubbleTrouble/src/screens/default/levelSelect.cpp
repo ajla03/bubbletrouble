@@ -25,15 +25,14 @@ void UpdateLevelSelectHover(HWND hwnd, int mx, int my) {
     sheet.top    = rect.bottom / 2 - sheetHeight / 2;
     sheet.bottom = sheet.top + sheetHeight;
 
-    int btnW = 80, btnH = 80, gapX = 40, gapY = 30, cols = 4;
-    int totalW1 = 4 * btnW + 3 * gapX;
-    int totalW2 = 3 * btnW + 2 * gapX;
-    int startY = sheet.top + 130;
+    int btnW = 80, btnH = 80, gapX = 50, gapY = 40, cols = 4;
+    int totalW = 4 * btnW + 3 * gapX;
+    int startX = sheet.left + ((sheet.right - sheet.left) - totalW) / 2;
+    int startY = sheet.top + 140;
 
     s_hoveredLevel = -1;
     for (int i = 0; i < 8; i++) {
         int row = i / cols, col = i % cols;
-        int startX = sheet.left + ((sheet.right - sheet.left) - (row == 0 ? totalW1 : totalW2)) / 2;
         int x = startX + col * (btnW + gapX);
         int y = startY + row * (btnH + gapY);
         if (mx >= x && mx <= x + btnW && my >= y && my <= y + btnH) {
@@ -59,13 +58,13 @@ void RenderLevelSelectScreen(HDC hdcBuffer, RECT rect) {
 
     int btnW = 80;
     int btnH = 80;
-    int gapX = 40;
-    int gapY = 30;
-    int cols = 4; // 4 u prvom redu, 3 u drugom
+    int gapX = 50;
+    int gapY = 40;
+    int cols = 4;
 
-    int totalW1 = 4 * btnW + 3 * gapX;
-    int totalW2 = 3 * btnW + 2 * gapX;
-    int startY = sheet.top + 130;
+    int totalW = 4 * btnW + 3 * gapX;
+    int startX = sheet.left + ((sheet.right - sheet.left) - totalW) / 2;
+    int startY = sheet.top + 140;
 
     BITMAP bm;
     GetObject(gRes.settingsPlayer, sizeof(BITMAP), &bm);
@@ -74,7 +73,6 @@ void RenderLevelSelectScreen(HDC hdcBuffer, RECT rect) {
         int row = i / cols;
         int col = i % cols;
 
-        int startX = sheet.left + ((sheet.right - sheet.left) - (row == 0 ? totalW1 : totalW2)) / 2;
         int x = startX + col * (btnW + gapX);
         int y = startY + row * (btnH + gapY);
 

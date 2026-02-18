@@ -10,18 +10,15 @@
 LoadingState gLoading = { 0 };
 
 void InitializeLoading(HWND hwnd) {
-    // Hack: Ako slike nisu učitane, učitaj ih sad
     if (gRes.background == NULL) {
         HINSTANCE hInstance = (HINSTANCE)GetWindowLongPtr(hwnd, GWLP_HINSTANCE);
-        // Pretpostavka da funkcija postoji (deklarisana u game.h ili slično)
-        // LoadBitmaps(hwnd, hInstance);
+
     }
 
     gLoading.progress = 0;
     gLoading.isComplete = false;
     gLoading.startTime = GetTickCount();
 
-    // Reset animacije
     gLoading.ballIsFalling = false;
     gLoading.ballPopped = false;
     gLoading.ballVy = 0;
@@ -42,19 +39,15 @@ void UpdateLoading() {
             if (finishDelay > 20) gLoading.isComplete = true;
         }
 
-        // Faza 2: Pad (80% do 90%)
         if (gLoading.progress > 80 && gLoading.progress <= 90) {
             gLoading.ballIsFalling = true;
             gLoading.ballVy += 2.0f;
             gLoading.ballY += gLoading.ballVy;
         }
-        // Faza 3: Pucanje (90%+)
         else if (gLoading.progress > 90 && !gLoading.ballPopped) {
             gLoading.harpoonActive = true;
             gLoading.harpoonHeight += 35.0f;
 
-            // Dinamička provjera - postavi targetnu visinu u renderu
-            // Ovdje samo rastemo, provjera je u RenderLoading funkciji
         }
         last = now;
     }
@@ -65,42 +58,26 @@ void RenderLoading(HDC hdc, RECT rect) {
     HBITMAP memBM = CreateCompatibleBitmap(hdc, rect.right, rect.bottom);
     HBITMAP oldBM = (HBITMAP)SelectObject(memDC, memBM);
 
-    // 1. POZADINA - Tamno siva (charcoal) uvijek
     HBRUSH bgBrush = CreateSolidBrush(RGB(35, 35, 40));
     FillRect(memDC, &rect, bgBrush);
     DeleteObject(bgBrush);
 
-    /* Zakomentarisano - koristimo solid sivu umjesto bitmap-a
-    if (gRes.background) {
-        HDC resDC = CreateCompatibleDC(hdc);
-        HBITMAP oldRes = (HBITMAP)SelectObject(resDC, gRes.background);
-        BITMAP bm; GetObject(gRes.background, sizeof(BITMAP), &bm);
-        StretchBlt(memDC, 0, 0, rect.right, rect.bottom, resDC, 0, 0, bm.bmWidth, bm.bmHeight, SRCCOPY);
-        SelectObject(resDC, oldRes); DeleteDC(resDC);
-    }
-    */
 
-    // --- KOORDINATE - OPTIMIZOVANO ZA 1280x720 I FULLSCREEN ---
     int centerX = rect.right / 2;
     int centerY = rect.bottom / 2;
 
-    // Progress bar skalira pametno
     int barW;
     if (rect.right <= 1280) {
-        // Mali ekran (1280x720) - fiksna veličina
         barW = 450;
     } else {
-        // Fullscreen - skalira se (50% širine)
         barW = (rect.right * 50) / 100;
-        if (barW > 900) barW = 900;  // Max 900px
+        if (barW > 900) barW = 900;
     }
 
     int barH;
     if (rect.bottom <= 720) {
-        // Mali ekran - fiksna visina
         barH = 25;
     } else {
-        // Fullscreen - proporcionalna visina
         barH = rect.bottom / 50;
         if (barH < 25) barH = 25;
         if (barH > 35) barH = 35;
@@ -109,15 +86,12 @@ void RenderLoading(HDC hdc, RECT rect) {
     int barX = centerX - (barW / 2);
     int barY = centerY;
 
-    // Heroj dimenzije - takođe optimizovane
     int heroW;
     int heroH;
     if (rect.right <= 1280) {
-        // Mali ekran
         heroW = 70;
         heroH = 90;
     } else {
-        // Fullscreen - skalira
         heroW = rect.right / 18;
         if (heroW < 70) heroW = 70;
         if (heroW > 130) heroW = 130;
@@ -127,11 +101,9 @@ void RenderLoading(HDC hdc, RECT rect) {
         if (heroH > 160) heroH = 160;
     }
 
-    // Fiksiramo heroja na samo dno ekrana (bez oduzimanja, ili vrlo malo ako treba)
     int heroY = rect.bottom - heroH;
 
-    // --- LOGIKA KRETANJA - do pozicije balona (15% van bara) ---
-    int targetX = (int)(barX + (barW * 1.15f)) - (heroW / 2); // Hoda do pozicije balona
+    int targetX = (int)(barX + (barW * 1.15f)) - (heroW / 2);
     int startX = -heroW;
 
     float moveFactor = (float)gLoading.progress / 90.0f;
@@ -205,13 +177,11 @@ void RenderLoading(HDC hdc, RECT rect) {
         }
 
         if (!gLoading.ballIsFalling) {
-            // Balon skakuće NA baru i malo PREKO ivice (1.15 = 115% - prelazi ivicu)
             float t = (float)gLoading.progress / 80.0f; if (t > 1.0f) t = 1.0f;
-            bx = barX + (barW * t * 1.15f); // Dodato 1.15 da ide 15% dalje od kraja
+            bx = barX + (barW * t * 1.15f);
             by = barY - radius - fabs(sinf(t * 15.0f)) * 50.0f;
             gLoading.ballY = by;
         } else {
-            // Pada sa kraja bara + malo offset-a
             bx = barX + (barW * 1.15f) + radius;
             by = gLoading.ballY;
             if (by > rect.bottom - radius) by = (float)(rect.bottom - radius);
@@ -258,10 +228,9 @@ void RenderLoading(HDC hdc, RECT rect) {
         HPEN harpPen = CreatePen(PS_SOLID, harpoonThickness, RGB(220, 220, 220)); // Srebrna linija
         HPEN oldPen = (HPEN)SelectObject(memDC, harpPen);
         MoveToEx(memDC, hX, hBaseY, NULL);
-        LineTo(memDC, hX, hTopY); // Samo ravna linija gore
+        LineTo(memDC, hX, hTopY);
         SelectObject(memDC, oldPen); DeleteObject(harpPen);
 
-        // Vrh Harpuna (Arrow) - KORISTIMO TransparentBlt SA BIJELOM BOJOM
         if (gRes.arrow) {
             HDC resDC = CreateCompatibleDC(hdc);
             HBITMAP oldRes = (HBITMAP)SelectObject(resDC, gRes.arrow);
@@ -270,7 +239,6 @@ void RenderLoading(HDC hdc, RECT rect) {
             int arrowX = hX - (bmArrow.bmWidth / 2);
             int arrowY = hTopY;
 
-            // RGB(255, 255, 255) uklanja bijelu pozadinu
             TransparentBlt(memDC, arrowX, arrowY, bmArrow.bmWidth, bmArrow.bmHeight,
                            resDC, 0, 0, bmArrow.bmWidth, bmArrow.bmHeight,
                            RGB(255, 255, 255));
@@ -278,7 +246,6 @@ void RenderLoading(HDC hdc, RECT rect) {
             SelectObject(resDC, oldRes); DeleteDC(resDC);
         }
 
-        // DINAMIČKA PROVJERA POGOTKA - bazirana na stvarnoj poziciji balona
         if (!gLoading.ballPopped) {
             float ballY = gLoading.ballY;
             float ballRadius;
@@ -291,9 +258,13 @@ void RenderLoading(HDC hdc, RECT rect) {
                 if (ballRadius > 28.0f) ballRadius = 28.0f;
             }
 
-            // Provjeri da li je vrh harpuna stigao do balona (sa malim offsetom)
-            if (hTopY <= (int)ballY + (int)ballRadius) { // tolerance zona bazirana na radiusu
-                gLoading.ballPopped = true;
+            if (hTopY <= (int)ballY + (int)ballRadius) {
+                if (!gLoading.ballPopped) {
+                    gLoading.ballPopped = true;
+                    PlaySound(MAKEINTRESOURCE(IDR_BALLOON_POP),
+                              GetModuleHandle(NULL),
+                              SND_RESOURCE | SND_ASYNC | SND_NODEFAULT);
+                }
             }
         }
     }
@@ -332,7 +303,6 @@ void RenderLoading(HDC hdc, RECT rect) {
         SelectObject(resDC, oldRes); DeleteDC(resDC);
     }
 
-    // 7. TEXT - ISPOD BARA sa animiranim tačkama i optimizovanim fontom
     SetBkMode(memDC, TRANSPARENT);
     SetTextColor(memDC, RGB(255, 255, 255));
 
@@ -354,7 +324,6 @@ void RenderLoading(HDC hdc, RECT rect) {
         sprintf(buf, "LOADING%s %d%%", dots, gLoading.progress);
     }
 
-    // Optimizovani font size za obe rezolucije
     int loadingFontSize;
     if (rect.bottom <= 720) {
         loadingFontSize = 16; // Mali ekran
@@ -370,7 +339,7 @@ void RenderLoading(HDC hdc, RECT rect) {
     SIZE sz;
     GetTextExtentPoint32(memDC, buf, strlen(buf), &sz);
     int textX = barX + (barW - sz.cx) / 2;
-    int textY = barY + barH + 10; // PROMIJENIO - tekst sada ide ispod bara
+    int textY = barY + barH + 10;
     TextOut(memDC, textX, textY, buf, strlen(buf));
 
     SelectObject(memDC, oldLoadingFont);
