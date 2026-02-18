@@ -141,11 +141,11 @@ void InitLevel8(HWND hwnd){
 
     // Section 2 (Middle) - Medium yellow balloon
     float section2CenterX = (float)(pillar1CenterX + pillar2CenterX) / 2.0f;
-    InitBalloon(1, section2CenterX, 150.0f, 55.0f,  2.5f, RGB(255, 210, 0));   // Yellow
+    InitBalloon(1, section2CenterX, 130.0f, 65.0f,  2.8f, RGB(255, 210, 0));   // Yellow
 
     // Section 3 (Right) - Medium-large orange balloon
     float section3CenterX = pillar2CenterX + (float)(bgW / 4) / 2.0f;
-    InitBalloon(2, section3CenterX, 130.0f, 65.0f, -2.8f, RGB(255, 130, 0));   // Orange
+    InitBalloon(2, section3CenterX, 120.0f, 80.0f, -3.0f, RGB(255, 130, 0));   // Orange
 
     // === SPAWN BOTH PLAYERS IN THE CENTER SECTION ===
     // Player 1 - slightly left of center
