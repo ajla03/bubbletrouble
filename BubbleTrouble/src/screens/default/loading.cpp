@@ -203,7 +203,7 @@ void RenderLoading(HDC hdc, RECT rect) {
             if (fontSize > 70) fontSize = 70;
         }
 
-        HFONT oldF = (HFONT)SelectObject(memDC,gRes.hFontHelp);
+        HFONT oldF = (HFONT)SelectObject(memDC,gRes.hFont);
         TextOut(memDC, barX + (int)(barW * 1.15f), barY - fontSize, "POP!", 4);
         SelectObject(memDC, oldF);
     }
