@@ -200,9 +200,18 @@ void UpdateWallTransition(HWND hwnd){
                     gGame.settingsState.currentHeroSelected = gRes.characterMask;
                     gGame.settingsState.currentPlayerBinding = 1;
                 }
+
                 gGame.gameState.currentMode = GAME_MODE_MENU;
                 gGame.gameState.isGameOver = false;
                 gGame.gameState.isLevelCleared = false;
+
+                // setting all menu buttons to unhover
+                gGame.helpButtonInfo.isHover = false;
+                gGame.dashboardButtonInfo.isHover = false;
+                gGame.menuButtons[0].isHovered = false;
+                gGame.menuButtons[1].isHovered = false;
+                gGame.menuButtons[2].isHovered = false;
+
                 ResetGame(hwnd);
             }else if(gGame.transitionState.pendingNextLevel){
                 if (CURRENT_LEVEL.hdcCache) { printf("DELETED DC"); DeleteDC(CURRENT_LEVEL.hdcCache);}
@@ -215,17 +224,27 @@ void UpdateWallTransition(HWND hwnd){
             }else if(gGame.transitionState.pendingSettings){
                 gGame.gameState.currentMode = GAME_MODE_SETTINGS;
                 gGame.menuButtons[2].isHovered = false;
+                gGame.backButtonInfo.isHover = false;
+                gGame.player1.isHover = gGame.player1.isHover = false;
+                gGame.settingsState.rightKeyButton.isHover = false;
+                gGame.settingsState.leftKeyButton.isHover = false;
+                gGame.settingsState.spaceKeyButton.isHover = false;
             }else if(gGame.transitionState.pendingHelp){
                 gGame.gameState.currentMode = GAME_MODE_HELP;
+                gGame.backButtonInfo.isHover = false;
             }else if(gGame.transitionState.pendingDashboard){
+                gGame.backButtonInfo.isHover = false;
                 gGame.gameState.currentMode = GAME_MODE_DASHBOARD;
             }else if(gGame.transitionState.pendingSingle){
                 StartGame(hwnd);
                 gGame.menuButtons[0].isHovered = false;
+                gGame.backButtonInfo.isHover = false;
             }else if(gGame.transitionState.pendingMulti){
                 InitMultiplayer(hwnd);
                 StartGame(hwnd);
                 gGame.menuButtons[1].isHovered = false;
+                gGame.backButtonInfo.isHover = false;
+
             }
             gGame.transitionState.transitionVars = TRANSITION_OPENING;
         }

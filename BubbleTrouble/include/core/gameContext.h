@@ -69,9 +69,8 @@ struct GameContext{
      Button settingsSoundButtonInfo;
      Button player1, player2;
      Button dashboardButtonInfo;
-     RECT helpIconRect;
      Button loginButtonInfo;
-     bool helpIconHovered;
+     Button helpButtonInfo;
 
     // STATE
     InputState inputState;

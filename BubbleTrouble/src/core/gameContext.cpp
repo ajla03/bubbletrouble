@@ -60,8 +60,7 @@ GameContext gGame = {
     /* player1 */       {},
     /* player2 */       {},
     /* dashboardButtoInfo*/  {},
-    /* helpIconRect */  {},
-    /* helpIconHovered */ false,
+    /* helpButtonInfo */  {},
 
     // ===== STATE =====
     /* inputState */    {false,false},

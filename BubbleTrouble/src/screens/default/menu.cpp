@@ -52,7 +52,6 @@ void InitializeMenu(HWND hwnd) {
     gGame.menuButtons[1].text = "2 PLAYERS";
     gGame.menuButtons[2].text = "SETTINGS";
 
-    gGame.helpIconHovered = false;
 }
 
 void RenderMenu(HDC hdc, RECT rect) {
@@ -124,7 +123,7 @@ void RenderMenu(HDC hdc, RECT rect) {
     SelectObject(hdc, hOldButtonFont);
     // === HELP ICON ===
     if (gRes.help && gRes.helpHover) {
-        HBITMAP currentHelp = gGame.helpIconHovered ? gRes.helpHover : gRes.help;
+        HBITMAP currentHelp = gGame.helpButtonInfo.isHover ? gRes.helpHover : gRes.help;
 
         BITMAP bm;
         GetObject(currentHelp, sizeof(BITMAP), &bm);
@@ -137,27 +136,27 @@ void RenderMenu(HDC hdc, RECT rect) {
         int helpX = rect.right - helpSize - padding;
         int helpY = padding;
 
-        gGame.helpIconRect.left = helpX;
-        gGame.helpIconRect.top = helpY;
-        gGame.helpIconRect.right = helpX + helpSize;
-        gGame.helpIconRect.bottom = helpY + helpSize;
+        gGame.helpButtonInfo.x = helpX;
+        gGame.helpButtonInfo.y = helpY;
+        gGame.helpButtonInfo.width =  helpSize;
+        gGame.helpButtonInfo.height = helpSize;
 
         HBITMAP oldMemBmp = (HBITMAP)SelectObject(gRes.hdcMem, currentHelp);
         TransparentBlt(hdc, helpX, helpY, helpSize, helpSize,
                        gRes.hdcMem, 0, 0, bm.bmWidth, bm.bmHeight,
                        RGB(255, 255, 255));
       // === HELP HOVER GLOW ===
-        if (gGame.helpIconHovered) {
+        if (gGame.helpButtonInfo.isHover) {
 
             HPEN glowPen = CreatePen(PS_SOLID, 4, RGB(255, 140, 0));
             HGDIOBJ oldPen = SelectObject(hdc, glowPen);
             HGDIOBJ oldBrush = SelectObject(hdc, GetStockObject(HOLLOW_BRUSH));
 
             RoundRect(hdc,
-                      helpX - 3,
-                      helpY - 3,
-                      helpX + helpSize + 3,
-                      helpY + helpSize + 3,
+                      helpX,
+                      helpY - 2,
+                      helpX + helpSize,
+                      helpY + helpSize + 2,
                       helpSize / 3,
                       helpSize / 3);
 
@@ -274,7 +273,7 @@ void RenderMenu(HDC hdc, RECT rect) {
 void HandleMenuClick(HWND hwnd, int x, int y) {
     POINT pt = {x, y};
 
-    if (PtInRect(&gGame.helpIconRect, pt)) {
+    if (IsPointInButton(gGame.helpButtonInfo, x, y)) {
         gGame.transitionState.pendingHelp = true;
         StartWallTransition(hwnd);
         return;
@@ -319,11 +318,7 @@ void HandleMenuMouseMove(HWND hwnd, int x, int y) {
         if (wasHovered != gGame.menuButtons[i].isHovered) needsRedraw = true;
     }
 
-    bool wasHelpHovered = gGame.helpIconHovered;
-    gGame.helpIconHovered = PtInRect(&gGame.helpIconRect, pt);
-    if (wasHelpHovered != gGame.helpIconHovered) {
-        needsRedraw = true;
-    }
+    CheckHover(gGame.helpButtonInfo, x, y);
 }
 
 
