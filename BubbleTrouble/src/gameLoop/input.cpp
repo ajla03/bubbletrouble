@@ -471,8 +471,7 @@ void HandleKeyDown(HWND hwnd, WPARAM wParam)
         gGame.settingsState.waitingForKey != KEYBIND_NONE)
     {
         // ESC ili ENTER otkazuju key binding
-        if (vkCode == VK_ESCAPE || vkCode == VK_RETURN || vkCode == VK_DOWN || vkCode == VK_UP
-            || vkCode == 'S') {
+        if (vkCode == VK_ESCAPE || vkCode == VK_RETURN) {
             gGame.settingsState.waitingForKey = KEYBIND_NONE;
             gGame.settingsState.rightKeyButton.isHover = false;
             gGame.settingsState.leftKeyButton.isHover = false;
