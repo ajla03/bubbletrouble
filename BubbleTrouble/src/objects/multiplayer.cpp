@@ -113,11 +113,12 @@ void UpdatePlayer2Input(HWND hwnd) {
         CheckHeroDoorCollisionP2();
     }
 
-    CheckHeroPillarCollision2(&CURRENT_LEVEL.pillar1);
-    CheckHeroPillarCollision2(&CURRENT_LEVEL.pillar2);
+    // IZMJENA: Koristimo univerzalnu funkciju i šaljemo &gGame.hero2
+    CheckHeroPillarCollision(&gGame.hero2, &CURRENT_LEVEL.pillar1);
+    CheckHeroPillarCollision(&gGame.hero2, &CURRENT_LEVEL.pillar2);
 
     if (CURRENT_LEVEL.ladder.width > 0) {
-        CheckHeroPillarCollision2(&CURRENT_LEVEL.longWall);
+        CheckHeroPillarCollision(&gGame.hero2, &CURRENT_LEVEL.longWall);
     }
 
     if(isMoving) {
@@ -152,7 +153,7 @@ void UpdatePlayer2Input(HWND hwnd) {
     gGame.inputState.wasSpacePressedP2 = isSpacePressed;
 
     if (CURRENT_LEVEL.ladder.width > 0) {
-        int platformY   = CURRENT_LEVEL.door.y;
+        int platformY    = CURRENT_LEVEL.door.y;
         int lowerFloorY = rect.bottom - gGame.floorWall.height - gGame.hero2.height;
         int upperFloorY = platformY - gGame.hero2.height;
 
@@ -307,20 +308,6 @@ void CheckHeroDoorCollisionP2() {
     }
 }
 
-void CheckHeroPillarCollision2(StaticObject* pillar) {
-    if(pillar->width <= 0 || pillar->height <= 0) return;
-
-    Hero* h = &gGame.hero2;
-
-    if (AABB(h->x, h->y, h->width, h->height,
-             pillar->x, pillar->y, pillar->width, pillar->height)) {
-        if (h->x < pillar->x)
-            h->x = pillar->x - h->width;
-        else
-            h->x = pillar->x + pillar->width;
-    }
-}
-
 void UpdateHeroCoolDownP2(float dt){
     if(gGame.hero2.heroHitCooldown > 0){
         gGame.hero2.heroHitCooldown -=dt;
@@ -332,3 +319,4 @@ void UpdateHeroCoolDownP2(float dt){
         gGame.hero2.blinkTimer = 0;
     }
 }
+

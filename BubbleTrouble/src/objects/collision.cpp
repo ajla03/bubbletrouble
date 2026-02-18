@@ -39,12 +39,10 @@ void CheckHeroDoorCollision()
     }
 }
 
-// Moved from input.cpp
-void CheckHeroPillarCollision(StaticObject* pillar)
+void CheckHeroPillarCollision(Hero* h, StaticObject* pillar)
 {
     if(pillar->width <= 0 || pillar->height <= 0) return;
 
-    Hero* h = &gGame.hero;
 
     if (AABB(h->x, h->y, h->width, h->height,
              pillar->x, pillar->y, pillar->width, pillar->height))

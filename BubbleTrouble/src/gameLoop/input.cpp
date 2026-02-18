@@ -24,14 +24,14 @@ void CheckInputs(HWND hwnd){
 
     // === PLAYER 2 INPUT ===
     if(gGame.gameState.isMultiplayer) {
-        UpdatePlayer2Input(hwnd);
+        UpdatePlayer2Input(hwnd); // Ovu funkciju smo definirali u multiplayer.cpp
     }
 }
 
 static bool CanProgressInput() {
     return gGame.gameState.currentMode == GAME_MODE_PLAYING &&
-           gGame.transitionState.transitionVars == TRANSITION_NONE
-           || gGame.transitionState.transitionVars == TRANSITION_SOON_TO_END;
+           (gGame.transitionState.transitionVars == TRANSITION_NONE
+            || gGame.transitionState.transitionVars == TRANSITION_SOON_TO_END);
 }
 
 static void UpdatePlayer1Input(HWND hwnd){
@@ -82,15 +82,15 @@ static void UpdatePlayer1Input(HWND hwnd){
         CheckHeroDoorCollision();
     }
 
-    if(gGame.currentLevel == 3){
-        CheckHeroPillarCollision(&CURRENT_LEVEL.pillar1);
-        CheckHeroPillarCollision(&CURRENT_LEVEL.pillar2);
+    if(gGame.currentLevel == 3 || gGame.currentLevel == 7){
+        CheckHeroPillarCollision(&gGame.hero, &CURRENT_LEVEL.pillar1);
+        CheckHeroPillarCollision(&gGame.hero, &CURRENT_LEVEL.pillar2);
     }
 
     if(CURRENT_LEVEL.ladder.width > 0){
-        CheckHeroPillarCollision(&CURRENT_LEVEL.longWall);
-        CheckHeroPillarCollision(&CURRENT_LEVEL.pillar1);
-        CheckHeroPillarCollision(&CURRENT_LEVEL.pillar2);
+        CheckHeroPillarCollision(&gGame.hero, &CURRENT_LEVEL.longWall);
+        CheckHeroPillarCollision(&gGame.hero, &CURRENT_LEVEL.pillar1);
+        CheckHeroPillarCollision(&gGame.hero, &CURRENT_LEVEL.pillar2);
     }
 
     if(isMoving) {
@@ -199,10 +199,10 @@ case GAME_MODE_LEVEL_SELECT:
             int sheetHeight = SHEET_H;
 
             RECT sheet;
-            sheet.left   = rect.right / 2 - sheetWidth / 2;
-            sheet.right  = sheet.left + sheetWidth;
-            sheet.top    = rect.bottom / 2 - sheetHeight / 2;
-            sheet.bottom = sheet.top + sheetHeight;
+            sheet.left    = rect.right / 2 - sheetWidth / 2;
+            sheet.right   = sheet.left + sheetWidth;
+            sheet.top     = rect.bottom / 2 - sheetHeight / 2;
+            sheet.bottom  = sheet.top + sheetHeight;
 
             int currentUnlocked = gGame.gameState.isMultiplayer ? gGame.unlockedLevelMulti : gGame.unlockedLevelSingle;
             int btnW = 80;
@@ -549,8 +549,8 @@ void HandleCharInput(HWND hwnd, WPARAM wParam)
         else if (wParam >= 32 && wParam <= 126)
         {
             bool isAllowed = isalnum((unsigned char)wParam) ||
-                     (char)wParam == '.' ||
-                     (char)wParam == '_';
+                             (char)wParam == '.' ||
+                             (char)wParam == '_';
 
             if(isAllowed){
                 if (gGame.loginInput.length < 11)
