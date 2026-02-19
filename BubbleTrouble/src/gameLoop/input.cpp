@@ -208,32 +208,40 @@ void HandleMouseClick(HWND hwnd, int mx, int my)
             int currentUnlocked = gGame.gameState.isMultiplayer ? gGame.unlockedLevelMulti : gGame.unlockedLevelSingle;
             int btnW = 80;
             int btnH = 80;
-            int gapX = 40;
-            int gapY = 30;
+            int gapX = 50;
+            int gapY = 40;
             int cols = 4;
-            int totalW1 = 4 * btnW + 3 * gapX;
-            int totalW2 = 3 * btnW + 2 * gapX;
-            int startY = sheet.top + 130;
 
-            for (int i = 0; i < 8; i++) {
+            int totalW = cols * btnW + (cols - 1) * gapX;
+            int startX = sheet.left + ((sheet.right - sheet.left) - totalW) / 2;
+            int startY = sheet.top + 140;
+
+            for (int i = 0; i < 8; i++)
+            {
                 int row = i / cols;
                 int col = i % cols;
-                int startX = sheet.left + ((sheet.right - sheet.left) - (row == 0 ? totalW1 : totalW2)) / 2;
+
                 int x = startX + col * (btnW + gapX);
                 int y = startY + row * (btnH + gapY);
 
-                if (mx >= x && mx <= x + btnW && my >= y && my <= y + btnH) {
-                    if (i <= currentUnlocked) {
+                if (mx >= x && mx <= x + btnW &&
+                    my >= y && my <= y + btnH)
+                {
+                    if (i <= currentUnlocked)
+                    {
                         gGame.currentLevel = i;
-                        if (gGame.gameState.isMultiplayer) {
+
+                        if (gGame.gameState.isMultiplayer)
                             gGame.transitionState.pendingMulti = true;
-                        } else {
+                        else
                             gGame.transitionState.pendingSingle = true;
-                        }
+
                         StartWallTransition(hwnd);
                     }
+                    break;
                 }
             }
+
 
             if(IsPointInButton(gGame.backButtonInfo, mx, my)){
                  gGame.transitionState.pendingHome = true;
