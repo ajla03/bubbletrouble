@@ -138,11 +138,12 @@ bool GetTopScores(HighScore* scores, int count, const char* mode) {
 
     HighScore* currentScore = scores;
 
-    char *sql = sqlite3_mprintf(
-        "SELECT player_name, score, level, mode, timestamp "
+   char *sql = sqlite3_mprintf(
+        "SELECT player_name, MAX(score) as max_score, level, mode, timestamp "
         "FROM high_scores "
-        "WHERE mode = %Q "
-        "ORDER BY score DESC "
+        "WHERE mode  = %Q "
+        "GROUP BY player_name "
+        "ORDER BY max_score DESC "
         "LIMIT %d;",
         mode, count
     );

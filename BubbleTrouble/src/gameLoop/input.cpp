@@ -476,6 +476,16 @@ void HandleKeyDown(HWND hwnd, WPARAM wParam)
 {
     int vkCode = (int)wParam;
 
+    if(gGame.gameState.currentMode == GAME_MODE_MENU
+       && vkCode == VK_ESCAPE){
+        gGame.gameState.currentMode = GAME_MODE_LOGIN;
+        gGame.playerName[0] = '\0';
+        gGame.loginInput.length = 0;
+        gGame.loginInput.text[0] = '\0';
+        gGame.loginInput.active = true;
+        return;
+       }
+
     if (gGame.gameState.currentMode == GAME_MODE_SETTINGS &&
         gGame.settingsState.waitingForKey != KEYBIND_NONE)
     {
