@@ -101,63 +101,8 @@ const char* VKCodeToString(int vkCode)
         case VK_UP:     return "UP";
         case VK_DOWN:   return "DOWN";
         case VK_SPACE:  return "SPC";
-        case VK_SHIFT:  return "SHIFT";
-        case VK_CONTROL:return "CTRL";
-        case VK_MENU:   return "ALT";
-        case VK_TAB:    return "TAB";
-        case VK_BACK:   return "BKSP";
-        case VK_DELETE: return "DEL";
-        case VK_INSERT: return "INS";
-        case VK_HOME:   return "HOME";
-        case VK_END:    return "END";
-        case VK_PRIOR:  return "PGUP";
-        case VK_NEXT:   return "PGDN";
 
-        // Function keys
-        case VK_F1:  return "F1";
-        case VK_F2:  return "F2";
-        case VK_F3:  return "F3";
-        case VK_F4:  return "F4";
-        case VK_F5:  return "F5";
-        case VK_F6:  return "F6";
-        case VK_F7:  return "F7";
-        case VK_F8:  return "F8";
-        case VK_F9:  return "F9";
-        case VK_F10: return "F10";
-        case VK_F11: return "F11";
-        case VK_F12: return "F12";
-
-        // Numpad
-        case VK_NUMPAD0: return "NUM0";
-        case VK_NUMPAD1: return "NUM1";
-        case VK_NUMPAD2: return "NUM2";
-        case VK_NUMPAD3: return "NUM3";
-        case VK_NUMPAD4: return "NUM4";
-        case VK_NUMPAD5: return "NUM5";
-        case VK_NUMPAD6: return "NUM6";
-        case VK_NUMPAD7: return "NUM7";
-        case VK_NUMPAD8: return "NUM8";
-        case VK_NUMPAD9: return "NUM9";
-        case VK_MULTIPLY: return "*";
-        case VK_ADD:      return "+";
-        case VK_SUBTRACT: return "-";
-        case VK_DECIMAL:  return ".";
-        case VK_DIVIDE:   return "/";
     }
-
-    switch (vkCode) {
-        case VK_OEM_PLUS:   return "+";
-        case VK_OEM_MINUS:  return "-";
-        case VK_OEM_COMMA:  return ",";
-        case VK_OEM_PERIOD: return ".";
-        case VK_OEM_1:      return ";";
-        case VK_OEM_2:      return "/";
-        case VK_OEM_3:      return "`";
-        case VK_OEM_4:      return "[";
-        case VK_OEM_6:      return "]";
-        case VK_OEM_7:      return "'";
-    }
-
     return "?";
 }
 
