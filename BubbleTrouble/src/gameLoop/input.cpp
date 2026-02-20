@@ -9,6 +9,7 @@
 static bool CanProgressInput();
 static void UpdatePlayer1Input(HWND);
 static void SaveLoginInfo(HWND);
+static bool IsAllowedKey(WPARAM key);
 
 void CheckInputs(HWND hwnd){
 
@@ -330,9 +331,8 @@ void HandleSettingsClick(HWND hwnd, int mx, int my){
 
 
 void HandleHelpClick(HWND hwnd, int mx, int my) {
-    // Back button logika (koristimo istu logiku tranzicije kao u settings)
     if(IsPointInButton(gGame.backButtonInfo, mx, my)){
-        gGame.transitionState.pendingHome = true; // Ovo signalizira povratak u Menu
+        gGame.transitionState.pendingHome = true;
         StartWallTransition(hwnd);
         return;
     }
@@ -476,11 +476,22 @@ void HandleKeyDown(HWND hwnd, WPARAM wParam)
 {
     int vkCode = (int)wParam;
 
+    if(gGame.gameState.currentMode == GAME_MODE_MENU
+       && vkCode == VK_ESCAPE){
+        gGame.gameState.currentMode = GAME_MODE_LOGIN;
+        gGame.playerName[0] = '\0';
+        gGame.loginInput.length = 0;
+        gGame.loginInput.text[0] = '\0';
+        gGame.loginInput.active = true;
+        return;
+       }
+
     if (gGame.gameState.currentMode == GAME_MODE_SETTINGS &&
         gGame.settingsState.waitingForKey != KEYBIND_NONE)
     {
         // ESC ili ENTER otkazuju key binding
-        if (vkCode == VK_ESCAPE || vkCode == VK_RETURN) {
+        if (vkCode == VK_ESCAPE || vkCode == VK_RETURN
+            || !IsAllowedKey(vkCode)) {
             gGame.settingsState.waitingForKey = KEYBIND_NONE;
             gGame.settingsState.rightKeyButton.isHover = false;
             gGame.settingsState.leftKeyButton.isHover = false;
@@ -490,7 +501,6 @@ void HandleKeyDown(HWND hwnd, WPARAM wParam)
 
         KeyBindings* keys = (gGame.settingsState.currentPlayerBinding == 1) ? &gGame.settingsState.player1Keys
                                                                             : &gGame.settingsState.player2Keys;
-
 
         if(vkCode == keys->moveLeft ||
            vkCode == keys->moveRight ||
@@ -607,4 +617,21 @@ static void SaveLoginInfo(HWND hwnd){
         gGame.transitionState.pendingHome = true;
         StartWallTransition(hwnd);
     }
+}
+
+static bool IsAllowedKey(WPARAM key)
+{
+    if (key == VK_UP || key == VK_DOWN || key == VK_LEFT || key == VK_RIGHT)
+        return true;
+
+    if (key == VK_SPACE)
+        return true;
+
+    if (key >= '0' && key <= '9')
+        return true;
+
+     if (key >= 'A' && key <= 'Z')
+        return true;
+
+    return false;
 }

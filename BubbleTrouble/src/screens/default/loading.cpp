@@ -111,7 +111,6 @@ void RenderLoading(HDC hdc, RECT rect) {
 
     int heroX = startX + (int)((targetX - startX) * moveFactor);
 
-    // 3. LOADING BAR - SA OKVIROM (optimizovan za obe rezolucije)
     int frameThickness;
     if (rect.bottom <= 720) {
         frameThickness = 4; // Mali ekran
@@ -121,35 +120,31 @@ void RenderLoading(HDC hdc, RECT rect) {
         if (frameThickness > 7) frameThickness = 7;
     }
 
-    // Spoljašnji okvir (bijela boja za bolji kontrast sa gradijentom)
-    HBRUSH outerFrameBrush = CreateSolidBrush(RGB(255, 255, 255)); // Bijela
+    HBRUSH outerFrameBrush = CreateSolidBrush(RGB(255, 255, 255));
     RECT outerRect = { barX - frameThickness, barY - frameThickness,
                        barX + barW + frameThickness, barY + barH + frameThickness };
     FillRect(memDC, &outerRect, outerFrameBrush);
     DeleteObject(outerFrameBrush);
 
-    // Unutrašnji frame (tamna pozadina)
     HBRUSH innerFrameBrush = CreateSolidBrush(RGB(30, 30, 30));
     RECT innerRect = { barX, barY, barX + barW, barY + barH };
     FillRect(memDC, &innerRect, innerFrameBrush);
     DeleteObject(innerFrameBrush);
 
-    // Fill (crveni progres sa gradijentom)
     int fillW = (barW * gLoading.progress) / 100;
 
     if (fillW > 0) {
-        // Gradijent od tamno crvene do svijetle crvene
         TRIVERTEX vertex[2];
         vertex[0].x = barX;
         vertex[0].y = barY;
-        vertex[0].Red = 0x6000;    // Tamno crvena lijevo
+        vertex[0].Red = 0x6000;
         vertex[0].Green = 0x1000;
         vertex[0].Blue = 0x1000;
         vertex[0].Alpha = 0x0000;
 
         vertex[1].x = barX + fillW;
         vertex[1].y = barY + barH;
-        vertex[1].Red = 0xFF00;    // Svijetlo crvena desno
+        vertex[1].Red = 0xFF00;
         vertex[1].Green = 0x3000;
         vertex[1].Blue = 0x3000;
         vertex[1].Alpha = 0x0000;
@@ -161,16 +156,13 @@ void RenderLoading(HDC hdc, RECT rect) {
         GradientFill(memDC, vertex, 2, &gRect, 1, GRADIENT_FILL_RECT_H);
     }
 
-    // 4. BALON - optimizovan za obe rezolucije
     if (!gLoading.ballPopped) {
         float bx, by;
         float radius;
 
         if (rect.bottom <= 720) {
-            // Mali ekran - fiksni radius
             radius = 16.0f;
         } else {
-            // Fullscreen - proporcionalni radius
             radius = (float)(barH * 0.8f);
             if (radius < 16.0f) radius = 16.0f;
             if (radius > 28.0f) radius = 28.0f;
@@ -208,13 +200,11 @@ void RenderLoading(HDC hdc, RECT rect) {
         SelectObject(memDC, oldF);
     }
 
-    // 5. HARPUN
     if (gLoading.harpoonActive) {
         int hX = heroX + (heroW / 2);
         int hBaseY = rect.bottom;
         int hTopY = hBaseY - (int)gLoading.harpoonHeight;
 
-        // Jednostavna ravna linija umjesto lanca - optimizovana debljina
         int harpoonThickness;
         if (rect.bottom <= 720) {
             harpoonThickness = 3; // Mali ekran
@@ -224,7 +214,7 @@ void RenderLoading(HDC hdc, RECT rect) {
             if (harpoonThickness > 6) harpoonThickness = 6;
         }
 
-        HPEN harpPen = CreatePen(PS_SOLID, harpoonThickness, RGB(220, 220, 220)); // Srebrna linija
+        HPEN harpPen = CreatePen(PS_SOLID, harpoonThickness, RGB(220, 220, 220));
         HPEN oldPen = (HPEN)SelectObject(memDC, harpPen);
         MoveToEx(memDC, hX, hBaseY, NULL);
         LineTo(memDC, hX, hTopY);
@@ -268,10 +258,9 @@ void RenderLoading(HDC hdc, RECT rect) {
         }
     }
 
-    // 6. KARAKTER
     if (gRes.character && gRes.characterMask) {
         HDC resDC = CreateCompatibleDC(hdc);
-        HBITMAP oldRes = (HBITMAP)SelectObject(resDC, gRes.characterMask); // Maska prvo
+        HBITMAP oldRes = (HBITMAP)SelectObject(resDC, gRes.characterMask);
 
         BITMAP bm; GetObject(gRes.character, sizeof(BITMAP), &bm);
         int frameW = bm.bmWidth / 4;
@@ -279,9 +268,9 @@ void RenderLoading(HDC hdc, RECT rect) {
 
         int row = 0;
         if (gLoading.harpoonActive || moveFactor >= 1.0f) {
-            row = 2; // Leđa (puca/čeka)
+            row = 2; )
         } else {
-            row = 0; // Hoda desno
+            row = 0;
         }
 
         int srcX = 0;
@@ -290,11 +279,9 @@ void RenderLoading(HDC hdc, RECT rect) {
              srcX = walkFrame * frameW;
         }
 
-        // 1. Maska (SRCAND)
         StretchBlt(memDC, heroX, heroY, heroW, heroH,
                    resDC, srcX, row * frameH, frameW, frameH, SRCAND);
 
-        // 2. Slika (SRCPAINT)
         SelectObject(resDC, gRes.character);
         StretchBlt(memDC, heroX, heroY, heroW, heroH,
                    resDC, srcX, row * frameH, frameW, frameH, SRCPAINT);
@@ -308,12 +295,10 @@ void RenderLoading(HDC hdc, RECT rect) {
     char buf[30];
 
     if (gLoading.progress >= 100) {
-        // Kada je 100%, prikaži COMPLETE
         sprintf(buf, "COMPLETE!");
-        SetTextColor(memDC, RGB(0, 255, 0)); // Zelena boja za complete
+        SetTextColor(memDC, RGB(0, 255, 0));
     } else {
-        // Animirane tačke (. .. ... .) dok se učitava
-        int dotCount = (GetTickCount() / 500) % 4; // Mijenja se svake 500ms
+        int dotCount = (GetTickCount() / 500) % 4;
         char dots[5] = "";
         for (int i = 0; i < dotCount; i++) {
             dots[i] = '.';

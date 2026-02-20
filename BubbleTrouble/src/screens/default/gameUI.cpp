@@ -324,11 +324,9 @@ void RenderDynamicGameUI(HDC hdc, RECT rect)
         }
     }
 
-    // === OVERLAY TEXT ===
-    // PROMJENA: Level limit je sada 5 (uključuje Level 5)
     if (gGame.gameState.isLevelCleared && gGame.currentLevel < MAX_LEVELS - 1)
         DrawLevelPassedScreen(hdc, rect);
-    // PROMJENA: Kraj igre nakon levela 6
+
     else if (gGame.gameState.isGameOver || (gGame.currentLevel >= MAX_LEVELS - 1 && gGame.gameState.isLevelCleared))
         DrawGameOverScreen(hdc, rect);
     else if(gGame.gameState.currentMode == GAME_MODE_PAUSE ){
@@ -338,11 +336,7 @@ void RenderDynamicGameUI(HDC hdc, RECT rect)
 }
 
 void DrawHeartsAndScore(HDC hdc, RECT rect, int padding) {
-    int gap = 30; // Razmak između srca
-
-    // ==========================================
-    // LIJEVA STRANA - PLAYER 1 (ili Single Player)
-    // ==========================================
+    int gap = 30;
 
     int p1Lives = gGame.player1Stats.lives;
     int p1Score = gGame.gameState.isMultiplayer ? gGame.player1Stats.displayScore : gGame.displayScore;
@@ -375,17 +369,14 @@ void DrawHeartsAndScore(HDC hdc, RECT rect, int padding) {
             SelectObject(gRes.hdcMem, gRes.heart);
             BitBlt(hdc, x, y, gGame.heartInfo.width, gGame.heartInfo.height, gRes.hdcMem, srcX, 0, SRCAND);
         }
-        SelectObject(gRes.hdcMem, oldBmp); // Vrati stari objekt
+        SelectObject(gRes.hdcMem, oldBmp);
     }
 
-    // === SCORE ZA PLAYER 1 ===
-    // Layout: [PLAYER 1] [SCORE]
     int scoreGap = 10;
     int scoreX = gGame.playerHolderInfo.x + gGame.playerHolderInfo.width + scoreGap;
     int scoreY = gGame.playerHolderInfo.y + 5;
 
-    // Dimenzije score boxa
-    int boxW = 100; // Fiksna minimalna širina za urednost
+    int boxW = 100;
     int scoreBoxH = gGame.playerHolderInfo.height - 8;
 
     // Iscrtaj holder
@@ -411,16 +402,11 @@ void DrawHeartsAndScore(HDC hdc, RECT rect, int padding) {
     GetTextExtentPoint32(hdc, valueText, lstrlen(valueText), &textSize);
     TextOut(hdc, scoreX + 10, scoreY + scoreBoxH/2 - textSize.cy/2, valueText, strlen(valueText));
 
-
-    // ==========================================
-    // DESNA STRANA - PLAYER 2 (Samo Multiplayer)
-    // ==========================================
     if (gGame.gameState.isMultiplayer) {
         int p2Lives = gGame.player2Stats.lives;
         int p2Score = gGame.player2Stats.displayScore;
         HeartAnim* p2HeartsAnim = gGame.player2Stats.hearts;
 
-        // Srca počinju od desnog zida
         int startX2 = rect.right - gGame.rightWall.width - gGame.heartBgInfo.width;
 
         for (int i = 0; i < 5; i++) {
@@ -450,26 +436,19 @@ void DrawHeartsAndScore(HDC hdc, RECT rect, int padding) {
             SelectObject(gRes.hdcMem, oldBmp2);
         }
 
-        // === P2 SCORE (Uz Player 2 ime) ===
-        // Layout: [SCORE] [PLAYER 2]
 
-        // 1. Izračunaj gdje počinje "PLAYER 2" okvir (da budemo simetrični s P1)
         char p2NameText[] = "PLAYER 2";
         SIZE p2NameSize;
         GetTextExtentPoint32(hdc, p2NameText, strlen(p2NameText), &p2NameSize);
-        int p2NameWidth = p2NameSize.cx + 30; // 30 je padding iz RenderStaticUI
+        int p2NameWidth = p2NameSize.cx + 30;
 
-        // X koordinata gdje počinje "PLAYER 2" okvir (desno poravnato uz zid)
         int p2NameX = rect.right - gGame.rightWall.width - p2NameWidth;
 
-        // 2. Postavi Score Box LIJEVO od imena
         int p2ScoreX = p2NameX - boxW - scoreGap;
 
-        // Iscrtaj holder za P2
         SelectObject(gRes.hdcMem, gRes.scoreHolder);
         StretchBlt(hdc, p2ScoreX, scoreY, boxW, scoreBoxH, gRes.hdcMem, 0, 0, gGame.scoreHolderInfo.width, gGame.scoreHolderInfo.height, SRCCOPY);
 
-        // Okvir za P2
         HPEN hDarkPen2 = CreatePen(PS_SOLID, 2, RGB(100, 100, 100));
         HPEN hOldPen2 = (HPEN)SelectObject(hdc, hDarkPen2);
         SelectObject(hdc, GetStockObject(NULL_BRUSH));
@@ -477,7 +456,6 @@ void DrawHeartsAndScore(HDC hdc, RECT rect, int padding) {
         SelectObject(hdc, hOldPen2);
         DeleteObject(hDarkPen2);
 
-        // Tekst za P2
         sprintf(valueText, "%d", p2Score);
         GetTextExtentPoint32(hdc, valueText, lstrlen(valueText), &textSize);
         TextOut(hdc, p2ScoreX + 10, scoreY + scoreBoxH/2 - textSize.cy/2, valueText, strlen(valueText));
