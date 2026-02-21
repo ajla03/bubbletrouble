@@ -268,7 +268,7 @@ void RenderLoading(HDC hdc, RECT rect) {
 
         int row = 0;
         if (gLoading.harpoonActive || moveFactor >= 1.0f) {
-            row = 2; )
+            row = 2;
         } else {
             row = 0;
         }
