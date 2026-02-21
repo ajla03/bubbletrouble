@@ -7,7 +7,6 @@
 #include <cmath>
 #include <algorithm>
 
-// Moved from input.cpp
 bool AABB(float ax, float ay, float aw, float ah,
           float bx, float by, float bw, float bh)
 {
@@ -17,7 +16,6 @@ bool AABB(float ax, float ay, float aw, float ah,
            (ay < by + bh);
 }
 
-// Moved from input.cpp
 void CheckHeroDoorCollision()
 {
     if(!CURRENT_LEVEL.door.active) return;
@@ -104,7 +102,6 @@ void CheckCollisions(){
 
         Balloon* b = &CURRENT_LEVEL.balloons[i];
 
-        // ========== CHECK COLLISION WITH PLAYER 1 ==========
         bool p1Alive = !gGame.gameState.isMultiplayer || gGame.player1Stats.lives > 0;
 
         float closestX = std::max(float(gGame.hero.x + 5), std::min(b->x, (float)(gGame.hero.x + gGame.hero.width - 5)));
@@ -122,7 +119,7 @@ void CheckCollisions(){
                 if(gGame.player1Stats.lives <= 0 && gGame.player2Stats.lives <= 0) {
                     gGame.gameState.isGameOver = true;
                     if(!gGame.gameState.isScoreSaved) {
-                        SaveFinalScore(); // Pretpostavka: Imas ovu funkciju negdje definisanu ili je to SaveScore
+                        SaveFinalScore();
                         gGame.gameState.isScoreSaved = true;
                     }
                     gGame.gameState.currentMode = GAME_OVER;
@@ -144,7 +141,6 @@ void CheckCollisions(){
             break;
         }
 
-        // ========== CHECK COLLISION WITH HARPOON 1 ==========
         if(gGame.harpoon.isActive){
             float distanceHarpoonX = fabs(b->x - harpoonCenterX);
 
@@ -152,17 +148,14 @@ void CheckCollisions(){
                 if (harpoonTop <= b->y + b->radius && harpoonBottom >= b->y - b->radius) {
                     SplitBalloon(i, gGame.harpoon.ownerPlayer);
 
-                    // PROVJERA KRAJA LEVELA
                     if(CURRENT_LEVEL.activeBalloonCount == 0 && !gGame.gameState.isLevelCleared){
 
-                        // 1. Izračunaj preostale živote za zvjezdice
                         int livesLeft = gGame.gameState.isMultiplayer
                             ? std::max(gGame.player1Stats.lives, gGame.player2Stats.lives)
                             : gGame.player1Stats.lives;
 
                         int earned = (livesLeft >= 3) ? 3 : (livesLeft == 2) ? 2 : 1;
 
-                        // 2. NOVA LOGIKA ZA ZVJEZDICE
                         if (gGame.gameState.isMultiplayer) {
                             if (earned > gGame.levelStarsMulti[gGame.currentLevel]) {
                                 gGame.levelStarsMulti[gGame.currentLevel] = earned;
@@ -185,7 +178,6 @@ void CheckCollisions(){
                             gGame.player2Stats.score += bonusPerPlayer;
                             gGame.totalScore = gGame.player1Stats.score + gGame.player2Stats.score;
 
-                            // SPAŠAVANJE OTKLJUČANIH NIVOA (PROGRESS)
                             if (gGame.currentLevel + 1 > gGame.unlockedLevelMulti) {
                                 gGame.unlockedLevelMulti = gGame.currentLevel + 1;
                                 if (gGame.unlockedLevelMulti > 7) gGame.unlockedLevelMulti = 7;
@@ -194,7 +186,6 @@ void CheckCollisions(){
                         } else {
                             gGame.totalScore += timeBonus;
 
-                            // SPAŠAVANJE OTKLJUČANIH NIVOA (PROGRESS)
                             if (gGame.currentLevel + 1 > gGame.unlockedLevelSingle) {
                                 gGame.unlockedLevelSingle = gGame.currentLevel + 1;
                                 if (gGame.unlockedLevelSingle > 7) gGame.unlockedLevelSingle = 7;
@@ -209,7 +200,6 @@ void CheckCollisions(){
         }
     }
 
-    // ========== MULTIPLAYER - PLAYER 2 COLLISIONS ==========
     if(!gGame.gameState.isMultiplayer) return;
 
     float harpoon2CenterX = gGame.harpoon2.x + gGame.harpoon2.width / 2.0f;
@@ -221,7 +211,6 @@ void CheckCollisions(){
 
         Balloon* b = &CURRENT_LEVEL.balloons[i];
 
-        // ========== CHECK COLLISION WITH PLAYER 2 ==========
         if (gGame.player2Stats.lives > 0) {
             float closestX = std::max(float(gGame.hero2.x + 5),
                                      std::min(b->x, (float)(gGame.hero2.x + gGame.hero2.width - 5)));
@@ -257,7 +246,6 @@ void CheckCollisions(){
             }
         }
 
-        // ========== CHECK COLLISION WITH HARPOON 2 ==========
         if(gGame.harpoon2.isActive) {
             float distanceHarpoonX = fabs(b->x - harpoon2CenterX);
 
@@ -267,11 +255,9 @@ void CheckCollisions(){
 
                     if(CURRENT_LEVEL.activeBalloonCount == 0 && !gGame.gameState.isLevelCleared) {
 
-                         // 1. Izračunaj živote
                          int livesLeft = std::max(gGame.player1Stats.lives, gGame.player2Stats.lives);
                          int earned = (livesLeft >= 3) ? 3 : (livesLeft == 2) ? 2 : 1;
 
-                         // 2. NOVA LOGIKA ZA ZVJEZDICE (Ovdje smo sigurno u multiplayeru jer harpun 2 postoji)
                          if (earned > gGame.levelStarsMulti[gGame.currentLevel]) {
                              gGame.levelStarsMulti[gGame.currentLevel] = earned;
                              SaveLevelStars(gGame.playerName, "multi", gGame.currentLevel, earned);
@@ -286,7 +272,6 @@ void CheckCollisions(){
                         gGame.player2Stats.score += bonusPerPlayer;
                         gGame.totalScore = gGame.player1Stats.score + gGame.player2Stats.score;
 
-                        // SPAŠAVANJE PROGRESSA
                         if (gGame.currentLevel + 1 > gGame.unlockedLevelMulti) {
                             gGame.unlockedLevelMulti = gGame.currentLevel + 1;
                             if (gGame.unlockedLevelMulti > 7) gGame.unlockedLevelMulti = 7;

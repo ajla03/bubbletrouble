@@ -35,19 +35,15 @@ void SpawnPowerup(HWND hwnd) {
 
             p->speedY = POWERUP_FALL_SPEED;
 
-            // === RANDOM POWERUP TIP === //
             int randomChance = rand() % 100;
 
             if(randomChance < LIFE_POWERUP_SPAWN_CHANCE) {
-                // 0-49: Life (50%)
                 p->type = POWERUP_EXTRA_LIFE;
             }
             else if(randomChance < LIFE_POWERUP_SPAWN_CHANCE + TIME_POWERUP_SPAWN_CHANCE) {
-                // 50-79: Time (30%)
                 p->type = POWERUP_EXTRA_TIME;
             }
             else {
-                // 80-99: Freeze (20%)
                 p->type = POWERUP_FREEZE;
             }
 
@@ -86,54 +82,46 @@ void UpdatePowerups(HWND hwnd) {
 
         PowerUp* p = &CURRENT_LEVEL.powerups[i];
 
-        // Padanje
+
         p->y += p->speedY;
 
-        // Koordinate powerupa (pomaknuto iznad provjere za pod)
         float powerupLeft = p->x;
         float powerupRight = p->x + p->width;
         float powerupTop = p->y;
         float powerupBottom = p->y + p->height;
 
-        // === PROVJERA SUDARA SA PREPREKAMA ===
         bool hitObstacle = false;
 
-        // 1. Dugacki zid
         if (CURRENT_LEVEL.longWall.width > 0 &&
             powerupBottom > CURRENT_LEVEL.longWall.y && powerupTop < CURRENT_LEVEL.longWall.y + CURRENT_LEVEL.longWall.height &&
             powerupRight > CURRENT_LEVEL.longWall.x && powerupLeft < CURRENT_LEVEL.longWall.x + CURRENT_LEVEL.longWall.width) {
             hitObstacle = true;
         }
 
-        // 2. Vrata
         if (CURRENT_LEVEL.ladder.width == 0 && CURRENT_LEVEL.door.active && CURRENT_LEVEL.door.width > 0 &&
             powerupBottom > CURRENT_LEVEL.door.y && powerupTop < CURRENT_LEVEL.door.y + CURRENT_LEVEL.door.height &&
             powerupRight > CURRENT_LEVEL.door.x && powerupLeft < CURRENT_LEVEL.door.x + CURRENT_LEVEL.door.width) {
             hitObstacle = true;
         }
 
-        // 3. Stub 1 (Level 4)
         if (CURRENT_LEVEL.pillar1.width > 0 &&
             powerupBottom > CURRENT_LEVEL.pillar1.y && powerupTop < CURRENT_LEVEL.pillar1.y + CURRENT_LEVEL.pillar1.height &&
             powerupRight > CURRENT_LEVEL.pillar1.x && powerupLeft < CURRENT_LEVEL.pillar1.x + CURRENT_LEVEL.pillar1.width) {
             hitObstacle = true;
         }
 
-        // 4. Stub 2 (Level 4)
         if (CURRENT_LEVEL.pillar2.width > 0 &&
             powerupBottom > CURRENT_LEVEL.pillar2.y && powerupTop < CURRENT_LEVEL.pillar2.y + CURRENT_LEVEL.pillar2.height &&
             powerupRight > CURRENT_LEVEL.pillar2.x && powerupLeft < CURRENT_LEVEL.pillar2.x + CURRENT_LEVEL.pillar2.width) {
             hitObstacle = true;
         }
 
-        // Ukloni ako padne na pod ILI na neku od prepreka
         if(powerupBottom >= FLOOR_Y || hitObstacle) {
             p->active = false;
             CURRENT_LEVEL.activePowerupCount--;
             continue;
         }
 
-        // === PROVJERA SUDARA SA PLAYER 1 ===
         float heroLeft = gGame.hero.x;
         float heroRight = gGame.hero.x + gGame.hero.width;
         float heroTop = gGame.hero.y;
@@ -142,7 +130,7 @@ void UpdatePowerups(HWND hwnd) {
         if(heroRight > powerupLeft && heroLeft < powerupRight &&
            heroBottom > powerupTop && heroTop < powerupBottom && gGame.player1Stats.lives > 0) {
 
-            ApplyPowerup(p->type, 1); // <--- ID 1 za Player 1
+            ApplyPowerup(p->type, 1);
             p->active = false;
             CURRENT_LEVEL.activePowerupCount--;
 
@@ -150,10 +138,10 @@ void UpdatePowerups(HWND hwnd) {
                 PlaySound(MAKEINTRESOURCE(IDR_BALLOON_POP),
                      GetModuleHandle(NULL),
                      SND_RESOURCE | SND_ASYNC | SND_NODEFAULT);
-            continue; // Pređi na sljedeći powerup
+            continue;
         }
 
-        // === PROVJERA SUDARA SA PLAYER 2 (Samo Multiplayer) ===
+
         if (gGame.gameState.isMultiplayer) {
             float hero2Left = gGame.hero2.x;
             float hero2Right = gGame.hero2.x + gGame.hero2.width;
@@ -163,7 +151,7 @@ void UpdatePowerups(HWND hwnd) {
             if (hero2Right > powerupLeft && hero2Left < powerupRight &&
                 hero2Bottom > powerupTop && hero2Top < powerupBottom && gGame.player2Stats.lives > 0) {
 
-                ApplyPowerup(p->type, 2); // <--- ID 2 za Player 2
+                ApplyPowerup(p->type, 2);
                 p->active = false;
                 CURRENT_LEVEL.activePowerupCount--;
 
@@ -176,12 +164,11 @@ void UpdatePowerups(HWND hwnd) {
         }
     }
 
-    // === UPDATE FREEZE TIMER === //
+
     if(gGame.gameState.balloonsAreFrozen && gGame.gameState.freezeTimeLeft > 0) {
         gGame.gameState.freezeTimeLeft--;
 
         if(gGame.gameState.freezeTimeLeft <= 0) {
-            // Freeze istekao - unfreezeuj balone
             UnfreezeBalloons();
         }
     }
@@ -190,7 +177,6 @@ void UpdatePowerups(HWND hwnd) {
 void ApplyPowerup(PowerUpType type, int playerIndex) {
     switch(type) {
         case POWERUP_EXTRA_LIFE:
-            // Logika za živote ovisi o modu igre i igraču
             if (gGame.gameState.isMultiplayer) {
                 if (playerIndex == 1) {
                     if (gGame.player1Stats.lives < 5)
@@ -201,7 +187,6 @@ void ApplyPowerup(PowerUpType type, int playerIndex) {
                         gGame.player2Stats.lives++;
                 }
             } else {
-                // Single player standardno
                 if (gGame.player1Stats.lives < 5)
                     gGame.player1Stats.lives++;
             }
@@ -215,7 +200,6 @@ void ApplyPowerup(PowerUpType type, int playerIndex) {
             break;
 
         case POWERUP_FREEZE:
-            // Zamrzni sve balone (vrijedi za oba igrača)
             FreezeBalloons();
             gGame.gameState.balloonsAreFrozen = true;
             gGame.gameState.freezeTimeLeft = FREEZE_DURATION;
@@ -250,11 +234,9 @@ void UnfreezeBalloons() {
         Balloon* b = &CURRENT_LEVEL.balloons[i];
 
         if(b->isFrozen) {
-            // Vrati originalne brzine
             b->speedX = b->frozenSpeedX;
             b->speedY = b->frozenSpeedY;
 
-            // Ukloni frozen oznaku
             b->isFrozen = false;
         }
     }
@@ -284,17 +266,16 @@ void DrawPowerups(HDC hdc, RECT rect) {
         }
 
         if(!bitmapToUse) {
-            // Fallback - obojeni kvadrat
             COLORREF color;
             switch(p->type) {
                 case POWERUP_EXTRA_TIME:
-                    color = RGB(0, 200, 255); // Plava
+                    color = RGB(0, 200, 255);
                     break;
                 case POWERUP_FREEZE:
-                    color = RGB(150, 220, 255); // Svetlo plava/led
+                    color = RGB(150, 220, 255);
                     break;
                 default:
-                    color = RGB(255, 0, 0); // Crvena
+                    color = RGB(255, 0, 0);
                     break;
             }
 

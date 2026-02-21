@@ -18,12 +18,10 @@ void CheckInputs(HWND hwnd){
 
     bool p1Active = !gGame.gameState.isMultiplayer || gGame.player1Stats.lives > 0;
 
-    // ===== PLAYER 1 INPUT ====
     if (p1Active){
         UpdatePlayer1Input(hwnd);
     }
 
-    // === PLAYER 2 INPUT ===
     if(gGame.gameState.isMultiplayer) {
         UpdatePlayer2Input(hwnd); // Ovu funkciju smo definirali u multiplayer.cpp
     }
@@ -275,13 +273,11 @@ void HandleMouseClick(HWND hwnd, int mx, int my)
 
 void HandleSettingsClick(HWND hwnd, int mx, int my){
 
-   // Sound Button
    if(IsPointInButton(gGame.settingsSoundButtonInfo, mx, my)){
     gGame.settingsState.soundState.soundEffectsOn = !gGame.settingsState.soundState.soundEffectsOn;
     return;
    }
 
-   // Music Button
    if(IsPointInButton(gGame.settingsMusicButtonInfo, mx, my)){
         gGame.settingsState.soundState.bgMusicOn = !gGame.settingsState.soundState.bgMusicOn;
         if(gGame.settingsState.soundState.bgMusicOn){
@@ -292,14 +288,12 @@ void HandleSettingsClick(HWND hwnd, int mx, int my){
     return;
    }
 
-    // Back button
     if(IsPointInButton(gGame.backButtonInfo, mx, my)){
         gGame.transitionState.pendingHome = true;
         StartWallTransition(hwnd);
         return;
     }
 
-    // Player selection
     if(IsPointInButton(gGame.player1, mx, my)){
         gGame.settingsState.currentHeroSelected = gRes.characterMask;
         gGame.settingsState.currentPlayerBinding = 1;
@@ -312,7 +306,6 @@ void HandleSettingsClick(HWND hwnd, int mx, int my){
         return;
     }
 
-    // Key binding buttons
     if (IsPointInButton(gGame.settingsState.leftKeyButton, mx, my)) {
         gGame.settingsState.waitingForKey = KEYBIND_LEFT;
         return;
@@ -396,19 +389,16 @@ void HandleEndScreenClick(HWND hwnd, int mx, int my)
 void HandleMouseMove(HWND hwnd, int x, int y)
 {
 
-    // LOGIN
     if(gGame.gameState.currentMode == GAME_MODE_LOGIN){
         CheckHover(gGame.loginButtonInfo, x, y);
         return;
     }
 
-    // DASHBOARD
     if(gGame.gameState.currentMode == GAME_MODE_DASHBOARD){
         CheckHover(gGame.backButtonInfo,x, y);
         return;
     }
 
-    // MENU
     if (gGame.gameState.currentMode == GAME_MODE_MENU)
     {
         CheckHover(gGame.dashboardButtonInfo, x, y);
@@ -416,7 +406,6 @@ void HandleMouseMove(HWND hwnd, int x, int y)
         return;
     }
 
-    // SETTINGS
     if (gGame.gameState.currentMode == GAME_MODE_SETTINGS)
     {
         if(gGame.settingsState.waitingForKey != KEYBIND_NONE)
@@ -437,7 +426,6 @@ void HandleMouseMove(HWND hwnd, int x, int y)
         CheckHover(gGame.backButtonInfo, x, y);
         return;
     }
-    // GAME OVER ILI LEVEL CLEARED
     if (gGame.gameState.currentMode == GAME_OVER ||
         gGame.gameState.isLevelCleared)
     {
@@ -450,7 +438,6 @@ void HandleMouseMove(HWND hwnd, int x, int y)
         return;
     }
 
-    // PLAYING
     if (gGame.gameState.currentMode == GAME_MODE_PLAYING)
     {
         CheckHover(gGame.pauseButtonInfo, x, y);
@@ -458,7 +445,6 @@ void HandleMouseMove(HWND hwnd, int x, int y)
         return;
     }
 
-    // PAUSE
     if (gGame.gameState.currentMode == GAME_MODE_PAUSE)
     {
         CheckHover(gGame.unpauseButtonInfo, x, y);

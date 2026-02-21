@@ -43,21 +43,16 @@ void Update(HWND hwnd){
     printf("%d", gGame.gameState.currentMode);
     printf("GDI Objects: %ld\n", GetGuiResources(GetCurrentProcess(), GR_GDIOBJECTS));
 
-    // UPDATE TIMERS //
     UpdateTimers();
 
-    // UPDATE HARPOON FOR HERO 1
     UpdateHarpoonHero1(hwnd);
 
-    // UPDATE HARPOON - MULTIPLAYER //
     if(gGame.gameState.isMultiplayer && gGame.harpoon2.isActive) {
         UpdateHarpoon2(hwnd);
     }
 
-    // UPDATE TORCHES //
     UpdateTorches();
 
-    // ==== update aktivnih vrata ====== //
     UpdateLevelLogic(hwnd);
 
      if(gGame.gameState.hasShield && gGame.gameState.shieldTimeLeft > 0) {
@@ -74,29 +69,22 @@ void Update(HWND hwnd){
         }
     }
 
-    // UDPATE HERO COOLDOWNS
     UpdateHeroCoolDown(0.016f);
 
     if(gGame.gameState.isMultiplayer) {
         UpdateHeroCoolDownP2(0.016f);
     }
 
-    // UPDATE BALOONS
     UpdateBalloons(hwnd);
 
-    // UPDATE HEARTS
     UpdateHearts();
 
-    // UPDATE POWERUPS
     UpdatePowerups(hwnd);
 
-    // UPDATE SCORE ANIMATION
-     UpdateScoreAnimation();
+    UpdateScoreAnimation();
 
-    // CHECK COLLISIONS
     CheckCollisions();
 
-    // UPDATE WALL TRANSITION
     UpdateWallTransition(hwnd);
 
 }
@@ -115,7 +103,6 @@ void UpdateHeroCoolDown(float dt){
 
 void UpdateHearts() {
     if (gGame.gameState.isMultiplayer) {
-        // === PLAYER 1 ANIMATION ===
         for (int i = 0; i < gGame.player1Stats.lives; i++) {
             gGame.player1Stats.hearts[i].animCounter++;
             if (gGame.player1Stats.hearts[i].animCounter >= HEART_ANIM_SPEED) {
@@ -126,7 +113,6 @@ void UpdateHearts() {
                 }
             }
         }
-        // === PLAYER 2 ANIMATION ===
         for (int i = 0; i < gGame.player2Stats.lives; i++) {
             gGame.player2Stats.hearts[i].animCounter++;
             if (gGame.player2Stats.hearts[i].animCounter >= HEART_ANIM_SPEED) {
@@ -138,7 +124,6 @@ void UpdateHearts() {
             }
         }
     } else {
-        // === SINGLE PLAYER (Stari kod) ===
         for (int i = 0; i < gGame.player1Stats.lives; i++) {
             gGame.hearts[i].animCounter++;
             if (gGame.hearts[i].animCounter >= HEART_ANIM_SPEED) {
@@ -166,7 +151,6 @@ void UpdateScoreAnimation() {
             gGame.player2Stats.displayScore += step;
         }
     } else {
-        // Single player
         int diff = gGame.totalScore - gGame.displayScore;
         if (diff > 0) {
             int step = std::max(1, diff / 10);
@@ -205,7 +189,6 @@ void UpdateWallTransition(HWND hwnd){
                 gGame.gameState.isGameOver = false;
                 gGame.gameState.isLevelCleared = false;
 
-                // setting all menu buttons to unhover
                 gGame.helpButtonInfo.isHover = false;
                 gGame.dashboardButtonInfo.isHover = false;
                 gGame.menuButtons[0].isHovered = false;
@@ -482,9 +465,6 @@ static void UpdateLevelLogic(HWND hwnd){
         }
     }
 
-    // === LEVEL 8: OBA STUBA NESTAJU ISTOVREMENO ===
-    // Oba stuba nestaju cim se sredisnji (zuti) balon u potpunosti unisti.
-    // Tj. kada nema vise aktivnih balona zute boje (RGB(255,210,0)).
     if (gGame.currentLevel == 7) {
         if (CURRENT_LEVEL.pillar1.width > 0 || CURRENT_LEVEL.pillar2.width > 0) {
             bool centerBalloonAlive = false;

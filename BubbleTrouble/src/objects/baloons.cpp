@@ -6,14 +6,12 @@
 #include <algorithm>
 #include <cmath>
 
-// Moved from resources.cpp
 float GetBounceSpeedForRadius(float radius)
 {
     float t = radius / MAX_RADIUS;
     return MIN_BOUNCE_SPEED + t * (MAX_BOUNCE_SPEED - MIN_BOUNCE_SPEED);
 }
 
-// Moved from resources.cpp
 void InitBalloon(int index, float x, float y, float radius, float speedX, COLORREF color)
 {
     if (index >= MAX_BALLOONS) return;
@@ -32,7 +30,6 @@ void InitBalloon(int index, float x, float y, float radius, float speedX, COLORR
     CURRENT_LEVEL.balloons[index].frozenSpeedY = 0.0f;
 }
 
-// Moved from update.cpp
 bool AreSectionBalloonsDestroyed(float left, float right)
 {
     for (int i = 0; i < MAX_BALLOONS; i++)
@@ -68,17 +65,15 @@ void UpdateBalloons(HWND hwnd) {
         if (!CURRENT_LEVEL.balloons[i].active) continue;
 
         Balloon* b = &CURRENT_LEVEL.balloons[i];
-        // Preskoči fiziku ako je balon frozen
+
         if(b->isFrozen) {
-            continue;  // Ne pomjeraj balon
+            continue;
         }
 
-        //gravitacija
         b->speedY += BALLOON_GRAVITY;
         if(b->speedY > MAX_FALL_SPEED)
             b->speedY = MAX_FALL_SPEED;
 
-        //pomicanje
         b->x += b->speedX;
         b->y += b->speedY;
 
@@ -107,13 +102,11 @@ void UpdateBalloons(HWND hwnd) {
         }
 
 
-        // ===== PREPREKE UNUTAR NIVOA ===== //
         // dodati ifove da ne provjerava ako nije taj level dzabaa ...
         ResolveBalloonPillarCollision(b, &CURRENT_LEVEL.longWall);
         if(CURRENT_LEVEL.door.active)
             ResolveBalloonPillarCollision(b, &CURRENT_LEVEL.door);
 
-        // Level 4 pillars
         ResolveBalloonPillarCollision(b, &CURRENT_LEVEL.pillar1);
         ResolveBalloonPillarCollision(b, &CURRENT_LEVEL.pillar2);
 
@@ -125,13 +118,13 @@ void UpdateBalloons(HWND hwnd) {
 }
 
 
-void SplitBalloon(int index, int scoringPlayer) {  // ← DODAJ PARAMETAR
+void SplitBalloon(int index, int scoringPlayer) {
     Balloon* b = &CURRENT_LEVEL.balloons[index];
 
     int gainedScore = GetScoreForBalloon(b->radius);
     CURRENT_LEVEL.levelScore += gainedScore;
 
-    // ← NOVI KOD - ODVOJENI SCORE
+
     if(gGame.gameState.isMultiplayer) {
         if(scoringPlayer == 1) {
             gGame.player1Stats.score += gainedScore;
@@ -150,11 +143,9 @@ void SplitBalloon(int index, int scoringPlayer) {  // ← DODAJ PARAMETAR
                                   GetModuleHandle(NULL),
                                   SND_RESOURCE | SND_ASYNC | SND_NODEFAULT);
 
-    // Zapamti frozen stanje roditeljskog balona
     bool parentWasFrozen = b->isFrozen;
 
     if (newRadius >= MIN_RADIUS) {
-        // Prvi novi balon (lijevo)
         for (int i = 0; i < MAX_BALLOONS; i++) {
             if (!CURRENT_LEVEL.balloons[i].active) {
                 InitBalloon(i, b->x - 10, b->y, newRadius, -3.5f, b->color);
@@ -172,7 +163,6 @@ void SplitBalloon(int index, int scoringPlayer) {  // ← DODAJ PARAMETAR
             }
         }
 
-        // Drugi novi balon (desno)
         for (int i = 0; i < MAX_BALLOONS; i++) {
             if (!CURRENT_LEVEL.balloons[i].active) {
                 InitBalloon(i, b->x + 10, b->y, newRadius, 3.5f, b->color);
@@ -202,7 +192,7 @@ void DrawBalloonGDI(HDC hdc, Balloon* b) {
 
     int r = GetRValue(b->color);
     int g = GetGValue(b->color);
-    int blue_val = GetBValue(b->color);  // ← PROMIJENJEN NAZIV (bio b_val)
+    int blue_val = GetBValue(b->color);
 
     for (int i = radius; i > 0; i--) {
         float factor = (float)i / radius;

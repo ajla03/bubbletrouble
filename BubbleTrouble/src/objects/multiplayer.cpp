@@ -113,7 +113,6 @@ void UpdatePlayer2Input(HWND hwnd) {
         CheckHeroDoorCollisionP2();
     }
 
-    // IZMJENA: Koristimo univerzalnu funkciju i šaljemo &gGame.hero2
     CheckHeroPillarCollision(&gGame.hero2, &CURRENT_LEVEL.pillar1);
     CheckHeroPillarCollision(&gGame.hero2, &CURRENT_LEVEL.pillar2);
 
