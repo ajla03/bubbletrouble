@@ -22,20 +22,18 @@ struct Level{
      int activePowerupCount;
      DWORD lastPowerupSpawn;
      DWORD nextPowerupSpawnTime;
-     StaticObject ladder;        // merdevine (Level 7)
+     StaticObject ladder;
      int ladderOrigW, ladderOrigH;
 };
 
 
 struct GameContext{
 
-    // ======== LEVELS ====== //
      Level levels[MAX_LEVELS];
      int currentLevel;
-     int totalScore;      // Combined score for level transitions
-     int displayScore;    // Old - keep for compatibility
+     int totalScore;
+     int displayScore;
 
-    // ===== SHARED GAME OBJEKTI =====
      Projectile harpoon;
      Projectile harpoon2;
      Hero hero;
@@ -47,16 +45,14 @@ struct GameContext{
      StaticObject player2HolderInfo, score2HolderInfo;
      StaticObject heartInfo, heartBgInfo, heartBorderInfo;
 
-     HeartAnim hearts[5];  // Old - keep for compatibility
+     HeartAnim hearts[5];
      Torch torchInfo;
      AnimatedWalls animatedWalls;
      StaticObject logoInfo;
 
-     // === NEW: SEPARATE PLAYER STATS ===
      PlayerStats player1Stats;
      PlayerStats player2Stats;
 
-    // UI
      MenuButton menuButtons[NUM_MENU_BUTTONS];
      Button restartButtonInfo;
      Button homeButtonInfo;
@@ -72,7 +68,6 @@ struct GameContext{
      Button loginButtonInfo;
      Button helpButtonInfo;
 
-    // STATE
     InputState inputState;
     GameState gameState;
     TransitionState transitionState;
@@ -80,10 +75,8 @@ struct GameContext{
     LoadingState loadingState;
     LoginInput loginInput;
 
-    // Player Name
     char playerName[12];
 
-    // Level Map
     int unlockedLevelSingle;
     int unlockedLevelMulti;
     int s_hoveredLevel = -1;

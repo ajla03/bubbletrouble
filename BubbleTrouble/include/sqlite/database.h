@@ -17,6 +17,6 @@ bool CreateTables();
 //za unlocked levels
 int GetPlayerMaxLevel(const char* playerName, const char* mode);
 void SavePlayerProgress(const char* playerName, const char* mode, int newMaxLevel);;
-// Za zvjezdice po levelima
+//za zvjezdice po levelima
 int GetLevelStars(const char* playerName, const char* mode, int level);
 void SaveLevelStars(const char* playerName, const char* mode, int level, int stars);

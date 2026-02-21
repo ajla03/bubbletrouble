@@ -1,6 +1,5 @@
 #pragma once
 
-// ========= BITMAPE =========== //
 #define IDB_HERO                    101
 #define IDB_HERO_MASK               102
 #define IDB_ARROW                   103
@@ -104,7 +103,7 @@
 #define IDB_GOLD                    201
 #define IDB_LADDER                  202
 #define IDB_STAR                    203
-// ======== OSTALE KONSTANTE  ======== //
+
 #define IDR_HARPOON_SOUND           201
 #define IDR_BALLOON_POP             202
 #define IDR_SLIDING_SOUND           203

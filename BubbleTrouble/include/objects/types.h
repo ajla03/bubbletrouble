@@ -1,17 +1,16 @@
 #pragma once
 #include<windows.h>
 
-// ======== POMOCNE STRUKTURE ======= //
 struct Hero{
  int x, y;
  int dx, dy;
  int width, height;
  int currentFrame, currentRow;
  int animCounter;
- float heroHitCooldown; // in secs
+ float heroHitCooldown;
  float blinkTimer;
  bool isOnLadder;
- int  floorY;          // Y na kojoj stoji (mijenja se ovisno o spratu)
+ int  floorY;
 };
 
 struct Projectile{
@@ -96,11 +95,10 @@ struct HeartAnim{
     int animCounter;
 };
 
-// === NEW: PLAYER STATS STRUCTURE ===
 struct PlayerStats {
     int lives;
     int score;
-    int displayScore;  // For smooth animation
+    int displayScore;
     bool isAlive;
     HeartAnim hearts[5];
 };
@@ -113,7 +111,7 @@ struct Torch{
  int animCounter = 0;
 };
 
-// used for MENU, RESTART and NEXT button etc.
+
 struct Button {
    int x, y;
    int width, height;
@@ -162,7 +160,6 @@ struct PowerUp {
    DWORD spawnTime;
 };
 
-/* ======  SETTINGS ====== */
 
 enum KeyBindingMode{
     KEYBIND_NONE = 0,
@@ -193,7 +190,6 @@ struct SettingsState{
  SoundState soundState;
  HBITMAP currentHeroSelected;
 
- // KEY BINDING MEMBERS //
  KeyBindingMode waitingForKey;
  KeyBindings player1Keys;
  KeyBindings player2Keys;
@@ -202,12 +198,10 @@ struct SettingsState{
  Button spaceKeyButton;
  int currentPlayerBinding;
 
- // ANIMATION
  DotAnimation dotAnimation;
 };
 
 
-// Login Screen
 struct LoginInput
 {
     char text[12];
