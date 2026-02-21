@@ -4,7 +4,6 @@
 #include <stdio.h>
 
 void RenderLevel4(HDC hdcBuffer, RECT rect){
-    // === BACKGROUND ===
     SelectObject(gRes.hdcMem, gRes.hBgLevel2);
 
     int bgX = gGame.leftWall.width;
@@ -22,7 +21,6 @@ void RenderLevel4(HDC hdcBuffer, RECT rect){
         SRCCOPY
     );
 
-    // === FIRST PILLAR (LEFT) ===
     if(CURRENT_LEVEL.pillar1.width > 0){
         SelectObject(gRes.hdcMem, gRes.longWall);
         SetStretchBltMode(hdcBuffer, HALFTONE);
@@ -41,7 +39,6 @@ void RenderLevel4(HDC hdcBuffer, RECT rect){
         );
     }
 
-    // === SECOND PILLAR (RIGHT) ===
     if(CURRENT_LEVEL.pillar2.width > 0){
         SelectObject(gRes.hdcMem, gRes.longWall);
         SetStretchBltMode(hdcBuffer, HALFTONE);
@@ -60,7 +57,6 @@ void RenderLevel4(HDC hdcBuffer, RECT rect){
         );
     }
 
-    // === BALLOONS ===
     for (int i = 0; i < MAX_BALLOONS; i++) {
         if (CURRENT_LEVEL.balloons[i].active) {
             DrawBalloonGDI(hdcBuffer, &CURRENT_LEVEL.balloons[i]);
@@ -75,7 +71,6 @@ void InitLevel4(HWND hwnd){
     RECT rect;
     GetClientRect(hwnd, &rect);
 
-    // === LOAD BACKGROUND INFO ===
     if(gRes.hBgLevel2){
         BITMAP bm;
         GetObject(gRes.hBgLevel2, sizeof(BITMAP), &bm);
@@ -83,17 +78,14 @@ void InitLevel4(HWND hwnd){
         CURRENT_LEVEL.backgroundInfo.height = bm.bmHeight;
     }
 
-    // === SETUP PILLARS ===
     BITMAP bmp;
     GetObject(gRes.longWall, sizeof(BITMAP), &bmp);
 
-    // Pillar 1 (Left)
     CURRENT_LEVEL.pillar1.originalWidth = bmp.bmWidth;
     CURRENT_LEVEL.pillar1.originalHeight = bmp.bmHeight;
     CURRENT_LEVEL.pillar1.width = bmp.bmWidth;
     CURRENT_LEVEL.pillar1.height = bmp.bmHeight;
 
-    // Pillar 2 (Right)
     CURRENT_LEVEL.pillar2.originalWidth = bmp.bmWidth;
     CURRENT_LEVEL.pillar2.originalHeight = bmp.bmHeight;
     CURRENT_LEVEL.pillar2.width = bmp.bmWidth;
@@ -101,27 +93,21 @@ void InitLevel4(HWND hwnd){
 
     RecalculateLevel4Layout(hwnd);
 
-    // === CLEAR ALL BALLOONS ===
     for(int i = 0; i < MAX_BALLOONS; i++)
         CURRENT_LEVEL.balloons[i].active = false;
 
-    // === CREATE 3 BALLOONS IN 3 SECTIONS ===
     int bgW = rect.right - gGame.leftWall.width - gGame.rightWall.width;
     int sectionWidth = bgW / 3;
 
-    // Section 1 (Left) - Small balloon (radius 20)
     float section1CenterX = gGame.leftWall.width + sectionWidth / 2;
-    InitBalloon(0, section1CenterX, 100, 20, 2.0f, RGB(255, 200, 0));  // Yellow
+    InitBalloon(0, section1CenterX, 100, 20, 2.0f, RGB(255, 200, 0));
 
-    // Section 2 (Middle) - Medium balloon (radius 40)
     float section2CenterX = gGame.leftWall.width + sectionWidth + sectionWidth / 2;
-    InitBalloon(1, section2CenterX, 150, 40, -2.5f, RGB(255, 100, 0)); // Orange
+    InitBalloon(1, section2CenterX, 150, 40, -2.5f, RGB(255, 100, 0));
 
-    // Section 3 (Right) - Large balloon (radius 80) - DUPLO VEĆI!
     float section3CenterX = gGame.leftWall.width + 2 * sectionWidth + sectionWidth / 2;
-    InitBalloon(2, section3CenterX, 120, 80, 3.0f, RGB(255, 0, 0));    // Red
+    InitBalloon(2, section3CenterX, 120, 80, 3.0f, RGB(255, 0, 0));
     InitPowerupSystemForLevel();
-    // === DODANO: POZICIONIRANJE ZA MULTIPLAYER (Level 4) ===
     if (gGame.gameState.isMultiplayer) {
 
         gGame.hero.x = gGame.leftWall.width + 50;
@@ -144,12 +130,10 @@ void RecalculateLevel4Layout(HWND hwnd)
     int bgH = rect.bottom - gGame.floorWall.height;
     int sectionWidth = bgW / 3;
 
-    // === PILLAR 1 (divides section 1 and 2) ===
     CURRENT_LEVEL.pillar1.x = gGame.leftWall.width + sectionWidth - CURRENT_LEVEL.pillar1.width / 2;
     CURRENT_LEVEL.pillar1.y = 0;
     CURRENT_LEVEL.pillar1.height = bgH;
 
-    // === PILLAR 2 (divides section 2 and 3) ===
     CURRENT_LEVEL.pillar2.x = gGame.leftWall.width + 2 * sectionWidth - CURRENT_LEVEL.pillar2.width / 2;
     CURRENT_LEVEL.pillar2.y = 0;
     CURRENT_LEVEL.pillar2.height = bgH;

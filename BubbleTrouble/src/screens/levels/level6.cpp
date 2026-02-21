@@ -6,7 +6,6 @@
 void RenderLevel6(HDC hdcBuffer, RECT rect){
     HDC hdcMem = CreateCompatibleDC(hdcBuffer);
 
-    // === BACKGROUND ===
     SelectObject(hdcMem, gRes.hBgLevel2);
 
     int bgX = gGame.leftWall.width;
@@ -24,7 +23,6 @@ void RenderLevel6(HDC hdcBuffer, RECT rect){
         SRCCOPY
     );
 
-    // === BALLOONS ===
     for (int i = 0; i < MAX_BALLOONS; i++) {
         if (CURRENT_LEVEL.balloons[i].active) {
             DrawBalloonGDI(hdcBuffer, &CURRENT_LEVEL.balloons[i]);
@@ -47,7 +45,6 @@ void InitLevel6(HWND hwnd){
         CURRENT_LEVEL.backgroundInfo.height = bm.bmHeight;
     }
 
-    // === CLEAR ALL BALLOONS ===
 
     for(int i = 0; i < MAX_BALLOONS; i++)
         CURRENT_LEVEL.balloons[i].active = false;

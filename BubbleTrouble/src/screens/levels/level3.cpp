@@ -6,7 +6,6 @@
 
 void RenderLevel3(HDC hdcBuffer, RECT rect){
 
-    // === BACKGROUND ===
     SelectObject(gRes.hdcMem, gRes.hBgLevel3);
 
     int bgX = gGame.leftWall.width;
@@ -24,7 +23,6 @@ void RenderLevel3(HDC hdcBuffer, RECT rect){
         SRCCOPY
     );
 
-    // === DOOR ===
     if(CURRENT_LEVEL.door.active){
         SelectObject(gRes.hdcMem, gRes.doorClosed);
         StretchBlt(hdcBuffer,
@@ -74,7 +72,6 @@ void RenderLevel3(HDC hdcBuffer, RECT rect){
             CURRENT_LEVEL.door.originalHeight,
             SRCPAINT);
     }
-    // === PILLAR ===
     SelectObject(gRes.hdcMem, gRes.longWall);
     SetStretchBltMode(hdcBuffer, HALFTONE);
     SetBrushOrgEx(hdcBuffer, 0, 0, NULL);
@@ -91,7 +88,6 @@ void RenderLevel3(HDC hdcBuffer, RECT rect){
         SRCCOPY
     );
 
-    // === BALLOONS ===
     for (int i = 0; i < MAX_BALLOONS; i++) {
         if (CURRENT_LEVEL.balloons[i].active) {
             DrawBalloonGDI(hdcBuffer, &CURRENT_LEVEL.balloons[i]);
@@ -130,9 +126,8 @@ void InitLevel3(HWND hwnd){
   for(int i=0;i<MAX_BALLOONS;i++)
         CURRENT_LEVEL.balloons[i].active = false;
 
-  InitBalloon(0, rect.right/4, 100, 20, 3.5f, RGB(255, 0, 0));    // Crvena
-  InitBalloon(1, 3*rect.right/4, 150, 40, -3.0f, RGB(0, 255, 0));   // Zelena
-  //InitBalloon(2, 600, 120, 80, 3.0f, RGB(0, 100, 255));  // Plava
+  InitBalloon(0, rect.right/4, 100, 20, 3.5f, RGB(255, 0, 0));
+  InitBalloon(1, 3*rect.right/4, 150, 40, -3.0f, RGB(0, 255, 0));
   InitPowerupSystemForLevel();
   if (gGame.gameState.isMultiplayer) {
       gGame.hero.x = gGame.leftWall.width + 50;
@@ -153,13 +148,11 @@ void RecalculateLevel3Layout(HWND hwnd)
     int targetDoorW = CURRENT_LEVEL.longWall.width;
     int targetDoorH = gGame.hero.height*1.2 + 5;
 
-    // Door
     CURRENT_LEVEL.door.x = rect.right/2 - targetDoorW/2;
     CURRENT_LEVEL.door.y = bgH - targetDoorH;
     CURRENT_LEVEL.door.width = targetDoorW;
     CURRENT_LEVEL.door.height = targetDoorH;
 
-    // Pillar
     CURRENT_LEVEL.longWall.x = rect.right/2 - CURRENT_LEVEL.longWall.width/2;
     CURRENT_LEVEL.longWall.y = 0;
     CURRENT_LEVEL.longWall.height = CURRENT_LEVEL.door.y;

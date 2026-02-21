@@ -4,7 +4,6 @@
 #include <stdio.h>
 
 void RenderLevel5(HDC hdcBuffer, RECT rect){
-    // === BACKGROUND ===
     SelectObject(gRes.hdcMem, gRes.hBgLevel2);
 
     int bgX = gGame.leftWall.width;
@@ -22,7 +21,6 @@ void RenderLevel5(HDC hdcBuffer, RECT rect){
         SRCCOPY
     );
 
-    // === BALLOONS ===
     for (int i = 0; i < MAX_BALLOONS; i++) {
         if (CURRENT_LEVEL.balloons[i].active) {
             DrawBalloonGDI(hdcBuffer, &CURRENT_LEVEL.balloons[i]);
@@ -42,31 +40,26 @@ void InitLevel5(HWND hwnd){
         CURRENT_LEVEL.backgroundInfo.height = bm.bmHeight;
     }
 
-    // === CLEAR ALL BALLOONS ===
     for(int i = 0; i < MAX_BALLOONS; i++)
         CURRENT_LEVEL.balloons[i].active = false;
 
     int bgW = rect.right - gGame.leftWall.width - gGame.rightWall.width;
     int bgH = rect.bottom - gGame.floorWall.height;
 
-    // Centar ekrana
     float centerX = gGame.leftWall.width + bgW / 2;
     float centerY = bgH / 2;
 
-    float yellowRadius = 50.0f;   // Dovoljno veliki za više cijepanja
-    float redRadius = 80.0f;      // 4x veći od žutog
+    float yellowRadius = 50.0f;
+    float redRadius = 80.0f;
 
     float yellowLeftX = gGame.leftWall.width + bgW / 4;
     float yellowRightX = gGame.leftWall.width + 3 * bgW / 4;
 
-    // Balon 0: Žuti lijevo
-    InitBalloon(0, yellowLeftX, 150, yellowRadius, 2.0f, RGB(255, 255, 0));  // Žuta
+    InitBalloon(0, yellowLeftX, 150, yellowRadius, 2.0f, RGB(255, 255, 0));
 
-    // Balon 1: Veliki crveni u centru (speedX = 0 da ostane u centru)
-    InitBalloon(1, centerX, centerY, redRadius, 0.0f, RGB(255, 0, 0));  // Crvena
+    InitBalloon(1, centerX, centerY, redRadius, 0.0f, RGB(255, 0, 0));
 
-    // Balon 2: Žuti desno
-    InitBalloon(2, yellowRightX, 150, yellowRadius, -2.0f, RGB(255, 255, 0));  // Žuta
+    InitBalloon(2, yellowRightX, 150, yellowRadius, -2.0f, RGB(255, 255, 0));
     InitPowerupSystemForLevel();
 
 }

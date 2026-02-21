@@ -41,11 +41,11 @@ int WINAPI WinMain(HINSTANCE hThisInstance, HINSTANCE hPrevInstance, LPSTR lpszA
     if (!RegisterClassEx(&wincl)) return 0;
 
     DWORD style =
-        WS_OVERLAPPED |        // osnovni prozor
-        WS_CAPTION |           // title bar
-        WS_SYSMENU |           // system menu
-        WS_MINIMIZEBOX |       // minimize dozvoljen
-        WS_MAXIMIZEBOX;        // fullscreen dozvoljen
+        WS_OVERLAPPED |
+        WS_CAPTION |
+        WS_SYSMENU |
+        WS_MINIMIZEBOX |
+        WS_MAXIMIZEBOX;
 
     hwnd = CreateWindowEx(0, szClassName, _T("Bubble Trouble"), style,
                           20, 20, 1280, 720,
@@ -89,7 +89,6 @@ int WINAPI WinMain(HINSTANCE hThisInstance, HINSTANCE hPrevInstance, LPSTR lpszA
 
     InitDefaultSettings();
 
-    // Inicijalizacija zvuka
     mciSendString("close bgMusic", NULL, 0, NULL);
     mciSendString("open \"assets\\sounds\\music_loop.wav\" type waveaudio alias bgMusic", NULL, 0, NULL);
     mciSendString("play bgMusic notify", NULL, 0, hwnd);
@@ -132,7 +131,6 @@ LRESULT CALLBACK WindowProcedure(HWND hwnd, UINT message, WPARAM wParam, LPARAM 
         case WM_CREATE:
         {
 
-            // Inicijalizuj gRes.hdcBuffer i ostalo
             HDC hdc = GetDC(hwnd);
             gRes.Init(hdc, hwnd);
             ReleaseDC(hwnd, hdc);

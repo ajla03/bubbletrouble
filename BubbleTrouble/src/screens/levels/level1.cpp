@@ -9,7 +9,6 @@ void InitLevel1(){
 
 void RenderLevel1(HDC hdcBuffer, RECT rect)
 {
-    // === BACKGROUND ===
     SelectObject(gRes.hdcMem, gRes.background);
 
     int bgX = gGame.leftWall.width;
@@ -25,7 +24,6 @@ void RenderLevel1(HDC hdcBuffer, RECT rect)
         SRCCOPY
     );
 
-    // === BALLOONS ===
     for (int i = 0; i < MAX_BALLOONS; i++) {
         if (CURRENT_LEVEL.balloons[i].active) {
             DrawBalloonGDI(hdcBuffer, &CURRENT_LEVEL.balloons[i]);
