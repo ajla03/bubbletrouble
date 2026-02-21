@@ -19,7 +19,6 @@ void DrawGameOverScreen(HDC hdc, RECT rect)
 
     FillRect(overlayDC, &rect, (HBRUSH)GetStockObject(BLACK_BRUSH));
 
-    // alpha blend
     BLENDFUNCTION bf{};
     bf.BlendOp = AC_SRC_OVER;
     bf.SourceConstantAlpha = 160;
@@ -62,7 +61,6 @@ void DrawGameOverScreen(HDC hdc, RECT rect)
     DrawButton(hdc,gRes.restartButton, gRes.restartButtonMask, gGame.restartButtonInfo);
     DrawButton(hdc, gRes.homeButton, gRes.homeButtonMask, gGame.homeButtonInfo);
 
-    // cleanup
     SelectObject(overlayDC, oldBmp);
     DeleteObject(overlayBmp);
     DeleteDC(overlayDC);

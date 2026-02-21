@@ -181,7 +181,7 @@ static void RenderTransparentSheet(HDC hdcBuffer, RECT rect, RECT* outSheet) {
     SelectObject(gRes.hdcMem, hBmpOld);
     DeleteObject(bmp);
 
-    // BORDER
+
     HPEN darkPen = CreatePen(PS_SOLID, 2, RGB(80,80,80));
     HPEN oldPen = (HPEN)SelectObject(hdcBuffer, darkPen);
     HBRUSH oldBrush = (HBRUSH)SelectObject(hdcBuffer, GetStockObject(NULL_BRUSH));

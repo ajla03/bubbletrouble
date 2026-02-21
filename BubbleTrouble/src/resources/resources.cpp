@@ -36,7 +36,6 @@ void LoadBitmaps(HWND hwnd, HINSTANCE hInstance){
     gGame.hearts[i].animCounter = 8;
     }
 
-    // === HARPUN SETUP ===
     if (gRes.arrow) {
         GetObject(gRes.arrow, sizeof(BITMAP), &bm);
         gGame.harpoon.width = bm.bmWidth;
@@ -46,7 +45,6 @@ void LoadBitmaps(HWND hwnd, HINSTANCE hInstance){
         gGame.harpoon.length = 0;
     }
 
-    // === BACKGROUND SETUP ===
     if (gRes.background) {
         GetObject(gRes.background, sizeof(BITMAP), &bm);
         CURRENT_LEVEL.backgroundInfo.width = bm.bmWidth;
@@ -64,7 +62,6 @@ void LoadBitmaps(HWND hwnd, HINSTANCE hInstance){
         gGame.torchInfo.currentFrame = gGame.torchInfo.currentRow = 0;
     }
 
-    // === WALL SETUP ===
     if (gRes.wall) {
         GetObject(gRes.wall, sizeof(BITMAP), &bm);
 
@@ -79,7 +76,6 @@ void LoadBitmaps(HWND hwnd, HINSTANCE hInstance){
     }
 
 
-    // ==== LEVEL PLACEHOLDER SETUP ==== //
     if(gRes.levelPlaceholderWhite){
         GetObject(gRes.levelPlaceholderWhite, sizeof(BITMAP), &bm);
 
@@ -89,7 +85,6 @@ void LoadBitmaps(HWND hwnd, HINSTANCE hInstance){
         gGame.levelPlaceholderInfo.y = 0;
     }
 
-    // ======= SCORE HOLDER ======== //
     if(gRes.scoreHolder){
         GetObject(gRes.scoreHolder, sizeof(BITMAP), &bm);
 
@@ -98,7 +93,6 @@ void LoadBitmaps(HWND hwnd, HINSTANCE hInstance){
         gGame.scoreHolderInfo.x = 0;
         gGame.scoreHolderInfo.y = 0;
     }
-    // === HERO SETUP ===
     if (gRes.character) {
         GetObject(gRes.character, sizeof(BITMAP), &bm);
         gGame.hero.width = bm.bmWidth / 4;
@@ -172,13 +166,11 @@ void LoadBitmaps(HWND hwnd, HINSTANCE hInstance){
 
 
 
-    // === INPUT STATE SETUP ===
     gGame.inputState.wasSpacePressed = false;
     InitializeMenu(hwnd);
 }
 
 void CreateFonts(){
-     // Kreiraj fontove
             gRes.hFont = CreateFont(
                 32, 0, 0, 0,
                 FW_BOLD,

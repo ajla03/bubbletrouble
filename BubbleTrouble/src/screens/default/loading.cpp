@@ -188,9 +188,9 @@ void RenderLoading(HDC hdc, RECT rect) {
 
         int fontSize;
         if (rect.bottom <= 720) {
-            fontSize = 40; // Mali ekran
+            fontSize = 40;
         } else {
-            fontSize = rect.bottom / 18; // Fullscreen
+            fontSize = rect.bottom / 18;
             if (fontSize < 40) fontSize = 40;
             if (fontSize > 70) fontSize = 70;
         }
@@ -207,7 +207,7 @@ void RenderLoading(HDC hdc, RECT rect) {
 
         int harpoonThickness;
         if (rect.bottom <= 720) {
-            harpoonThickness = 3; // Mali ekran
+            harpoonThickness = 3;
         } else {
             harpoonThickness = barH / 8;
             if (harpoonThickness < 3) harpoonThickness = 3;
@@ -240,7 +240,7 @@ void RenderLoading(HDC hdc, RECT rect) {
             float ballRadius;
 
             if (rect.bottom <= 720) {
-                ballRadius = 16.0f; // Mali ekran
+                ballRadius = 16.0f;
             } else {
                 ballRadius = (float)(barH * 0.8f);
                 if (ballRadius < 16.0f) ballRadius = 16.0f;
@@ -310,9 +310,9 @@ void RenderLoading(HDC hdc, RECT rect) {
 
     int loadingFontSize;
     if (rect.bottom <= 720) {
-        loadingFontSize = 16; // Mali ekran
+        loadingFontSize = 16;
     } else {
-        loadingFontSize = rect.bottom / 45; // Fullscreen
+        loadingFontSize = rect.bottom / 45;
         if (loadingFontSize < 16) loadingFontSize = 16;
         if (loadingFontSize > 28) loadingFontSize = 28;
     }

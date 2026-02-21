@@ -20,7 +20,6 @@ void RenderStaticUI(HDC hdc, RECT rect) {
 
         RenderWalls(CURRENT_LEVEL.hdcCache, rect);
 
-        // === RENDER PLACEHOLDER ZA LEVEL ===
         SelectObject(gRes.hdcMem, gRes.levelPlaceholderWhite);
 
         std::string levelText = "LEVEL " + std::to_string(gGame.currentLevel+1);
@@ -59,7 +58,6 @@ void RenderStaticUI(HDC hdc, RECT rect) {
         SelectObject(CURRENT_LEVEL.hdcCache, oldFont);
 
 
-        // === PLAYER PLACEHOLDERS ===
         int heartsTop = rect.bottom - gGame.floorWall.height + barHeight*2 + 10;
         int playerY = heartsTop + gGame.heartBgInfo.height + 10;
 
@@ -107,7 +105,6 @@ void RenderWalls(HDC hdc, RECT rect){
     SelectObject(gRes.hdcMem, gRes.wall);
     StretchBlt(hdc, 0, 0, rect.right, rect.bottom, gRes.hdcMem, 0, 0, tileW, tileH, SRCCOPY);
 
-    // BIJELI OKVIR
     HPEN hPen = CreatePen(PS_SOLID, 2, RGB(255, 255, 255));
     HBRUSH hOldBrush = (HBRUSH)SelectObject(hdc, GetStockObject(NULL_BRUSH));
     HPEN hOldPen = (HPEN)SelectObject(hdc, hPen);
@@ -134,28 +131,23 @@ void RenderDynamicGameUI(HDC hdc, RECT rect)
     int bgW = rect.right - gGame.leftWall.width - gGame.rightWall.width;
     int bgH = rect.bottom - gGame.floorWall.height;
 
-    // PAUSE BUTTON //
     gGame.pauseButtonInfo.x = bgX + 15;
     DrawButton(hdc, gRes.pauseButton, gRes.pauseButtonMask, gGame.pauseButtonInfo);
 
-    // SOUND BUTTON //
     gGame.soundButtonInfo.x = gGame.pauseButtonInfo.x + gGame.pauseButtonInfo.width + 15;
     DrawButton(hdc, gRes.soundButton, gRes.soundButtonMask, gGame.soundButtonInfo);
 
-    // === TIME BAR ===
     int barHeight = 25;
     int barGap = 8;
     int barY = bgY + bgH + barGap;
     int barX = bgX;
     int maxBarWidth = bgW;
 
-    // Pozadina trake
     HBRUSH hDarkBrush = CreateSolidBrush(RGB(100, 100, 100));
     RECT barBgRect = { barX, barY, barX + maxBarWidth, barY + barHeight };
     FillRect(hdc, &barBgRect, hDarkBrush);
     DeleteObject(hDarkBrush);
 
-    // Ograničenje vremena na 0
     if (CURRENT_LEVEL.timeLeft < 0)
         CURRENT_LEVEL.timeLeft = 0;
 
@@ -181,7 +173,6 @@ void RenderDynamicGameUI(HDC hdc, RECT rect)
     SelectObject(hdc, hOldBrush);
     DeleteObject(hWhitePen);
 
-    // === HEARTS & SCORE ===
     DrawHeartsAndScore(hdc, rect, barHeight);
 
     std::string levelText = "LEVEL " + std::to_string(gGame.currentLevel+1);
@@ -194,14 +185,12 @@ void RenderDynamicGameUI(HDC hdc, RECT rect)
         &textSize
     );
 
-    // Padding oko teksta
     int paddingX = 40;
     int paddingY = 20;
 
     int boxW = textSize.cx + paddingX * 2;
     int placeholderX = (rect.right / 2) - (boxW / 2);
 
-    // === RENDER BAKLJI ===
     float torchScale = 1.3f;
 
     int torchW = (int)(gGame.torchInfo.width  * torchScale);
@@ -214,7 +203,6 @@ void RenderDynamicGameUI(HDC hdc, RECT rect)
     int torchSrcX = gGame.torchInfo.currentFrame * gGame.torchInfo.width;
     int torchSrcY = gGame.torchInfo.currentRow * gGame.torchInfo.height;
 
-    // Lijeva baklja
     SelectObject(gRes.hdcMem, gRes.torchMask);
     StretchBlt(
         hdc,
@@ -237,7 +225,6 @@ void RenderDynamicGameUI(HDC hdc, RECT rect)
         gGame.torchInfo.height,
         SRCAND
     );
-    // Desna baklja
     SelectObject(gRes.hdcMem, gRes.torchMask);
     StretchBlt(
         hdc,
@@ -261,7 +248,6 @@ void RenderDynamicGameUI(HDC hdc, RECT rect)
         SRCAND
     );
 
-    // === HERO (PLAYER 1) ===
     if (gGame.player1Stats.lives > 0) {
         RenderHero(
             hdc,
@@ -274,7 +260,6 @@ void RenderDynamicGameUI(HDC hdc, RECT rect)
         );
     }
 
-    // === HARPOON ===
     if (gGame.harpoon.isActive) {
         int visible = std::min(gGame.harpoon.length, gGame.harpoon.height);
         int y = gGame.harpoon.y - visible;
@@ -293,7 +278,6 @@ void RenderDynamicGameUI(HDC hdc, RECT rect)
     }
 
 
-    // === PLAYER 2 (MULTIPLAYER) ===
    if(gGame.gameState.isMultiplayer && gGame.player2Stats.lives > 0) {
         RenderHero(
             hdc,
@@ -305,7 +289,6 @@ void RenderDynamicGameUI(HDC hdc, RECT rect)
             1.2f
         );
 
-        // Render harpoon2
         if(gGame.harpoon2.isActive) {
             int visible = std::min(gGame.harpoon2.length, gGame.harpoon2.height);
             int y = gGame.harpoon2.y - visible;
@@ -349,19 +332,16 @@ void DrawHeartsAndScore(HDC hdc, RECT rect, int padding) {
         int x = startX1 + i * (gGame.heartInfo.width + gap);
         int y = startY;
 
-        // === P1 BACKGROUND ===
         HBITMAP oldBmp = (HBITMAP)SelectObject(gRes.hdcMem, gRes.heartBkgMask);
         BitBlt(hdc, x, y, gGame.heartBgInfo.width, gGame.heartBgInfo.height, gRes.hdcMem, 0, 0, SRCPAINT);
         SelectObject(gRes.hdcMem, gRes.heartBkg);
         BitBlt(hdc, x, y, gGame.heartBgInfo.width, gGame.heartBgInfo.height, gRes.hdcMem, 0, 0, SRCAND);
 
-        // === P1 BORDER ===
         SelectObject(gRes.hdcMem, gRes.heartBorderMask);
         BitBlt(hdc, x, y, gGame.heartBorderInfo.width, gGame.heartBorderInfo.height, gRes.hdcMem, 0, 0, SRCPAINT);
         SelectObject(gRes.hdcMem, gRes.heartBorder);
         BitBlt(hdc, x, y, gGame.heartBorderInfo.width, gGame.heartBorderInfo.height, gRes.hdcMem, 0, 0, SRCAND);
 
-        // === P1 FILL ===
         if (i < p1Lives) {
             int srcX = p1HeartsAnim[i].currentFrame * gGame.heartInfo.width;
             SelectObject(gRes.hdcMem, gRes.heartMask);
@@ -379,12 +359,12 @@ void DrawHeartsAndScore(HDC hdc, RECT rect, int padding) {
     int boxW = 100;
     int scoreBoxH = gGame.playerHolderInfo.height - 8;
 
-    // Iscrtaj holder
+
     SelectObject(gRes.hdcMem, gRes.scoreHolder);
     SetStretchBltMode(hdc, COLORONCOLOR);
     StretchBlt(hdc, scoreX, scoreY, boxW, scoreBoxH, gRes.hdcMem, 0, 0, gGame.scoreHolderInfo.width, gGame.scoreHolderInfo.height, SRCCOPY);
 
-    // Okvir
+
     HPEN hDarkPen = CreatePen(PS_SOLID, 2, RGB(100, 100, 100));
     HPEN hOldPen = (HPEN)SelectObject(hdc, hDarkPen);
     SelectObject(hdc, GetStockObject(NULL_BRUSH));
@@ -392,7 +372,6 @@ void DrawHeartsAndScore(HDC hdc, RECT rect, int padding) {
     SelectObject(hdc, hOldPen);
     DeleteObject(hDarkPen);
 
-    // Ispis broja
     HFONT oldFont = (HFONT)SelectObject(hdc, gRes.hFont);
     SetBkMode(hdc, TRANSPARENT);
     SetTextColor(hdc, RGB(70, 70, 70));
@@ -413,19 +392,16 @@ void DrawHeartsAndScore(HDC hdc, RECT rect, int padding) {
             int x = startX2 - i * (gGame.heartInfo.width + gap);
             int y = startY;
 
-            // === P2 BACKGROUND ===
             HBITMAP oldBmp2 = (HBITMAP)SelectObject(gRes.hdcMem, gRes.heartBkgMask);
             BitBlt(hdc, x, y, gGame.heartBgInfo.width, gGame.heartBgInfo.height, gRes.hdcMem, 0, 0, SRCPAINT);
             SelectObject(gRes.hdcMem, gRes.heartBkg);
             BitBlt(hdc, x, y, gGame.heartBgInfo.width, gGame.heartBgInfo.height, gRes.hdcMem, 0, 0, SRCAND);
 
-            // === P2 BORDER ===
             SelectObject(gRes.hdcMem, gRes.heartBorderMask);
             BitBlt(hdc, x, y, gGame.heartBorderInfo.width, gGame.heartBorderInfo.height, gRes.hdcMem, 0, 0, SRCPAINT);
             SelectObject(gRes.hdcMem, gRes.heartBorder);
             BitBlt(hdc, x, y, gGame.heartBorderInfo.width, gGame.heartBorderInfo.height, gRes.hdcMem, 0, 0, SRCAND);
 
-            // === P2 FILL ===
             if (i < p2Lives) {
                 int srcX = p2HeartsAnim[i].currentFrame * gGame.heartInfo.width;
                 SelectObject(gRes.hdcMem, gRes.heartMask);
@@ -535,20 +511,18 @@ void DrawPlayerPlaceholder(
 
     SelectObject(hdc, oldFont);
 }
-// ============ UI HELPER FUNCTIONS ============
 
-// Moved from gameOver.cpp
 void DrawButton(HDC hdc, HBITMAP bmp, HBITMAP mask, Button& button)
 {
-    // maska
+
     SelectObject(gRes.hdcMem, mask);
     BitBlt(hdc, button.x, button.y, button.width, button.height, gRes.hdcMem, 0, 0, SRCPAINT);
 
-    // bitmap
+
     SelectObject(gRes.hdcMem, bmp);
     BitBlt(hdc, button.x, button.y, button.width, button.height, gRes.hdcMem, 0, 0, SRCAND);
 
-    // SOUND OFF
+
     if (bmp == gRes.soundButton && !gGame.settingsState.soundState.soundEffectsOn)
     {
         HRGN rgn = CreateEllipticRgn(
@@ -588,7 +562,7 @@ void DrawButton(HDC hdc, HBITMAP bmp, HBITMAP mask, Button& button)
         DeleteDC(overlayDC);
     }
 
-    // HOVER
+
     if (button.isHover)
     {
         HRGN rgn = CreateEllipticRgn(

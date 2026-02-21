@@ -24,30 +24,28 @@ void RenderSettings(HDC hdcBuffer, RECT rect)
 
     RenderBackground(hdcBuffer, rect);
 
-    // --- PROZIRNI SHEET ---
     RenderTransparentSheet(hdcBuffer, rect, &sheet);
 
-    // SETTINGS TEKST //
+
     HFONT oldFont = (HFONT)SelectObject(hdcBuffer, gRes.hFont);
     RenderSettingsTitle(hdcBuffer, sheet);
 
-    /* CONTROLS */
+
     int controlX, controlY, controlW, controlH;
     RenderControlsHolder(hdcBuffer, sheet, &controlX, &controlY, &controlW, &controlH);
     RenderHeroesInHolder(hdcBuffer, controlX, controlY, controlW, controlH);
     RenderKeyButtons(hdcBuffer, controlX, controlY, controlW, controlH);
     RenderPlayerButtons(hdcBuffer, sheet, controlX, controlY, controlH);
 
-    // BACK BUTTON //
+
     RenderBackButton(hdcBuffer, sheet);
 
-    // --- SOUND HOLDER ---
+
     RenderSoundHolder(hdcBuffer, sheet);
 
-    // --- TORCHES ---
+
     RenderTorches(hdcBuffer, sheet);
 
-    // ANIMATION - KEY BINDING //
     if (gGame.settingsState.waitingForKey != KEYBIND_NONE) {
         RenderKeyBindingOverlay(hdcBuffer, rect);
     }
@@ -61,12 +59,10 @@ void InitDefaultSettings(){
     gGame.settingsState.soundState.soundEffectsOn = true;
     gGame.settingsState.currentHeroSelected = gRes.characterMask;
 
-    // player 1 - default controls
     gGame.settingsState.player1Keys.moveLeft = VK_LEFT;
     gGame.settingsState.player1Keys.moveRight = VK_RIGHT;
     gGame.settingsState.player1Keys.shoot = VK_SPACE;
 
-    // player 2 - default controls
     gGame.settingsState.player2Keys.moveLeft = 'A';
     gGame.settingsState.player2Keys.moveRight = 'D';
     gGame.settingsState.player2Keys.shoot = 'W';
@@ -137,7 +133,6 @@ static void RenderTransparentSheet(HDC hdcBuffer, RECT rect, RECT* outSheet) {
     SelectObject(gRes.hdcMem, hBmpOld);
     DeleteObject(bmp);
 
-    // SIVI BORDER //
 
     HPEN darkPen = CreatePen(PS_SOLID, 2, RGB(80,80,80));
     HPEN oldPen = (HPEN)SelectObject(hdcBuffer, darkPen);
@@ -207,19 +202,19 @@ static void RenderHeroesInHolder(HDC hdcBuffer, int x, int y, int controlW, int 
     SetStretchBltMode(hdcBuffer, COLORONCOLOR);
     SelectObject(gRes.hdcMem, gGame.settingsState.currentHeroSelected);
 
-    // LIJEVO
+
     int srcX_left = 0 * gGame.hero.width;
     int srcY_left = 1 * gGame.hero.height;
     TransparentBlt(hdcBuffer, leftHeroX, heroY, heroW, heroH,
                    gRes.hdcMem, srcX_left, srcY_left, gGame.hero.width, gGame.hero.height, RGB(255, 255, 255));
 
-    // SREDINA
+
     int srcX_back = 0 * gGame.hero.width;
     int srcY_back = 2 * gGame.hero.height;
     TransparentBlt(hdcBuffer, midHeroX, heroY, heroW, heroH,
                    gRes.hdcMem, srcX_back, srcY_back, gGame.hero.width, gGame.hero.height, RGB(255, 255, 255));
 
-    // DESNO
+
     int srcX_right = 3 * gGame.hero.width;
     int srcY_right = 0 * gGame.hero.height;
     TransparentBlt(hdcBuffer, rightHeroX, heroY, heroW, heroH,
@@ -277,7 +272,7 @@ static void RenderSingleKeyButton(HDC hdcBuffer, int currentBtnX, int currentBtn
     if (isWaiting) {
         SetTextColor(hdcBuffer, RGB(255, 255, 0));
         DrawText(hdcBuffer, "...", -1, &btnRect, DT_CENTER | DT_VCENTER | DT_SINGLELINE);
-        SetTextColor(hdcBuffer, RGB(255, 255, 255)); // VRATI BIJELU BOJU NAZAD!
+        SetTextColor(hdcBuffer, RGB(255, 255, 255));
     } else {
         KeyBindings* keys = (gGame.settingsState.currentPlayerBinding == 1) ?
                             &gGame.settingsState.player1Keys : &gGame.settingsState.player2Keys;
@@ -335,7 +330,6 @@ static void RenderPlayerButtons(HDC hdcBuffer, RECT sheet, int x, int y, int con
     BITMAP bm;
     HBITMAP currentBitmap;
 
-    // PLAYER 1
     if (gGame.player1.isHover)
         currentBitmap = gRes.playerHover;
     else
@@ -371,7 +365,6 @@ static void RenderPlayerButtons(HDC hdcBuffer, RECT sheet, int x, int y, int con
     RECT r1 = { btnX, firstBtnY, btnX + btnW, firstBtnY + btnH };
     DrawText(hdcBuffer, "PLAYER 1", -1, &r1, DT_CENTER | DT_VCENTER | DT_SINGLELINE);
 
-    // PLAYER 2
     if (gGame.player2.isHover)
         currentBitmap = gRes.playerHover;
     else
@@ -460,7 +453,6 @@ static void RenderTorches(HDC hdcBuffer, RECT sheet) {
     int torchSrcX = gGame.torchInfo.currentFrame * gGame.torchInfo.width;
     int torchSrcY = gGame.torchInfo.currentRow * gGame.torchInfo.height;
 
-    // Prva baklja
     SelectObject(gRes.hdcMem, gRes.torchMask);
     StretchBlt(hdcBuffer, torchX1, torchY, torchW, torchH,
                gRes.hdcMem, torchSrcX, torchSrcY, gGame.torchInfo.width, gGame.torchInfo.height, SRCPAINT);
@@ -468,7 +460,6 @@ static void RenderTorches(HDC hdcBuffer, RECT sheet) {
     StretchBlt(hdcBuffer, torchX1, torchY, torchW, torchH,
                gRes.hdcMem, torchSrcX, torchSrcY, gGame.torchInfo.width, gGame.torchInfo.height, SRCAND);
 
-    // Druga baklja
     SelectObject(gRes.hdcMem, gRes.torchMask);
     StretchBlt(hdcBuffer, torchX2, torchY, torchW, torchH,
                gRes.hdcMem, torchSrcX, torchSrcY, gGame.torchInfo.width, gGame.torchInfo.height, SRCPAINT);
@@ -481,7 +472,6 @@ static void RenderSoundHolder(HDC hdcBuffer, RECT sheet)
 {
     int padding = 40;
 
-    /* ================= MUSIC BUTTON ================= */
 
     BITMAP bmBase;
     GetObject(gRes.hMusicHolder, sizeof(BITMAP), &bmBase);
@@ -550,7 +540,6 @@ static void RenderSoundHolder(HDC hdcBuffer, RECT sheet)
              DT_RIGHT | DT_VCENTER | DT_SINGLELINE);
 
 
-    /* ================= SOUND EFFECTS BUTTON ================= */
 
     int sfxY = y - padding / 2 - soundH;
 

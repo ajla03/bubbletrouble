@@ -9,13 +9,13 @@ static void RenderPlayersName(HDC hdcBuffer, int x, int y);
 
 void RenderLoginScreen(HDC hdcBuffer, RECT rect, HWND hwnd){
 
-    // BACKGROUND
+
     RenderBackground(hdcBuffer, rect);
 
-    // LOGIN POPUP
+
     RenderLoginPopup(hdcBuffer, rect, hwnd);
 
-    // NEXT BUTTON
+
     RenderNextButton(hdcBuffer, rect);
 
 }
@@ -115,7 +115,7 @@ static void RenderPlayersName(HDC hdcBuffer, int x, int y)
     SIZE size;
     GetTextExtentPoint32A(hdcBuffer, gGame.loginInput.text, strlen(gGame.loginInput.text), &size);
 
-    // CARET
+
     if(gGame.loginInput.caretVisible)
     {
         HPEN hPen = CreatePen(PS_SOLID, 3, RGB(255,165,0));
@@ -140,7 +140,7 @@ static void RenderPlayersName(HDC hdcBuffer, int x, int y)
 
 
 
-// INIT LOGIN INPUT
+
 void InitLoginInput()
 {
     gGame.loginInput.length = 0;

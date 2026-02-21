@@ -7,7 +7,6 @@
 #include "database.h"
 #include "resourceManager.h"
 
-// Helper macros if std::max/min don't work
 #ifndef max
 #define max(a,b) (((a) > (b)) ? (a) : (b))
 #endif
@@ -58,7 +57,7 @@ void RenderMenu(HDC hdc, RECT rect) {
     SetStretchBltMode(hdc, HALFTONE);
     SetBrushOrgEx(hdc, 0, 0, NULL);
 
-    // Render menu background
+
     if (gRes.menuScreen) {
         HBITMAP oldMemBmp = (HBITMAP)SelectObject(gRes.hdcMem, gRes.menuScreen);
         BITMAP bm;
@@ -72,14 +71,12 @@ void RenderMenu(HDC hdc, RECT rect) {
         DeleteObject(hBrush);
     }
 
-    // === BUTTONS ===
-    // Use the same font as settings screen
+
     HFONT hOldButtonFont = (HFONT)SelectObject(hdc, gRes.hFont);
 
     for (int i = 0; i < NUM_MENU_BUTTONS; i++) {
         MenuButton* btn = &gGame.menuButtons[i];
 
-        // Koristi iste buttone kao u settings-u
         HBITMAP currentButton = btn->isHovered ? gRes.settingsPlayer : gRes.playerHover;
 
         BITMAP bm;
@@ -87,13 +84,11 @@ void RenderMenu(HDC hdc, RECT rect) {
         int btnWidth = btn->rect.right - btn->rect.left;
         int btnHeight = btn->rect.bottom - btn->rect.top;
 
-        // Koristi TransparentBlt umjesto SRCAND/SRCPAINT kao u settings-u
         HBITMAP oldMemBmp = (HBITMAP)SelectObject(gRes.hdcMem, currentButton);
         TransparentBlt(hdc, btn->rect.left, btn->rect.top, btnWidth, btnHeight,
                        gRes.hdcMem, 0, 0, bm.bmWidth, bm.bmHeight, RGB(255, 255, 255));
         SelectObject(gRes.hdcMem, oldMemBmp);
 
-        // === HOVER ORANGE GLOW ===
         if (btn->isHovered) {
 
             int left   = btn->rect.left;
@@ -112,7 +107,6 @@ void RenderMenu(HDC hdc, RECT rect) {
             DeleteObject(glowPen);
         }
 
-        // Tekst na buttonu
         SetBkMode(hdc, TRANSPARENT);
         SetTextColor(hdc, RGB(255, 255, 255));
 
@@ -120,7 +114,6 @@ void RenderMenu(HDC hdc, RECT rect) {
         DrawText(hdc, btn->text, -1, &textRect, DT_CENTER | DT_VCENTER | DT_SINGLELINE);
     }
     SelectObject(hdc, hOldButtonFont);
-    // === HELP ICON ===
     if (gRes.help && gRes.helpHover) {
         HBITMAP currentHelp = gGame.helpButtonInfo.isHover ? gRes.helpHover : gRes.help;
 
@@ -144,7 +137,6 @@ void RenderMenu(HDC hdc, RECT rect) {
         TransparentBlt(hdc, helpX, helpY, helpSize, helpSize,
                        gRes.hdcMem, 0, 0, bm.bmWidth, bm.bmHeight,
                        RGB(255, 255, 255));
-      // === HELP HOVER GLOW ===
         if (gGame.helpButtonInfo.isHover) {
 
             HPEN glowPen = CreatePen(PS_SOLID, 4, RGB(255, 140, 0));
@@ -167,7 +159,6 @@ void RenderMenu(HDC hdc, RECT rect) {
         SelectObject(gRes.hdcMem, oldMemBmp);
     }
 
-     // === PODIUM ICON ===
     if (gRes.podium && gRes.podiumHover) {
         BITMAP bm;
         HBITMAP current = gGame.dashboardButtonInfo.isHover ? gRes.podiumHover : gRes.podium;
@@ -191,7 +182,6 @@ void RenderMenu(HDC hdc, RECT rect) {
         TransparentBlt(hdc, helpX, helpY, podiumSize, podiumSize,
                        gRes.hdcMem, 0, 0, bm.bmWidth, bm.bmHeight,
                        RGB(255, 255, 255));
-       // === DASHBOARD HOVER GLOW ===
         if (gGame.dashboardButtonInfo.isHover) {
 
             HPEN glowPen = CreatePen(PS_SOLID, 4, RGB(255, 140, 0));
@@ -216,7 +206,6 @@ void RenderMenu(HDC hdc, RECT rect) {
     }
 
 
-    // === CHARACTER ===
     HBITMAP currentChar = gRes.menuCharacter;
     HBITMAP currentCharMask = gRes.menuCharacterMask;
     bool isPlayer2 = false;
@@ -263,7 +252,6 @@ void RenderMenu(HDC hdc, RECT rect) {
         StretchBlt(hdc, charX, charY, charW, charH, gRes.hdcMem, 0, 0, bm.bmWidth, bm.bmHeight, SRCPAINT);
     }
 
-    // NEWBIE, SILVER, BRONZE & GOLD BADGE
     DrawBadge(hdc, rect);
 
 
@@ -282,17 +270,14 @@ void HandleMenuClick(HWND hwnd, int x, int y) {
         if (PtInRect(&gGame.menuButtons[i].rect, pt)) {
             switch(i) {
                 case 0:
-                    // 1 PLAYER
                     gGame.gameState.isMultiplayer = false;
-                    gGame.gameState.currentMode = GAME_MODE_LEVEL_SELECT; // Umjesto tranzicije idemo na mapu
+                    gGame.gameState.currentMode = GAME_MODE_LEVEL_SELECT;
                     break;
                 case 1:
-                    // 2 PLAYERS
                     gGame.gameState.isMultiplayer = true;
-                    gGame.gameState.currentMode = GAME_MODE_LEVEL_SELECT; // Umjesto tranzicije idemo na mapu
+                    gGame.gameState.currentMode = GAME_MODE_LEVEL_SELECT;
                     break;
                 case 2:
-                    // SETTINGS (ovo ostaje isto, ide sa tranzicijom)
                     gGame.transitionState.pendingSettings = true;
                     StartWallTransition(hwnd);
                     break;

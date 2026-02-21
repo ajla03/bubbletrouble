@@ -14,24 +14,18 @@ static void RenderTorches(HDC hdcBuffer, RECT sheet);
 
 void RenderDashboard(HDC hdcBuffer, RECT rect){
 
-    // POZADINA - sivi zid
     RenderBackground(hdcBuffer, rect);
 
-    // SHEET
     RECT sheet;
     RenderTransparentSheet(hdcBuffer, rect,&sheet);
 
-    // TORCHES
     RenderTorches(hdcBuffer, sheet);
 
-    // SCORE HOLDERS
     RenderBestScore(hdcBuffer, sheet);
 
-    // TITLE
     HFONT oldFont = (HFONT)SelectObject(hdcBuffer, gRes.hFont);
     RenderDashboardTitle(hdcBuffer, sheet);
 
-    // BACK BUTTON //
     RenderBackButton(hdcBuffer, sheet);
 
     SelectObject(hdcBuffer, oldFont);
@@ -213,7 +207,6 @@ static void RenderScoreTable(
     HBITMAP holderBmp
 ){
 
-    // === DRAW HOLDER ===
     BITMAP bm;
     GetObject(holderBmp, sizeof(BITMAP), &bm);
     SelectObject(gRes.hdcMem, holderBmp);
@@ -228,7 +221,6 @@ static void RenderScoreTable(
         RGB(255,255,255)
     );
 
-    // === DRAW BANNER ===
     HBITMAP bannerBmp =
         (strcmp(tableName, "SinglePlayer") == 0)
         ? gRes.singleplayerBanner
@@ -257,12 +249,10 @@ static void RenderScoreTable(
         RGB(255,255,255)
     );
 
-    // === GET TOP 5 ===
     HighScore scores[5] = {};
     GetTopScores(scores, 5, tableName);
 
 
-   // === SCORE AREA ===
     int nameX1  = x + 107;
     int nameX2  = x + 252;
 
@@ -279,7 +269,6 @@ static void RenderScoreTable(
         int rowY1 = firstRowY + i * rowHeight;
         int rowY2 = rowY1 + rowHeight;
 
-        // NAME
         RECT nameRect = {
             nameX1,
             rowY1,
@@ -306,7 +295,6 @@ static void RenderScoreTable(
             DT_CENTER | DT_VCENTER | DT_SINGLELINE | DT_END_ELLIPSIS
         );
 
-        // SCORE
         char displayScore[32];
         if(scores[i].playerName[0] != '\0')
             wsprintfA(displayScore, "%d", scores[i].score);
@@ -346,7 +334,6 @@ static void RenderTorches(HDC hdcBuffer, RECT sheet) {
     int torchSrcX = gGame.torchInfo.currentFrame * gGame.torchInfo.width;
     int torchSrcY = gGame.torchInfo.currentRow * gGame.torchInfo.height;
 
-    // Prva baklja
     SelectObject(gRes.hdcMem, gRes.torchMask);
     StretchBlt(hdcBuffer, torchX1, torchY, torchW, torchH,
                gRes.hdcMem, torchSrcX, torchSrcY, gGame.torchInfo.width, gGame.torchInfo.height, SRCPAINT);
@@ -354,7 +341,6 @@ static void RenderTorches(HDC hdcBuffer, RECT sheet) {
     StretchBlt(hdcBuffer, torchX1, torchY, torchW, torchH,
                gRes.hdcMem, torchSrcX, torchSrcY, gGame.torchInfo.width, gGame.torchInfo.height, SRCAND);
 
-    // Druga baklja
     SelectObject(gRes.hdcMem, gRes.torchMask);
     StretchBlt(hdcBuffer, torchX2, torchY, torchW, torchH,
                gRes.hdcMem, torchSrcX, torchSrcY, gGame.torchInfo.width, gGame.torchInfo.height, SRCPAINT);
